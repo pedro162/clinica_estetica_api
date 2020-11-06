@@ -4,7 +4,7 @@
 <div class="container-fluid">
 	<div class="row mb-5">
 		<div class="col">
-			<form action="{{route('pessoa.store')}}" method="post" class="form row p-2">
+			<form action="{{route('pessoa.store')}}" method="post" class="form row p-2" id="form_pessoa_cadastrar{{$randId}}">
 				@csrf
 				<div class="row">
 					<div class="col-md-5 col-sm-12">
@@ -22,7 +22,7 @@
 
 							<div class="form-group col-md-6 col-sm-12">
 								<label class="label" for="documento{{$randId}}">CPF</label>
-								<input type="text" id="documento{{$randId}}" name="documento" class="form-control form-control-sm" required="required">
+								<input type="text" id="documento{{$randId}}" name="documento" class="form-control form-control-sm" required="required" maxlength="14">
 							</div>
 
 							<div class="form-group col-md-6 col-sm-12">
@@ -112,22 +112,22 @@
 						<fieldset class="row"><legend></legend>
 							<div class="form-group col-md-12 col-sm-12">
 								<label class="label" for="celular_1{{$randId}}">Celular 1</label>
-								<input type="text" id="celular_1{{$randId}}" name="celular_1" class="form-control form-control-sm" required="required">
+								<input type="text" id="celular_1{{$randId}}" name="celular_1" class="form-control form-control-sm" required="required" maxlength="15">
 							</div>
 
 							<div class="form-group col-md-12 col-sm-12">
 								<label class="label" for="celular_2{{$randId}}">Celular 2</label>
-								<input type="text" id="celular_2{{$randId}}" name="celular_2" class="form-control form-control-sm">
+								<input type="text" id="celular_2{{$randId}}" name="celular_2" class="form-control form-control-sm" maxlength="15">
 							</div>
 
 							<div class="form-group col-md-12 col-sm-12">
 								<label class="label" for="telefone{{$randId}}">Telefone</label>
-								<input type="text" id="telefone{{$randId}}" name="telefone" class="form-control form-control-sm">
+								<input type="text" id="telefone{{$randId}}" name="telefone" class="form-control form-control-sm" minlength="14" maxlength="14">
 							</div>						
 
 							<div class="form-group col-md-12 col-sm-12">
 								<label class="label" for="email{{$randId}}">Email</label>
-								<input type="text" id="email{{$randId}}" name="email" class="form-control form-control-sm">
+								<input type="text" id="email{{$randId}}" name="email" class="form-control form-control-sm" minlength="4" maxlength="255">
 							</div>
 						</fieldset>
 					</div>
@@ -143,17 +143,17 @@
 
 <script type="text/javascript">
 	//----- define mascaras para algusn campos
-	$('#cep{{$randId}}').mask("00.000-000");
+	$('#cep{{$randId}}').mask("00000-000");
 	$('#documento{{$randId}}').mask("000.000.000-00")
 	$('#telefone{{$randId}}').mask("(00) 0000-0000")
-	$('celular_1{{$randId}}, celular_2{{$randId}}').mask("(00) 0000-00009").on('blur', function(ev){
+	$('#celular_1{{$randId}}, #celular_2{{$randId}}').mask("(00) 0000-00009").on('blur', function(ev){
 		if($(this).val().length == 15){
 			$(this).mask("(00) 00000-0009")
 		}else{
 			$(this).mask("(00) 0000-00009")
 		}
 	})
-	$('#documento_complementar{{$randId}}').mask("999.999.999-w",{
+	$('#documento_complementar{{$randId}}').mask("999.999.999.999-w",{
 		translation: {'w':{
 				pattern:/[X0-9]/
 			}
@@ -194,11 +194,11 @@
 				let campo_cidade 		= $('html body').find('#cidade{{$randId}}');
 				let campo_estado 		= $('html body').find('#estado{{$randId}}');
 
-				campo_cep.val(			dados.cep 			? dados.cep 		: campo_cep.val());
-				campo_logradouro.val(	dados.logradouro 	? dados.logradouro 	: campo_logradouro.val());
-				campo_bairro.val(		dados.bairro 		? dados.bairro 		: campo_bairro.val());
-				campo_cidade.val(		dados.localidade 	? dados.localidade 	: campo_cidade.val());
-				campo_estado.val(		dados.uf 			? dados.uf 			: campo_estado.val());
+				campo_cep.val(			typeof dados.cep 		=='string'	? dados.cep 		: campo_cep.val());
+				campo_logradouro.val(	typeof dados.logradouro =='string'	? dados.logradouro 	: campo_logradouro.val());
+				campo_bairro.val(		typeof dados.bairro 	=='string'	? dados.bairro 		: campo_bairro.val());
+				campo_cidade.val(		typeof dados.localidade =='string'	? dados.localidade 	: campo_cidade.val());
+				campo_estado.val(		typeof dados.uf 		=='string'	? dados.uf 			: campo_estado.val());
 				
 			},
 			beforeSend:function(){
@@ -206,14 +206,11 @@
 			},
 			error:function(response, status, error){
 					//console.log(response, status, error)
-					console.log(response.responseJSON);
-					let objErros = response.responseJSON.errors
-					let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
-					for (let prop in objErros){
-						msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
-					}
+					Utilitarios.assistenteMensageAlertClear();
 
-					Utilitarios.assistenteMensageAlert(msg, 'warning');
+					console.log(response.responseJSON);
+					
+					//Utilitarios.assistenteMensageAlert('Erro ao carregar o cep', 'warning');
 			}
 		})
 
@@ -221,9 +218,11 @@
 
 
 	//----- edita ou salva uma pessoa
-	$('html body').delegate('form#form_pessoa_cadastrar','submit', function(ev){
+	$('html body').delegate('form#form_pessoa_cadastrar{{$randId}}','submit', function(ev){
 
 		try{
+
+			ev.preventDefault();
 
 			let url = $(this).attr('action');
 			let id = $(this).attr('id');
@@ -269,12 +268,72 @@
 				},
 				error:function(response, status, error){
 					//console.log(response, status, error)
-					console.log(response.responseJSON);
-					let objErros = response.responseJSON.errors
+					console.log(response);
+					let objErros = response.responseJSON.errors;
+					let errors = response.responseJSON;
 					let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
-					for (let prop in objErros){
-						msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
+
+					if(response.responseJSON.errors){
+						for (let prop in objErros){
+							msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
+						}
+
+					}else if(errors.mensagem){
+						let erros = errors.mensagem;
+						console.log(erros);
+						for (let i=0; !(i == erros.length); i++){
+							msg+=erros[i]+'<br/>';
+						}
 					}
+					Utilitarios.assistenteMensageAlert(msg, 'warning');
+				}
+
+
+			})
+
+		}catch(ex){
+
+			console.log(ex.message);
+		}
+	});
+
+
+	//----- valida o cpf
+	$('html').delegate('#documento{{$randId}}','keyup', function(ev){
+
+		let cpf = $(this).val().trim().replace(/[\.]/g, '');
+		cpf = cpf.replace(/[-]/g, '');
+
+		try{
+
+			if(cpf.trim().length < 11){
+				return false;
+			}
+
+			let url = '/pessoa/valida/cpf/'+cpf;
+
+			$.ajax({
+				url:url,
+				type:'GET',
+				dataType:'json',
+				success:function(response){
+					console.log(response);
+					Utilitarios.assistenteMensageAlertClear();
+					if(response.hasOwnProperty('mensagem') || (response.mensagem.lenght > 0)){
+
+						//Utilitarios.assistenteMensageAlert(response.mensagem);
+
+					}
+				},
+				beforeSend:function(){
+					Utilitarios.assistenteMensageAlert('Aguarde, validando cpf...', 'warning');
+				},
+				error:function(response, status, error){
+					console.log(response);
+					Utilitarios.assistenteMensageAlertClear();
+
+					let objErros = response.responseJSON
+					let msg = objErros.mensagem;
 
 					Utilitarios.assistenteMensageAlert(msg, 'warning');
 				}

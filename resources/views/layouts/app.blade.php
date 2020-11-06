@@ -18,6 +18,7 @@
         <script src="{{asset('jquery/jquery-ui/external/jquery/jquery.js')}}"></script>
         <script src="{{asset('jquery/jquery-ui/jquery-ui.min.js')}}"></script>
         <script src="{{asset('jquery/plugins/jQuery-Mask/src/jquery.mask.js')}}"></script>
+        <script src="{{asset('jquery/plugins/chart-JS/chart.js')}}"></script>
         <script src="{{asset('jquery/plugins/jqueryDataTable/jquery.dataTables.min.js')}}"></script>
         <script type="text/javascript" src="{{asset('scripts/admin.js')}}" ></script>
         <script src="{{asset('bootstrap-4/js/bootstrap.min.js')}}"></script>

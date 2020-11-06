@@ -48,7 +48,9 @@
 
 						<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio">Relatório</buttom>
 
-						<a href="{{route('pessoa.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar_pessoa"><i class="fas fa-plus"></i> Cadastrar</a>
+						<a href="{{route('pessoa.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar_pessoa"><i class="fas fa-plus"></i> Cadastrar CPF</a>
+
+						<a href="{{route('pessoa.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar_pessoa"><i class="fas fa-plus"></i> Cadastrar CNPJ</a>
 					</div>
 				</div>
 			</div>
@@ -82,9 +84,10 @@
 		})*/
 
 		let arrLinks = [
-			['Ediar', '/pessoa/edit/'+id+'', 'btn btn-lg btn-outline-success', 'id_pessoa_editar'],
+			['Ediar', '/pessoa/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_pessoa_editar'],
 			['Visualizar', '/pessoa/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_pessoa_visualizar'],
-			['Excluir', '/pessoa/info/'+id+'', 'btn btn-lg btn-outline-danger', 'id_pessoa_deletar']
+			['Excluir', '/pessoa/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_pessoa_deletar'],
+			['Gerar Mensalidade', '/financeiro/receber/mensalidade'+id+'', 'btn btn-lg btn-outline-primary', 'id_pessoa_gerar_mensalidade'],
 		];
 
 		Utilitarios.assitentOpcoes(arrLinks);
@@ -104,7 +107,7 @@
 
 	});
 
-	//cadastra um produto view
+	//cadastra uma pessoa view
 	$('body').delegate('div.card a#cadastrar_pessoa', 'click', function(ev){
 
 		ev.preventDefault();
@@ -115,122 +118,35 @@
 
 	});
 
-	//deletar produto preview
+	//deletar pessoa preview
 	$('body').delegate('#assistenteModal #id_pessoa_deletar', 'click', function(ev){
 
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Deletar', 'xs')
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Deletar', 'md')
 
 	});
 
-	//deleta uma pessoa action
-	$('body').delegate('#assistenteModal #id_pessoa_destroy', 'click', function(ev){
 
-		try{
 
-			ev.preventDefault();
-
-			let url = $(this).attr('href');
-			
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Deletar')
-
-		}catch(ex){
-			console.log('Erro: '+ex.message);
-		}
-		
-
+	$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
+		ev.preventDefault();
+		Utilitarios.toggleFiltro();
 	});
 
-		//edita ou salva uma pessoa
-		$('html body').delegate('form#form_pessoa_cadastrar, form#form_pessoa_atualizar','submit', function(ev){
-
-			try{
-
-				let url = $(this).attr('action');
-				let id = $(this).attr('id');
-
-				let form = new FormData($(this)[0]);
-				$.ajax({
-					url:url,
-					type:'POST',
-					dataType:'json',
-					data:form,
-					processData:false,
-					contentType:false,
-					success:function(response){
-						console.log(response);
-						console.log(response.mensagem.id);
-
-						if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
-
-							if(id == 'form_pessoa_atualizar'){
-
-								Utilitarios.assistenteMensageAlert('Pessoa atualizada com sucesso');
-
-							}else{
-
-								Utilitarios.assistenteMensageAlert('Pessoa cadastrada com sucesso');
-
-							}
-
-						}else{
-
-							if(id == 'form_pessoa_atualizar'){
-
-								Utilitarios.assistenteMensageAlert('Erro ao atuaolizar registro', 'warning');
-
-							}else{
-
-								Utilitarios.assistenteMensageAlert('Erro ao cadastrar registro', 'warning');
-
-							}
-
-							
-						}
-					},
-					error:function(response, status, error){
-						//console.log(response, status, error)
-						console.log(response.responseJSON);
-						let objErros = response.responseJSON.errors
-						let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
-						for (let prop in objErros){
-							msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
-						}
-
-						Utilitarios.assistenteMensageAlert(msg, 'warning');
-					}
+	//lista os pessoas cadastrados
+	$('body').delegate('div.card #form_search_pessoa', 'click', function(ev){
 
 
-				})
+		ev.preventDefault();
+		let url = '/pessoa/index';
 
-			}catch(ex){
+		let objResponse = $('html body').find('div#response-request');
+		Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
+		Utilitarios.toggleFiltro();
 
-				console.log(ex.message);
-			}
-
-				ev.preventDefault();
-		});
-
-
-		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
-			ev.preventDefault();
-			Utilitarios.toggleFiltro();
-		});
-
-		//lista os pessoas cadastrados
-		$('body').delegate('div.card #form_search_pessoa', 'click', function(ev){
-
-
-			ev.preventDefault();
-			let url = '/pessoa/index';
-
-			let objResponse = $('html body').find('div#response-request');
-			Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
-			Utilitarios.toggleFiltro();
-
-		});
+	});
 
 	</script>
 @endsection

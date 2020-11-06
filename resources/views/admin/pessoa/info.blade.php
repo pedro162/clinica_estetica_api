@@ -55,6 +55,58 @@
 		</table>
 	</div>
 	<div class="col-md-12 col-sm-12" align="right">
-		<a id="id_produto_destroy" href="{{route('pessoa.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
+		<a id="id_pessoa_destroy" href="{{route('pessoa.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
 	</div>
 </div>
+
+<script type="text/javascript">
+	//deleta uma pessoa action
+	$('body').delegate('#assistenteModal #id_pessoa_destroy', 'click', function(ev){
+
+		try{
+
+			ev.preventDefault();
+
+			let url = $(this).attr('href');
+			
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Deletar', 'md')
+
+			$.ajax({
+				url:url,
+				type:'GET',
+				dataType:'json',
+				success:function(response){
+					Utilitarios.assistenteModal(response.message, width, title);
+					
+				},
+				error:function(response, status, error){
+					//console.log(response, status, error)
+					console.log(response);
+					let objErros = response.responseJSON.errors;
+					let errors = response.responseJSON;
+					let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
+
+					if(response.responseJSON.errors){
+						for (let prop in objErros){
+							msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
+						}
+
+					}else if(errors.mensagem){
+						let erros = errors.mensagem;
+						console.log(erros);
+						for (let i=0; !(i == erros.length); i++){
+							msg+=erros[i]+'<br/>';
+						}
+					}
+					Utilitarios.assistenteMensageAlert(msg, 'warning');
+				}
+
+			});
+
+		}catch(ex){
+			console.log('Erro: '+ex.message);
+		}
+		
+
+	});
+</script>

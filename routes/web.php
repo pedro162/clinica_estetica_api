@@ -63,10 +63,11 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::post('/pessoa/store', ['as'=>'pessoa.store', 'uses'=>'Admin\PessoaController@store']);
 	Route::get('/pessoa/edit/{id}', ['as'=>'pessoa.edit', 'uses'=>'Admin\PessoaController@edit']);
 	Route::put('/pessoa/update/{id}', ['as'=>'pessoa.update', 'uses'=>'Admin\PessoaController@update']);
-	Route::get('/pessoa/show/id', ['as'=>'pessoa.show', 'uses'=>'Admin\PessoaController@show']);
+	Route::get('/pessoa/show/{id}', ['as'=>'pessoa.show', 'uses'=>'Admin\PessoaController@show']);
 	Route::get('/pessoa/info/{id}', ['as'=>'pessoa.info', 'uses'=>'Admin\PessoaController@info']);
 	Route::get('/pessoa/head', ['as'=>'pessoa.head', 'uses'=>'Admin\PessoaController@head']);
 	Route::get('/pessoa/destroy/{id}', ['as'=>'pessoa.destroy', 'uses'=>'Admin\PessoaController@destroy']);
+	Route::get('/pessoa/valida/cpf/{cpf}', ['as'=>'pessoa.valida.cpf', 'uses'=>'Admin\PessoaController@validarCpf']);
 
 	Route::get('/logradouro/index', ['as'=>'logradouro.index', 'uses'=>'Admin\LogradouroController@index']);
 	Route::get('/logradouro/create', ['as'=>'logradouro.create', 'uses'=>'Admin\LogradouroController@create']);
@@ -79,4 +80,14 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/logradouro/destroy/{id}', ['as'=>'logradouro.destroy', 'uses'=>'Admin\LogradouroController@destroy']);
 
 	Route::get('/logradouro/load/api', ['as'=>'logradouro.load.api', 'uses'=>'Admin\LogradouroController@loadLogradouroApi']);
+
+	Route::get('/cobranca/receber/index', ['as'=>'cobranca.receber.index', 'uses'=>'Admin\CobrancaReceberController@index']);
+	Route::get('/cobranca/receber/create', ['as'=>'cobranca.receber.create', 'uses'=>'Admin\CobrancaReceberController@create']);
+	Route::post('/cobranca/receber/store', ['as'=>'cobranca.receber.store', 'uses'=>'Admin\CobrancaReceberController@store']);
+	Route::get('/cobranca/receber/edit/{id}', ['as'=>'cobranca.receber.edit', 'uses'=>'Admin\CobrancaReceberController@edit']);
+	Route::put('/cobranca/receber/update/{id}', ['as'=>'cobranca.receber.update', 'uses'=>'Admin\CobrancaReceberController@update']);
+	Route::get('/cobranca/receber/show/id', ['as'=>'cobranca.receber.show', 'uses'=>'Admin\CobrancaReceberController@show']);
+	Route::get('/cobranca/receber/info/{id}', ['as'=>'cobranca.receber.info', 'uses'=>'Admin\CobrancaReceberController@info']);
+	Route::get('/cobranca/receber/head', ['as'=>'cobranca.receber.head', 'uses'=>'Admin\CobrancaReceberController@head']);
+	Route::get('/cobranca/receber/destroy/{id}', ['as'=>'cobranca.receber.destroy', 'uses'=>'Admin\CobrancaReceberController@destroy']);
 });
