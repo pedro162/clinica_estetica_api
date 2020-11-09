@@ -5,48 +5,48 @@
 </div>
 <div class="row">
 	<div class="col-md-8 col-sm-12">
-		<table class="table table-responsive table-hover">
+		<table class="table table-sm table-responsive table-hover">
 			<tbody>
 				<tr>
 					<td>{{$registro->tipo == 'fisica' ? 'Nome' : 'Razão Social'}} :</td>
-					<td>{{$registro->name}}</td>
+					<td style="width: 100%;">{{$registro->name}}</td>
 				</tr>
 				<tr>
-					<td>{{$registro->tipo == 'fisica' ? 'Sobrenome' : 'Nome Fantasia'}} :</td>
-					<td>{{$registro->nome_complementar}}</td>
+					<td>{{$registro->tipo == 'fisica' ? 'Sobrenome' : 'Nome Fantasia'}}:</td>
+					<td style="width: 100%;">{{$registro->nome_complementar}}</td>
 				</tr>
 				<tr>
 					<td>{{$registro->tipo == 'fisica' ? 'CPF' : 'CNPJ'}}:</td>
-					<td>{{$registro->documento}}</td>
+					<td style="width: 100%;">{{$registro->documento}}</td>
 				</tr>
 				<tr>
 					<td>{{$registro->tipo == 'fisica' ? 'RG' : 'IE'}} :</td>
-					<td>{{$registro->documento_complementar}}</td>
+					<td style="width: 100%;">{{$registro->documento_complementar}}</td>
 				</tr>
 				<tr>
 					<td>E-mail :</td>
-					<td>{{$registro->email}}</td>
+					<td style="width: 100%;">{{$registro->email}}</td>
 				</tr>
 				@if($registro->sexo != null)
 				<tr>
 					<td>Sexo:</td>
-					<td>{{$registro->sexo}}</td>
+					<td style="width: 100%;">{{$registro->sexo}}</td>
 				</tr>
 				@endif
 			</tbody>							
 		</table>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<table class="table table-responsive table-hover">
+		<table class="table table-sm table-responsive table-hover">
 			<thead>
 				<tr>
-					<td>Contato</td>
+					<td style="width: 100%;">Contato</td>
 				</tr>
 			</thead>
 			<tbody>
 				@foreach($registro->telefone as $fone)
 				<tr>
-					<td>
+					<td style="width: 100%;">
 						{{$fone->numero}}
 					</td>
 				</tr>

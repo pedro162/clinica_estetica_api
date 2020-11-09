@@ -32,33 +32,32 @@
 						<div class="card-body" style="display: block;">
 							<div class="row">
 								<div class="col">
-									<a id="btn-edita-pessoa{{$randId}}" href="{{route('pessoa.edit', $registro->id)}}" class="btn btn-sm btn-outline-primary" style="float: right;"><i class="fa fa-plus"></i></a>
 									<table class="table table-sm table-responsive table-hover" id="table-pessoa{{$randId}}" style="width: 100%;">
 										<tbody  style="width: 100%;">
 											<tr  style="width: 100%;">
-												<td >{{$registro->tipo == 'fisica' ? 'Nome' : 'Razão Social'}} :</td>
-												<td style="width: 100%;">{{$registro->name}}</td>
+												<td>{{$registro->tipo == 'fisica' ? 'Nome' : 'Razão Social'}} :</td>
+												<td>{{$registro->name}}</td>
 											</tr>
 											<tr  style="width: 100%;">
 												<td>{{$registro->tipo == 'fisica' ? 'Sobrenome' : 'Nome Fantasia'}} :</td>
-												<td style="width: 100%;">{{$registro->nome_complementar}}</td>
+												<td>{{$registro->nome_complementar}}</td>
 											</tr>
 											<tr>
 												<td>{{$registro->tipo == 'fisica' ? 'CPF' : 'CNPJ'}}:</td>
-												<td style="width: 100%;">{{$registro->documento}}</td>
+												<td>{{$registro->documento}}</td>
 											</tr>
 											<tr  style="width: 100%;">
 												<td>{{$registro->tipo == 'fisica' ? 'RG' : 'IE'}} :</td>
-												<td style="width: 100%;">{{$registro->documento_complementar}}</td>
+												<td>{{$registro->documento_complementar}}</td>
 											</tr>
 											<tr>
 												<td>E-mail :</td>
-												<td style="width: 100%;">{{$registro->email}}</td>
+												<td>{{$registro->email}}</td>
 											</tr  style="width: 100%;">
 											@if($registro->sexo != null)
 											<tr  style="width: 100%;">
 												<td>Sexo:</td>
-												<td style="width: 100%;">{{$registro->sexo}}</td>
+												<td>{{$registro->sexo}}</td>
 											</tr>
 											@endif
 											<input type="hidden" name="pessoa" value="{{$registro->id}}">
@@ -68,13 +67,12 @@
 
 								<div class="col">
 									@php $telefone = $registro->telefone; @endphp
-									<a id="btn-adiciona-telefone{{$randId}}" href="{{route('pessoa.edit', $registro->id)}}" class="btn btn-sm btn-outline-primary" style="float: right;"><i class="fa fa-plus"></i></a>
 									<table class="table table-sm table-responsive table-hover" style="width: 100%;">
 										<thead>
 											<tr>
-												<td style="width: 100%;">Numero</td>
-												<td style="width: 100%;">Whatsapp</td>
-												<td style="width: 100%;">Tipo</td>
+												<td>Numero</td>
+												<td>Whatsapp</td>
+												<td>Tipo</td>
 											</tr>
 										</thead>
 										<tbody  style="width: 100%;">
@@ -83,7 +81,7 @@
 												<td>{{$val->numero}}</td>
 												<td>{{$val->whatsapp == 'sim'? 'Sim': 'Não'}}</td>
 												<td>{{$val->tipo}}</td>
-												<input type="hidden"  value="{{$val->id}}">
+												<input type="hidden" name="pessoa" value="{{$val->id}}">
 											</tr>
 											@endforeach
 											
@@ -92,10 +90,8 @@
 								</div>
 
 								<div class="col">
-									@php $logradouro = $registro->logradouro->where('active', '=', 'yes'); @endphp
-
-									<a href="{{route('logradouro.create', $registro->id)}}" class="btn btn-sm btn-outline-primary" id="id_logradouro_create{{$randId}}" style="float: right;"><i class="fa fa-plus"></i></a>
-									<table style="clear: both;" class="table table-sm table-responsive table-hover" id="table-lograouro{{$randId}}" style="width: 100%;">
+									@php $logradouro = $registro->logradouro; @endphp
+									<table class="table table-sm table-responsive table-hover" style="width: 100%;">
 										<thead>
 											<tr>
 												<td>Cep</td>
@@ -108,14 +104,14 @@
 										</thead>
 										<tbody  style="width: 100%;">
 											@foreach($logradouro as $val)
-											<tr class="assistenteModalLogradouro">
+											<tr>
 												<td>{{$val->cep}}</td>
 												<td>{{$val->logradouro}}</td>
 												<td>{{$val->numero}}</td>
 												<td>{{$val->complemento}}</td>
 												<td>{{$val->cidade}}</td>
 												<td>{{$val->estado}}</td>
-												<input type="hidden" value="{{$val->id}}">
+												<input type="hidden" name="pessoa" value="{{$val->id}}">
 											</tr>
 											@endforeach
 											
@@ -262,70 +258,6 @@
 
     })
 
-    $('html body').delegate('#btn-edita-pessoa{{$randId}}', 'click', function(ev){
-    	ev.preventDefault();
-
-    	let url = $(this).attr('href');
-    	Utilitarios.assistentAjaxModal('GET',url, 'HTML', 'Pessoa - Editar','lg');
-    })
-
-    
-    /**
-	*	CHAMA O MODAL DE LOGRADOURO
-	*/
-	$('body').delegate('.assistenteModalLogradouro', 'click', function(ev){
-
-		let id = $(this).find('input:hidden').val();
-		let idPessoa = $('html body').find('table#table-pessoa{{$randId}} input:hidden[name=pessoa]').val();
- 
-		
-		let arrLinks = [
-			['Ediar', '/logradouro/edit/'+id+'/'+idPessoa, 'btn btn-lg btn-outline-primary', 'id_logradouro_editar{{$randId}}'],
-			['Excluir', '/logradouro/info/'+id+'/'+idPessoa, 'btn btn-lg btn-outline-primary', 'id_logradouro_deletar{{$randId}}']
-		];
-
-		Utilitarios.assitentOpcoes(arrLinks);
-	})
-
-	//----- chama a view de atualizar pessoa
-   $('html body').delegate('a#id_logradouro_editar{{$randId}}', 'click', function(ev){
-    	
-		ev.preventDefault();
-		let url = $(this).attr('href');
-		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','logradouro - Editar');
-
-    })
-
-   //----- chama a view de deletar logradouro
-   $('html body').delegate('a#id_logradouro_deletar{{$randId}}', 'click', function(ev){
-    	
-		ev.preventDefault();
-		let url = $(this).attr('href');
-		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','logradouro - Deletar', 'md');
-
-    })
-
-   //----- chama a view de cadastrar logradouro
-   $('html body').delegate('a#id_logradouro_create{{$randId}}', 'click', function(ev){
-    	
-		ev.preventDefault();
-		let url = $(this).attr('href');
-		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Logradouro - Cadastrar');
-
-    })
-
-   //----- chama a view de cadastrar telefone
-   $('html body').delegate('a#btn-adiciona-telefone{{$randId}}', 'click', function(ev){
-    	
-		ev.preventDefault();return false;
-		let url = $(this).attr('href');
-		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Contato - Cadastrar');
-
-    })
 
 </script>
 @endsection

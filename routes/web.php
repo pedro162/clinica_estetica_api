@@ -70,14 +70,14 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/pessoa/valida/cpf/{cpf}', ['as'=>'pessoa.valida.cpf', 'uses'=>'Admin\PessoaController@validarCpf']);
 
 	Route::get('/logradouro/index', ['as'=>'logradouro.index', 'uses'=>'Admin\LogradouroController@index']);
-	Route::get('/logradouro/create', ['as'=>'logradouro.create', 'uses'=>'Admin\LogradouroController@create']);
-	Route::post('/logradouro/store', ['as'=>'logradouro.store', 'uses'=>'Admin\LogradouroController@store']);
-	Route::get('/logradouro/edit/{id}', ['as'=>'logradouro.edit', 'uses'=>'Admin\LogradouroController@edit']);
-	Route::put('/logradouro/update/{id}', ['as'=>'logradouro.update', 'uses'=>'Admin\LogradouroController@update']);
-	Route::get('/logradouro/show/id', ['as'=>'logradouro.show', 'uses'=>'Admin\LogradouroController@show']);
-	Route::get('/logradouro/info/{id}', ['as'=>'logradouro.info', 'uses'=>'Admin\LogradouroController@info']);
+	Route::get('/logradouro/create/{id}', ['as'=>'logradouro.create', 'uses'=>'Admin\LogradouroController@create']);
+	Route::post('/logradouro/store/{idPessoa}', ['as'=>'logradouro.store', 'uses'=>'Admin\LogradouroController@store']);
+	Route::get('/logradouro/edit/{id}/{idPessoa}', ['as'=>'logradouro.edit', 'uses'=>'Admin\LogradouroController@edit']);
+	Route::put('/logradouro/update/{id}/{idPessoa}', ['as'=>'logradouro.update', 'uses'=>'Admin\LogradouroController@update']);
+	Route::get('/logradouro/show/{id}/{idPessoa}', ['as'=>'logradouro.show', 'uses'=>'Admin\LogradouroController@show']);
+	Route::get('/logradouro/info/{id}/{idPessoa}', ['as'=>'logradouro.info', 'uses'=>'Admin\LogradouroController@info']);
 	Route::get('/logradouro/head', ['as'=>'logradouro.head', 'uses'=>'Admin\LogradouroController@head']);
-	Route::get('/logradouro/destroy/{id}', ['as'=>'logradouro.destroy', 'uses'=>'Admin\LogradouroController@destroy']);
+	Route::get('/logradouro/destroy/{id}/{idPessoa}', ['as'=>'logradouro.destroy', 'uses'=>'Admin\LogradouroController@destroy']);
 
 	Route::get('/logradouro/load/api', ['as'=>'logradouro.load.api', 'uses'=>'Admin\LogradouroController@loadLogradouroApi']);
 
