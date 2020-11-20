@@ -19,8 +19,7 @@ class CreateProdutosTable extends Migration
             $table->foreign('marca_id')->references('id')->on('marcas')->onUpdate('cascade')->onDelete('cascade');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('user_update_id')->unsigned()->nullable();
-            $table->foreign('user_update_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
             $table->integer('stock')->unsigned()->default(0);
             $table->integer('prazo_garantia')->unsigned()->default(0);
             $table->string('name');
@@ -30,9 +29,9 @@ class CreateProdutosTable extends Migration
             $table->enum('spotlight',['yes', 'no'])->default('no');
             $table->string('image');
             $table->bigInteger('sold_amout')->unsigned()->default(0);
-            $table->string('cdEAN')->nullable();
+            $table->string('cdEAN')->nullable()->default(null);
             $table->enum('produto_final', ['yes', 'no'])->default('no');
-            $table->date('prazo_venda')->nullable();
+            $table->date('prazo_venda')->nullable()->default(null);
             $table->enum('revenda', ['yes', 'no'])->default('no');
             $table->enum('fora_de_linha', ['yes', 'no'])->default('no');
             $table->enum('importado', ['yes', 'no'])->default('no');
@@ -41,8 +40,8 @@ class CreateProdutosTable extends Migration
             $table->enum('controle_validade', ['yes', 'no'])->default('no');
             $table->enum('has_venda', ['yes', 'no'])->default('no');
             $table->enum('has_venda_direta', ['yes', 'no'])->default('no');
-            $table->dateTime('dt_exclusao', 0)->nullable();
-            $table->date('dt_validade')->nullable();
+            $table->dateTime('dt_exclusao', 0)->nullable()->default(null);
+            $table->date('dt_validade')->nullable()->default(null);
             $table->decimal('valor_ultima_compra', 10, 2)->default(0);
             $table->decimal('valor_compra_futura', 10, 2)->default(0);
             $table->decimal('valor_desconto', 10, 2)->default(0);
@@ -93,7 +92,7 @@ class CreateProdutosTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
 
-            $table->bigInteger('user_update_id')->unsigned()->nullable();
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
             $table->foreign('user_update_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->enum('active',['yes', 'no'])->default('no');
             $table->timestamps();

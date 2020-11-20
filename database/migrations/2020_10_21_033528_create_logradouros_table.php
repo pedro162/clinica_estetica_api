@@ -20,18 +20,15 @@ class CreateLogradourosTable extends Migration
             $table->string('logradouro');
             $table->string('bairro');
             $table->string('estado');
-            $table->string('complemento')->nullable();
-            $table->string('numero')->nullable();
-            $table->string('bloco')->nullable();
+            $table->string('complemento')->nullable()->default(null);
+            $table->string('numero')->nullable()->default(null);
+            $table->string('bloco')->nullable()->default(null);
             $table->enum('tipo', ['casa', 'apartamento'])->default('casa');
             $table->enum('importancia', ['principal', 'secundario'])->default('principal');
 
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-
-            $table->bigInteger('user_update_id')->unsigned()->nullable();
-            $table->foreign('user_update_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);         
             $table->enum('active',['yes', 'no'])->default('no');
             $table->timestamps();
         });

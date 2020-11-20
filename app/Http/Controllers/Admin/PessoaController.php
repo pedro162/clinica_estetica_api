@@ -95,50 +95,53 @@ class PessoaController extends Controller
                     'sexo', 'email');
 
                 $cpf = preg_replace("/[^0-9]/", '', trim($dadosPessoa['documento']));
-                if(Pessoa::where('documento', '=', $cpf)){
+                $dadosPessoa['documento'] = $cpf;
+                if(Pessoa::where('documento', '=', $cpf)->first()){
                     $erros[] = 'Pessoa já se encontra cadastrada.';
                     return false;
-                }
+                }else{
 
-                $dadosPessoa['user_id']     = \Auth::User()->id;
-                $dadosPessoa['tipo']        = 'fisica';
-                $dadosPessoa['active']      = 'yes';
+                    $dadosPessoa['user_id']     = \Auth::User()->id;
+                    $dadosPessoa['tipo']        = 'fisica';
+                    $dadosPessoa['active']      = 'yes';
 
-                $grupo = Grupo::where('id', '=', $dados['groupo_id'])
-                ->where('active', '=', 'yes')->first();
-
-
-                $dadosLogradoruo = $request->only(
-                    'cep','logradouro',
-                    'numero','tipo',
-                    'complemento','bairro',
-                    'cidade','estado', 'bloco');
-                $dadosLogradoruo['user_id']  = $user_id;
-                $dadosLogradoruo['active']   = 'yes';
-                $dadosLogradoruo['importancia']   = 'principal';
+                    $grupo = Grupo::where('id', '=', $dados['groupo_id'])
+                    ->where('active', '=', 'yes')->first();
 
 
-                $dadosContato       = $request->only('celular_1','celular_2','telefone');
-               
-                $pessoa             = Pessoa::create($dadosPessoa);
-                $logradouro         = Logradouro::create($dadosLogradoruo);
-                $resultLogradouro   = $pessoa->adicionarLogradouro($logradouro,['active'=>'yes','user_id'=>$user_id]);
-                $resultGrupoPessoa  = $pessoa->adicionarGrupo($grupo,['active'=>'yes', 'user_id'=>$user_id, 'created_at' => date('Y-m-d H:i:s'), 'updated_at'=>date('Y-m-d H:i:s')]);
+                    $dadosLogradoruo = $request->only(
+                        'cep','logradouro',
+                        'numero','tipo',
+                        'complemento','bairro',
+                        'cidade','estado', 'bloco');
+                    $dadosLogradoruo['user_id']  = $user_id;
+                    $dadosLogradoruo['active']   = 'yes';
+                    $dadosLogradoruo['importancia']   = 'principal';
 
-                foreach ($dadosContato as $key => $value) {
-                    $tipo = $key == 'telefone' ? 'fixo' : 'celular';
-                    $contato        = Telefone::create([
-                        'numero'=>$value ?? '00000000000', 'tipo'=>$tipo, 'user_id'=> $user_id,
-                        'active' => 'yes', 'pessoa_id' => $pessoa->id
-                    ]);
-                }
 
-                if( 
-                    $pessoa
-                    && $logradouro 
-                    && $contato
-                ){
-                    $registro = $pessoa;
+                    $dadosContato       = $request->only('celular_1','celular_2','telefone');
+                   
+                    $pessoa             = Pessoa::create($dadosPessoa);
+                    $logradouro         = Logradouro::create($dadosLogradoruo);
+                    $resultLogradouro   = $pessoa->adicionarLogradouro($logradouro,['active'=>'yes','user_id'=>$user_id]);
+                    $resultGrupoPessoa  = $pessoa->adicionarGrupo($grupo,['active'=>'yes', 'user_id'=>$user_id, 'created_at' => date('Y-m-d H:i:s'), 'updated_at'=>date('Y-m-d H:i:s')]);
+
+                    foreach ($dadosContato as $key => $value) {
+                        $tipo = $key == 'telefone' ? 'fixo' : 'celular';
+                        $contato        = Telefone::create([
+                            'numero'=>$value ?? '00000000000', 'tipo'=>$tipo, 'user_id'=> $user_id,
+                            'active' => 'yes', 'pessoa_id' => $pessoa->id
+                        ]);
+                    }
+
+                    if( 
+                        $pessoa
+                        && $logradouro 
+                        && $contato
+                    ){
+                        $registro = $pessoa;
+                    }
+
                 }
                 
                 
@@ -187,6 +190,7 @@ class PessoaController extends Controller
     {
         try{
 
+            
             if($id <= 0){
 
                  \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);

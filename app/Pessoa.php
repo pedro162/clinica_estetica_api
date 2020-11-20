@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Grupo;
 use App\Logradouro;
 use App\Telefone;
+use App\CobrancaReceber;
+use App\Venda;
 
 class Pessoa extends Model
 {
@@ -57,5 +59,15 @@ class Pessoa extends Model
 	public function telefone()
 	{
 		return $this->hasMany(Telefone::class, 'pessoa_id');
+	}
+
+	public function contasReceber()
+	{
+		return $this->hasMany(CobrancaReceber::class, );
+	}
+
+	public function venda()
+	{
+		return $this->hasMany(Venda::class, 'pessoa_id');
 	}
 }

@@ -136,31 +136,10 @@
 						<div class="card-header bg-white form-inline h4">
 							Contas a Receber
 						</div>
-						<div class="card-body" style="display: block;">
-							<table id="contas-recebeer{{$randId}}" class="table table-sm table-responsive table-hover" style="width: 100%;">
-								<thead style="width: 100%;">
-									<tr>
-										<th>Cod</th>
-										<th>Duplicata</th>
-										<th>Cod Venda</th>
-										<th>Cliente</th>
-										<th>Valor</th>
-										<th>Juros</th>
-										<th>Multa</th>
-										<th>Vencimento</th>
-										<th>Pagamento</th>
-										<th>Status</th>
-										<th>Posse</th>
-										<th>Desdobrado</th>
-									</tr>
-								</thead>
-								<tbody  style="width: 100%;">
-									
-								</tbody>
-							</table>
+						<div class="card-body" style="display: block;" id="containerContReceber{{$randId}}">
+							
 						</div>
 						<div class="card-footer bg-white form-inline">
-							
 						</div>
 					</div>
 				</div>
@@ -203,8 +182,6 @@
 	</div>
 </div>
 <script type="text/javascript">
-
-	Utilitarios.useDataTable($('#contas-recebeer{{$randId}}'))
 
 	/*-------------- Exercicio anual ---------*/
     let excAnual = $('#frequencia{{$randId}}');
@@ -326,6 +303,9 @@
 		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Contato - Cadastrar');
 
     })
+
+   
+   Utilitarios.assistentAjax('GET','/cobranca/receber/index?id={{$registro->id}}', 'HTML', $('html body').find('#containerContReceber{{$randId}}'));
 
 </script>
 @endsection

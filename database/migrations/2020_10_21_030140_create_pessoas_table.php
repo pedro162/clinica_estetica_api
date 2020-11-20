@@ -16,18 +16,17 @@ class CreatePessoasTable extends Migration
         Schema::create('pessoas', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('name_opcional')->nullable();
+            $table->string('name_opcional')->nullable()->default(null);
             $table->string('documento');
-            $table->string('documento_complementar')->nullable();
-            $table->string('email')->nullable();
-            $table->date('nascimento_fundacao')->nullable();
-            $table->enum('sexo', ['m', 'f'])->nullable();
+            $table->string('documento_complementar')->nullable()->default(null);
+            $table->string('email')->nullable()->default(null);
+            $table->date('nascimento_fundacao')->nullable()->default(null);
+            $table->enum('sexo', ['m', 'f'])->nullable()->default(null);
             $table->enum('tipo', ['fisica', 'juridica'])->default('fisica');
             
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('user_update_id')->unsigned()->nullable();
-            $table->foreign('user_update_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
             $table->enum('active',['yes', 'no'])->default('no');
             $table->timestamps();
         });
