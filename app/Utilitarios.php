@@ -54,4 +54,30 @@ class Utilitarios extends Model
         return true;
 
     }
+
+    static function getFormTable(Array $dados):Array
+    {
+        if(count($dados) == 0){
+            return [];
+        }
+        $index      = 0;                
+        $escuta     = true;
+        $supArr     = [];
+        while (! ($escuta  == false)){
+        
+            $subArr     = [];
+            foreach($dados as $key => $val){
+                $subArr[$key] = $val[$index];
+                if(! array_key_exists($index + 1, $val)){
+                    $escuta = false;
+                }
+               
+                
+            }
+            $supArr[] = $subArr;
+            $index ++;
+        }
+
+        return $supArr;
+    }
 }

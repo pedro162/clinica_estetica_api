@@ -1,0 +1,71 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreatePlanoPagamentosTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('plano_pagamentos', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('descricao');
+            $table->integer('diasmedios');
+            $table->integer('qtdParcelas');
+            $table->enum('desdobrarDuplicataManual', ['yes', 'no'])->default('no');
+            $table->enum('gerarDuplicataManual', ['yes', 'no'])->default('no');
+            $table->enum('isAtiva', ['yes', 'no'])->default('no');
+            $table->enum('isAberto', ['yes', 'no'])->default('no');
+
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
+            
+            $table->enum('active',['yes', 'no'])->default('no');
+            $table->timestamps();
+        });
+    }
+
+    /*
+        `Financeiro_PlanosDePagamentos_id`,
+        `Financeiro_PlanosDePagamentos_nome`,
+        `Financeiro_PlanosDePagamentos_descricao`,
+        `Financeiro_PlanosDePagamentos_diasmedios`,
+        `Financeiro_PlanosDePagamentos_tpVenda`,
+        `Financeiro_PlanosDePagamentos_hasBoleto`,
+        `Financeiro_PlanosDePagamentos_hasPrazoAdicionalCliente`,
+        `Financeiro_PlanosDePagamentos_qtdDiasProrrogacao`,
+        `Financeiro_PlanosDePagamentos_qtdParcelas`,
+        `Financeiro_PlanosDePagamentos_tipo`,
+        `Financeiro_PlanosDePagamentos_nrDia`,
+        `Financeiro_PlanosDePagamentos_vrPcntAcrescimos`,
+        `hasGeraDuplicataManual`,
+        `isAvista`,
+        `isAberto`,
+        `isAtivo`,
+        `idPessoaAutor`,
+        `dtCriacao`,
+        `dtAlteracao`,
+        `Financeiro_PlanosDePagamentos_exigePlanoVenda`,
+        `hasManterDiaPrimeiraParcela`,
+        `idAtividade`
+    */
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('plano_pagamentos');
+    }
+}

@@ -273,10 +273,116 @@ class Logradouro extends BaseModelo{
 
 class Utilitarios{
 
-	static assistenteModal(response, widthModal='lg', title='Titulo'){
+	constructor(){
+		this.inputsArray = [];
+		this.table;
+	}
+	setTableInputs(table){
+		this.table = table;
+	}
+	adicionaFielsTable(data){
+		let index = this.inputsArray.length;
+
+		data.index = index
+		let leng = this.inputsArray.push(data);
+		return leng;
+	}
+
+	removeFieldsTable(index){
+		if(this.inputsArray.length > 0){
+			for(let i=0; !(i == this.inputsArray.length); i++){
+				if(this.inputsArray[i] != null){
+					if(this.inputsArray[i].hasOwnProperty('index')){						
+						if(this.inputsArray[i].index == index){
+							console.log(this.inputsArray[i].index +' '+index )
+							this.inputsArray[i] = null;
+							break;
+						}
+						
+						
+					}
+				}
+			}
+		}
+
+		this.retornaFieldsTable();
+		return true;
+	}
+
+	retornaFieldsTable(only = []){
+		if(Array.isArray(only) && (only.length > 0)){
+			let trs = '';
+			for(let i=0; !(i == this.inputsArray.length); i++){
+				let tr = '<tr>';
+				let index = null;
+				for(let item in this.inputsArray[i]){
+					if(this.inputsArray[i] != null){
+						
+						let escuta = false;
+						for(let j = 0; !(j == only.length); j++){
+							if(item == only[j]){
+								escuta = true;
+							}
+						}
+						if(escuta == true){
+							if(this.inputsArray[i].hasOwnProperty(item) && (item != 'index')){
+								tr += '<td>'+this.inputsArray[i][item]+'</td>'
+							}
+							if(item == 'index'){
+								index = this.inputsArray[i][item];
+							}
+						}
+					}
+				}
+				if(index != null){
+
+					tr+= '<td><button type="button" class="btn btn-sm btn-outline-danger" id="'+index+'"><i class="fa fa-trash"></i></button></td></tr>';
+					trs += tr;
+				}
+				
+			}
+			this.table.html(trs);
+		}else{
+
+			let trs = '';
+			for(let i=0; !(i == this.inputsArray.length); i++){
+				let tr = '<tr>';
+				let index = null;
+				for(let item in this.inputsArray[i]){
+					if(this.inputsArray[i] != null){
+						
+						if(this.inputsArray[i].hasOwnProperty(item) && (item != 'index')){
+							tr += '<td>'+this.inputsArray[i][item]+'</td>'
+						}
+						if(item == 'index'){
+							index = this.inputsArray[i][item];
+						}
+
+
+					}
+				}
+				if(index != null){
+
+					tr+= '<td><button type="button" class="btn btn-sm btn-outline-danger" id="'+index+'"><i class="fa fa-trash"></i></button></td></tr>';
+					trs += tr;
+				}
+				
+			}
+			this.table.html(trs);
+		}
+		
+		return true;
+	}
+
+	getDataTable(){
+		return this.inputsArray;
+	}
+
+
+	static assistenteModal(response, widthModal='lg', title='Titulo', height = null){
 
 		Utilitarios.assistenteMensageAlertClear();
-		Utilitarios.widthAssistenteModal(widthModal);
+		Utilitarios.widthAssistenteModal(widthModal, height);
 		$('html #assistenteModal').find('.modal-body #content_modal').html(response).css({margin: 'auto'});
 		$('html #assistenteModal').find('.modal-header h4.modal-title').html(title)
 		$('html #assistenteModal').modal('show');
@@ -295,7 +401,7 @@ class Utilitarios{
 	}
 
 
-	static assitentOpcoes(arrLInks, widthOptions='200px', widModal = 'md'){
+	static assitentOpcoes(arrLInks, widthOptions='200px', widModal = 'md', height=null){
 
 		let ul = $('<ul/>').addClass('navbar-nav');
 
@@ -342,7 +448,7 @@ class Utilitarios{
 		}
 	}
 
-	static assistentAjaxModal(type,url, typeResponse, title='titulo', width='lg'){
+	static assistentAjaxModal(type,url, typeResponse, title='titulo', width='lg', heigh = null){
 
 		if(type == 'GET'){
 
@@ -351,7 +457,7 @@ class Utilitarios{
 				type:type,
 				dataType:typeResponse,
 				success:function(response){
-					Utilitarios.assistenteModal(response, width, title);
+					Utilitarios.assistenteModal(response, width, title, heigh);
 					
 				}
 
@@ -366,7 +472,7 @@ class Utilitarios{
 	}
 
 
-	static widthAssistenteModal(width){
+	static widthAssistenteModal(width, height = null){
 		let base 	= 'modal-dialog modal-dialog-centered';
 		let lg 		= 'modal-lg '+base;
 		let sm 		= 'modal-sm '+base;
@@ -388,6 +494,13 @@ class Utilitarios{
 				obj.removeClass(sm).removeClass(xs).removeClass(md).addClass(lg).css('max-width', '90%');
 			break;
 			
+		}
+
+
+		if(height != null){
+			obj.find('.modal-content').css('height', height)
+		}else{
+			obj.find('.modal-content').css('height', 'auto')
 		}
 	}
 
@@ -451,6 +564,58 @@ class Utilitarios{
 
 	        ]
 	    });
+	}
+
+	static foramtCalcCod(number){
+  
+
+    number = String(number);
+    
+
+    if(number.length == 0){
+      return 0;
+    }
+
+    if(number.indexOf(',') > -1){
+    	number = number.replace(/\./g, '');
+    	number = number.replace(/,/g, '.');
+    }
+
+    number = Number(number);
+    if(isNaN(number)){
+    	return 0;
+    }
+
+    return number.toFixed(2);
+
+
+  }
+
+  static formatMoney(amount, decimalCount = 2, decimal = ',', thousands = '.'){
+	  try{
+
+	    decimalCount = Math.abs(decimalCount);
+	    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+	    const negativeSing = amount < 0 ? '-' : '';
+
+	    let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+	    let j = (i.length > 3) ? i.length % 3 : 0;
+
+	    let fomartted = negativeSing;
+	    fomartted += (j ? i.substr(0, j) + thousands : '');
+	    fomartted += i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands);
+	    fomartted += (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : '');
+
+	    return fomartted;
+
+
+	  }catch(e){
+
+	    console.log(e);
+	  }
+
+
 	}
 	
 }

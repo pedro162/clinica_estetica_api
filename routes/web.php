@@ -82,6 +82,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/logradouro/load/api', ['as'=>'logradouro.load.api', 'uses'=>'Admin\LogradouroController@loadLogradouroApi']);
 
 	Route::get('/cobranca/receber/index', ['as'=>'cobranca.receber.index', 'uses'=>'Admin\CobrancaReceberController@index']);
+	Route::get('/cobranca/receber/index/json', ['as'=>'cobranca.receber.index.json', 'uses'=>'Admin\CobrancaReceberController@indexJson']);
 	Route::get('/cobranca/receber/create', ['as'=>'cobranca.receber.create', 'uses'=>'Admin\CobrancaReceberController@create']);
 	Route::post('/cobranca/receber/store', ['as'=>'cobranca.receber.store', 'uses'=>'Admin\CobrancaReceberController@store']);
 	Route::get('/cobranca/receber/edit/{id}', ['as'=>'cobranca.receber.edit', 'uses'=>'Admin\CobrancaReceberController@edit']);
@@ -90,4 +91,6 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/cobranca/receber/info/{id}', ['as'=>'cobranca.receber.info', 'uses'=>'Admin\CobrancaReceberController@info']);
 	Route::get('/cobranca/receber/head', ['as'=>'cobranca.receber.head', 'uses'=>'Admin\CobrancaReceberController@head']);
 	Route::get('/cobranca/receber/destroy/{id}', ['as'=>'cobranca.receber.destroy', 'uses'=>'Admin\CobrancaReceberController@destroy']);
+	Route::get('/cobranca/receber/mensalidade/{id}', ['as'=>'cobranca.receber.mensalidade', 'uses'=>'Admin\CobrancaReceberController@mensalidade']);
+	Route::post('/cobranca/receber/mensalidade/store/{id}', ['as'=>'cobranca.receber.mensalidade.store', 'uses'=>'Admin\CobrancaReceberController@saveMensalidade']);
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use \Auth;
 
 class ProdutoRequest extends FormRequest
 {
@@ -13,7 +14,10 @@ class ProdutoRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if(Auth::check()){
+            return true;
+        }
+        return false;
     }
 
     /**

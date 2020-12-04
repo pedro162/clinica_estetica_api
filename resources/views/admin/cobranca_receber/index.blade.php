@@ -25,7 +25,7 @@
 			</thead>
 			<tbody  style="width: 100%;">
 				@foreach($registro as $cobranca)
-					<tr>
+					<tr class="{{$cobranca->statusCobranca == 'baixado' ? 'text-success': ''}}">
 						<td><input type="checkbox" name=""></td>
 						<td>{{ $cobranca->id ?? '0' }}</td>
 						<td>{{ $cobranca->nrDuplicata ?? '0' }}</td>
@@ -37,7 +37,7 @@
 						<td>{{ number_format($cobranca->vrMulta, 2, ',', '.') ?? '0' }}</td>
 						<td>{{ $cobranca->dtVencimentoCobrancaReceber ?? '-' }}</td>
 						<td>{{ $cobranca->dtCobrancaReceberRecebimento ?? '-' }}</td>
-						<td>{{ $cobranca->statusCobranca ?? '0'}}</td>
+						<td>{{ $cobranca->statusCobranca ?? '-'}}</td>
 						<td>{{'-'}}</td>
 						<td>{{ $cobranca->isDuplicataOriginal == 'yes' ? 'Não' : 'Sim' }}</td>
 					</tr>

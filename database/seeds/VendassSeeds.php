@@ -5,6 +5,7 @@ use \App\Venda;
 use \App\Pessoa;
 use \App\User;
 use \App\Logradouro;
+use \App\Filial;
 class VendassSeeds extends Seeder
 {
     /**
@@ -16,7 +17,7 @@ class VendassSeeds extends Seeder
     {
         Venda::create(
         	[
-				'pessoa_id'=>Pessoa::find(2)->id,
+				'pessoa_id'=>Pessoa::first()->id,
 				'qtdIntes'=>2,
 				'vrBruto'=>200,
 				'vrDesconto'=>0,
@@ -24,7 +25,7 @@ class VendassSeeds extends Seeder
 				'tpDescontoAvulso'=>'',
 				'vrVenda'=>200,
 				'vrFrete'=>0,
-				'nmPessoaContato'=>Pessoa::find(2)->name,
+				'nmPessoaContato'=>Pessoa::first()->name,
 				'dsObservacao'=>'Ligar antes',
 				'statusVenda'=>'expedida',
 				'statusFaturamento'=>'faturado',
@@ -62,11 +63,11 @@ class VendassSeeds extends Seeder
 				'idPessoaEstornoComissao'=>1,
 				'vrPesoBruto'=>50,
 				'idPessoaLiberacaoDesconto'=>1,
-				'idEnderecoCobranca'=>Pessoa::find(2)->logradouro->where('importancia', '=', 'principal')->first()->id,
-				'idEnderecoEntrega'=>Pessoa::find(2)->logradouro->where('importancia', '=', 'principal')->first()->id,
+				'idEnderecoCobranca'=>Pessoa::find(1)->logradouro->where('importancia', '=', 'principal')->first()->id,
+				'idEnderecoEntrega'=>Pessoa::find(1)->logradouro->where('importancia', '=', 'principal')->first()->id,
 				'user_id'=>User::first()->id,
 				'active'=>'yes',
-				'filial_id'=>1
+				'filial_id'=>Filial::first()->id
 		    ]
         );
     }

@@ -62,6 +62,8 @@ class CobrancaReceber extends Model
 		'isDuplicataOriginal',
 		'user_id',
 		'user_update_id',
+		'pl_pgto_id',
+		'op_finan_id',
 		'active'
     ];
 

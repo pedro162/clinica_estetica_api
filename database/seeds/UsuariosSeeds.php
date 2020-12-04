@@ -13,7 +13,7 @@ class UsuariosSeeds extends Seeder
     public function run()
     {
         if(! User::where('email', '=', 'admin@gmail.com')->first()){
-        	User::create(['name'=>'admin','email'=>'admin@gmail.com', 'password'=>bcrypt(123456)]);
+        	User::create(['name'=>'admin','email'=>'admin@gmail.com',  'password'=>bcrypt(123456)]);
 		}
     }
 }
