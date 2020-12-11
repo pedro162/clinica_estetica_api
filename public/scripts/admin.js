@@ -311,6 +311,7 @@ class Utilitarios{
 
 	retornaFieldsTable(only = []){
 		if(Array.isArray(only) && (only.length > 0)){
+			
 			let trs = '';
 			for(let i=0; !(i == this.inputsArray.length); i++){
 				let tr = '<tr>';
@@ -318,24 +319,24 @@ class Utilitarios{
 				for(let item in this.inputsArray[i]){
 					if(this.inputsArray[i] != null){
 						
-						let escuta = false;
 						for(let j = 0; !(j == only.length); j++){
 							if(item == only[j]){
-								escuta = true;
+								if(this.inputsArray[i].hasOwnProperty(item) && (item != 'index')){
+									tr += '<td>'+this.inputsArray[i][item]+'</td>'
+									
+								}
+															
 							}
-						}
-						if(escuta == true){
-							if(this.inputsArray[i].hasOwnProperty(item) && (item != 'index')){
-								tr += '<td>'+this.inputsArray[i][item]+'</td>'
-							}
+
 							if(item == 'index'){
+								
 								index = this.inputsArray[i][item];
 							}
 						}
 					}
 				}
 				if(index != null){
-
+					
 					tr+= '<td><button type="button" class="btn btn-sm btn-outline-danger" id="'+index+'"><i class="fa fa-trash"></i></button></td></tr>';
 					trs += tr;
 				}
@@ -410,8 +411,8 @@ class Utilitarios{
 			let li = $('<li/>').append($('<a/>')
 				.attr('href', arrLInks[i][1]).html(arrLInks[i][0])
 				.addClass(arrLInks[i][2]).css('width',widthOptions)
-				.attr('id',arrLInks[i][3] )
-				);
+				.attr('id',arrLInks[i][3] ).css('box-sizing', 'border-box')
+				).css('box-sizing', 'border-box');
 
 			ul.append(li);
 			li.addClass('col-md-12 mb-3')

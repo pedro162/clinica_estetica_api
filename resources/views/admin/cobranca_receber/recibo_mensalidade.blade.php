@@ -1,10 +1,9 @@
-@extends('layouts.app')
-@section('content')
+
 @php $randId = rand(11111, 999999); @endphp
 <div class="container py-4">
 	<div class="row">
 		<div class="col">
-			<table class="" style="width: 100%;">
+			<table class="table table-sm" style="width: 100%;">
 				<tbody>
 					<tr>
 						<td>
@@ -42,7 +41,7 @@
 	</div>
 	<div class="row">
 		<div class="col">
-			<table class="table">
+			<table class="table table-sm">
 				<tbody>
 					<tr>
 						<td>Endereco: Rua Exemploe</td>
@@ -64,7 +63,7 @@
 	<div class="row mt-4">
 		<div class="col">
 			<h2 class="uppercase">Itens do pedido</h2>
-			<table class="table" style="width: 100%;">
+			<table class="table table-sm" style="width: 100%;">
 				<thead>
 					<tr class="uppercase">
 						<th>cod</th>
@@ -76,6 +75,7 @@
 					</tr>
 				</thead>
 				<tbody>
+					
 					<tr>
 						<td>1</td>
 						<td>Descricao do produto</td>
@@ -84,6 +84,7 @@
 						<td>750,00</td>
 						<td>1.500,00</td>
 					</tr>
+					
 					<tr>
 						<td>2</td>
 						<td>Descricao do produto</td>
@@ -121,7 +122,7 @@
 	</div>
 	<div class="row">
 		<div class="col">
-			<table class="table">
+			<table class="table table-sm">
 				<thead>
 					<tr class="uppercase">
 						<th>condicoes de pagamento</th>
@@ -154,4 +155,3 @@
 		</div>
 	</div>
 </div>
-@endsection

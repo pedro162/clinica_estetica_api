@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use \App\VendaItem;
 
 class Venda extends Model
 {
@@ -58,5 +59,11 @@ class Venda extends Model
 		'user_id',
 		'user_update_id',
 		'active'
-    ];
+	];
+	
+
+	public function vendaItem()
+	{
+		return $this->hasMany(VendaItem::class);
+	}
 }

@@ -85,12 +85,27 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/cobranca/receber/index/json', ['as'=>'cobranca.receber.index.json', 'uses'=>'Admin\CobrancaReceberController@indexJson']);
 	Route::get('/cobranca/receber/create', ['as'=>'cobranca.receber.create', 'uses'=>'Admin\CobrancaReceberController@create']);
 	Route::post('/cobranca/receber/store', ['as'=>'cobranca.receber.store', 'uses'=>'Admin\CobrancaReceberController@store']);
-	Route::get('/cobranca/receber/edit/{id}', ['as'=>'cobranca.receber.edit', 'uses'=>'Admin\CobrancaReceberController@edit']);
+	Route::get('/cobranca/receber/edit/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.edit', 'uses'=>'Admin\CobrancaReceberController@edit']);
 	Route::put('/cobranca/receber/update/{id}', ['as'=>'cobranca.receber.update', 'uses'=>'Admin\CobrancaReceberController@update']);
-	Route::get('/cobranca/receber/show/id', ['as'=>'cobranca.receber.show', 'uses'=>'Admin\CobrancaReceberController@show']);
+	Route::get('/cobranca/receber/show/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.show', 'uses'=>'Admin\CobrancaReceberController@show']);
 	Route::get('/cobranca/receber/info/{id}', ['as'=>'cobranca.receber.info', 'uses'=>'Admin\CobrancaReceberController@info']);
 	Route::get('/cobranca/receber/head', ['as'=>'cobranca.receber.head', 'uses'=>'Admin\CobrancaReceberController@head']);
 	Route::get('/cobranca/receber/destroy/{id}', ['as'=>'cobranca.receber.destroy', 'uses'=>'Admin\CobrancaReceberController@destroy']);
 	Route::get('/cobranca/receber/mensalidade/{id}', ['as'=>'cobranca.receber.mensalidade', 'uses'=>'Admin\CobrancaReceberController@mensalidade']);
 	Route::post('/cobranca/receber/mensalidade/store/{id}', ['as'=>'cobranca.receber.mensalidade.store', 'uses'=>'Admin\CobrancaReceberController@saveMensalidade']);
+
+	Route::get('/cobranca/receber/baixar/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.baixar', 'uses'=>'Admin\CobrancaReceberController@baixar']);
+	Route::get('/cobranca/receber/baixar/credito/cliente/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.baixar.credito.cliente', 'uses'=>'Admin\CobrancaReceberController@baixarCreCliente']);
+	Route::get('/cobranca/receber/extornar/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.extornar', 'uses'=>'Admin\CobrancaReceberController@extornar']);
+	Route::get('/cobranca/receber/acertar/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.acertar', 'uses'=>'Admin\CobrancaReceberController@acertar']);
+	Route::get('/cobranca/receber/desdobrar/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.desdobrar', 'uses'=>'Admin\CobrancaReceberController@desdobrar']);
+	Route::get('/cobranca/receber/negativar/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.negativar', 'uses'=>'Admin\CobrancaReceberController@negativar']);
+	Route::get('/cobranca/receber/conciliar/cni{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.conciliar.cni', 'uses'=>'Admin\CobrancaReceberController@conciliarCni']);
+	Route::get('/cobranca/receber/recibo/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.recibo', 'uses'=>'Admin\CobrancaReceberController@recibo']);
+	Route::get('/cobranca/receber/anexar/documento/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.baixar.anexar
+documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
+	Route::get('/cobranca/receber/ver/desdobramento/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.ver.desdobramento', 'uses'=>'Admin\CobrancaReceberController@verDesdobramento']);
+	Route::get('/cobranca/receber/ficha/debitos/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.ficha.debitos', 'uses'=>'Admin\CobrancaReceberController@fichaDebitos']);
+
+	Route::get('/cobranca/receber/recibo/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.recibo', 'uses'=>'Admin\CobrancaReceberController@recibo']);
 });

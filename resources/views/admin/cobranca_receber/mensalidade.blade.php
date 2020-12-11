@@ -82,7 +82,7 @@
 								<select id="operador_financeiro{{$randId}}" name="operador_financeiro" class="form-control form-control-sm" required="required">
 									<option ></option>
 									@foreach($operadorFinanceiro as $val)
-										<option value="{{$val->id}}">{{$val->name}}</option>
+										<option value="{{$val->id}}">{{$val->pessoa->name}}</option>
 									@endforeach
 								</select>
 							</div>
@@ -144,13 +144,15 @@
 			let formPgto 		= form.find('#forma_pagamento{{$randId}}').val();
 			let formPgtoText	= form.find('#forma_pagamento{{$randId}}').find('option[value='+formPgto+']').text();
 			let planoPgto 		= form.find('#palano_pagamento{{$randId}}').val();
+			let planoPgtoText	= form.find('#palano_pagamento{{$randId}}').find('option[value='+planoPgto+']').text();
 			let operadorFinan 	= form.find('#operador_financeiro{{$randId}}').val();
+			let operFiText 		= form.find('#operador_financeiro{{$randId}}').find('option[value='+operadorFinan+']').text();
 			let cvNsu 			= form.find('#doc{{$randId}}').val();			
 			let vrLiquido 		= $('html body').find('#vrLiquido{{$randId}}').val();	
 			vrLiquido 			= Utilitarios.foramtCalcCod(vrLiquido)
 
 			console.log('valor: '+valor)
-			let data = {valor:valor, formPgto:formPgto, planoPgto:planoPgto, operadorFinan:operadorFinan, cvNsu:cvNsu };
+			let data = {valor:valor, formPgtoText:formPgtoText, formPgto:formPgto, planoPgtoText:planoPgtoText, planoPgto:planoPgto, operFiText:operFiText, operadorFinan:operadorFinan, cvNsu:cvNsu };
 
 			let errors = validarCobranca(valor, formPgto, planoPgto, operadorFinan, cvNsu, saldo(objTable, vrLiquido))
 
@@ -160,7 +162,7 @@
 			}
 
 			objTable.adicionaFielsTable(data);		
-			objTable.retornaFieldsTable();
+			objTable.retornaFieldsTable(['valor', 'formPgtoText' , 'planoPgtoText', 'operFiText', 'cvNsu']);
 
 			let totCobAdd 	= totalCobAdd(objTable, 'valor');	
 			let vrSaldo 	= saldo(objTable, vrLiquido);
@@ -182,8 +184,9 @@
 	$('html body').delegate('#form_pessoa_cadastrar{{$randId}}', 'submit', function(ev){
 		ev.preventDefault();
 
-		let url = $(this).attr('action');
-		let id = $(this).attr('id');
+		let url 	= $(this).attr('action');
+		let id 		= $(this).attr('id');
+		let element = $(this);
 
 		let form = new FormData($(this)[0]);
 		for(let i=0; !(i == objTable.getDataTable().length); i++){
@@ -202,12 +205,45 @@
 			contentType:false,
 			success:function(response){
 				console.log(response);
-				console.log(response.mensagem.id);
+				console.log(response.data.id);
 
-				if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
+				if(response.data.hasOwnProperty('id') || response.data > 0){
 
-					Utilitarios.assistenteMensageAlert('Registro criado com sucesso');
+					Utilitarios.assistenteMensageAlert('Registro criado com sucesso', 'success');
+					let urlRecibo = '/cobranca/receber/recibo/'+response.data.id+'/OrdemServico';
 
+					$.ajax({
+						url: urlRecibo,
+						type:'GET',
+						dataType: 'HTML',
+						success: function(response){
+
+							Utilitarios.assistenteModal(response, 'lg', 'Recibo', null)
+						},
+						error:function(response, status, error){
+							Utilitarios.assistenteMensageAlertClear();
+
+							console.log(response);return;
+							let objErros = response.responseJSON.errors;
+							let errors = response.responseJSON;
+							let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
+
+							if(response.responseJSON.errors){
+								for (let prop in objErros){
+									msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
+								}
+
+							}else if(errors.mensagem){
+								let erros = errors.mensagem;
+								console.log(erros);
+								for (let i=0; !(i == erros.length); i++){
+									msg+=erros[i]+'<br/>';
+								}
+							}
+							Utilitarios.assistenteMensageAlert(msg, 'warning');
+						}	
+					})
+					
 				}
 			},
 			error:function(response, status, error){
