@@ -87,8 +87,7 @@
 			['Ediar', '/pessoa/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_pessoa_editar'],
 			['Visualizar', '/pessoa/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_pessoa_visualizar'],
 			['Excluir', '/pessoa/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_pessoa_deletar'],
-			['Gerar Mensalidade', '/cobranca/receber/mensalidade/'+id+'', 'btn btn-lg btn-outline-primary', 'id_pessoa_gerar_mensalidade{{$randId}}'],
-			
+			['Gerar Mensalidade', '/financeiro/receber/mensalidade'+id+'', 'btn btn-lg btn-outline-primary', 'id_pessoa_gerar_mensalidade'],
 		];
 
 		Utilitarios.assitentOpcoes(arrLinks);
@@ -103,7 +102,7 @@
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Editar', '700px');
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Editar');
 
 
 	});
@@ -114,7 +113,7 @@
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Cadastrar', 'lg', '700px')
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Cadastrar', 'lg')
 		Utilitarios.toggleFiltro();
 
 	});
@@ -146,25 +145,6 @@
 		let objResponse = $('html body').find('div#response-request');
 		Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
 		Utilitarios.toggleFiltro();
-
-	});
-
-	$('body').delegate('#id_pessoa_gerar_mensalidade{{$randId}}', 'click', function(e){
-		e.preventDefault();
-		let url = $(this).attr('href');
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Mensalidade-Criar', 'lg', '900px')
-
-	})
-
-	//edita uma pessoa específica view
-	$('body').delegate('#assistenteModal #id_pessoa_plano_adicionar{{$randId}}', 'click', function(ev){
-
-
-		ev.preventDefault();
-		let url = $(this).attr('href');
-
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Plano', 'lg', '900px');
-
 
 	});
 

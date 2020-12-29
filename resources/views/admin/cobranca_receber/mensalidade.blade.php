@@ -21,20 +21,22 @@
 					</div>
 
 					<div class="form-group col-md-4 col-sm-12">
-						<label class="label label-sm" for="pessoa{{$randId}}">Referência</label>
-						<input type="text" id="pessoa{{$randId}}" name="pessoa" class="form-control form-control-sm" value="{{ ucwords('Mensalidade Academia')}}" readonly="readonly">
+						<label class="label label-sm" for="servico{{$randId}}">Referência</label>
+						<input type="text" id="treinoDescricao{{$randId}}" name="servico" class="form-control form-control-sm" value="{{ ucwords('Mensalidade '.$servico->descricao )}}" readonly="readonly">
+						<input type="hidden" id="treinoId{{$randId}}" name="servico_id" class="form-control form-control-sm" value="{{ $servico->id }}">
+
 					</div>
 					
 				</div>
 				<div class="row mb-5">
 					<div class="form-group col-md-4 col-sm-12">
 						<label class="label label-sm" for="vrBruto{{$randId}}">Valor Bruto</label>
-						<input type="text" id="vrBruto{{$randId}}" name="vrBruto" class="form-control form-control-sm" readonly="readonly" value="200,00">
+						<input type="text" id="vrBruto{{$randId}}" name="vrBruto" class="form-control form-control-sm" readonly="readonly" value="{{$servico->vrServico}}">
 					</div>
 
 					<div class="form-group col-md-4 col-sm-12">
 						<label class="label label-sm" for="vrLiquido{{$randId}}">Valor Líquido</label>
-						<input type="text" id="vrLiquido{{$randId}}" name="vrLiquido" class="form-control form-control-sm" readonly="readonly" value="200,00">
+						<input type="text" id="vrLiquido{{$randId}}" name="vrLiquido" class="form-control form-control-sm" readonly="readonly" value="{{$servico->vrServico}}">
 					</div>
 
 					<div class="form-group col-md-4 col-sm-12">

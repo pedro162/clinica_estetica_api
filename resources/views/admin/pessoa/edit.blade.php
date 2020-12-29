@@ -9,59 +9,67 @@
 				@method('PUT')
 				<div class="row">
 					<div class="col-md-12 col-sm-12">
-						<h4>Dados Pessoais</h4>
-						<fieldset class="row"><legend></legend>
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="name{{$randId}}">Nome</label>
-								<input type="text" id="name{{$randId}}" name="name" class="form-control form-control-sm" required="required" value="{{$registro->name}}" minlength="3" maxlength="255">
+						<div class="row">
+							<div class="col-md-4 col-sm-12" style="box-sizing: border-box;">
+								<img src="{{asset('img/perfil/avatar.png')}}" alt="Imagem de um avatar padrão" style="width: 80%;">
 							</div>
+							<div class="col-md-8 col-sm-12">
+							
+								<h4>Dados Pessoais</h4>
+								<fieldset class="row"><legend></legend>
+									<div class="form-group col-md-6 col-sm-12">
+										<label class="label" for="name{{$randId}}">Nome</label>
+										<input type="text" id="name{{$randId}}" name="name" class="form-control form-control-sm" required="required" value="{{$registro->name}}" minlength="3" maxlength="255">
+									</div>
 
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="name_opcional{{$randId}}">Sobrenome</label>
-								<input type="text" id="name_opcional{{$randId}}" name="name_opcional" class="form-control form-control-sm" value="{{$registro->name_opcional}}" minlength="3" maxlength="255">
-							</div>
+									<div class="form-group col-md-6 col-sm-12">
+										<label class="label" for="name_opcional{{$randId}}">Sobrenome</label>
+										<input type="text" id="name_opcional{{$randId}}" name="name_opcional" class="form-control form-control-sm" value="{{$registro->name_opcional}}" minlength="3" maxlength="255">
+									</div>
 
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="documento{{$randId}}">CPF</label>
-								<input type="text" id="documento{{$randId}}" name="documento" class="form-control form-control-sm" required="required" value="{{$registro->documento}}">
-							</div>
+									<div class="form-group col-md-6 col-sm-12">
+										<label class="label" for="documento{{$randId}}">CPF</label>
+										<input type="text" id="documento{{$randId}}" name="documento" class="form-control form-control-sm" required="required" value="{{$registro->documento}}">
+									</div>
 
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="documento_complementar{{$randId}}">RG</label>
-								<input type="text" id="documento_complementar{{$randId}}" name="documento_complementar" class="form-control form-control-sm" value="{{$registro->documento_complementar}}">
-							</div>
+									<div class="form-group col-md-6 col-sm-12">
+										<label class="label" for="documento_complementar{{$randId}}">RG</label>
+										<input type="text" id="documento_complementar{{$randId}}" name="documento_complementar" class="form-control form-control-sm" value="{{$registro->documento_complementar}}">
+									</div>
 
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="nascimento_fundacao{{$randId}}">Nascimento</label>
-								<input type="date" id="nascimento_fundacao{{$randId}}" name="nascimento_fundacao" class="form-control form-control-sm" value="{{$registro->nascimento_fundacao}}">
-							</div>
+									<div class="form-group col-md-6 col-sm-12">
+										<label class="label" for="nascimento_fundacao{{$randId}}">Nascimento</label>
+										<input type="date" id="nascimento_fundacao{{$randId}}" name="nascimento_fundacao" class="form-control form-control-sm" value="{{$registro->nascimento_fundacao}}">
+									</div>
 
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="sexo{{$randId}}">Sexo</label>
-								<select id="sexo{{$randId}}"  name="sexo" class="form-control form-control-sm" required="required">
-									<option value="m" {{$registro->sexo == 'm' ? 'selected' : ''}}>Masculino</option>
-									<option value="f" {{$registro->sexo == 'f' ? 'selected' : ''}}>Feminino</option>						
-								</select>
-							</div>
+									<div class="form-group col-md-6 col-sm-12">
+										<label class="label" for="sexo{{$randId}}">Sexo</label>
+										<select id="sexo{{$randId}}"  name="sexo" class="form-control form-control-sm" required="required">
+											<option value="m" {{$registro->sexo == 'm' ? 'selected' : ''}}>Masculino</option>
+											<option value="f" {{$registro->sexo == 'f' ? 'selected' : ''}}>Feminino</option>						
+										</select>
+									</div>
 
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="groupo_id{{$randId}}">Grupo</label>
-								<select id="groupo_id{{$randId}}"  name="groupo_id" class="form-control form-control-sm" required="required">
-									@foreach($grupos as $grupo)
-									<option value="{{$grupo->id}}" {{$registro->grupo[0]->id == $grupo->id ? 'selected' : ''}}>{{$grupo->name}}
-									</option>
-									@endforeach
-								</select>
-							</div>
+									<div class="form-group col-md-6 col-sm-12">
+										<label class="label" for="groupo_id{{$randId}}">Grupo</label>
+										<select id="groupo_id{{$randId}}"  name="groupo_id" class="form-control form-control-sm" required="required">
+											@foreach($grupos as $grupo)
+											<option value="{{$grupo->id}}" {{$registro->grupo[0]->id == $grupo->id ? 'selected' : ''}}>{{$grupo->name}}
+											</option>
+											@endforeach
+										</select>
+									</div>
 
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="email{{$randId}}">Email</label>
-								<input type="text" id="email{{$randId}}" name="email" value="{{$registro->email}}" class="form-control form-control-sm">
+									<div class="form-group col-md-6 col-sm-12">
+										<label class="label" for="email{{$randId}}">Email</label>
+										<input type="text" id="email{{$randId}}" name="email" value="{{$registro->email}}" class="form-control form-control-sm">
+									</div>
+									<div class="form-group col-md-12 col-sm-12" align="center">
+										<button style="width: 50%;" type="submit" class=" btn btn-sm btn-outline-primary">Atualizar</button>
+									</div>
+								</fieldset>
 							</div>
-							<div class="form-group col-md-12 col-sm-12" align="center">
-								<button style="width: 50%;" type="submit" class=" btn btn-sm btn-outline-primary">Atualizar</button>
-							</div>
-						</fieldset>
+						</div>
 					</div>
 				</div>
 			</form>

@@ -80,4 +80,14 @@ class Utilitarios extends Model
 
         return $supArr;
     }
+
+
+    static function difDate($dtInicio, $dtFim, $tipoRetorno='d'){
+        $dtInit = new \DateTime($dtInicio);
+        $dtEnd  = new \DateTime($dtFim);
+
+        $intervalo = $dtInit->diff($dtEnd);
+
+        return $intervalo->format('%d');
+    }
 }

@@ -66,7 +66,9 @@ class CobrancaReceber extends Model
 		'pl_pgto_id',
 		'op_finan_id',
 		'pessoa_rca_id',
-		'active'
+		'active',
+		'filial_id',
+		'statusTransito',
     ];
 
 

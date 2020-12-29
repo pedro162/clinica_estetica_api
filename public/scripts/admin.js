@@ -567,6 +567,54 @@ class Utilitarios{
 	    });
 	}
 
+
+	static selecionadosTable(idTable){
+		let ids = '';
+		$('html body').find('#'+idTable).find('tbody tr').each(function(){
+			let obj = $(this).find(' td:eq(0) input:checkbox');
+			if(obj.prop('checked') == true){
+				let id = obj.parents('tr').find('input.id').val();
+				if(Number(id) > 0){
+					ids += id+',';
+				}
+				
+			}
+
+		})
+
+		if(ids.trim().length > 0){
+			return ids.substr(0, ids.length - 1)
+		}
+		return false;
+	}
+
+
+	static selecionarMultiplosTable(idTable){
+		
+		let objHead = $('html body').find('#'+idTable).find('thead tr th:eq(0)').find(' input:checkbox');
+		if(objHead.prop('checked') == true){
+			
+			$('html body').find('#'+idTable).find('tbody tr').each(function(){
+				let objBody = $(this).find(' td:eq(0) input:checkbox');
+				if(objBody.prop('checked') == false){
+					objBody.trigger('click')					
+				}
+
+			})
+			
+		}else{
+			$('html body').find('#'+idTable).find('tbody tr').each(function(){
+				let objBody = $(this).find(' td:eq(0) input:checkbox');
+				if(objBody.prop('checked') == true){
+					objBody.trigger('click')					
+				}
+
+			})		
+		}
+
+		
+	}
+	
 	static foramtCalcCod(number){
   
 
@@ -592,31 +640,32 @@ class Utilitarios{
 
   }
 
-  static formatMoney(amount, decimalCount = 2, decimal = ',', thousands = '.'){
-	  try{
+  	static formatMoney(amount, decimalCount = 2, decimal = ',', thousands = '.'){
+		try{
 
-	    decimalCount = Math.abs(decimalCount);
-	    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+			decimalCount = Math.abs(decimalCount);
+			decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
 
-	    const negativeSing = amount < 0 ? '-' : '';
+			const negativeSing = amount < 0 ? '-' : '';
 
-	    let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-	    let j = (i.length > 3) ? i.length % 3 : 0;
+			let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+			let j = (i.length > 3) ? i.length % 3 : 0;
 
-	    let fomartted = negativeSing;
-	    fomartted += (j ? i.substr(0, j) + thousands : '');
-	    fomartted += i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands);
-	    fomartted += (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : '');
+			let fomartted = negativeSing;
+			fomartted += (j ? i.substr(0, j) + thousands : '');
+			fomartted += i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands);
+			fomartted += (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : '');
 
-	    return fomartted;
+			return fomartted;
 
 
-	  }catch(e){
+		}catch(e){
 
-	    console.log(e);
-	  }
+			console.log(e);
+		}
 
 
 	}
-	
+
+
 }

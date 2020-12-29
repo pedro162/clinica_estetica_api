@@ -26,6 +26,34 @@
 			<div class="row">
 				<div class="col-md-12 col-sm-12 mb-2">
 					<div class="card card-togle">
+						<div class="card-header bg-white form-inline h4">
+						{{ ucwords($registro->name.' '.$registro->name_opcional)}}
+						</div>
+						<div class="card-body" style="display: block;" id="{{$randId}}">
+							<div class="row">
+								<div class="col-md-3 col-sm-12" style="margin: auto; text-align: center;">
+									<p><img src="{{asset('img/perfil/avatar.png')}}" alt="" style="width: 100px;"></p>
+									<p > <a href="" class="btn btn-sm btn-outline-primary" style="border-radius: 20px;">{{$registro->email}}  <i class="fa fa-paper-plane"></i></a></p>
+									<p>	<a href="" class="btn btn-sm btn-outline-primary" style="border-radius: 20px;" >Ficha de Exercícios</a> <a  href="" class="btn btn-sm btn-outline-primary" style="border-radius: 20px;" >Avaliação Física</a></p>
+								</div>
+								<div class="col-md-9 col-sm-12">
+									<h4 class="">Sem contrato cadastrado</h4>
+									<a href="" class="btn btn-sm btn-outline-primary">Observações em aula</a> <a href="{{route('contrato.create' , $registro->id)}}" id="novo-contrato{{$randId}}" class="btn btn-sm btn-outline-primary">Criar Contrato</a>
+									<h4 class=" mt-2">Observação</h4>
+									<form action="" style="width: 100%;" class="mt-2">
+										<textarea name="" id="" cols="30" rows="2" class="form-control form-control-sm"></textarea>
+									</form>
+								</div>
+							</div>
+						</div>
+						<div class="card-footer bg-white form-inline">
+							
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-12 col-sm-12 mb-2">
+					<div class="card card-togle">
 						<div class="card-header bg-white h4">
 							Dados pessoais -> Contato -> Endereço
 						</div>
@@ -339,5 +367,16 @@
 
    })
 
+
+   //----- Chama a view de novo contrato
+
+   $('html body').delegate('#novo-contrato{{$randId}}', 'click', function(ev){
+	   	
+		ev.preventDefault();
+		
+		let url = $(this).attr('href');
+		
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Contrato - Novo', 'md');
+   })
 </script>
 @endsection

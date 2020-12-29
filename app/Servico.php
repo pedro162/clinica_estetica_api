@@ -13,6 +13,7 @@ class Servico extends Model
 		'unidade',
 		'user_id',
 		'user_update_id',
+		'type',
 		'active'
 
     ];

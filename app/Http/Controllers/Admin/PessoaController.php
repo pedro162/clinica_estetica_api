@@ -11,6 +11,17 @@ use \App\Grupo;
 use \App\Telefone;
 use \App\Logradouro;
 use \App\Utilitarios;
+use \App\CobrancaReceber;
+use \App\FormaPagamento;
+use \App\PlanoPagamento;
+use \App\OperadorFinanceiro;
+use \App\OrdemServico;
+use \App\Filial;
+use \App\VendaItem;
+use \App\Venda;
+use \App\ServicoItem;
+use \App\Servico;
+use \App\Plano;
 
 class PessoaController extends Controller
 {
@@ -508,6 +519,39 @@ class PessoaController extends Controller
         }
 
         return response()->json(['mensagem'=>'Cpf inválido', 'class'=>'warning'], 400); 
+    }
+
+
+    public function adicionarPlano($id)
+    {
+        try{
+
+            if((! isset($id)) || ($id <= 0)){
+                return response()->json(['errors'=>['params'=>'Parametro inválido']], 400);
+            }
+
+            $registro           = null;
+            $formaPagamento     = null;
+            $planoPagamento     = null;
+            $operadorFinanceiro = null;
+            $plano              = null;
+            \DB::transaction(function() use (&$id, &$registro, &$formaPagamento, &$planoPagamento, &$operadorFinanceiro, &$plano){
+                $registro = Pessoa::where('active', '=', 'yes')->where('id', '=', $id)->first();
+
+                $formaPagamento         = FormaPagamento::where('active', '=', 'yes')->get();
+                $planoPagamento         = PlanoPagamento::where('active', '=', 'yes')->get();
+                $operadorFinanceiro     = OperadorFinanceiro::where('active', '=', 'yes')->get();
+                $plano                  = Plano::where('active', '=', 'yes')->get();
+            });
+            
+            if(($registro == null) || ($formaPagamento == null) || ($plano == null)){
+                 return response()->json(['errors'=>['erro'=>'Erro ao carregar o registro'], 'class'=>'warning'], 400);
+            }
+            return view('admin.plano.painelVenda', compact('registro', 'formaPagamento', 'planoPagamento', 'operadorFinanceiro', 'plano'));
+
+        }catch(\Exception $e){
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor '.$e->getMessage().' > '.$e->getFile().' > '.$e->getLine(), 'class'=>'warning'], 500);
+        }
     }
 
 }
