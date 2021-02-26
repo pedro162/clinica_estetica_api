@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use \App\PlanoPagamentoPrazos;
 
 class PlanoPagamento extends Model
 {
@@ -19,5 +20,10 @@ class PlanoPagamento extends Model
 		'user_id',
 		'user_update_id',
 		'active'
-    ];
+	];
+	
+	public function planoPrazo()
+	{
+		return $this->hasMany(PlanoPagamentoPrazos::class,'plano_pagamentos_id');
+	}
 }

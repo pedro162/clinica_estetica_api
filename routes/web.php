@@ -83,6 +83,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/logradouro/load/api', ['as'=>'logradouro.load.api', 'uses'=>'Admin\LogradouroController@loadLogradouroApi']);
 
 	Route::get('/cobranca/receber/index', ['as'=>'cobranca.receber.index', 'uses'=>'Admin\CobrancaReceberController@index']);
+	Route::post('/cobranca/receber/index', ['as'=>'cobranca.receber.index', 'uses'=>'Admin\CobrancaReceberController@index']);
 	Route::get('/cobranca/receber/index/json', ['as'=>'cobranca.receber.index.json', 'uses'=>'Admin\CobrancaReceberController@indexJson']);
 	Route::get('/cobranca/receber/create', ['as'=>'cobranca.receber.create', 'uses'=>'Admin\CobrancaReceberController@create']);
 	Route::post('/cobranca/receber/store', ['as'=>'cobranca.receber.store', 'uses'=>'Admin\CobrancaReceberController@store']);
@@ -108,8 +109,8 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/cobranca/receber/ver/desdobramento/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.ver.desdobramento', 'uses'=>'Admin\CobrancaReceberController@verDesdobramento']);
 	Route::get('/cobranca/receber/ficha/debitos/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.ficha.debitos', 'uses'=>'Admin\CobrancaReceberController@fichaDebitos']);
 
-	Route::get('/cobranca/receber/recibo/{idReferencia}/{tpReferencia}', ['as'=>'cobranca.receber.recibo', 'uses'=>'Admin\CobrancaReceberController@recibo']);
-
+	Route::post('/cobranca/receber/simular/desdobramento/{idReferencia}', ['as'=>'cobranca.receber.simular.desdobramento', 'uses'=>'Admin\CobrancaReceberController@simularAcertar']);
+	
 
 	Route::get('/contrato/index', ['as'=>'contrato.index', 'uses'=>'Admin\ContratoController@index']);
 	Route::get('/contrato/create/{id}', ['as'=>'contrato.create', 'uses'=>'Admin\ContratoController@create']);
@@ -122,4 +123,28 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/contrato/destroy/{id}/{idPessoa}', ['as'=>'contrato.destroy', 'uses'=>'Admin\ContratoController@destroy']);
 
 
+	Route::get('/plano_pagamento/index', ['as'=>'plano_pagamento.index', 'uses'=>'Admin\PlanoPagamentoController@index']);
+	Route::get('/plano_pagamento/create', ['as'=>'plano_pagamento.create', 'uses'=>'Admin\PlanoPagamentoController@create']);
+	Route::post('/plano_pagamento/store', ['as'=>'plano_pagamento.store', 'uses'=>'Admin\PlanoPagamentoController@store']);
+	Route::get('/plano_pagamento/edit/{id}', ['as'=>'plano_pagamento.edit', 'uses'=>'Admin\PlanoPagamentoController@edit']);
+	Route::put('/plano_pagamento/update/{id}', ['as'=>'plano_pagamento.update', 'uses'=>'Admin\PlanoPagamentoController@update']);
+	Route::get('/plano_pagamento/show/{id}', ['as'=>'plano_pagamento.show', 'uses'=>'Admin\PlanoPagamentoController@show']);
+	Route::get('/plano_pagamento/info/{id}', ['as'=>'plano_pagamento.info', 'uses'=>'Admin\PlanoPagamentoController@info']);
+	Route::get('/plano_pagamento/head', ['as'=>'plano_pagamento.head', 'uses'=>'Admin\PlanoPagamentoController@head']);
+	Route::get('/plano_pagamento/destroy/{id}', ['as'=>'plano_pagamento.destroy', 'uses'=>'Admin\PlanoPagamentoController@destroy']);
+
+
+	Route::get('/forma_pagamento/index', ['as'=>'forma_pagamento.index', 'uses'=>'Admin\FormaPagamentoController@index']);
+	Route::get('/forma_pagamento/create', ['as'=>'forma_pagamento.create', 'uses'=>'Admin\FormaPagamentoController@create']);
+	Route::post('/forma_pagamento/store', ['as'=>'forma_pagamento.store', 'uses'=>'Admin\FormaPagamentoController@store']);
+	Route::get('/forma_pagamento/edit/{id}', ['as'=>'forma_pagamento.edit', 'uses'=>'Admin\FormaPagamentoController@edit']);
+	Route::put('/forma_pagamento/update/{id}', ['as'=>'forma_pagamento.update', 'uses'=>'Admin\FormaPagamentoController@update']);
+	Route::get('/forma_pagamento/show/{id}', ['as'=>'forma_pagamento.show', 'uses'=>'Admin\FormaPagamentoController@show']);
+	Route::get('/forma_pagamento/info/{id}', ['as'=>'forma_pagamento.info', 'uses'=>'Admin\FormaPagamentoController@info']);
+	Route::get('/forma_pagamento/head', ['as'=>'forma_pagamento.head', 'uses'=>'Admin\FormaPagamentoController@head']);
+	Route::get('/forma_pagamento/destroy/{id}', ['as'=>'forma_pagamento.destroy', 'uses'=>'Admin\FormaPagamentoController@destroy']);
+
+	Route::post('/forma_pagamento/plano/pagamento/json', ['as'=>'forma_pagamento.plano.pagamento.json', 'uses'=>'Admin\FormaPagamentoController@planoPagamentoJson']);
+	Route::post('/forma_pagamento/operador/financeiro/json', ['as'=>'forma_pagamento.operador.financeiro.json', 'uses'=>'Admin\FormaPagamentoController@operadorJson']);
 });
+

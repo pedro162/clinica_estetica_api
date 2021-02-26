@@ -97,7 +97,7 @@
 
 
 	//edita uma pessoa específica view
-	$('body').delegate('#assistenteModal #id_pessoa_editar', 'click', function(ev){
+	$('body').delegate('#id_pessoa_editar', 'click', function(ev){
 
 
 		ev.preventDefault();
@@ -120,7 +120,7 @@
 	});
 
 	//deletar pessoa preview
-	$('body').delegate('#assistenteModal #id_pessoa_deletar', 'click', function(ev){
+	$('body').delegate('#id_pessoa_deletar', 'click', function(ev){
 
 		ev.preventDefault();
 		let url = $(this).attr('href');
@@ -157,7 +157,7 @@
 	})
 
 	//edita uma pessoa específica view
-	$('body').delegate('#assistenteModal #id_pessoa_plano_adicionar{{$randId}}', 'click', function(ev){
+	$('body').delegate('#id_pessoa_plano_adicionar{{$randId}}', 'click', function(ev){
 
 
 		ev.preventDefault();

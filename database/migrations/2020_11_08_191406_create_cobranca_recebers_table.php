@@ -34,7 +34,7 @@ class CreateCobrancaRecebersTable extends Migration
             $table->decimal('vrDevolucao', 10, 2)->default(0);
             $table->decimal('vrDescontoFinanceiro', 10, 2)->default(0);
             $table->integer('qtdProrrogacao')->default(0);
-            $table->enum('statusCobranca', ['aberto', 'baixado'])->default('aberto');
+            $table->enum('statusCobranca', ['aberto', 'baixado', 'desdobrado'])->default('aberto');
             $table->enum('isEstornado', ['yes', 'no'])->default('no');
             $table->bigInteger('idFuncionarioEstorno')->unsigned()->default(null);
             $table->string('dsMotivoEstorno')->nullable()->default(null);
@@ -69,8 +69,12 @@ class CreateCobrancaRecebersTable extends Migration
             $table->enum('isDuplicataOriginal',['yes', 'no']);
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);         
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);      
+            $table->bigInteger('user_desdobramento_id')->unsigned()->nullable()->default(null);         
             $table->enum('active',['yes', 'no'])->default('no');
+            $table->enum('isTransitoria',['yes', 'no'])->default('no');
+            $table->enum('isAcertada',['yes', 'no'])->default('no');
+            $table->string('dsJustificativaDesdobramento')->nullable()->default(null);
             $table->enum('statusTransito',['expedido', 'transito', 'custodiado', 'guardado'])->default('guardado');
             $table->timestamps();
         });

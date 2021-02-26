@@ -237,7 +237,6 @@ $(document).ready(function(ev){
 })
 
 
-
 class BaseModelo{
 
 	constructor(){
@@ -285,7 +284,7 @@ class Utilitarios{
 
 		data.index = index
 		let leng = this.inputsArray.push(data);
-		return leng;
+		return this.inputsArray;
 	}
 
 	removeFieldsTable(index){
@@ -329,7 +328,7 @@ class Utilitarios{
 							}
 
 							if(item == 'index'){
-								
+								//alert('aqui')
 								index = this.inputsArray[i][item];
 							}
 						}
@@ -343,6 +342,7 @@ class Utilitarios{
 				
 			}
 			this.table.html(trs);
+			
 		}else{
 
 			let trs = '';
@@ -383,22 +383,83 @@ class Utilitarios{
 	static assistenteModal(response, widthModal='lg', title='Titulo', height = null){
 
 		Utilitarios.assistenteMensageAlertClear();
-		Utilitarios.widthAssistenteModal(widthModal, height);
+		/*Utilitarios.widthAssistenteModal(widthModal, height);
 		$('html #assistenteModal').find('.modal-body #content_modal').html(response).css({margin: 'auto'});
 		$('html #assistenteModal').find('.modal-header h4.modal-title').html(title)
-		$('html #assistenteModal').modal('show');
+		$('html #assistenteModal').modal('show');*/
+		this.createModal(response, widthModal, title, height);
 	}
 
-	static assistenteMensageAlert(response, cls='success'){
+	static assistenteMensageAlert(response, cls='success', idModal=''){
 
-		$('html #assistenteModal').find('.modal-body #messagem_modal').html($('<h5/>').addClass('alert alert-'+cls).html(response).css({textAlign: 'center'}));
+		$('html #assistenteModal').find('.modal-body #messagem_modal'+idModal).html($('<h5/>').addClass('alert alert-'+cls).html(response).css({textAlign: 'center'}));
 		
 	}
 
-	static assistenteMensageAlertClear(){
+	static assistenteMensageAlertClear(idModal=''){
 
-		$('html #assistenteModal').find('.modal-body #messagem_modal').html('');
+		$('html #assistenteModal').find('.modal-body #messagem_modal'+idModal).html('');
 		
+	}
+
+	static novoAsistente(){
+		$('html').on('show.bs.modal', '.modal', function (event) {
+            var zIndex = 1040 + (10 * $('.modal:visible').length);
+            $(this).css('z-index', zIndex);
+            setTimeout(function() {
+                $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+            }, 0);
+        });
+	}
+
+	static createModal(response='', widthModal='lg', title='Titulo', height = null){
+		let rand = Math.random() * (999 - 1) + 1;
+		rand = String(rand).replace('.', '')
+		let modal = ` 	<!-- The Modal -->
+			<div class="modal fade" id="assistenteModal${rand}">
+				<div class="" id="modal-size`+rand+`" role="document">
+					<div class="modal-content">
+		
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="modal-title">${title}</h4>
+						<button type="button" class="close" data-dismiss="modal" id="closeModal${rand}">&times;</button>
+					</div>
+		
+					<!-- Modal body -->
+					<div class="modal-body">
+						<div class="row">
+							<div class="col" id="messagem_modal`+rand+`">
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col" id="content_modal`+rand+`">
+								${response}
+							</div>
+						</div>
+					</div>
+		
+					<!-- Modal footer -->
+					<div class="modal-footer" id="modal_footer`+rand+`">
+						
+					</div>
+		
+					</div>
+				</div>
+			</div>`;
+			$('#footer').append(modal)
+			Utilitarios.widthAssistenteModal(widthModal, height, 'html body #modal-size'+rand);
+			$('html #assistenteModal'+rand).modal('show');
+
+			$('html').delegate('#closeModal'+rand, 'click', function(ev){
+				
+				$('html footer #assistenteModal'+rand).css('display', 'none').removeClass('show');
+				$('html .modal-backdrop:last-child').remove();
+			})
+
+			//Utilitarios.novoAsistente();
+			return rand;
 	}
 
 
@@ -420,8 +481,10 @@ class Utilitarios{
 		ul.css('margin', 'auto')
 		let nav = $('<nav/>').html(ul).addClass('nav row');
 		nav.css('margin', 'auto');
+		nav.css('text-align', 'center');
+		nav = $('<div/>').html(nav)
 
-		this.assistenteModal(nav, widModal, 'Opções')
+		this.assistenteModal(nav.html(), widModal, 'Opções')
 	}
 
 
@@ -473,13 +536,17 @@ class Utilitarios{
 	}
 
 
-	static widthAssistenteModal(width, height = null){
+	static widthAssistenteModal(width, height = null, seletor=null){
 		let base 	= 'modal-dialog modal-dialog-centered';
 		let lg 		= 'modal-lg '+base;
 		let sm 		= 'modal-sm '+base;
 		let md 		= 'modal-md '+base;
 		let xs 		= 'modal-xs '+base;
 		let obj 	= $('html #assistenteModal #modal-size');
+		if(seletor){
+			obj 	= $(seletor);
+		}
+		
 
 		switch(width){
 			case'sm':
@@ -618,27 +685,27 @@ class Utilitarios{
 	static foramtCalcCod(number){
   
 
-    number = String(number);
-    
+		number = String(number);
+		
 
-    if(number.length == 0){
-      return 0;
-    }
+		if(number.length == 0){
+		return 0;
+		}
 
-    if(number.indexOf(',') > -1){
-    	number = number.replace(/\./g, '');
-    	number = number.replace(/,/g, '.');
-    }
+		if(number.indexOf(',') > -1){
+			number = number.replace(/\./g, '');
+			number = number.replace(/,/g, '.');
+		}
 
-    number = Number(number);
-    if(isNaN(number)){
-    	return 0;
-    }
+		number = Number(number);
+		if(isNaN(number)){
+			return 0;
+		}
 
-    return number.toFixed(2);
+		return number.toFixed(2);
 
 
-  }
+	}
 
   	static formatMoney(amount, decimalCount = 2, decimal = ',', thousands = '.'){
 		try{

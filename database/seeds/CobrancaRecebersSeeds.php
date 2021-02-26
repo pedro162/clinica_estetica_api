@@ -5,6 +5,7 @@ use \App\CobrancaReceber;
 use \App\Venda;
 use \App\User;
 use \App\Pessoa;
+use \App\Filial;
 
 class CobrancaRecebersSeeds extends Seeder
 {
@@ -18,7 +19,7 @@ class CobrancaRecebersSeeds extends Seeder
          CobrancaReceber::create([
 	    	'idReferencia'=>Venda::first()->id,
 			'tpReferencia'=>Venda::class,
-			'pessoa_id'=>Pessoa::find(2)->id,
+			'pessoa_id'=>Pessoa::find(1)->id,
 			'nrDuplicata'=>12,
 			'dtCobrancaReceber'=>null,
 			'dtCompetencia'=>null,
@@ -69,7 +70,8 @@ class CobrancaRecebersSeeds extends Seeder
 			'isDuplicataOriginal'=>'yes',
 			'user_id'=>User::first()->id,
 			'user_update_id'=>User::first()->id,
-			'active'=>'yes'
+			'active'=>'yes',
+			'filial_id'=>Filial::first()->id
 	    ]);
     }
 }

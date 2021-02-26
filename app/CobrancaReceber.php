@@ -96,7 +96,7 @@ class CobrancaReceber extends Model
             'vrCobrancaReceber'         => $params['vrCobrancaReceber'],
             'vrBruto'         			=> $params['vrBruto'],
             'dsHistorico'               => $params['dsHistorico'],
-            'idCobrancaTipo'            => $params['idCobrancaTipo'],
+            'forma_pagamento_id'	    => $params['idCobrancaTipo'],
             'pl_pgto_id'   				=> $params['pl_pgto_id'],
             'op_finan_id'				=> $params['op_finan_id'],
             'idReferencia'              => $params['idReferencia'],

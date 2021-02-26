@@ -24,6 +24,8 @@ class CreateFormaPagamentosTable extends Migration
             $table->enum('hasAcertoBalcao', ['yes', 'no'])->default('no');
             $table->enum('hasAcertoCaixa', ['yes', 'no'])->default('no');
             $table->enum('hasEntrada', ['yes', 'no'])->default('no');
+            $table->enum('tipo', ['cartao_credito', 'cartao_debito', 'boleto', 'dinheiro'])->default('dinheiro');
+            $table->enum('hasOperadorFinanceiro', ['yes', 'no'])->default('no');
 
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');

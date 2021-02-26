@@ -16,7 +16,7 @@
 							<div class="col-md-8 col-sm-12">
 							
 								<h4>Dados Pessoais</h4>
-								<fieldset class="row"><legend></legend>
+								<div class="row"><legend></legend>
 									<div class="form-group col-md-6 col-sm-12">
 										<label class="label" for="name{{$randId}}">Nome</label>
 										<input type="text" id="name{{$randId}}" name="name" class="form-control form-control-sm" required="required" value="{{$registro->name}}" minlength="3" maxlength="255">
@@ -54,7 +54,7 @@
 										<label class="label" for="groupo_id{{$randId}}">Grupo</label>
 										<select id="groupo_id{{$randId}}"  name="groupo_id" class="form-control form-control-sm" required="required">
 											@foreach($grupos as $grupo)
-											<option value="{{$grupo->id}}" {{$registro->grupo[0]->id == $grupo->id ? 'selected' : ''}}>{{$grupo->name}}
+											<option value="{{$grupo->id}}" {{ isset($registro->grupo[0]->id) ? $registro->grupo[0]->id == $grupo->id ? 'selected' : '' : ''}}>{{$grupo->name}}
 											</option>
 											@endforeach
 										</select>
@@ -67,7 +67,7 @@
 									<div class="form-group col-md-12 col-sm-12" align="center">
 										<button style="width: 50%;" type="submit" class=" btn btn-sm btn-outline-primary">Atualizar</button>
 									</div>
-								</fieldset>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -119,11 +119,11 @@
 					console.log(response.mensagem.id);
 
 					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
-						Utilitarios.assistenteMensageAlert('Registro atualizado com sucesso');
-
+						//Utilitarios.assistenteMensageAlert('Registro atualizado com sucesso');
+						Utilitarios.assistenteModal('<h2 class="alert alert-success">Registro atualizado com sucesso</h2>', 'md', 'Resultado', '500px')
 					}else{
-
-						Utilitarios.assistenteMensageAlert('Erro ao cadastrar registro', 'warning');
+						Utilitarios.assistenteModal('<h2 class="alert alert-warning">Erro ao cadastrar registro</h2>', 'md', 'Resultado', '500px')
+						//Utilitarios.assistenteMensageAlert('Erro ao cadastrar registro', 'warning');
 						
 					}
 				},
@@ -136,7 +136,8 @@
 						msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
 					}
 
-					Utilitarios.assistenteMensageAlert(msg, 'warning');
+					//Utilitarios.assistenteMensageAlert(msg, 'warning');
+					Utilitarios.assistenteModal(msg, 'md', 'Resultado', '500px')
 				}
 
 

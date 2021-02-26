@@ -38,6 +38,25 @@ class CreateOperadorFinanceirosTable extends Migration
             $table->enum('active',['yes', 'no'])->default('no');
             $table->timestamps();
         });
+
+
+        Schema::create('oper_forma_pgto', function (Blueprint $table) {
+            $table->id();
+
+            $table->bigInteger('oper_pagamentos_id')->unsigned();
+            $table->foreign('oper_pagamentos_id')->references('id')->on('operador_financeiros')->onUpdate('cascade')->onDelete('cascade');
+
+            $table->bigInteger('forma_pagamentos_id')->unsigned();
+            $table->foreign('forma_pagamentos_id')->references('id')->on('forma_pagamentos')->onUpdate('cascade')->onDelete('cascade');
+
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
+            
+            $table->enum('active',['yes', 'no'])->default('no');
+            $table->timestamps();
+        });
     }
 
 

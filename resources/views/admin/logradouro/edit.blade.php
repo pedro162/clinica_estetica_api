@@ -10,7 +10,7 @@
 				<div class="row">
 					<div class="col-md-12 col-sm-12">
 						<h4>Endereço</h4>
-						<fieldset class="row"><legend></legend>
+						<div class="row"><legend></legend>
 							<div class="form-group col-md-6 col-sm-12">
 								<label class="label" for="cep{{$randId}}">Cep</label>
 								<input type="text" id="cep{{$randId}}" name="cep" value="{{$registro->cep}}" class="form-control form-control-sm" required="required">
@@ -61,7 +61,7 @@
 								<button style="width: 50%;" type="submit" class=" btn btn-sm btn-outline-primary">Atualizar</button>
 							</div>
 
-						</fieldset>
+						</div>
 					</div>
 				</div>
 			</form>
@@ -92,7 +92,7 @@
 				contentType:false,
 				success:function(response){
 					console.log(response);
-					console.log(response.mensagem.id);
+					console.log(response.mensagem.id); //widthModal='lg', title='Titulo', height = null
 
 					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
 						Utilitarios.assistenteMensageAlert('Registro atualizado com sucesso');

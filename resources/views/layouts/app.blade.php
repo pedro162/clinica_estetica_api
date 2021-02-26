@@ -54,7 +54,7 @@
             @yield('content')
         </main>
     </body>
-    <footer>
+    <footer id='footer'>
         <!-- The Modal -->
       <div class="modal fade" id="assistenteModal">
         <div class="" id="modal-size" role="document">

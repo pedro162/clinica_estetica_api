@@ -81,6 +81,19 @@ class Utilitarios extends Model
         return $supArr;
     }
 
+    static function removeMaskMoney($valor)
+    {
+        if(! (strlen(trim($valor)) > 0)){
+            return false;
+        }
+
+        if(strpos($valor, ',') > -1){
+           return (float) str_replace(['.', ','], ['', '.'], $valor);
+        }else{
+            return (float) $valor;
+        }
+    }
+
 
     static function difDate($dtInicio, $dtFim, $tipoRetorno='d'){
         $dtInit = new \DateTime($dtInicio);
@@ -90,4 +103,38 @@ class Utilitarios extends Model
 
         return $intervalo->format('%d');
     }
+
+    public static function validaData($data, $formatoAmericano = true)
+    {
+        if(strlen(trim($data)) == 0){
+            return false;
+        }
+        $delimitador = '-';
+        if(strpos($data, '/') > -1){
+            $delimitador = '/';
+        }
+
+        $dtExplode = explode($delimitador, $data);
+        if(
+            ! (is_array($dtExplode) && (count($dtExplode) > 0))
+        ){
+            return false;
+        }
+
+        if($formatoAmericano){
+            if( (count($dtExplode) == 3) && checkdate($dtExplode[1], $dtExplode[2], $dtExplode[0])){
+                return true;
+            }
+
+        }else{
+            if((count($dtExplode) == 3)  && checkdate( $dtExplode[1],  $dtExplode[0], $dtExplode[2] )  ){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+
 }

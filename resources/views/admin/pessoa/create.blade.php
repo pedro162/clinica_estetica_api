@@ -9,7 +9,7 @@
 				<div class="row">
 					<div class="col-md-5 col-sm-12">
 						<h4>Dados Pessoais</h4>
-						<fieldset class="row"><legend></legend>
+						<div class="row"><legend></legend>
 							<div class="form-group col-md-6 col-sm-12">
 								<label class="label" for="name{{$randId}}">Nome</label>
 								<input type="text" id="name{{$randId}}" name="name" class="form-control form-control-sm" required="required"  minlength="3" maxlength="255">
@@ -52,12 +52,12 @@
 									@endforeach
 								</select>
 							</div>
-						</fieldset>
+						</div>
 					</div>
 
 					<div class="col-md-5 col-sm-12">
 						<h4>Endereço</h4>
-						<fieldset class="row"><legend></legend>
+						<div class="row"><legend></legend>
 							<div class="form-group col-md-6 col-sm-12">
 								<label class="label" for="cep{{$randId}}">Cep</label>
 								<input type="text" id="cep{{$randId}}" name="cep" class="form-control form-control-sm" required="required">
@@ -104,12 +104,12 @@
 								<input type="text" id="estado{{$randId}}" name="estado" class="form-control form-control-sm" required="required" minlength="2" maxlength="2">
 							</div>
 
-						</fieldset>
+						</div>
 					</div>
 
 					<div class="col-md-2 col-sm-12">
 						<h4>Contato</h4>
-						<fieldset class="row"><legend></legend>
+						<div class="row"><legend></legend>
 							<div class="form-group col-md-12 col-sm-12">
 								<label class="label" for="celular_1{{$randId}}">Celular 1</label>
 								<input type="text" id="celular_1{{$randId}}" name="celular_1" class="form-control form-control-sm" required="required" maxlength="15">
@@ -129,7 +129,7 @@
 								<label class="label" for="email{{$randId}}">Email</label>
 								<input type="text" id="email{{$randId}}" name="email" class="form-control form-control-sm" minlength="4" maxlength="255">
 							</div>
-						</fieldset>
+						</div>
 					</div>
 				</div>
 				
@@ -243,11 +243,11 @@
 
 						if(id == 'form_pessoa_atualizar'){
 
-							Utilitarios.assistenteMensageAlert('Pessoa atualizada com sucesso');
+							Utilitarios.assistenteModal('Pessoa atualizada com sucesso');
 
 						}else{
 
-							Utilitarios.assistenteMensageAlert('Pessoa cadastrada com sucesso');
+							Utilitarios.assistenteModal('Pessoa cadastrada com sucesso');
 
 						}
 
@@ -255,11 +255,11 @@
 
 						if(id == 'form_pessoa_atualizar'){
 
-							Utilitarios.assistenteMensageAlert('Erro ao atuaolizar registro', 'warning');
+							Utilitarios.assistenteModal('Erro ao atuaolizar registro', 'warning');
 
 						}else{
 
-							Utilitarios.assistenteMensageAlert('Erro ao cadastrar registro', 'warning');
+							Utilitarios.assistenteModal('Erro ao cadastrar registro', 'warning');
 
 						}
 
