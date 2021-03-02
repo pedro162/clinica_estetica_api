@@ -460,7 +460,7 @@ class CobrancaReceberController extends Controller
             $idFiliais          = $result['idFiliais'];
             $idFilial           = $result['idFilial'];
             
-
+            $rcas = Pessoa::where('active', '=', 'yes')->whereIn('id', $rcas)->get();
             if(count($idPessoas) > 1){
                 throw new CobrancaReceberException('Contas a receber de clientes diferentes');
                 

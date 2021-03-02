@@ -146,5 +146,15 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 
 	Route::post('/forma_pagamento/plano/pagamento/json', ['as'=>'forma_pagamento.plano.pagamento.json', 'uses'=>'Admin\FormaPagamentoController@planoPagamentoJson']);
 	Route::post('/forma_pagamento/operador/financeiro/json', ['as'=>'forma_pagamento.operador.financeiro.json', 'uses'=>'Admin\FormaPagamentoController@operadorJson']);
+
+	
+	Route::get('/nfe/index', ['as'=>'nfe.index', 'uses'=>'Admin\NfeController@index']);
+	Route::get('/nfe/create', ['as'=>'nfe.create', 'uses'=>'Admin\NfeController@create']);
+	Route::post('/nfe/store', ['as'=>'nfe.store', 'uses'=>'Admin\NfeController@store']);
+	Route::get('/nfe/edit/{id}', ['as'=>'nfe.edit', 'uses'=>'Admin\NfeController@edit']);
+	Route::put('/nfe/update/{id}', ['as'=>'nfe.update', 'uses'=>'Admin\NfeController@update']);
+	Route::get('/nfe/show/id', ['as'=>'nfe.show', 'uses'=>'Admin\NfeController@show']);
+	Route::get('/nfe/info/{id}', ['as'=>'nfe.info', 'uses'=>'Admin\NfeController@info']);
+	Route::get('/nfe/montagemxml', ['as'=>'nfe.index', 'uses'=>'Admin\NfeController@montagemXml']);
 });
 

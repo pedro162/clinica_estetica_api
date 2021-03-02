@@ -48,14 +48,24 @@
                             <input type="text" id="vrMultas{{$randId}}" name="vrMultas" value="{{number_format($totalMultas, 2, ',', '.')}}" class="form-control form-control-sm">
                         </div>
 
+                        <div class="form-group col-md-3 col-sm-12">
+                            <label class="label" for="rca{{$randId}}">RCA</label>
+                            <select id="rca{{$randId}}" name="rca" class="form-control form-control-sm">
+                            <option value=""></option>
+                                @foreach($rcas as $rc)
+                                    <option value="{{$rc->id}}">{{$rc->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                        <div class="form-group col-md-6 col-sm-12">
+
+                        <div class="form-group col-md-4 col-sm-12">
                             <label class="label" for="vrFinal{{$randId}}">Valor Final</label>
                             <input type="text" id="vrFinal{{$randId}}" value="{{number_format($totalCobrancas + $totalJuros + $totalMultas, 2, ',', '.')}}" name="vrFinal" class="form-control form-control-sm" readonly>
                         </div>
 
                         
-                        <div class="form-group col-md-6 col-sm-12">
+                        <div class="form-group col-md-4 col-sm-12">
                             <label class="label" for="vrDiferenca{{$randId}}">Diferença</label>
                             <input type="text" id="vrDiferenca{{$randId}}" name="vrDiferenca" class="form-control form-control-sm"  readonly>
                         </div>
