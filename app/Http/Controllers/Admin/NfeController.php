@@ -88,6 +88,86 @@ class NfeController extends Controller
 
         $nfe->enderecoEmitente($dados);
 
+        //------------------------------------------------------------------------------
+        
+        $dados                      = [];
+        $dados['xNome']             = 'Luciana';
+        $dados['indIEDest']         = null;
+        $dados['IE']                = '129065820';
+        $dados['ISUF']              = null;
+        $dados['IM']                = null;
+        $dados['email']             = 'lucy@gmail.com';
+        $dados['CNPJ']              = '59635091000184';
+        $dados['CEP']               = null;
+        $dados['idEstrangeiro']     = null;
+        $apenas =[
+            'xNome','IE','email','CNPJ'
+        ];
+        $errors = $validadorXml->Destinatario($dados, $apenas);
+        if(is_array($errors) && (count($errors)> 0)){
+            //
+        }
+        $nfe->Destinatario($dados);
+
+        //---------------------------------------------------------------------------------
+
+        $dados              = [];
+        $dados['xLgr']      = 'Rua nova';
+        $dados['nro']       = '23';
+        $dados['xCpl']      = '';
+        $dados['xBairro']   = 'Ipase de Baixo';
+        $dados['cMun']      = '11300';
+        $dados['xMun']      = 'Sao Luiz';
+        $dados['UF']        = 'MA';
+        $dados['CEP']       = '65061220';
+        $dados['cPais']     = '1058';
+        $dados['xPais']     = 'BRAZIL';
+        $dados['fone']      = '98984257623';
+        $apenas =[
+            'xLgr','nro','xBairro','cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais', 
+        ];
+        $errors = $validadorXml->enderecoDestinatario($dados, $apenas);
+        if(is_array($errors) && (count($errors)> 0)){
+            //
+        }
+
+        $nfe->enderecoDestinatario($dados);
+        
+        //---------------------------------------------------------------------------
+        $dados              = [];
+        $dados['cUF']       = '';
+        $dados['cNF']       = '';
+        $dados['natOp']     = '';
+        $dados['indPag']    = '';
+        $dados['mod']       = '';
+        $dados['serie']     = '';
+        $dados['nNF']       = '';
+        $dados['dhEmi']     = '';
+        $dados['dhSaiEnt']  = '';
+        $dados['tpNF']      = '';
+        $dados['idDest']    = '';
+        $dados['cMunFG']    = '';
+        $dados['tpImp']     = '';
+        $dados['tpEmis']    = '';
+        $dados['cDV']       = '';
+        $dados['tpAmb']     = '';
+        $dados['finNFe']    = '';        
+        $dados['indFinal']  = '';        
+        $dados['indPres']   = '';
+        $dados['procEmi']   = '';
+        $dados['dhCont']    = '';
+        $dados['xJust']     = '';
+        $dados['verProc']   = '';
+        $apenas =[
+            'cUF','cNF','natOp','mod', 'serie', 'nNF', 'dhEmi', 'dhSaiEnt', 'tpNF', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'procEmi', 'verProc'
+        ];
+        $errors = $validadorXml->IdentificacaoDaNota($dados, $apenas);
+        if(is_array($errors) && (count($errors)> 0)){
+            //
+        }
+
+        $nfe->IdentificacaoDaNota($dados);
+
         //Este método retorna o XML em uma string, mesmo que existam erros.
         $xml = $objFacade->getXML();
 

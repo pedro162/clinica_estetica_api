@@ -156,4 +156,312 @@ class VaidateNfe
         return $this->errors;
     } 
 
+
+    public function Destinatario(Array $dados, Array $apenas):Array
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        //Node com os dados do destinatário
+        if(in_array('xNome', $apenas)){
+            if(! (strlen(trim( $dados['xNome'])) > 0)){
+                $this->errors[] = 'Nome do destinatário é obrigatório';
+            }
+        }
+
+        //Indicador da IE do Destinatário
+        if(in_array('indIEDest', $apenas)){
+            if(! (strlen(trim( $dados['indIEDest'])) > 0)){
+                $this->errors[] = 'Indicador da IE do Destinatário é obrigatório';
+            }
+        }
+        //Na NF-e existe o campo xCpl - Complemento (Local de retirada) da NF-e. Esse campo pode ser preenchido com o complemento do endereço do local de retirada, sendo opcional e com no máximo de 60 caracteres.
+        if(in_array('IE', $apenas)){
+            if(! (strlen(trim( $dados['IE'])) > 0)){
+                $this->errors[] = 'IE do destinatário é obrigatório';
+            }
+        }
+        
+        if(in_array('ISUF', $apenas)){
+            if(! (strlen(trim( $dados['ISUF'])) > 0)){
+                $this->errors[] = 'ISUF é obrigatóro.';
+            }
+        }
+
+        if(in_array('IM', $apenas)){
+            if(! (strlen(trim( $dados['IM'])) > 0)){
+                $this->errors[] = 'Código do  município do destinatário é obrigatório';
+            }
+        }
+
+        if(in_array('email', $apenas)){
+            if(! (strlen(trim( $dados['email'])) > 0)){
+                $this->errors[] = 'E-mail  do destinatário é obrigatório';
+            }
+        }
+
+        if(in_array('CNPJ', $apenas)){
+            if(! (strlen(trim( $dados['CNPJ'])) > 0)){
+                $this->errors[] = 'CNPJ do destinatário é  obrigatória';
+            }
+        }
+
+        if(in_array('CPF', $apenas)){
+            if(! (strlen(trim( $dados['CPF'])) > 0)){
+                $this->errors[] = 'CPF do destinatário é  obrigatória';
+            }
+        }
+
+        if(in_array('idEstrangeiro', $apenas)){
+            if(! (strlen(trim( $dados['idEstrangeiro'])) > 0)){
+                $this->errors[] = 'idEstrangeiro do destinatário é  obrigatória';
+            }
+        }
+
+        return $this->errors;
+    } 
+
+
+    public function enderecoDestinatario(Array $dados, Array $apenas)
+    {
+        //Node com o endereço do emitente
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        //Node com os dados do emitente
+        if(in_array('xLgr', $apenas)){
+            if(! (strlen(trim( $dados['xLgr'])) > 0)){
+                $this->errors[] = 'Logaradouro do destinatário é obrigatório';
+            }
+        }
+
+        if(in_array('nro', $apenas)){
+            if(! (strlen(trim( $dados['nro'])) > 0)){
+                $this->errors[] = 'O número é obrigatório';
+            }
+        }
+        //Na NF-e existe o campo xCpl - Complemento (Local de retirada) da NF-e. Esse campo pode ser preenchido com o complemento do endereço do local de retirada, sendo opcional e com no máximo de 60 caracteres.
+        if(in_array('xCpl', $apenas)){
+            if(! (strlen(trim( $dados['xCpl'])) > 0)){
+                $this->errors[] = 'Complemento (Local de retirada) do destinatário é obrigatório';
+            }
+        }
+        
+        if(in_array('xBairro', $apenas)){
+            if(! (strlen(trim( $dados['xBairro'])) > 0)){
+                $this->errors[] = 'Bairro do destinatário é obrigatóro.';
+            }
+        }
+
+        if(in_array('cMun', $apenas)){
+            if(! (strlen(trim( $dados['cMun'])) > 0)){
+                $this->errors[] = 'Código do  município do destinatário é obrigatório';
+            }
+        }
+
+        if(in_array('xMun', $apenas)){
+            if(! (strlen(trim( $dados['xMun'])) > 0)){
+                $this->errors[] = 'Nome do município  do destinatário é obrigatório';
+            }
+        }
+
+        if(in_array('UF', $apenas)){
+            if(! (strlen(trim( $dados['UF'])) > 0)){
+                $this->errors[] = 'UF do destinatário é  obrigatória';
+            }
+        }
+
+        if(in_array('CEP', $apenas)){
+            if(! (strlen(trim( $dados['CEP'])) > 0)){
+                $this->errors[] = 'CEP do destinatário é  obrigatória';
+            }
+        }
+
+        if(in_array('cPais', $apenas)){
+            if(! (strlen(trim( $dados['cPais'])) > 0)){
+                $this->errors[] = 'Código do país do destinatário é  obrigatória';
+            }
+        }
+
+        if(in_array('xPais', $apenas)){
+            if(! (strlen(trim( $dados['xPais'])) > 0)){
+                $this->errors[] = 'Nome do país do destinatário é  obrigatória';
+            }
+        }
+
+        if(in_array('fone', $apenas)){
+            if(! (strlen(trim( $dados['fone'])) > 0)){
+                $this->errors[] = 'Fone do destinatário é  obrigatória';
+            }
+        }
+        
+        return $this->errors;
+    } 
+
+    public function IdentificacaoDaNota(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('cUF', $apenas)){
+            if(! (strlen(trim( $dados['cUF'])) > 0)){
+                $this->errors[] = 'cUF é obrigatório';
+            }
+        }
+
+
+        if(in_array('cNF', $apenas)){
+            if(! (strlen(trim( $dados['cNF'])) > 0)){
+                $this->errors[] = 'cNF é obrigatório';
+            }
+        }
+
+        
+        if(in_array('natOp', $apenas)){
+            if(! (strlen(trim( $dados['natOp'])) > 0)){
+                $this->errors[] = 'natOp é obrigatório';
+            }
+        }
+        
+        if(in_array('indPag', $apenas)){
+            if(! (strlen(trim( $dados['indPag'])) > 0)){
+                $this->errors[] = 'indPag é obrigatóro.';
+            }
+        }
+
+        if(in_array('mod', $apenas)){
+            if(! (strlen(trim( $dados['mod'])) > 0)){
+                $this->errors[] = 'mod é obrigatório';
+            }
+        }
+
+        if(in_array('serie', $apenas)){
+            if(! (strlen(trim( $dados['serie'])) > 0)){
+                $this->errors[] = 'serie é obrigatório';
+            }
+        }
+
+        if(in_array('nNF', $apenas)){
+            if(! (strlen(trim( $dados['nNF'])) > 0)){
+                $this->errors[] = 'nNF é  obrigatória';
+            }
+        }
+
+        if(in_array('dhEmi', $apenas)){
+            if(! (strlen(trim( $dados['dhEmi'])) > 0)){
+                $this->errors[] = 'dhEmi é  obrigatória';
+            }
+        }
+
+        if(in_array('dhSaiEnt', $apenas)){
+            if(! (strlen(trim( $dados['dhSaiEnt'])) > 0)){
+                $this->errors[] = 'dhSaiEnt é  obrigatória';
+            }
+        }
+
+        if(in_array('tpNF', $apenas)){
+            if(! (strlen(trim( $dados['tpNF'])) > 0)){
+                $this->errors[] = 'tpNF é  obrigatória';
+            }
+        }
+
+        if(in_array('idDest', $apenas)){
+            if(! (strlen(trim( $dados['idDest'])) > 0)){
+                $this->errors[] = 'idDest é  obrigatória';
+            }
+        }
+
+        if(in_array('cMunFG', $apenas)){
+            if(! (strlen(trim( $dados['cMunFG'])) > 0)){
+                $this->errors[] = 'cMunFG é  obrigatória';
+            }
+        }
+
+        if(in_array('tpImp', $apenas)){
+            if(! (strlen(trim( $dados['tpImp'])) > 0)){
+                $this->errors[] = 'tpImp é  obrigatória';
+            }
+        }
+
+        if(in_array('tpEmis', $apenas)){
+            if(! (strlen(trim( $dados['tpEmis'])) > 0)){
+                $this->errors[] = 'tpEmis é  obrigatória';
+            }
+        }
+
+        if(in_array('cDV', $apenas)){
+            if(! (strlen(trim( $dados['cDV'])) > 0)){
+                $this->errors[] = 'cDV é  obrigatória';
+            }
+        }
+
+        if(in_array('tpAmb', $apenas)){
+            if(! (strlen(trim( $dados['tpAmb'])) > 0)){
+                $this->errors[] = 'tpAmb é  obrigatória';
+            }
+        }
+
+        if(in_array('finNFe', $apenas)){
+            if(! (strlen(trim( $dados['finNFe'])) > 0)){
+                $this->errors[] = 'finNFe é  obrigatória';
+            }
+        }
+
+        if(in_array('indFinal', $apenas)){
+            if(! (strlen(trim( $dados['indFinal'])) > 0)){
+                $this->errors[] = 'indFinal é  obrigatória';
+            }
+        }
+
+        if(in_array('indPres', $apenas)){
+            if(! (strlen(trim( $dados['indPres'])) > 0)){
+                $this->errors[] = 'indPres é  obrigatória';
+            }
+        }
+
+        if(in_array('procEmi', $apenas)){
+            if(! (strlen(trim( $dados['procEmi'])) > 0)){
+                $this->errors[] = 'procEmi é  obrigatória';
+            }
+        }
+
+        if(in_array('verProc', $apenas)){
+            if(! (strlen(trim( $dados['verProc'])) > 0)){
+                $this->errors[] = 'verProc é  obrigatória';
+            }
+        }
+
+        if(in_array('dhCont', $apenas)){
+            if(! (strlen(trim( $dados['dhCont'])) > 0)){
+                $this->errors[] = 'dhCont é  obrigatória';
+            }
+        }
+
+        if(in_array('xJust', $apenas)){
+            if(! (strlen(trim( $dados['xJust'])) > 0)){
+                $this->errors[] = 'xJust é  obrigatória';
+            }
+        }
+        
+        return $this->errors;
+    }
+    
+
+
+
+
+
+
+
+
+
+
+
+
 }
