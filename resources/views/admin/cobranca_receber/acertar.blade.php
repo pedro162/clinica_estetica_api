@@ -224,6 +224,62 @@
         })
     })
 
+    //------------- salva os acertos/desdobramentos
+
+    $('html body').find('#concluir{{$randId}}').on('click', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        let token       = $('html body #form_receber_acertar{{$randId}}').find('input[name="_token"]:first-child').val()
+        let duplicatas  = "{{$ids}}";
+        let acao 		= $('html body').find('#acao{{$randId}}').val();
+        let rca        = $('html body').find('#rca{{$randId}}').val();
+
+        let formData = new FormData()
+        formData.append('ids', duplicatas)
+        formData.append('_token', token)
+        formData.append('tpAcao', acao);
+        formData.append('rca', rca);
+        let destino = objTable.getDataTable();
+
+        if(Array.isArray(destino)){
+            for(let i = 0; !(i ==destino.length); i++){
+                for(vl in destino[i]){
+                    
+                    formData.append('destinos['+i+']['+vl+']', destino[i][vl])
+                } 
+            }
+        }
+      
+
+        
+
+        $.ajax({
+            url: '/cobranca/receber/acertar/save/'+duplicatas,
+            type: 'POST',
+            data: formData,
+            dataType: 'HTML',
+            processData:false,
+            contentType: false,
+            success: function(response){
+                Utilitarios.assistenteModal(response, 'lg', 'Duplicatas', '900px')
+            },
+            error:function(response, status, error){
+				//console.log(response, status, error)
+				console.log(response);
+				let errors = response.responseJSON;
+				let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
+
+				if(errors.mensagem){
+					let erros = errors.mensagem;
+					console.log(erros);
+					msg+=erros+'<br/>';
+				}
+				Utilitarios.assistenteMensageAlert(msg, 'warning');
+			}
+        })
+    })
+
     $('html body').find('#btn-cob{{$randId}}').on('click', function(ev){
 
         try{

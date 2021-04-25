@@ -10,151 +10,6 @@ $(document).ready(function(ev){
 	})
 	
 
-	
-
-
-	/**
-	*	CHAMA O MODAL DE OPÇÕES DE MARCAS
-	*/
-	$('body').delegate('.assistenteModalMarca', 'click', function(ev){
-
-		let id = $(this).find('input:hidden').val();
-
-		$.ajax({
-			type:'POST',
-			url: '#',
-			data:true,
-			dataType: 'HTML',
-			success: function(response){
-				console.log(response)
-			}
-		})
-
-		let arrLinks = [
-			['Ediar', '/marca/edit/'+id+'', 'btn btn-lg btn-outline-success', 'id_marca_editar'],
-			['Visualizar', '/marca/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_visualizar'],
-			['Excluir', '/marca/info/'+id+'', 'btn btn-lg btn-outline-danger', 'id_marca_deletar']
-
-		];
-
-		Utilitarios.assitentOpcoes(arrLinks);
-	})
-
-
-	
-
-	//edita uma marca específica
-	$('body').delegate('#assistenteModal #id_marca_editar', 'click', function(ev){
-
-
-		ev.preventDefault();
-		let url = $(this).attr('href');
-		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Editar')
-
-	});
-
-	//cadastra uma marca
-	$('body').delegate('div.card a#cadastrar_marca', 'click', function(ev){
-
-		ev.preventDefault();
-		let url = $(this).attr('href');
-		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Cadastrar')
-		Utilitarios.toggleFiltro();
-
-	});
-
-	//chama o preview de deletar marca
-	$('body').delegate('#assistenteModal #id_marca_deletar', 'click', function(ev){
-
-		ev.preventDefault();
-		let url = $(this).attr('href');
-		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Deletar')
-
-	});
-
-	//deleta uma marca
-	$('body').delegate('#assistenteModal #id_marca_destroy', 'click', function(ev){
-
-		ev.preventDefault();
-		let url = $(this).attr('href');
-		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Deletar')
-
-	});
-
-	$('html body').delegate('form#form_marca_cadastrar, form#form_marca_atualizar','submit', function(ev){
-
-		try{
-
-			let url = $(this).attr('action');
-			let id = $(this).attr('id');
-
-			let form = new FormData($(this)[0]);
-			$.ajax({
-				url:url,
-				type:'POST',
-				dataType:'json',
-				data:form,
-				processData:false,
-				contentType:false,
-				success:function(response){
-					console.log(response);
-					console.log(response.mensagem.id);
-
-					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
-
-						if(id == 'form_marca_atualizar'){
-
-							Utilitarios.assistenteMensageAlert('Registro atualizado com sucesso');
-
-						}else{
-
-							Utilitarios.assistenteMensageAlert('Registro cadastrado com sucesso');
-
-						}
-
-					}else{
-
-						if(id == 'form_marca_atualizar'){
-
-							Utilitarios.assistenteMensageAlert('Erro ao atuaolizar registro', 'warning');
-
-						}else{
-
-							Utilitarios.assistenteMensageAlert('Erro ao cadastrar registro', 'warning');
-
-						}
-
-						
-					}
-				},
-				error:function(response, status, error){
-					//console.log(response, status, error)
-					console.log(response.responseJSON);
-					let objErros = response.responseJSON.errors
-					let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
-					for (let prop in objErros){
-						msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
-					}
-
-					Utilitarios.assistenteMensageAlert(msg, 'warning');
-				}
-
-
-			})
-
-		}catch(ex){
-
-			console.log(ex.message);
-		}
-
-		ev.preventDefault();
-	});
-	
-
 	/**
 	*	CHAMA O MODAL DE OPÇÕES DE CATEGORIAS
 	*/
@@ -380,14 +235,14 @@ class Utilitarios{
 	}
 
 
-	static assistenteModal(response, widthModal='lg', title='Titulo', height = null){
-
+	static assistenteModal(response, widthModal='lg', title='Titulo', height = null, idModal=null){
+		
 		Utilitarios.assistenteMensageAlertClear();
 		/*Utilitarios.widthAssistenteModal(widthModal, height);
 		$('html #assistenteModal').find('.modal-body #content_modal').html(response).css({margin: 'auto'});
 		$('html #assistenteModal').find('.modal-header h4.modal-title').html(title)
 		$('html #assistenteModal').modal('show');*/
-		this.createModal(response, widthModal, title, height);
+		return this.createModal(response, widthModal, title, height, idModal);
 	}
 
 	static assistenteMensageAlert(response, cls='success', idModal=''){
@@ -402,6 +257,13 @@ class Utilitarios{
 		
 	}
 
+	static assistenteMensage(mensagem, cls="success", title="", width="xs", height='300px'){
+		mensagem = $('<h5/>').addClass('alert alert-'+cls).html(mensagem).css({textAlign: 'center'});
+		mensagem = $('<div/>').html(mensagem)
+		return this.assistenteModal(mensagem.html(), width, title, height)
+
+	}
+
 	static novoAsistente(){
 		$('html').on('show.bs.modal', '.modal', function (event) {
             var zIndex = 1040 + (10 * $('.modal:visible').length);
@@ -412,9 +274,15 @@ class Utilitarios{
         });
 	}
 
-	static createModal(response='', widthModal='lg', title='Titulo', height = null){
-		let rand = Math.random() * (999 - 1) + 1;
-		rand = String(rand).replace('.', '')
+	static createModal(response='', widthModal='lg', title='Titulo', height = null, id=null){
+		let rand =  Math.floor(Math.random() * (999 - 1) + 1);
+
+		if(id != null){
+			rand = id;
+		}
+		rand = String(rand).replace(/\./g, '')
+		
+		
 		let modal = ` 	<!-- The Modal -->
 			<div class="modal fade" id="assistenteModal${rand}">
 				<div class="" id="modal-size`+rand+`" role="document">
@@ -462,8 +330,21 @@ class Utilitarios{
 			return rand;
 	}
 
+	static gerarRandomico(){
+		let rand = Math.floor(Math.random() * (999 - 1) + 1);
+
+		rand = String(rand).replace(/\./g, '')
+		rand = String(rand).replace(/,/g, '')
+		return rand;
+	}
+
+	static fecharAssistente(idAssistene){
+		$('html').find('#assistenteModal'+idAssistene).find('#closeModal'+idAssistene).trigger('click')
+	}
 
 	static assitentOpcoes(arrLInks, widthOptions='200px', widModal = 'md', height=null){
+		
+		const idModal = this.gerarRandomico();
 
 		let ul = $('<ul/>').addClass('navbar-nav');
 
@@ -484,11 +365,14 @@ class Utilitarios{
 		nav.css('text-align', 'center');
 		nav = $('<div/>').html(nav)
 
-		this.assistenteModal(nav.html(), widModal, 'Opções')
+		//height = null, idModal=null
+		this.assistenteModal(nav.html(), widModal, 'Opções', height, idModal)
+
+		return idModal;
 	}
 
 
-	static assistentAjax(type,url, typeResponse, objRender){
+	static assistentAjax(type,url, typeResponse, objRender, beforeSend=null){
 
 		if(type == 'GET'){
 
@@ -499,6 +383,15 @@ class Utilitarios{
 				success:function(response){
 
 					$(objRender).html(response,);
+
+				},
+				beforeSend: function() {
+					if(beforeSend != null){
+						beforeSend()
+					}
+				},
+				error:function(response, status, error){
+					console.log(response)
 
 				}
 
@@ -514,6 +407,8 @@ class Utilitarios{
 
 	static assistentAjaxModal(type,url, typeResponse, title='titulo', width='lg', heigh = null){
 
+		const rand = this.gerarRandomico();
+		url+='/'+rand
 		if(type == 'GET'){
 
 			$.ajax({
@@ -521,7 +416,7 @@ class Utilitarios{
 				type:type,
 				dataType:typeResponse,
 				success:function(response){
-					Utilitarios.assistenteModal(response, width, title, heigh);
+					Utilitarios.assistenteModal(response, width, title, heigh, rand);
 					
 				}
 
@@ -533,6 +428,7 @@ class Utilitarios{
 
 
 		}
+		return rand;
 	}
 
 
@@ -550,13 +446,13 @@ class Utilitarios{
 
 		switch(width){
 			case'sm':
-				obj.removeClass(lg).removeClass(xs).removeClass(md).addClass(sm).css('max-width', '');
+				obj.removeClass(lg).removeClass(xs).removeClass(md).addClass(sm).css('max-width', '50%');
 			break;
 			case'xs':
-				obj.removeClass(lg).removeClass(sm).removeClass(md).addClass(xs).css('max-width', '');
+				obj.removeClass(lg).removeClass(sm).removeClass(md).addClass(xs).css('max-width', '20%');
 			break;
 			case'md':
-				obj.removeClass(lg).removeClass(sm).removeClass(xs).addClass(md).css('max-width', '');
+				obj.removeClass(lg).removeClass(sm).removeClass(xs).addClass(md).css('max-width', '70%');
 			break;
 			default:
 				obj.removeClass(sm).removeClass(xs).removeClass(md).addClass(lg).css('max-width', '90%');
@@ -680,6 +576,17 @@ class Utilitarios{
 		}
 
 		
+	}
+
+	static adicionarLoading(obj){
+		let html = `
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<imt style="width: '150px'; height:'150px';text-align: 'center';" src="{{asset('img/configuracoes/loader.gif')}}"/>
+				</div>
+			</div>
+		`;
+		obj.html(html)
 	}
 	
 	static foramtCalcCod(number){

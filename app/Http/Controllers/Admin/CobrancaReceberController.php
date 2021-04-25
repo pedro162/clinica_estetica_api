@@ -20,6 +20,7 @@ use \App\User;
 use \App\Rca;
 use \App\Exceptions\CobrancaReceberException;
 use \App\ExceptionApplication;
+use \App\CobrancaReceberDesdobramentoDestino;
 use \App\CobrancaReceberDesdobramento;
 use \App\CobrancaReceberDesdobramentoOrigen;
 use \App\Http\Requests\CobrancaReceberRequest;
@@ -580,40 +581,25 @@ class CobrancaReceberController extends Controller
 
     private function validarDestnos(Array $dados, $tpAcao):Array
     {
-        //dd($dados);
+       
         if(! (is_array($dados) && (count($dados) > 0))){
             throw new CobrancaReceberException('Dados inválidos');
         }
 
-        $ultimaDataDestino = null;
-        $vrCobrancasDestino = 0;
-        for($i = 0; !($i == count($dados) ); $i++){
+        $ultimaDataDestino = Utilitarios::validaData(substr($dados['dtVencimento'], 0, 10)) != false ? $dados['dtVencimento'] : date('Y-m-d');
+        $vrCobranca = Utilitarios::removeMaskMoney($dados['vrCobranca']);
 
-            if($ultimaDataDestino == null){
-                $ultimaDataDestino = Utilitarios::validaData($dados['dtVencimento']) != false ? $dados['dtVencimento'] : date('Y-m-d');
-            }else{
-
-                $data_01 = new \DateTime(Utilitarios::validaData($dados['dtVencimento']) != false ? $dados['dtVencimento'] : date('Y-m-d'));
-                $data_02 = new \DateTime($ultimaDataDestino != null ? $ultimaDataDestino : date('Y-m-d'));
-
-                if($data_01 > $data_02){
-                    $ultimaDataDestino = $data_01;
-                }
-            }
-
-            $vrCobranca = Utilitarios::removeMaskMoney($dados['vrCobranca']);
-            if($vrCobranca === false){
-                throw new CobrancaReceberException('Valor da cobrança é inválido');
-            }
-            $vrCobrancasDestino += $vrCobranca;
-
-            if(! (isset($dados['forma_pagamento_id']) && ($dados['forma_pagamento_id'] > 0)) ){
-                throw new CobrancaReceberException('Forma de pagamento não identificada');
-            }
+        if($vrCobranca === false){
+            throw new CobrancaReceberException('Valor da cobrança é inválido');
         }
+
+        if(! (isset($dados['forma_pagamento_id']) && ($dados['forma_pagamento_id'] > 0)) ){
+            throw new CobrancaReceberException('Forma de pagamento não identificada');
+        }
+        
+
         $dados['ultimaDataDestino'] = $ultimaDataDestino;
-        $dados['vrCobrancasDestino'] = $vrCobrancasDestino;
-        //dd('aqui');
+        $dados['vrCobrancasDestino'] = (float)$vrCobranca;
         return $dados;
 
     }
@@ -626,6 +612,7 @@ class CobrancaReceberController extends Controller
             \DB::beginTransaction();
 
             $dados = $request->all();
+            $val = $dados['destinos'];
             if( (!isset($ids)) || (strlen(trim($ids)) == 0)){
                 return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
             }
@@ -639,19 +626,47 @@ class CobrancaReceberController extends Controller
                 throw new CobrancaReceberException('Parâmetro inválido');
             }
 
-            $result = $this->validaCobrancaReceber($cobrancasArr);
-            $resultDestinos =  $this->validarDestnos($dados['destinos']);
+            //dd($val);
 
-            if((new \DateTime($result['maiorData']) < new \DateTime($resultDestinos['ultimaDataDestino']) ) && ($dados['tpAcao'] == 'acertar') && ($result['hasCartao'] == true)){
-                throw new CobrancaReceberException('Ultima data de destino não pode ser maior que a maior data de origem. Por favor, utilize a opção de desdobramento.');
+            $result = $this->validaCobrancaReceber($cobrancasArr);
+            $resultDestinos['vrCobrancasDestino'] = 0;
+            $ultimaDataDestino = null;
+            if(is_array($val) && ($val > 0)){
+                for($i = 0; !($i == count($val)); $i++){
+                   $val[$i]['forma_pagamento_id'] =  $val[$i]['formPgto'];
+                   $val[$i]['vrCobranca'] =  $val[$i]['valor'];
+                   $val[$i]['dtVencimento'] =  substr($val[$i]['dtVencimento'], 0, 10);
+                   
+                   $resultado = $this->validarDestnos($val[$i], $dados['tpAcao']);
+                   
+                   $resultDestinos['vrCobrancasDestino'] +=  (float)  $resultado['vrCobrancasDestino'];
+
+                   if($ultimaDataDestino == null){
+                        $ultimaDataDestino = Utilitarios::validaData(substr($resultado['dtVencimento'], 0, 10)) != false ? $resultado['dtVencimento'] : date('Y-m-d');
+                    }else{
+            
+                        $data_01 = new \DateTime(Utilitarios::validaData($resultado['dtVencimento']) != false ? substr($resultado['dtVencimento'], 0, 10) : date('Y-m-d'));
+                        $data_02 = new \DateTime($ultimaDataDestino != null ? substr($ultimaDataDestino, 0, 10) : date('Y-m-d'));
+            
+                        if($data_01 > $data_02){
+                            $ultimaDataDestino = $data_01;
+                        }
+                    }
+
+                    if((new \DateTime($result['maiorData']) < new \DateTime($resultado['ultimaDataDestino']) ) && ($dados['tpAcao'] == 'acertar') && ($result['hasCartao'] == true)){
+                        throw new CobrancaReceberException('Ultima data de destino não pode ser maior que a maior data de origem. Por favor, utilize a opção de desdobramento.');
+                    }
+
+                }
             }
 
             if(abs($result['totalCobrancas'] - $resultDestinos['vrCobrancasDestino']) > 0.05){
                 throw new CobrancaReceberException('O total das origens: '.$result['totalCobrancas'].' não pode ser diferente do total de destino: '.$resultDestinos['vrCobrancasDestino'].'.');
             }
+           
 
             //----- valida plano de contas para descontos
-            if($dados['vrDescontos'] > 0){
+            if(isset($val['vrDescontos']) && ($val['vrDescontos'] > 0)){
                 /*if(isset($parametros['financeiro_planodecontas_descontos']) && (strlen(trim($parametros['financeiro_planodecontas_descontos'])) > 0)){
 
                 }*/
@@ -660,14 +675,16 @@ class CobrancaReceberController extends Controller
                 /**
                  * CobrancaPagar::create(['idReferencia'=> $idDesdobramentoReceber, 'tpReferencia'=>CobrancaReceber::class]);
                  */
+
+                $val['vrDesconto'] = $val['vrDescontos'];
             }
 
             $totJursoDispensados = 0;
             $totMultaDispensada = 0;
 
             if($dados['tpAcao'] == 'desdobrar'){
-                $totJursoDispensados    = $result['totalJuros'] - $dados['vrJuros'];
-                $totMultaDispensada     = $result['totalMultas'] -  Utilitarios::removeMaskMoney($dados['vrMultas']);
+                $totJursoDispensados    = $result['totalJuros'] ?? 0 - $dados['vrJuros'] ?? 0;
+                $totMultaDispensada     = $result['totalMultas'] -  Utilitarios::removeMaskMoney($dados['vrMultas'] ?? 0);
             }
 
             if($totJursoDispensados > 0){
@@ -678,7 +695,7 @@ class CobrancaReceberController extends Controller
                 //----- lançar multas dispensadas
             }
 
-            if(Utilitarios::removeMaskMoney($dados['vrAcrescimos']) > 0){
+            if(Utilitarios::removeMaskMoney($dados['vrAcrescimos'] ?? 0) > 0){
                 //----- Lançar crédito para o cliente
             }
 
@@ -687,6 +704,9 @@ class CobrancaReceberController extends Controller
                     'vrJurosDispensados'    =>$totJursoDispensados,
                     'vrMultaDispensada'     =>$totJursoDispensados,
                     'qtdParcelas'           =>count($dados['destinos']),
+                    'vrDesdobramento'       => 0,
+                    'idReferencia'          => 0,
+                    'tpReferencia'          => CobrancaReceber::class,
                     'user_id'               => \Auth::User()->id
                 ]
             );
@@ -695,8 +715,13 @@ class CobrancaReceberController extends Controller
                 throw new CobrancaReceberException('Algo errado aconteceu al desdobrar.');
             }
             $escutaOrigem = true;
-            
-            if(is_array($cobrancasArr) && (count($cobrancasArr) > 0)){
+            $referencias = [];
+            $idReferencia = null;
+            $tpReferencia = null;
+            $idPesoa = null;
+            $rca = [];
+            $dtCompetenciaOrigem = null;
+            if($cobrancasArr){
                 for($i = 0; !($i == count($cobrancasArr)); $i++){
                     $idPlanoContas = $cobrancasArr[$i]->idPlanoContas;
 
@@ -709,7 +734,7 @@ class CobrancaReceberController extends Controller
                         'isTransitoria'                 => 'no',
                         'isAcertada'                    => 'yes',
                         'idPessoaCustodia'              => 1, // configurar a pesso da custódia
-                        'dsJustificativaDesdobramento'  => $dados['dsJustificativaDesdobramento'],
+                        'dsJustificativaDesdobramento'  => $dados['dsJustificativaDesdobramento'] ?? '',
                     ]);
 
                     $rca[$cobrancasArr[$i]->pessoa_id] = $cobrancasArr[$i]->vrCobrancaReceber;
@@ -719,13 +744,14 @@ class CobrancaReceberController extends Controller
                     $idReferencia = $cobrancasArr[$i]->idReferencia;
                     $tpReferencia = $cobrancasArr[$i]->tpReferencia;
                     $dsHistorico = $cobrancasArr[$i]->dsHistorico;
+                    $idPesoa = $cobrancasArr[$i]->pessoa_id;
 
                     $referencias[$cobrancasArr[$i]->idReferencia] = true;
 
                     //inserir origens
                     CobrancaReceberDesdobramentoOrigen::create(
                         [
-                            'c_recebers_id' => $resultCobReceber->id,
+                            'c_recebers_id' => $cobrancasArr[$i]->id,
                             'c_rec_des_id' => $desdobramento->id,
                             'user_id'       =>\Auth::User()->id,
                             'active'        =>'yes'
@@ -735,40 +761,44 @@ class CobrancaReceberController extends Controller
                     // se as origens forem boletos solicitar cancelamento
                 }
             }
-
+           
             $dsHistoricoGeral = 'DESD: '.$desdobramento->id;
-
+           
             if(count($referencias) > 1){
                 $idReferencia = $desdobramento->id;
                 $tpReferencia = CobrancaReceberDesdobramento::class;
             }
            
-            if(is_array($dados['destinos']) && (count($dados['destinos']) > 0)){
+            $destinosArr = [];
+            if(is_array($val) && (count($val) > 0)){
                 $count = 1;
-                for($i=0; !($i == count($dados['destinos'])); $i++){
-                    $cobrancaReceberDest = CobrancaReceber::create(
+                for($i=0; !($i == count($val)); $i++){
+                   $cobrancaReceberDest = CobrancaReceber::create(
                                                 [
                                                     'idReferencia'                  =>$idReferencia,
                                                     'tpReferencia'                  =>$tpReferencia,
-                                                    'pessoa_id'                     =>$dados['destinos'][$i]['idPessoa'],
+                                                    'pessoa_id'                     =>$idPesoa,
                                                     'dtCompetencia'                 =>$dtCompetenciaOrigem,
-                                                    'dtVencimentoCobrancaReceber'   =>$dados['destinos'][$i]['dtVencimentoCobrancaReceber'],
+                                                    'dtVencimentoCobrancaReceber'   =>$val[$i]['dtVencimento'],
                                                     'dsHistorico'                   =>$dsHistoricoGeral ?? NULL,
-                                                    'vrBruto'                       =>$dados['destinos'][$i]['vrCobranca'],
-                                                    'vrCobrancaReceber'             =>$dados['destinos'][$i]['vrCobranca'],
-                                                    'idCobrancaTipo'                =>$dados['destinos'][$i]['idCobrancaTipo'],
-                                                    'pl_pgto_id'                    =>$dados['destinos'][$i]['pl_pgto_id'],
-                                                    'op_finan_id'                   =>$dados['destinos'][$i]['op_finan_id'],
-                                                    'nrDoc'                         =>$dados['destinos'][$i]['nrDoc'] ?? NULL,
-                                                    'idPlanoContaSubConta'          =>$dados['destinos'][$i]['idPlanoContaSubConta'],
+                                                    'vrBruto'                       =>$val[$i]['vrCobranca'],
+                                                    'vrCobrancaReceber'             =>$val[$i]['vrCobranca'],
+                                                    'idCobrancaTipo'                =>$val[$i]['idCobrancaTipo'] ?? $val[$i]['formPgto'],
+                                                    'pl_pgto_id'                    =>$val[$i]['pl_pgto_id'] ?? $val[$i]['planoPgto'],
+                                                    'op_finan_id'                   =>$val[$i]['op_finan_id'] ?? $val[$i]['operadorFinan'],
+                                                    'nrDoc'                         =>$val[$i]['nrDoc'] ?? $val[$i]['cvNsu'] ?? NULL,
+                                                    'idPlanoContaSubConta'          =>$val[$i]['idPlanoContaSubConta'] ?? null,
+                                                    'vrDesconto'                    =>$val[$i]['vrDesconto'] ?? 0,
                                                     'statusCobranca'                =>'aberto',
-                                                    'qtdParcelas'                   =>$dados['destinos'][$i]['qtdParcelas'],
-                                                    'filial_id'                     =>$dados['destinos'][$i]['filial_id'],
+                                                    'qtdParcelas'                   =>$val[$i]['qtdParcelas'] ?? null,
+                                                    'filial_id'                     =>$val[$i]['filial_id'] ?? null ,
                                                     'user_id'                       => \Auth::User()->id,
                                                     'active'                        =>'yes',
-                                                    'pessoa_rca_id'                 =>array_search(max($rca), $rca),
+                                                    'pessoa_rca_id'                 =>$dados['rca'],
                                                     'nrDuplicata'                   =>$nrDuplicata ?? NULL,                            
                                                     'nrParcela'                     =>$count,
+                                                    'idPessoaCustodia'              =>\Auth::User()->id, //configura a pessoa do usuario
+                                                    'filial_id'                     =>1 //configurar a filial
                                                 ]);
 
                     CobrancaReceberDesdobramentoDestino::create([
@@ -777,7 +807,7 @@ class CobrancaReceberController extends Controller
                         'user_id'       =>\Auth::User()->id,
                         'active'        =>'yes'
                     ]);
-
+                    $destinosArr[] =  $cobrancaReceberDest;
                     $count ++;
                 }
 
@@ -790,8 +820,7 @@ class CobrancaReceberController extends Controller
             //throw new ExceptionApplication('Exceção teste');
             \DB::commit();
 
-            dd($dados);
-
+            return response()->json(['data'=>$destinosArr, 'class'=>'success'], 201);
             //return view('admin.cobranca_receber.acertar');
         }catch(\ExceptionApplication $e){
             \DB::rollback();

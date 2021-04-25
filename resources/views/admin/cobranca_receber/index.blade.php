@@ -76,7 +76,7 @@
 				['Ficha de Débitos', '/cobranca/receber/ficha/debitos/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
 			];
 
-			Utilitarios.assitentOpcoes(arrLinks, '100%');
+			Utilitarios.assitentOpcoes(arrLinks, '100%', 'xs');
 		}
 
 	})

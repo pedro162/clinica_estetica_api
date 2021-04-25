@@ -74,7 +74,7 @@ class MarcaController extends Controller
                 $dadosRequest = [];
 
                 $dadosRequest['name']               = $dados['name'];
-                $dadosRequest['user_id']            = 1;//trocar pelo id do usuario logado
+                $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
                 $dadosRequest['active']             = 'yes';
 
                 $registro      = $marca = Marca::create($dadosRequest);
@@ -173,7 +173,7 @@ class MarcaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, $id_assistente)
     {
 
 
@@ -203,11 +203,11 @@ class MarcaController extends Controller
 
 	            //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
 	            //return redirect()->back();
-                return response()->json(['mensagem'=>'Erro, registro não encontrado', 'class'=>'warning'], 400);
+                return response()->json(['mensagem'=>'Erro, registro não encontrado', 'class'=>'warning', '$id_assistente'=>$$id_assistente], 400);
 	        }
 
 
-	        return view('admin.marca.edit', compact('registro'));
+	        return view('admin.marca.edit', compact('registro', 'id_assistente'));
 
 
     	} catch (\Exception $e) {
@@ -241,13 +241,16 @@ class MarcaController extends Controller
                 $dadosRequest = [];
 
                 $dadosRequest['name']               = $dados['name'];
-                $dadosRequest['user_id']            = 1;//trocar pelo id do usuario logado
+                $dadosRequest['user_id']            = \Auth::user()->id;//trocar pelo id do usuario logado
                 $dadosRequest['active']             = 'yes';
 
                 $marca = Marca::find($id);
                 
-                $registro = $marca->update($dadosRequest);
-
+                $response = $marca->update($dadosRequest);
+                
+                if($response == true){
+                    $registro = $marca;
+                }
             });
 
             if($registro != null){
@@ -255,7 +258,7 @@ class MarcaController extends Controller
                 //\Session::flash('mensagem', ['msg'=>'Registro atualizado com sucesso', 'class'=>'alert alert-success']);
 
                 //return redirect()->route('marca.head');
-                return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
+                return response()->json(['data'=>$registro, 'class'=>'success'], 200);
             }
 
             //\Session::flash('mensagem', ['msg'=>'Erroa ao atualizar registro', 'class'=>'alert alert-warning']);

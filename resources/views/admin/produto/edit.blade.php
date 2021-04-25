@@ -1,3 +1,5 @@
+@php $randId = rand(11111, 99999); @endphp
+
 <div class="container">
 	<div class="row mb-5">
 		<div class="col">
@@ -62,3 +64,7 @@
 		</div>
 	</div>	
 </div>
+<script>
+	$("#tabs{{$randId}}").tabs()
+	
+</script>

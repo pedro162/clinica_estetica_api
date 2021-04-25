@@ -99,29 +99,29 @@
 				console.log(response)
 			}
 		})
-
+		
 		let arrLinks = [
-			['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-success', 'id_produto_editar'],
-			['Visualizar', '/produto/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_visualizar'],
-			['Excluir', '/produto/info/'+id+'', 'btn btn-lg btn-outline-danger', 'id_produto_deletar'],
+			//['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
+			['Ediar', '/produto/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
+			['Excluir', '/produto/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar'],
 			['Adicionar Ingredite', '/produto/adiconar/ingrediente/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_adiconar_ingrediente'],
 
 		];
-
-		Utilitarios.assitentOpcoes(arrLinks);
+		//widthOptions='200px', widModal = 'md', height=null
+		Utilitarios.assitentOpcoes(arrLinks, '200px', 'sm', null);
 	})
 
 
 	
 
 	//edita um produto específico view
-	$('body').delegate('#assistenteModal #id_produto_editar', 'click', function(ev){
+	$('body').delegate('#id_produto_editar', 'click', function(ev){
 
 
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Editar')
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Editar', 'md', '700px')
 
 	});
 
@@ -131,7 +131,7 @@
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Cadastrar', 'lg')
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Cadastrar', 'md', '500px')
 		Utilitarios.toggleFiltro();
 
 	});
@@ -142,7 +142,7 @@
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md')
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
 
 	});
 
@@ -155,7 +155,7 @@
 
 			let url = $(this).attr('href');
 			
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar')
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
 
 		}catch(ex){
 			console.log('Erro: '+ex.message);
@@ -240,8 +240,8 @@
 
 		ev.preventDefault();
 		let url = $(this).attr('href');
-		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Adicionar Ingredientes')
+		// width='lg', heigh = null
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Adicionar Ingredientes', 'md', '500px')
 
 	});
 	

@@ -13,6 +13,35 @@ class VaidateNfe
         $this->errors = [];
     }
 
+    
+    public function infNfe(Array $dados, Array $apenas):Array
+    {
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        //Node com os dados do emitente
+        if(in_array('versao', $apenas)){
+            if(! (strlen(trim( $dados['versao'])) > 0)){
+                $this->errors[] = 'A versão da nota é obrigatório';
+            }
+        }
+
+        if(in_array('Id', $apenas)){
+            if(! (strlen(trim( $dados['Id'])) == 44)){
+                $this->errors[] = 'A chave da nota deve ter 44 caractéres';
+            }
+        }
+
+        if(in_array('pk_nItem', $apenas)){
+            if(! (strlen(trim( $dados['pk_nItem'])) === null)){
+                $this->errors[] = 'O pk_nItem deve ser nulo';
+            }
+        }
+
+        return $this->errors;
+    }
+
     public function Emitente(Array $dados, Array $apenas):Array
     {
         
@@ -452,8 +481,155 @@ class VaidateNfe
         return $this->errors;
     }
     
+    public function Produto(Array $dados, Array $apenas)
+    {
+        if(in_array('item', $apenas)){
+            if(! (strlen(trim( $dados['item'])) > 0)){
+                $this->errors[] = 'Item é  obrigatória';
+            }
+        }
 
+        if(in_array('cProd', $apenas)){
+            if(! (strlen(trim( $dados['cProd'])) > 0)){
+                $this->errors[] = 'Código do item é  obrigatória';
+            }
+        }
 
+        if(in_array('cEAN', $apenas)){
+            if(! (strlen(trim( $dados['cEAN'])) > 0)){
+                $this->errors[] = 'Código de barras do item é  obrigatória';
+            }
+        }
+
+        if(in_array('xProd', $apenas)){
+            if(! (strlen(trim( $dados['xProd'])) > 0)){
+                $this->errors[] = 'Nome do item é  obrigatória';
+            }
+        }
+
+        if(in_array('NCM', $apenas)){
+            if(! (strlen(trim( $dados['NCM'])) > 0)){
+                $this->errors[] = 'NCM do item é  obrigatória';
+            }
+        }
+
+        if(in_array('cBenef', $apenas)){
+            if(! (strlen(trim( $dados['cBenef'])) > 0)){
+                $this->errors[] = 'cBenef do item é  obrigatória';
+            }
+        }
+
+        if(in_array('EXTIPI', $apenas)){
+            if(! (strlen(trim( $dados['EXTIPI'])) > 0)){
+                $this->errors[] = 'EXTIPI do item é  obrigatória';
+            }
+        }
+
+        if(in_array('CFOP', $apenas)){
+            if(! (strlen(trim( $dados['CFOP'])) > 0)){
+                $this->errors[] = 'CFOP do item é  obrigatória';
+            }
+        }
+
+        if(in_array('uCom', $apenas)){
+            if(! (strlen(trim( $dados['uCom'])) > 0)){
+                $this->errors[] = 'uCom do item é  obrigatória';
+            }
+        }
+
+        if(in_array('qCom', $apenas)){
+            if(! (strlen(trim( $dados['qCom'])) > 0)){
+                $this->errors[] = 'qCom do item é  obrigatória';
+            }
+        }
+
+        if(in_array('vUnCom', $apenas)){
+            if(! (strlen(trim( $dados['vUnCom'])) > 0)){
+                $this->errors[] = 'vUnCom do item é  obrigatória';
+            }
+        }
+
+        if(in_array('vProd', $apenas)){
+            if(! (strlen(trim( $dados['vProd'])) > 0)){
+                $this->errors[] = 'Valor do item é  obrigatória';
+            }
+        }
+
+        if(in_array('cEANTrib', $apenas)){
+            if(! (strlen(trim( $dados['cEANTrib'])) > 0)){
+                $this->errors[] = 'cEANTrib do item é  obrigatória';
+            }
+        }
+
+        if(in_array('uTrib', $apenas)){
+            if(! (strlen(trim( $dados['uTrib'])) > 0)){
+                $this->errors[] = 'uTrib do item é  obrigatória';
+            }
+        }
+
+        if(in_array('qTrib', $apenas)){
+            if(! (strlen(trim( $dados['qTrib'])) > 0)){
+                $this->errors[] = 'qTrib do item é  obrigatória';
+            }
+        }
+
+        if(in_array('vUnTrib', $apenas)){
+            if(! (strlen(trim( $dados['vUnTrib'])) > 0)){
+                $this->errors[] = 'vUnTrib do item é  obrigatória';
+            }
+        }
+
+        if(in_array('vFrete', $apenas)){
+            if(! (strlen(trim( $dados['vFrete'])) > 0)){
+                $this->errors[] = 'vFrete do item é  obrigatória';
+            }
+        }
+
+        if(in_array('vSeg', $apenas)){
+            if(! (strlen(trim( $dados['vSeg'])) > 0)){
+                $this->errors[] = 'vSeg do item é  obrigatória';
+            }
+        }
+
+        if(in_array('vDesc', $apenas)){
+            if(! (strlen(trim( $dados['vDesc'])) > 0)){
+                $this->errors[] = 'Valor do desconto é  obrigatória';
+            }
+        }
+
+        if(in_array('vOutro', $apenas)){
+            if(! (strlen(trim( $dados['vOutro'])) > 0)){
+                $this->errors[] = 'vOutro do item é  obrigatória';
+            }
+        }
+
+        if(in_array('indTot', $apenas)){
+            if(! (strlen(trim( $dados['indTot'])) > 0)){
+                $this->errors[] = 'indTot do item é  obrigatória';
+            }
+        }
+
+        if(in_array('xPed', $apenas)){
+            if(! (strlen(trim( $dados['xPed'])) > 0)){
+                $this->errors[] = 'xPed do item é  obrigatória';
+            }
+        }
+
+        if(in_array('nItemPed', $apenas)){
+            if(! (strlen(trim( $dados['nItemPed'])) > 0)){
+                $this->errors[] = 'nItemPed do item é  obrigatória';
+            }
+        }
+
+        if(in_array('nFCI', $apenas)){
+            if(! (strlen(trim( $dados['nFCI'])) > 0)){
+                $this->errors[] = 'nFCI do item é  obrigatória';
+            }
+        }
+        
+        return $this->errors;
+    }
+    
 
 
 

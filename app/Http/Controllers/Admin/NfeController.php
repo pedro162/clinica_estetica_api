@@ -9,6 +9,7 @@ use \App\Fiscal\VaidateNfe;
 use NFePHP\NFe\Make;
 
 use \App\Fiscal\FacadeNfe;
+use stdClass;
 
 class NfeController extends Controller
 {
@@ -35,143 +36,263 @@ class NfeController extends Controller
      */
     public function create()
     {
-        $objFacade = new FacadeNfe();
-        $validadorXml = new VaidateNfe();
-        $nfe = new Nfe($objFacade);
 
-        //---------------------------
-
-
-        $dados              = [];
-        $dados['xNome']     = 'Pedro';
-        $dados['xFant']     = 'Pedro Produções';
-        $dados['IE']        = '128456701';
-        $dados['IEST']      = null;
-        $dados['IM']        = null;
-        $dados['CNAE']      = null;
-        $dados['CRT']       = '1';
-        $dados['CNPJ']      = '03810070000101'; //indicar apenas um CNPJ ou CPF
-        $dados['CPF']       = null;
+        try{
         
-        $apenas =[
-            'xNome','CNPJ','CRT',
-        ];
+            $objFacade = new FacadeNfe();
+            $validadorXml = new VaidateNfe();
+            $nfe = new Nfe($objFacade);
 
-        $errors = $validadorXml->Emitente($dados, $apenas);
-        if(is_array($errors) && (count($errors)> 0)){
-            //
+
+            //--------------------------------------------------------------------
+
+            $dados              = [];
+            $dados['versao']    = '4.00';
+            $dados['Id']        = 'NFe52210303810070000101550010000000101000000010';
+            $dados['pk_nItem']  = null;
+
+            $apenas = ['versao', 'Id', 'pk_nItem'];
+            $errors = $validadorXml->Emitente($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                //
+            }
+            $nfe->infNfe($dados);
+            //--------------------------------------------------------------------
+
+
+            $dados              = [];
+            $dados['xNome']     = 'Pedro';
+            $dados['xFant']     = 'Pedro Produções';
+            $dados['IE']        = '128456701';
+            $dados['IEST']      = null;
+            $dados['IM']        = null;
+            $dados['CNAE']      = null;
+            $dados['CRT']       = '1';
+            $dados['CNPJ']      = '03810070000101'; //indicar apenas um CNPJ ou CPF
+            $dados['CPF']       = null;
+            
+            $apenas =[
+                'xNome','CNPJ','CRT',
+            ];
+
+            $errors = $validadorXml->Emitente($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                //
+            }
+            $nfe->Emitente($dados);
+
+
+
+            //----------------------------------------
+            $dados              = [];
+            $dados['xLgr']      = 'Rua nova';
+            $dados['nro']       = '23';
+            $dados['xCpl']      = '';
+            $dados['xBairro']   = 'Ipase de Baixo';
+            $dados['cMun']      = '11300';
+            $dados['xMun']      = 'Sao Luiz';
+            $dados['UF']        = 'MA';
+            $dados['CEP']       = '65061220';
+            $dados['cPais']     = '1058';
+            $dados['xPais']     = 'BRAZIL';
+            $dados['fone']      = '98984257623';
+            $apenas =[
+                'xLgr','nro','xBairro','cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais', 
+            ];
+            $errors = $validadorXml->enderecoEmitente($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                //
+            }
+
+            $nfe->enderecoEmitente($dados);
+
+            //------------------------------------------------------------------------------
+            
+            $dados                      = [];
+            $dados['xNome']             = 'Luciana';
+            $dados['indIEDest']         = 1;
+            $dados['IE']                = '129065820';
+            $dados['ISUF']              = null;
+            $dados['IM']                = null;
+            $dados['email']             = 'lucy@gmail.com';
+            $dados['CNPJ']              = '59635091000184';
+            $dados['CEP']               = null;
+            $dados['idEstrangeiro']     = null;
+            $apenas =[
+                'xNome','IE','email','CNPJ'
+            ];
+            $errors = $validadorXml->Destinatario($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                //
+            }
+            $nfe->Destinatario($dados);
+
+            //---------------------------------------------------------------------------------
+
+            $dados              = [];
+            $dados['xLgr']      = 'Rua nova';
+            $dados['nro']       = '23';
+            $dados['xCpl']      = '';
+            $dados['xBairro']   = 'Ipase de Baixo';
+            $dados['cMun']      = '11300';
+            $dados['xMun']      = 'Sao Luiz';
+            $dados['UF']        = 'MA';
+            $dados['CEP']       = '65061220';
+            $dados['cPais']     = '1058';
+            $dados['xPais']     = 'BRAZIL';
+            $dados['fone']      = '98984257623';
+            $apenas =[
+                'xLgr','nro','xBairro','cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais', 
+            ];
+            $errors = $validadorXml->enderecoDestinatario($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                //
+            }
+
+            $nfe->enderecoDestinatario($dados);
+            
+            //---------------------------------------------------------------------------
+            $dados              = [];
+            $dados['cUF']       = '52'; //codigo numerico do estado
+            $dados['cNF']       = '1'; //numero aleatório da NF
+            $dados['natOp']     = 'Venda de Produto'; //natureza da operação
+            $dados['indPag']    = '1'; //0=Pagamento à vista; 1=Pagamento a prazo; 2=Outros
+            $dados['mod']       = '55'; //modelo da NFe 55 ou 65 essa última NFCe
+            $dados['serie']     = '1'; //serie da NFe
+            $dados['nNF']       = '10'; // numero da NFe 
+            $dados['dhEmi']     = date("Y-m-d\TH:i:sP");;
+            $dados['dhSaiEnt']  = date("Y-m-d\TH:i:sP"); // Nâo informar para nfce
+            $dados['tpNF']      = '1'; 
+            $dados['idDest']    = '1'; //1=Operação interna; 2=Operação interestadual; 3=Operação com exterior.
+            $dados['cMunFG']    = '5200258';
+            $dados['tpImp']     = '1';
+            $dados['tpEmis']    = '1';
+            $dados['cDV']       = '';
+            $dados['tpAmb']     = '2';  //1=Produção; 2=Homologação
+            $dados['finNFe']    = '1';  //1=NF-e normal; 2=NF-e complementar; 3=NF-e de ajuste; 4=Devolução/Retorno.
+            $dados['indFinal']  = '0';  //0=Normal; 1=Consumidor final;       
+            $dados['indPres']   = '9';  //0=Não se aplica (por exemplo, Nota Fiscal complementar ou de ajuste);
+                                        //1=Operação presencial;
+                                        //2=Operação não presencial, pela Internet;
+                                        //3=Operação não presencial, Teleatendimento;
+                                        //4=NFC-e em operação com entrega a domicílio;
+                                        //9=Operação não presencial, outros.
+            
+            $dados['procEmi']   = '0';  //0=Emissão de NF-e com aplicativo do contribuinte;
+                                        //1=Emissão de NF-e avulsa pelo Fisco;
+                                        //2=Emissão de NF-e avulsa, pelo contribuinte com seu certificado digital, através do site do Fisco;
+                                        //3=Emissão NF-e pelo contribuinte com aplicativo fornecido pelo Fisco.
+            $dados['dhCont']    = '';   //entrada em contingência AAAA-MM-DDThh:mm:ssTZD
+            $dados['xJust']     = '';   //Justificativa da entrada em contingência
+            $dados['verProc']   = '1,0'; //versão do aplicativo emissor
+            
+            $apenas =[
+                'cUF','cNF','natOp','mod', 'serie', 'nNF', 'dhEmi', 'dhSaiEnt', 'tpNF', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'procEmi', 'verProc'
+            ];
+            $errors = $validadorXml->IdentificacaoDaNota($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                //
+            }
+
+            $nfe->IdentificacaoDaNota($dados);
+
+
+            //-----------------------------------------------------------------------------------------------
+            
+            $aP[] = array(
+                //'nItem' => 1,
+                'item' => 1,
+                'cProd' => '15',
+                'cEAN' => '97899072659522',
+                'xProd' => 'Chopp Pilsen - Barril 30 Lts',
+                'NCM' => '22030000',
+                'EXTIPI' => '',
+                'CFOP' => '5101',
+                'uCom' => 'Un',
+                'qCom' => '4',
+                'vUnCom' => '210.00',
+                'vProd' => '840.00',
+                'cEANTrib' => '',
+                'uTrib' => 'Lt',
+                'qTrib' => '120',
+                'vUnTrib' => '7.00',
+                'vFrete' => '',
+                'vSeg' => '',
+                'vDesc' => '',
+                'vOutro' => '',
+                'indTot' => '1',
+                'xPed' => '16',
+                'nItemPed' => '1',
+                'nFCI' => '',
+                'cBenef'=>''
+            );
+            $apenas =[
+                'item',
+                'cProd', 
+                'xProd', 
+                'cEAN',
+                'CFOP',
+                'NCM',
+                'uCom',
+                'qCom',
+                'vUnCom',
+                'vProd',
+                'uTrib',
+                'qTrib',
+                'vUnTrib',
+                'indTot',   
+            ];
+               
+            foreach ($aP as $prod) {
+                $prod = (object) $prod;
+                $dados              = [];
+                $dados['item']      = $prod->item; //item da NFe
+                $dados['cProd']     = $prod->cProd;
+                $dados['cEAN']      = $prod->cEAN;
+                $dados['xProd']     = $prod->xProd;
+                $dados['NCM']       = $prod->NCM;
+                $dados['cBenef']    = $prod->cBenef; //incluido no layout 4.00
+
+                $dados['EXTIPI']    = $prod->EXTIPI;
+                $dados['CFOP']      = $prod->CFOP;
+                $dados['uCom']      = $prod->uCom;
+                $dados['qCom']      = $prod->qCom;
+                $dados['vUnCom']    = $prod->vUnCom;
+                $dados['vProd']     = $prod->vProd;
+                $dados['cEANTrib']  = $prod->cEANTrib;
+                $dados['uTrib']     = $prod->uTrib;
+                $dados['qTrib']     = $prod->qTrib;
+                $dados['vUnTrib']   = $prod->vUnTrib;
+                $dados['vFrete']    = $prod->vFrete;
+                $dados['vSeg']      = $prod->vSeg;
+                $dados['vDesc']     = $prod->vDesc;
+                $dados['vOutro']    = $prod->vOutro;
+                $dados['indTot']    = $prod->indTot;
+                $dados['xPed']      = $prod->xPed;
+                $dados['nItemPed']  = $prod->nItemPed;
+                $dados['nFCI']      = $prod->nFCI;
+                
+                $errors = $validadorXml->Produto($dados, $apenas);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+
+                $nfe->Produto($dados);
+            }
+            
+            
+
+            //------------------------------------------------------------------------------------------------
+
+            //Este método retorna o XML em uma string, mesmo que existam erros.
+            $xml = $objFacade->getXML();
+
+            echo $xml;
+            //dd($objFacade->getErrors());
+        }catch(\Exception $ex){
+            dd($ex);
+            //dd($objFacade->getErrors());
         }
-        $nfe->Emitente($dados);
-
-
-
-        //----------------------------------------
-        $dados              = [];
-        $dados['xLgr']      = 'Rua nova';
-        $dados['nro']       = '23';
-        $dados['xCpl']      = '';
-        $dados['xBairro']   = 'Ipase de Baixo';
-        $dados['cMun']      = '11300';
-        $dados['xMun']      = 'Sao Luiz';
-        $dados['UF']        = 'MA';
-        $dados['CEP']       = '65061220';
-        $dados['cPais']     = '1058';
-        $dados['xPais']     = 'BRAZIL';
-        $dados['fone']      = '98984257623';
-        $apenas =[
-            'xLgr','nro','xBairro','cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais', 
-        ];
-        $errors = $validadorXml->enderecoEmitente($dados, $apenas);
-        if(is_array($errors) && (count($errors)> 0)){
-            //
-        }
-
-        $nfe->enderecoEmitente($dados);
-
-        //------------------------------------------------------------------------------
-        
-        $dados                      = [];
-        $dados['xNome']             = 'Luciana';
-        $dados['indIEDest']         = null;
-        $dados['IE']                = '129065820';
-        $dados['ISUF']              = null;
-        $dados['IM']                = null;
-        $dados['email']             = 'lucy@gmail.com';
-        $dados['CNPJ']              = '59635091000184';
-        $dados['CEP']               = null;
-        $dados['idEstrangeiro']     = null;
-        $apenas =[
-            'xNome','IE','email','CNPJ'
-        ];
-        $errors = $validadorXml->Destinatario($dados, $apenas);
-        if(is_array($errors) && (count($errors)> 0)){
-            //
-        }
-        $nfe->Destinatario($dados);
-
-        //---------------------------------------------------------------------------------
-
-        $dados              = [];
-        $dados['xLgr']      = 'Rua nova';
-        $dados['nro']       = '23';
-        $dados['xCpl']      = '';
-        $dados['xBairro']   = 'Ipase de Baixo';
-        $dados['cMun']      = '11300';
-        $dados['xMun']      = 'Sao Luiz';
-        $dados['UF']        = 'MA';
-        $dados['CEP']       = '65061220';
-        $dados['cPais']     = '1058';
-        $dados['xPais']     = 'BRAZIL';
-        $dados['fone']      = '98984257623';
-        $apenas =[
-            'xLgr','nro','xBairro','cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais', 
-        ];
-        $errors = $validadorXml->enderecoDestinatario($dados, $apenas);
-        if(is_array($errors) && (count($errors)> 0)){
-            //
-        }
-
-        $nfe->enderecoDestinatario($dados);
-        
-        //---------------------------------------------------------------------------
-        $dados              = [];
-        $dados['cUF']       = '';
-        $dados['cNF']       = '';
-        $dados['natOp']     = '';
-        $dados['indPag']    = '';
-        $dados['mod']       = '';
-        $dados['serie']     = '';
-        $dados['nNF']       = '';
-        $dados['dhEmi']     = '';
-        $dados['dhSaiEnt']  = '';
-        $dados['tpNF']      = '';
-        $dados['idDest']    = '';
-        $dados['cMunFG']    = '';
-        $dados['tpImp']     = '';
-        $dados['tpEmis']    = '';
-        $dados['cDV']       = '';
-        $dados['tpAmb']     = '';
-        $dados['finNFe']    = '';        
-        $dados['indFinal']  = '';        
-        $dados['indPres']   = '';
-        $dados['procEmi']   = '';
-        $dados['dhCont']    = '';
-        $dados['xJust']     = '';
-        $dados['verProc']   = '';
-        $apenas =[
-            'cUF','cNF','natOp','mod', 'serie', 'nNF', 'dhEmi', 'dhSaiEnt', 'tpNF', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'procEmi', 'verProc'
-        ];
-        $errors = $validadorXml->IdentificacaoDaNota($dados, $apenas);
-        if(is_array($errors) && (count($errors)> 0)){
-            //
-        }
-
-        $nfe->IdentificacaoDaNota($dados);
-
-        //Este método retorna o XML em uma string, mesmo que existam erros.
-        $xml = $objFacade->getXML();
-
-        echo $xml;
 
     }
     public function montagemXml()

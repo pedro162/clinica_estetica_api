@@ -1,2 +1,21 @@
 
 div.card .card-body, div.card .card-footer{display: none;}
+.input-pdv{
+border: 3px solid rgb(180, 173, 173, 0.5);
+}
+
+.obs-pdv{
+    height: 20vh;
+    border: 3px solid rgb(180, 173, 173, 0.5);
+}
+
+.container-itens-pdv{
+    height: 60vh;
+    border: 3px solid rgb(180, 173, 173, 0.5);
+}
+
+.btn-acoes-dpv, .btn-operador-pedidos-pdv, .btn-concluir-pdv{
+    width: 100%;
+    height: 8vh;
+    border-radius: 50px;
+}

@@ -16,6 +16,18 @@ class Nfe
         $this->objFacadeNfe = $obj;
     }
 
+    public function infNfe(Array $dados)
+    {
+        //contêm os dados dos campos, nomeados conforme manual
+
+        $std = new \stdClass();
+        $std->versao    = $dados['versao']; //versão do layout (string)
+        $std->Id        = $dados['Id']; //se o Id de 44 digitos não for passado será gerado automaticamente
+        $std->pk_nItem  = $dados['pk_nItem']; //deixe essa variavel sempre como NULL
+
+        $this->objFacadeNfe->taginfNFe($std);
+    }
+
     public function Emitente(Array $dados)
     {
         
@@ -167,7 +179,37 @@ class Nfe
 
     public function Produto(Array $dados)
     {
+        //Node de dados do produto/serviço
 
+        $std = new \stdClass();
+        $std->item      = $dados['item']; //item da NFe
+        $std->cProd     = $dados['cProd'];
+        $std->cEAN      = $dados['cEAN'];
+        $std->xProd     = $dados['xProd'];
+        $std->NCM       = $dados['NCM'];
+
+        $std->cBenef    = $dados['cBenef']; //incluido no layout 4.00
+
+        $std->EXTIPI    = $dados['EXTIPI'];
+        $std->CFOP      = $dados['CFOP'];
+        $std->uCom      = $dados['uCom'];
+        $std->qCom      = $dados['qCom'];
+        $std->vUnCom    = $dados['vUnCom'];
+        $std->vProd     = $dados['vProd'];
+        $std->cEANTrib  = $dados['cEANTrib'];
+        $std->uTrib     = $dados['uTrib'];
+        $std->qTrib     = $dados['qTrib'];
+        $std->vUnTrib   = $dados['vUnTrib'];
+        $std->vFrete    = $dados['vFrete'];
+        $std->vSeg      = $dados['vSeg'];
+        $std->vDesc     = $dados['vDesc'];
+        $std->vOutro    = $dados['vOutro'];
+        $std->indTot    = $dados['indTot'];
+        $std->xPed      = $dados['xPed'];
+        $std->nItemPed  = $dados['nItemPed'];
+        $std->nFCI      = $dados['nFCI'];
+        
+        $this->objFacadeNfe->tagprod($std);
     } 
 
 

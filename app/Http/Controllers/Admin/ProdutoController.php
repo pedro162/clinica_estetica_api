@@ -9,6 +9,7 @@ use \App\Http\Requests\ProdutoRequest;
 use \App\Produto;
 use \App\Marca;
 use \App\Categoria;
+use \App\Exceptions\ProdutoException;
 
 class ProdutoController extends Controller
 {
@@ -180,7 +181,29 @@ class ProdutoController extends Controller
      */
     public function show($id)
     {
-        //
+        try{
+
+            if( (!isset($id)) || ($id <= 0)){
+                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            }
+
+            \DB::beginTransaction();
+            $registro = Produto::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            if(! $registro){
+                throw new ProdutoException('Registro não encontrado');
+            }
+            \DB::commit();
+
+            return view('admin.produto.container', compact('registro'));
+        
+        }catch(ProdutoException $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+       
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
     }
 
 
@@ -233,7 +256,7 @@ class ProdutoController extends Controller
     public function edit($id)
     {
         try{
-
+           // sleep(30);
             if($id <= 0){
 
                  \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);

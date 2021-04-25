@@ -66,6 +66,8 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+		let idModalOptions = null;
+		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
 			ev.preventDefault();
 			Utilitarios.toggleFiltro();
@@ -76,13 +78,94 @@
 
 
 			ev.preventDefault();
-			let url = '/marca/index';
+			atualizaRelatorio();
+
+		});
+
+		function atualizaRelatorio( url = '/marca/index'){
 
 			let objResponse = $('html body').find('div#response-request');
 			Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
 			Utilitarios.toggleFiltro();
+		}
+
+
+
+		/**
+		*	CHAMA O MODAL DE OPÇÕES DE MARCAS
+		*/
+		$('body').delegate('.assistenteModalMarca', 'click', function(ev){
+
+			let id = $(this).find('input:hidden').val();
+
+			$.ajax({
+				type:'POST',
+				url: '#',
+				data:true,
+				dataType: 'HTML',
+				success: function(response){
+					console.log(response)
+				}
+			})
+
+			let arrLinks = [
+				['Ediar', '/marca/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_editar{{$randId}}'],
+				['Visualizar', '/marca/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_visualizar{{$randId}}'],
+				['Excluir', '/marca/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_deletar{{$randId}}']
+
+			];
+
+			let idModal = Utilitarios.assitentOpcoes(arrLinks, '100%', 'xs');
+			idModalOptions = idModal;
+		})
+
+
+
+
+		//edita uma marca específica
+		$('body').delegate('#id_marca_editar{{$randId}}', 'click', function(ev){
+
+
+			ev.preventDefault();
+			let url = $(this).attr('href');
+
+			Utilitarios.fecharAssistente(idModalOptions);
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Editar', 'sm', '400px')
 
 		});
 
+		//cadastra uma marca
+		$('body').delegate('div.card a#cadastrar_marca', 'click', function(ev){
+
+			ev.preventDefault();
+			let url = $(this).attr('href');
+
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Cadastrar')
+			Utilitarios.toggleFiltro();
+
+		});
+
+		//chama o preview de deletar marca
+		$('body').delegate('#id_marca_deletar{{$randId}}', 'click', function(ev){
+
+			ev.preventDefault();
+			let url = $(this).attr('href');
+
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Deletar')
+
+		});
+
+		//deleta uma marca
+		$('body').delegate('#id_marca_destroy{{$randId}}', 'click', function(ev){
+
+			ev.preventDefault();
+			let url = $(this).attr('href');
+
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Deletar')
+
+		});
+
+		
 	</script>
 @endsection
+
