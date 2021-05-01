@@ -18,4 +18,10 @@ border: 3px solid rgb(180, 173, 173, 0.5);
     width: 100%;
     height: 8vh;
     border-radius: 50px;
+    font-weight: bolder;
+}
+
+
+.btn-pesquisa{
+    cursor: pointer;
 }

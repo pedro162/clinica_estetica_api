@@ -101,7 +101,7 @@ class ProdutoController extends Controller
                 $dadosRequest['price']              = $dados['price'];
                 //$dadosRequest['spotigth']           = $dados['spotigth'];
                 $dadosRequest['stock']              = $dados['stock'];
-                $dadosRequest['user_id']            = 1;//trocar pelo id do usuario logado
+                $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
                 $dadosRequest['active']             = 'yes';
 
 
@@ -537,5 +537,60 @@ class ProdutoController extends Controller
         }
         
         
+    }
+
+    /**
+     * Return a listing of the resource in json.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function indexJson(Request $request)
+    {
+        try{
+
+            $params = $request->all();
+
+            
+            \DB::beginTransaction();
+
+            //$registro = \App\Produto::where('active', '=', 'yes')->get();
+            $registro = \DB::table('produtos')->join('categoria_produto', function($join){
+                
+                $join->on('produtos.id', '=', 'categoria_produto.produto_id');
+
+            })->join('categorias', function($join){
+
+                $join->on('categorias.id', '=', 'categoria_produto.categoria_id');
+
+            })->join('marcas', function($join){
+
+                $join->on('marcas.id', '=' ,'produtos.marca_id');
+
+            })->select('produtos.*', 'categorias.name as categoria', 'marcas.name as marca')
+                ->where('categoria_produto.active', '=', 'yes')
+                ->where('produtos.active', '=', 'yes')
+                ->where('categoria_produto.tipo', '=', 'principal')
+                ->where('produtos.produto_final', '=', 'yes')
+                ->where('produtos.revenda', '=', 'yes');
+           
+            if(isset($params['nmProduto']) && (strlen(trim($params['nmProduto'])) > 0)  ){
+                $registro->where('produtos.name', 'like', '%'.trim($params['nmProduto']).'%');
+            }
+
+            $data = $registro->get();
+
+            \DB::commit();
+
+            return response()->json(['data'=>$data, 'class'=>'success'], 201);
+
+        }catch(ProdutoException $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
     }
 }

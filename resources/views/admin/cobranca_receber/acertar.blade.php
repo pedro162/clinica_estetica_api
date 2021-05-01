@@ -15,7 +15,7 @@
 
                         <div class="form-group col-md-2 col-sm-12">
                             <label class="label" for="acao{{$randId}}">Ação</label>
-                            <select id="acao{{$randId}}" name="acao" class="form-control form-control-sm" required="required" >
+                            <select id="acao{{$randId}}" name="acao" class="form-control form-control-sm ajusta-desdobra-{{$randId}}" required="required" >
                                 <option value="acertar">Acertar</option>
                                 <option value="desdobrar">Desdobrar</option>
                             </select>
@@ -28,24 +28,24 @@
 
                         <div class="form-group col-md-2 col-sm-12">
                             <label class="label" for="vrDescontos{{$randId}}">Descontos</label>
-                            <input type="text" id="vrDescontos{{$randId}}" name="vrDescontos" class="form-control form-control-sm" required="required"  minlength="3" maxlength="255">
+                            <input type="text" id="vrDescontos{{$randId}}" name="vrDescontos" class="form-control form-control-sm ajusta-desdobra-{{$randId}}" required="required"  minlength="3" maxlength="255">
                         </div>
 
                         <div class="form-group col-md-2 col-sm-12">
                             <label class="label" for="vrCreditoCliente{{$randId}}">Acréscimos (Crédito de Cliente)</label>
-                            <input type="text" id="vrCreditoCliente{{$randId}}" name="vrCreditoCliente" class="form-control form-control-sm" required="required">
+                            <input type="text" id="vrCreditoCliente{{$randId}}" name="vrCreditoCliente" class="form-control form-control-sm ajusta-desdobra-{{$randId}}" required="required">
                         </div>
 
                         
                         <div class="form-group col-md-2 col-sm-12">
                             <label class="label" for="vrJuros{{$randId}}">Juros</label>
-                            <input type="text" id="vrJuros{{$randId}}" value="{{number_format($totalJuros, 2, ',', '.')}}" name="vrJuros" class="form-control form-control-sm">
+                            <input type="text" id="vrJuros{{$randId}}" value="{{number_format($totalJuros, 2, ',', '.')}}" name="vrJuros" class="form-control form-control-sm ajusta-desdobra-{{$randId}}">
                         </div>
                         
 
                         <div class="form-group col-md-2 col-sm-12">
                             <label class="label" for="vrMultas{{$randId}}">Multas</label>
-                            <input type="text" id="vrMultas{{$randId}}" name="vrMultas" value="{{number_format($totalMultas, 2, ',', '.')}}" class="form-control form-control-sm">
+                            <input type="text" id="vrMultas{{$randId}}" name="vrMultas" value="{{number_format($totalMultas, 2, ',', '.')}}" class="form-control form-control-sm ajusta-desdobra-{{$randId}}">
                         </div>
 
                         <div class="form-group col-md-3 col-sm-12">
@@ -563,7 +563,7 @@
 
     //#, , , , , , #vrDescontos{{$randId}}, #vrDuplicatas{{$randId}}
 
-	$('html body').delegate('#vrDescontos{{$randId}}, #vrDiferenca{{$randId}} , #vrFinal{{$randId}}, #vrMultas{{$randId}}, #vrJuros{{$randId}}, #vrCreditoCliente{{$randId}} ', 'change', function(){
+	$('html body').delegate('.ajusta-desdobra-{{$randId}}', 'change', function(){
 		try{
              
 			let result = calculaTotalComDescontoAcrescimos();
@@ -649,21 +649,42 @@
         vrMultas            = Utilitarios.foramtCalcCod(vrMultas);
         vrCreditoCliente    = Utilitarios.foramtCalcCod(vrCreditoCliente);
 
+        if(isNaN(vrDuplicatas)){
+            vrDuplicatas = 0;
+        }
+
+        if(isNaN(vrDescontos)){
+            vrDescontos = 0;
+        }
+
+        if(isNaN(vrJuros)){
+            vrJuros = 0;
+        }
+
+        if(isNaN(vrMultas)){
+            vrMultas = 0;
+        }
+
+        if(isNaN(vrCreditoCliente)){
+            vrCreditoCliente = 0;
+        }
+
         if((vrDescontos > 0) && (vrCreditoCliente > 0)){
-            alert('Não é possível atriuir descontos e crédotos de forma simultânea.')
+            alert('Não é possível atriuir descontos e créditos de forma simultânea.')
             return 0;
         }
         
         if(acao.trim().toLowerCase() == 'acertar'){
            
-            let valorFinal = (vrDuplicatas + vrCreditoCliente)- vrDescontos;
+            let valorFinal = (Number(vrDuplicatas) + Number(vrCreditoCliente))- Number(vrDescontos);
             vrFinal.val(Utilitarios.formatMoney(valorFinal))
             return Utilitarios.foramtCalcCod(valorFinal);
 
         }else if(acao.trim().toLowerCase() == 'desdobrar'){
 
-            let valorFinal = (vrDuplicatas + vrJuros + vrMultas ) - vrDescontos;
+            let valorFinal = ( Number(vrDuplicatas) + Number(vrJuros) + Number(vrMultas) + Number(vrCreditoCliente)) - Number(vrDescontos);
             vrFinal.val(Utilitarios.formatMoney(valorFinal))
+            
             return Utilitarios.foramtCalcCod(valorFinal);
 
         }else{

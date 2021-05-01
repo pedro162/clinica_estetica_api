@@ -34,7 +34,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/produto/destroy/{id}/{id_assistente?}', ['as'=>'produto.destroy', 'uses'=>'Admin\ProdutoController@destroy']);
 	Route::get('/produto/adiconar/ingrediente/{id}/{id_assistente?}', ['as'=>'produto.adicionar.ingrediente', 'uses'=>'Admin\ProdutoController@adicionarIngrediente']);
 	Route::post('/produto/ingrediente/salvar/{id}/{id_assistente?}', ['as'=>'produto.ingrediente.salvar', 'uses'=>'Admin\ProdutoController@ingredienteSalvar']);
-
+	Route::post('/produto/index/json/{id_assistente?}', ['as'=>'produto.index.json', 'uses'=>'Admin\ProdutoController@indexJson']);
 
 
 	Route::get('/marca/index', ['as'=>'marca.index', 'uses'=>'Admin\MarcaController@index']);

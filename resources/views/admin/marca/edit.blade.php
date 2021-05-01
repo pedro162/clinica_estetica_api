@@ -39,8 +39,9 @@
 
 					if(response.data.id && (response.data.id > 0)){
 						Utilitarios.fecharAssistente('{{$id_assistente}}');
-						Utilitarios.assistenteMensage('Registro atualizado com sucesso')
 						
+						Utilitarios.assistenteMensage('Registro atualizado com sucesso')
+						atualizaRelatorio();
 					}
 				},
 				error:function(response, status, error){

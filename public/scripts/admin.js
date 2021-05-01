@@ -582,7 +582,7 @@ class Utilitarios{
 		let html = `
 			<div class="row">
 				<div class="col-md-12 col-sm-12">
-					<imt style="width: '150px'; height:'150px';text-align: 'center';" src="{{asset('img/configuracoes/loader.gif')}}"/>
+					<imt style="width: '150px'; height:'150px';text-align: 'center';" src="../img/configuracoes/loader.gif"/>
 				</div>
 			</div>
 		`;
