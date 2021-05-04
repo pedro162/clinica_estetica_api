@@ -220,6 +220,17 @@
             }
         })
 
+        
+        /**
+         * Abre o assistente para pesquisar produtos
+         */
+
+         $('#pesquisar-produto{{$randId}}').on('click', (ev)=>{
+            
+            let url = '/produto/head';
+            Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos-Pesquisar', 'lg', '100%')
+         })
+
 
         /** 
          *  Valida o item a ser adicionado ao pedido

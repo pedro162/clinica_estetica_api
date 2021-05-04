@@ -2,7 +2,7 @@
 @section('content')
 @php $randId = rand(11111, 999999); @endphp
 
-<div class="container-fluid my-4">
+<div class="container-fluid my-4 body">
 		<div class="col-md-12">	
 			<nav aria-label="breadcrumb" class="my-2">
 				<ol class="breadcrumb">

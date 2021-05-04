@@ -40,7 +40,30 @@
           <a class="dropdown-item" href="#">Contas a Pagar</a>
           <a class="dropdown-item" href="#">Lançar Despesa</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Ouras</a>
+          <a class="dropdown-item" href="#">Outros</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="vendas" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Vendas
+        </a>
+        <div class="dropdown-menu" aria-labelledby="vendas">
+          <a class="dropdown-item" href="{{route('venda.pdv')}}">PDV</a>
+          <a class="dropdown-item" href="#">Vendas</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Outros</a>
+        </div>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="vendas" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Produtos
+        </a>
+        <div class="dropdown-menu" aria-labelledby="vendas">
+          
+          <a class="dropdown-item" href="{{route('produto.head')}}">Produtos</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Outros</a>
         </div>
       </li>
       <li class="nav-item dropdown">
@@ -53,7 +76,7 @@
           <a class="dropdown-item" href="#">Folha de Pagamento</a>
           <a class="dropdown-item" href="#"></a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Ouras</a>
+          <a class="dropdown-item" href="#">Outros</a>
         </div>
       </li>
       <li class="nav-item dropdown">

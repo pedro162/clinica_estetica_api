@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 @php $randId = rand(11111, 999999); @endphp
-<div class="container-fluid my-4">
+<div class="container-fluid my-4 body">
 	<div class="col-md-12">	
 		<nav aria-label="breadcrumb" class="my-2">
 			<ol class="breadcrumb">
@@ -64,10 +64,10 @@
 			</div>
 
 			<div class="card-footer bg-white form-inline">
-				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="form_search_produto"><i class="fas fa-search"></i> Pesquisar</buttom>
-				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio">Exportar para excel</buttom>
-				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio">Relatório</buttom>
-				<a href="{{route('produto.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar_produto"><i class="fas fa-plus"></i> Cadastrar</a>
+				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
+				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
+				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
+				<a href="{{route('produto.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar_produto{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
 			</div>
 
 		</div>
@@ -83,6 +83,7 @@
 </div>
 <script type="text/javascript">
 
+	let idModalOptions = null;
 	/**
 	*	CHAMA O MODAL DE OPÇÕES DE PRODUTO
 	*/
@@ -102,31 +103,33 @@
 		
 		let arrLinks = [
 			//['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
-			['Ediar', '/produto/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
-			['Excluir', '/produto/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar'],
-			['Adicionar Ingredite', '/produto/adiconar/ingrediente/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_adiconar_ingrediente'],
+			['Ediar', '/produto/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}'],
+			['Excluir', '/produto/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}'],
+			['Adicionar Ingredite', '/produto/adiconar/ingrediente/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_adiconar_ingrediente{{$randId}}'],
 
 		];
-		//widthOptions='200px', widModal = 'md', height=null
-		Utilitarios.assitentOpcoes(arrLinks, '200px', 'sm', null);
+		//widthOptions='200px', widModal = 'md', height=null //, 'HTML','Marca-Editar', 'sm', '400px'
+		idModal = Utilitarios.assitentOpcoes(arrLinks, '100%', 'xs');
+		idModalOptions = idModal;
 	})
 
 
 	
 
 	//edita um produto específico view
-	$('body').delegate('#id_produto_editar', 'click', function(ev){
+	$('body').delegate('#id_produto_editar{{$randId}}', 'click', function(ev){
 
 
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
+		Utilitarios.fecharAssistente(idModalOptions);
 		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Editar', 'md', '700px')
 
 	});
 
 	//cadastra um produto view
-	$('body').delegate('div.card a#cadastrar_produto', 'click', function(ev){
+	$('body').delegate('div.card a#cadastrar_produto{{$randId}}', 'click', function(ev){
 
 		ev.preventDefault();
 		let url = $(this).attr('href');
@@ -137,17 +140,18 @@
 	});
 
 	//deletar produto preview
-	$('body').delegate('#assistenteModal #id_produto_deletar', 'click', function(ev){
+	$('body').delegate('#assistenteModal #id_produto_deletar{{$randId}}', 'click', function(ev){
 
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
+		Utilitarios.fecharAssistente(idModalOptions);
 		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
 
 	});
 
 	//deleta um produto action
-	$('body').delegate('#assistenteModal #id_produto_destroy', 'click', function(ev){
+	$('body').delegate('#assistenteModal #id_produto_destroy{{$randId}}', 'click', function(ev){
 
 		try{
 
@@ -155,6 +159,7 @@
 
 			let url = $(this).attr('href');
 			
+			Utilitarios.fecharAssistente(idModalOptions);
 			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
 
 		}catch(ex){
@@ -235,7 +240,7 @@
 	});
 
 	//adiciona ingrediente ao produto específico view
-	$('body').delegate('#assistenteModal #id_produto_adiconar_ingrediente', 'click', function(ev){
+	$('body').delegate('#assistenteModal #id_produto_adiconar_ingrediente{{$randId}}', 'click', function(ev){
 
 
 		ev.preventDefault();
@@ -252,7 +257,7 @@
 	});
 
 	//lista os produtos cadastrados
-	$('body').delegate('div.card #form_search_produto', 'click', function(ev){
+	$('body').delegate('div.card #form_search_produto{{$randId}}', 'click', function(ev){
 
 
 		ev.preventDefault();

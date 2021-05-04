@@ -2,7 +2,7 @@
 @section('content')
 @php $randId = rand(11111, 999999); @endphp
 
-<div class="container-fluid my-4">
+<div class="container-fluid my-4 body">
 		<div class="col-md-12">	
 			<nav aria-label="breadcrumb" class="my-2">
 				<ol class="breadcrumb">
@@ -66,6 +66,7 @@
 
 	<script type="text/javascript">
 
+		let idModalOptions = null;
 		/**
 	*	CHAMA O MODAL DE OPÇÕES DE PESSOA
 	*/
@@ -91,7 +92,8 @@
 			
 		];
 
-		Utilitarios.assitentOpcoes(arrLinks);
+		let idModal = Utilitarios.assitentOpcoes(arrLinks);
+		idModalOptions = idModal;
 	})
 
 
@@ -103,6 +105,7 @@
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
+		Utilitarios.fecharAssistente(idModalOptions);
 		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Editar', '700px');
 
 
@@ -114,6 +117,8 @@
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
+		Utilitarios.fecharAssistente(idModalOptions);
+
 		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Cadastrar', 'lg', '700px')
 		Utilitarios.toggleFiltro();
 
@@ -125,6 +130,7 @@
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
+		Utilitarios.fecharAssistente(idModalOptions);
 		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Deletar', 'md')
 
 	});
@@ -133,6 +139,7 @@
 
 	$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
 		ev.preventDefault();
+		Utilitarios.fecharAssistente(idModalOptions);
 		Utilitarios.toggleFiltro();
 	});
 
@@ -152,6 +159,7 @@
 	$('body').delegate('#id_pessoa_gerar_mensalidade{{$randId}}', 'click', function(e){
 		e.preventDefault();
 		let url = $(this).attr('href');
+		Utilitarios.fecharAssistente(idModalOptions);
 		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Mensalidade-Criar', 'lg', '900px')
 
 	})
@@ -163,6 +171,7 @@
 		ev.preventDefault();
 		let url = $(this).attr('href');
 
+		Utilitarios.fecharAssistente(idModalOptions);
 		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Pessoa-Plano', 'lg', '900px');
 
 

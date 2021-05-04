@@ -282,6 +282,9 @@ class Utilitarios{
 		}
 		rand = String(rand).replace(/\./g, '')
 		
+		if($(''+response+'').find('.body').hasClass('body')){
+			response  = $(''+response+'').find('.body').parent().html()
+		}
 		
 		let modal = ` 	<!-- The Modal -->
 			<div class="modal fade" id="assistenteModal${rand}">
@@ -302,7 +305,7 @@ class Utilitarios{
 							</div>
 						</div>
 						<div class="row">
-							<div class="col" id="content_modal`+rand+`">
+							<div class="col" id="content_modal`+rand+`" >
 								${response}
 							</div>
 						</div>
@@ -462,7 +465,7 @@ class Utilitarios{
 
 
 		if(height != null){
-			obj.find('.modal-content').css('height', height)
+			obj.find('.modal-content').css('min-height', height)
 		}else{
 			obj.find('.modal-content').css('height', 'auto')
 		}
