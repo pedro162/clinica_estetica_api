@@ -1,6 +1,18 @@
 @extends('layouts.app')
 @section('content')
 @php $randId = rand(11111, 999999); @endphp
+
+<style>
+	.filtred{
+		padding: 2px 4px;
+		border-radius: 10px;
+		color: #000;
+		background-color: #ccc;
+		margin-right: 3px;
+		margin-left: 3px;
+		cursor: pointer;
+	}
+</style>
 <div class="container-fluid my-4 body">
 	<div class="col-md-12">	
 		<nav aria-label="breadcrumb" class="my-2">
@@ -10,56 +22,66 @@
 			</ol>
 		</nav>
 	</div>
-	<div class="col-md-12">
-		<div class="card card-togle">
+	<div class="col-md-12" id="container_filtros{{$randId}}">
+		<div class="card card-togle" >
 
 			<div class="card-header bg-white form-inline">
-
-				<button type="button" class="btn btn-sm btn-outline-primary mb-sm-1" id="form_filtro{{$randId}}"><i class="fas fa-filter"></i></button>
+				<div class="row" style="width: 100%;text-align: left;">
+					<div class="col-md-1 col-sm-12" id="container_icon_filter{{$randId}}">
+						<button type="button" class="btn btn-sm btn-outline-primary mb-sm-1" id="form_filtro{{$randId}}"><i class="fas fa-filter"></i></button>
+					</div>
+					<div style="box-sizing: border-box;" class="col-md-11 col-sm-12 p-2" id="container_filtred{{$randId}}">
+					</div>
+				</div>
+				
 			</div>
 
 			<div class="card-body">
-				<form class="form-inline">
+				<form class="" id="filtros{{$randId}}">
+						@csrf
+						<div class="row" >
+							<div class="custom-control my-1 col-md-1 col-sm-12">
+								<label class="label text-left" for="codigo_produto">Cód</label>
+								<input type="text" name="id" class="form-control form-control-sm filtro" id="codigo_produto">
+							</div>
 
-					<div class="custom-control my-1 mr-sm-2">
-						<label class="label text-left" for="codigo_produto">Cód</label>
-						<input type="text" name="codigo_produto" class="form-control form-control-sm" id="codigo_produto">
-					</div>
+							<div class="custom-control my-1 col-md-2 col-sm-12">
+								<label class="label  text-left" for="nome_produto">Nome produto</label>
+								<input type="text" name="nome_produto" class="form-control form-control-sm filtro" id="nome_produto">
+							</div>
 
-					<div class="custom-control my-1 mr-sm-2">
-						<label class="label  text-left" for="nome_produto">Nome produto</label>
-						<input type="text" name="nome_produto" class="form-control form-control-sm" id="nome_produto">
-					</div>
+							<div class="custom-control my-1 col-md-2 col-sm-12">
+								<label class="label  text-left" for="marca_produto">Marca</label>
+								<input type="text" name="marca_produto" class="form-control form-control-sm filtro" id="marca_produto">
+							</div>
 
-					<div class="custom-control my-1 mr-sm-2">
-						<label class="label  text-left" for="marca_produto">Marca</label>
-						<input type="text" name="marca_produto" class="form-control form-control-sm" id="marca_produto">
-					</div>
+							<div class="custom-control my-1 col-md-1 col-sm-12">
+								<label class="label  text-left" for="ordem">Ordenar por</label>
+								<select  name="ordem" class="form-control form-control-sm filtro" id="ordem">
+									@php
+										$ordem = [
+											'nome_produto-ASC'=>'Nome produto AZ',
+											'nome_produto-DESC'=>'Nome produto ZA',
+										];
+										foreach( $ordem as $key=>$val){
+											@endphp
+												<option value="{{$key}}">{{$val}}</option>
+											@php
 
-					<div class="custom-control my-1 mr-sm-2">
-						<label class="label  text-left" for="descricao_produto">Destaque</label>
-						<input type="text" name="descricao_produto" class="form-control form-control-sm" id="descricao_produto">
-					</div>
+										}
+									@endphp
+									
+								</select>
+								
+							</div>
 
-					<div class="custom-control my-1 mr-sm-2">
-						<label class="label  text-left" for="descricao_produto">Descrição</label>
-						<input type="text" name="descricao_produto" class="form-control form-control-sm" id="descricao_produto">
-					</div>
+							<div class="custom-control my-1 col-md-1 col-sm-12">
+								<label class="label  text-left" for="limite">Limite</label>
+								<input type="number" value="150" name="limite" class="form-control form-control-sm filtro" id="limite">
+							</div>
 
-					<div class="custom-control my-1 mr-sm-2">
-						<label class="label  text-left" for="dt_inicio">Dt início</label>
-						<input type="date" name="dt_inico" class="form-control form-control-sm" id="dt_inicio">
-					</div>
-
-					<div class="custom-control my-1 mr-sm-2">
-						<label class="label  text-left" for="dt_fim">Dt fim</label>
-						<input type="date" name="dt_fim" class="form-control form-control-sm" id="dt_fim">
-					</div>
+						</div>
 					
-					<div class="custom-control custom-checkbox my-1 mr-sm-2">
-						<input type="checkbox" name="ignorar_data" class="custom-control-input" id="ignorar_data">
-						<label class="custom-control-label" for="ignorar_data">Ignorar data</label>
-					</div>
 				</form>
 			</div>
 
@@ -105,7 +127,7 @@
 			//['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
 			['Ediar', '/produto/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}'],
 			['Excluir', '/produto/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}'],
-			['Adicionar Ingredite', '/produto/adiconar/ingrediente/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_adiconar_ingrediente{{$randId}}'],
+			
 
 		];
 		//widthOptions='200px', widModal = 'md', height=null //, 'HTML','Marca-Editar', 'sm', '400px'
@@ -124,7 +146,7 @@
 		let url = $(this).attr('href');
 		
 		Utilitarios.fecharAssistente(idModalOptions);
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Editar', 'md', '700px')
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Editar', 'sm', '700px')
 
 	});
 
@@ -134,7 +156,7 @@
 		ev.preventDefault();
 		let url = $(this).attr('href');
 		
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Cadastrar', 'md', '500px')
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Cadastrar', 'sm', 'auto')
 		Utilitarios.toggleFiltro();
 
 	});
@@ -239,17 +261,6 @@
 		ev.preventDefault();
 	});
 
-	//adiciona ingrediente ao produto específico view
-	$('body').delegate('#assistenteModal #id_produto_adiconar_ingrediente{{$randId}}', 'click', function(ev){
-
-
-		ev.preventDefault();
-		let url = $(this).attr('href');
-		// width='lg', heigh = null
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Adicionar Ingredientes', 'md', '500px')
-
-	});
-	
 
 	$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
 		ev.preventDefault();
@@ -261,15 +272,109 @@
 
 
 		ev.preventDefault();
-		let url = '/produto/index';
+		let url = '/produto/index/post';
 
 		let objResponse = $('html body').find('div#response-request');
-		Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
-
-		$('div.card').find('.card-body').toggle('fast');
-		$('div.card').find('.card-footer').toggle('fast');
+		//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
+		togleFiltros();
+		 carregarItens{{$randId}}('POST', url, 'HTML', objResponse)
+		
 
 	});
+
+	function togleFiltros(){
+		$('html').find('#container_filtros{{$randId}}').find('.card').find('.card-body').toggle('fast');
+		$('html').find('#container_filtros{{$randId}}').find('.card').find('.card-footer').toggle('fast');
+		//filtros{{$randId}}
+
+	}
+
+	function carregarItens{{$randId}}(type, url, dataType, objResponse){
+
+		let filtro = montarFiltro{{$randId}}();
+		let formData = new FormData();
+
+		let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
+		formData.append('_token', token)
+
+		if(Array.isArray(filtro) && filtro.length > 0){
+			let escuta = false;
+			
+			for(let i=0; !(i == filtro.length); i++){
+				let condition = filtro[i].hasOwnProperty('name') && filtro[i].hasOwnProperty('value')
+				if(condition == true){
+					escuta = true;
+				
+					formData.append(filtro[i].name, filtro[i].value)
+				}
+			}
+
+			if(escuta){
+				
+				exibeFiltroHead{{$randId}}();
+				
+			}
+		}
+
+		Utilitarios.assistentAjax(type, url, dataType, objResponse, null, formData)
+	}
+
+	function montarFiltro{{$randId}}(){
+		
+		let dados = [];
+		$('html').find('#filtros{{$randId}}').find('.filtro').each(function(){
+			let atual 	= $(this);
+			let name 	= String(atual.attr('name')).trim();
+			let valor 	= String(atual.val()).trim()
+			let id 		= String(atual.attr('id').trim())
+			let label 	= String($('html').find('#filtros{{$randId}}').find('label[for="'+id+'"]').text()).trim();
+
+			if(valor.length > 0){
+				let obj ={
+					'label': label,
+					'name': name,
+					'id': id,
+					'value': valor
+				}
+				dados.push(obj)
+			}
+		})
+		
+		return dados;
+	}
+
+
+	function exibeFiltroHead{{$randId}}(containerSlector = '#container_filtred{{$randId}}'){
+		let filtro = montarFiltro{{$randId}}();
+	
+		if(Array.isArray(filtro) && filtro.length > 0){
+			let filtros_head = '';
+
+			for(let i=0; !(i == filtro.length); i++){
+				let condition = filtro[i].hasOwnProperty('name') && filtro[i].hasOwnProperty('value')
+				if(condition == true){
+					
+					let param = filtro[i].id;
+					filtros_head += `<span onClick="try{removerFiltro{{$randId}}('${'#'+param}');}catch(e){console.log(e)}" class="filtred">${filtro[i].label}: ${filtro[i].value}</span>`;
+					console.log('aqui 03')
+				}
+			}
+			$('html').find(containerSlector).html(filtros_head)
+			return true;
+
+		}
+		$('html').find(containerSlector).html('')
+		return false;
+	}
+
+
+	function removerFiltro{{$randId}}(selectorImput){
+		
+		$('html').find(selectorImput).val('');
+		montarFiltro{{$randId}}()
+		exibeFiltroHead{{$randId}}(containerSlector = '#container_filtred{{$randId}}')
+		
+	}
 
 
 

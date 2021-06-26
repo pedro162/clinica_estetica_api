@@ -10,4 +10,9 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function montaCamposConsulta($obj, Array $campos){
+        $dados = implode(',', $campos);
+        return $dados;
+    }
 }

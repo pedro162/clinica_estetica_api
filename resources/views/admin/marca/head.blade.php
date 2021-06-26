@@ -26,7 +26,7 @@
 								<input type="text" name="codigo_marca" class="form-control form-control-sm" id="codigo_marca">
 							</div>
 
-							<div class="custom-control my-1 mr-sm-2">
+							<div class="custom-control my-1 mr-sm-2">-
 								<label class="label  text-left" for="nome_marca">Nome marca</label>
 								<input type="text" name="nome_marca" class="form-control form-control-sm" id="nome_marca">
 							</div>

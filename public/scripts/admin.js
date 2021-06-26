@@ -375,7 +375,7 @@ class Utilitarios{
 	}
 
 
-	static assistentAjax(type,url, typeResponse, objRender, beforeSend=null){
+	static assistentAjax(type,url, typeResponse, objRender, beforeSend=null, data=null){
 
 		if(type == 'GET'){
 
@@ -385,12 +385,15 @@ class Utilitarios{
 				dataType:typeResponse,
 				success:function(response){
 
-					$(objRender).html(response,);
+					$(objRender).html(response);
 
 				},
 				beforeSend: function() {
 					if(beforeSend != null){
 						beforeSend()
+					}else{
+						Utilitarios.adicionarLoading($(objRender))
+
 					}
 				},
 				error:function(response, status, error){
@@ -404,7 +407,32 @@ class Utilitarios{
 
 		}else{
 
+			$.ajax({
+				url:url,
+				type:type,
+				dataType:typeResponse,
+				data:data,
+				processData:false,
+				contentType:false,
+				success:function(response){
+					$(objRender).html(response);
+				},
+				beforeSend: function() {
+					if(beforeSend != null){
+						beforeSend()
+					}else{
+						Utilitarios.adicionarLoading($(objRender))
 
+					}
+				},
+				error:function(response, status, error){
+					console.log(response)
+
+				}
+
+
+			})
+			
 		}
 	}
 
