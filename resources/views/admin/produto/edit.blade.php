@@ -7,7 +7,7 @@
 				@csrf
 				@method('PUT')
 				
-				<h2 class="mt-5 text-primary">Dados Básicos</h2>
+				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
 				<hr/>
 
 				<div class="row mt-5" >
@@ -73,18 +73,6 @@
 
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Preço de custo</label>
-						<input value="{{$registro->price}}" type="text" name="price_custo" class="form-control form-control-sm">
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Estoque mínimo</label>
-						<input value="{{$registro->stock}}" type="text" name="stock" class="form-control form-control-sm">
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Origem</label>
 						<select type="text" name="origem" class="form-control form-control-sm">						
 							<option value=""></option>						
@@ -97,6 +85,48 @@
 						<input type="file" name="imagem" class="form-control form-control-sm ">
 					</div>
 				</div>
+
+				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados para venda</h5>
+			<hr/>
+
+
+			<div class="row">
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label">Preço de custo</label>
+					<input type="text" value="0"  name="selling_price" class="form-control form-control-sm">
+				</div>
+
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label">Preço de venda</label>
+					<input type="text" value="{{$registro->price}}" name="price" class="form-control form-control-sm">
+				</div>
+
+				<!--<div class="form-group col-md-6 col-sm-12">
+					<label class="label">Estoque mínimo</label>
+					<input type="text" name="stock" class="form-control form-control-sm">
+				</div> -->
+			</div>
+
+			<div class="row">
+				<div class="custom-control custom-checkbox col-md-4 col-sm-12">
+					
+					<input type="checkbox" name="sale_without_stok" class="custom-control-input" id="sale_without_stok"/>
+					<label class="custom-control-label" for="sale_without_stok">Venda sem estoque</label>
+				</div>
+
+				<div class="custom-control custom-checkbox col-md-4 col-sm-12">
+					
+					<input type="checkbox" name="blokade_stok" class="custom-control-input" id="blokade_stok"/>
+					<label class="custom-control-label"  for="blokade_stok">Bloqueio entrada de estoque</label>
+				</div>
+
+				<div class="custom-control custom-checkbox col-md-4 col-sm-12">
+					
+					<input type="checkbox" name="fracioned_sale" class="custom-control-input" id="fracioned_sale"/>
+					<label class="custom-control-label" for="fracioned_sale">Venda fracionada</label>
+				</div>
+
+			</div>
 
 				<div class="row">
 
@@ -111,6 +141,60 @@
 	</div>	
 </div>
 <script>
+	const assistente = '{{$idAssistente}}';
 	$("#tabs{{$randId}}").tabs()
-	
+	//edita ou salva um produto
+	$('html body').find('form#form_produto_cadastrar, form#form_produto_atualizar').on('submit', function(ev){
+		ev.preventDefault();
+		try{
+
+			let url = $(this).attr('action');
+			let id = $(this).attr('id');
+
+			let form = new FormData($(this)[0]);
+			$.ajax({
+				url:url,
+				type:'POST',
+				dataType:'json',
+				data:form,
+				processData:false,
+				contentType:false,
+				success:function(response){
+					console.log(response);
+					console.log(response.mensagem.id);
+
+					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
+						Utilitarios.fecharAssistente(assistente);
+						Utilitarios.assistenteMensage('Registrado com sucesso');
+						@php echo base64_decode($callBack) @endphp
+
+					}else{
+
+						Utilitarios.assistenteMensage('Erro ao atuaolizar registro', 'warning', 'Erro');
+
+
+					}
+				},
+				error:function(response, status, error){
+					//console.log(response, status, error)
+					console.log(response.responseJSON);
+					let objErros = response.responseJSON.errors
+					let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
+					for (let prop in objErros){
+						msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
+					}
+
+					Utilitarios.assistenteMensage(msg, 'warning', 'Erro');
+				}
+
+
+			})
+
+		}catch(ex){
+
+			console.log(ex.message);
+		}
+
+		
+	});
 </script>

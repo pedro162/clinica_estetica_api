@@ -156,3 +156,59 @@ Dados de tributação
 	Preço Compra = (Preço Fábrica – Descontos do Fornecedor)
 
  -->
+
+<script>
+	//edita ou salva um produto
+	$('html body').delegate('form#form_produto_cadastrar, form#form_produto_atualizar','submit', function(ev){
+
+		try{
+
+			let url = $(this).attr('action');
+			let id = $(this).attr('id');
+
+			let form = new FormData($(this)[0]);
+			$.ajax({
+				url:url,
+				type:'POST',
+				dataType:'json',
+				data:form,
+				processData:false,
+				contentType:false,
+				success:function(response){
+					console.log(response);
+					console.log(response.mensagem.id);
+
+					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
+
+						Utilitarios.assistenteMensageAlert('Registrado com sucesso');
+
+					}else{
+
+						Utilitarios.assistenteMensageAlert('Erro ao atuaolizar registro', 'warning');
+
+						
+					}
+				},
+				error:function(response, status, error){
+					//console.log(response, status, error)
+					console.log(response.responseJSON);
+					let objErros = response.responseJSON.errors
+					let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
+					for (let prop in objErros){
+						msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
+					}
+
+					Utilitarios.assistenteMensageAlert(msg, 'warning');
+				}
+
+
+			})
+
+		}catch(ex){
+
+			console.log(ex.message);
+		}
+
+		ev.preventDefault();
+});
+</script>

@@ -28,9 +28,12 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/produto/create/{id_assistente?}', ['as'=>'produto.create', 'uses'=>'Admin\ProdutoController@create']);
 	Route::post('/produto/store/{id_assistente?}', ['as'=>'produto.store', 'uses'=>'Admin\ProdutoController@store']);
 	Route::get('/produto/edit/{id}/{id_assistente?}', ['as'=>'produto.edit', 'uses'=>'Admin\ProdutoController@edit']);
+	Route::post('/produto/edit/{id}/{id_assistente?}', ['as'=>'produto.edit', 'uses'=>'Admin\ProdutoController@edit']);
 	Route::put('/produto/update/{id}/{id_assistente?}', ['as'=>'produto.update', 'uses'=>'Admin\ProdutoController@update']);
 	Route::get('/produto/show/{id}/{id_assistente?}', ['as'=>'produto.show', 'uses'=>'Admin\ProdutoController@show']);
+	Route::post('/produto/show/{id}/{id_assistente?}', ['as'=>'produto.show', 'uses'=>'Admin\ProdutoController@show']);
 	Route::get('/produto/info/{id}/{id_assistente?}', ['as'=>'produto.info', 'uses'=>'Admin\ProdutoController@info']);
+	Route::post('/produto/info/{id}/{id_assistente?}', ['as'=>'produto.info', 'uses'=>'Admin\ProdutoController@info']);
 	Route::get('/produto/head/{id_assistente?}', ['as'=>'produto.head', 'uses'=>'Admin\ProdutoController@head']);
 	Route::get('/produto/destroy/{id}/{id_assistente?}', ['as'=>'produto.destroy', 'uses'=>'Admin\ProdutoController@destroy']);
 	Route::get('/produto/adiconar/ingrediente/{id}/{id_assistente?}', ['as'=>'produto.adicionar.ingrediente', 'uses'=>'Admin\ProdutoController@adicionarIngrediente']);
@@ -42,6 +45,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/marca/create', ['as'=>'marca.create', 'uses'=>'Admin\MarcaController@create']);
 	Route::post('/marca/store', ['as'=>'marca.store', 'uses'=>'Admin\MarcaController@store']);
 	Route::get('/marca/edit/{id}/{id_assistente?}', ['as'=>'marca.edit', 'uses'=>'Admin\MarcaController@edit']);
+	Route::post('/marca/edit/{id}/{id_assistente?}', ['as'=>'marca.edit', 'uses'=>'Admin\MarcaController@edit']);
 	Route::put('/marca/update/{id}', ['as'=>'marca.update', 'uses'=>'Admin\MarcaController@update']);
 	Route::get('/marca/show/id', ['as'=>'marca.show', 'uses'=>'Admin\MarcaController@show']);
 	Route::get('/marca/info/{id}', ['as'=>'marca.info', 'uses'=>'Admin\MarcaController@info']);

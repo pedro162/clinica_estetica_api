@@ -1,5 +1,3 @@
-@extends('layouts.app')
-@section('content')
 
 @php $randId = rand(11111, 999999); @endphp
 
@@ -60,12 +58,51 @@
 	</div>
 	<div class="container">
 		<div class="col-md-12">	
-			<div id="response-request">
+			<div id="response-request{{$randId}}">
 
 			</div>
 		</div>
 	</div>
 	<script type="text/javascript">
+
+		const body = document.getElementById('container-laraval-body');
+		if(!body){
+			
+			let url = window.location.href;
+			if(url.indexOf('?')){
+
+				
+				url = url.split('?')
+				let params =  url[1] ? url[1].split('&'): '';
+				let objParam = {}
+				if(Array.isArray(params) && params.length > 0){
+					for(let i = 0; !(i == params.length); i++){
+						let atual = params[i].split('=');
+						if(Array.isArray(atual) && atual.length > 0){
+							objParam[atual[0]] = atual[1] ? atual[1] : '';
+						}
+						
+					}
+				}
+				let newParams = '?';
+				objParam['isReload'] = 'true';
+				for(let ob in objParam){
+					if(String(ob) && String(objParam[ob])){
+						newParams += '&'+ob+'='+objParam[ob];
+					}
+				}
+
+				url = url[0]+newParams
+			}
+			console.log(url)
+			window.location = url;
+			
+		}
+
+
+		Utilitarios.modifyUrlWithoutReload(window.location.href, 'Marcas')
+
+
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
@@ -84,56 +121,14 @@
 
 		function atualizaRelatorio( url = '/marca/index'){
 
-			let objResponse = $('html body').find('div#response-request');
+			let objResponse = $('html body').find('div#response-request{{$randId}}');
 			Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
 			Utilitarios.toggleFiltro();
 		}
 
 
 
-		/**
-		*	CHAMA O MODAL DE OPÇÕES DE MARCAS
-		*/
-		$('body').delegate('.assistenteModalMarca', 'click', function(ev){
-
-			let id = $(this).find('input:hidden').val();
-
-			$.ajax({
-				type:'POST',
-				url: '#',
-				data:true,
-				dataType: 'HTML',
-				success: function(response){
-					console.log(response)
-				}
-			})
-
-			let arrLinks = [
-				['Ediar', '/marca/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_editar{{$randId}}'],
-				['Visualizar', '/marca/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_visualizar{{$randId}}'],
-				['Excluir', '/marca/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_deletar{{$randId}}']
-
-			];
-
-			let idModal = Utilitarios.assitentOpcoes(arrLinks, '100%', 'xs');
-			idModalOptions = idModal;
-		})
-
-
-
-
-		//edita uma marca específica
-		$('body').delegate('#id_marca_editar{{$randId}}', 'click', function(ev){
-
-
-			ev.preventDefault();
-			let url = $(this).attr('href');
-
-			Utilitarios.fecharAssistente(idModalOptions);
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Editar', 'sm', '400px')
-
-		});
-
+		
 		//cadastra uma marca
 		$('body').delegate('div.card a#cadastrar_marca', 'click', function(ev){
 
@@ -144,28 +139,6 @@
 			Utilitarios.toggleFiltro();
 
 		});
-
-		//chama o preview de deletar marca
-		$('body').delegate('#id_marca_deletar{{$randId}}', 'click', function(ev){
-
-			ev.preventDefault();
-			let url = $(this).attr('href');
-
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Deletar')
-
-		});
-
-		//deleta uma marca
-		$('body').delegate('#id_marca_destroy{{$randId}}', 'click', function(ev){
-
-			ev.preventDefault();
-			let url = $(this).attr('href');
-
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Marca-Deletar')
-
-		});
-
 		
 	</script>
-@endsection
 

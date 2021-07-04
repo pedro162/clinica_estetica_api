@@ -23,9 +23,9 @@
           Produtos
         </a>
         <div class="dropdown-menu" aria-labelledby="massas">
-          <a class="dropdown-item" href="{{route('produto.head')}}">Produtos</a>
-          <a class="dropdown-item" href="{{route('marca.head')}}">Marcas</a>
-          <a class="dropdown-item" href="{{route('categoria.head')}}">Categorias</a>
+          <a class="dropdown-item rotina" href="{{route('produto.head')}}">Produtos</a>
+          <a class="dropdown-item rotina" href="{{route('marca.head')}}">Marcas</a>
+          <a class="dropdown-item rotina" href="{{route('categoria.head')}}">Categorias</a>
           <a class="dropdown-item" href="#">Estoques</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#">Ouras</a>

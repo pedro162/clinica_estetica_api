@@ -22,8 +22,9 @@
         <script src="{{asset('jquery/plugins/jqueryDataTable/jquery.dataTables.min.js')}}"></script>
         <script type="text/javascript" src="{{asset('scripts/admin.js')}}" ></script>
         <script src="{{asset('bootstrap-4/js/bootstrap.min.js')}}"></script>
+
     </head>
-    <body>
+    <body class="container-laraval-body" id="container-laraval-body">
         @if(Auth::check())
         <header>
             @include('layouts._admin._nav')
@@ -51,7 +52,9 @@
             </div>
             @endif
             <div class="row"><div class="col" id="menssageForUser"></div></div>
-            @yield('content')
+            <div id="container-principal">
+                @yield('content')
+            </div>
         </main>
     </body>
     <footer id='footer'>

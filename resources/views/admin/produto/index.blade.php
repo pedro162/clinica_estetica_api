@@ -5,6 +5,7 @@
 	</div>-->
 	<div class="col">
 		<table style="width: 100%;" id="lista-produtos{{$randId}}" class="table table-sm table-responsive table-hover display">
+			@csrf
 			<thead>
 				<tr>
 					<th>
@@ -114,4 +115,79 @@
 
 <script type="text/javascript">
 	Utilitarios.useDataTable($('#lista-produtos{{$randId}}'))
+
+	let idModalOptions{{$randId}} = null;
+	let callBack{{$randId}} = '{{$consulta["callBack"]}}'
+	//alert(callBack{{$randId}})
+
+
+	/**
+	*	CHAMA O MODAL DE OPÇÕES DE PRODUTO
+	*/
+	$('body').find('#lista-produtos{{$randId}}').find('.assistenteModalProduto').on('click', function(ev){
+		try{
+			let id = $(this).find('input:hidden').val();
+
+			let arrLinks = [
+				//['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
+				['Ediar', '/produto/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar(this);'],
+				['Excluir', '/produto/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'deletar(this);'],
+				
+
+			];
+			//widthOptions='200px', widModal = 'md', height=null //, 'HTML','Marca-Editar', 'sm', '400px'
+			idModal = Utilitarios.assitentOpcoes(arrLinks, '100%', 'xs');
+			idModalOptions{{$randId}} = idModal;
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	})
+
+	
+
+	function editar(element){
+		try{
+			let url = $(element).attr('href');
+			let id = $(element).attr('idItem');
+			let idModal= $(element).attr('idModal');
+			// //
+			Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+			let data = new FormData();
+			data.append('id', id)
+			data.append('idAssistente', '')
+			data.append('callBack', ''+callBack{{$randId}}+'')
+
+			let token = $('html').find('#lista-produtos{{$randId}}').find('input[name="_token"]').val()
+			data.append('_token', token)
+
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Editar', 'sm', '700px', null, data)
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
+	function deletar(element){
+		try{
+			
+			let url = $(element).attr('href');
+			let id = $(element).attr('idItem');
+			let idModal= $(element).attr('idModal');
+			// //
+			Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+
+			let data = new FormData();
+			data.append('id', id)
+			data.append('idAssistente', '')
+			data.append('callBack', ''+callBack{{$randId}}+'')
+
+			let token = $('html').find('#lista-produtos{{$randId}}').find('input[name="_token"]').val()
+			data.append('_token', token)
+
+			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Deletar', 'sm', '700px', null, data)
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
 </script>

@@ -173,13 +173,18 @@ class MarcaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, $id_assistente)
+    public function edit(Request $request, $id, $id_assistente)
     {
 
 
         $registro = null;
 
     	try {
+            $dadosRequest = $request->all();
+            if(! isset($id)){
+                $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
+            }
+            
 
     		if($id <= 0){
 
@@ -333,9 +338,17 @@ class MarcaController extends Controller
         }
     }
 
-    public function head()
+    public function head(Request $request)
     {
-
-        return view('admin.marca.head');
+        $dados = $request->all();
+        
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        if($isReload){
+           
+            return view('admin.marca.head_refresh', compact('isReload'));
+        }else{
+            return view('admin.marca.head', compact('isReload'));
+        }
+        
     }
 }

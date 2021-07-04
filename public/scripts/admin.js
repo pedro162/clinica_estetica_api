@@ -81,11 +81,31 @@ $(document).ready(function(ev){
 	});
 
 
-	
+	//------------- SEMPRE QUE FORM CLICADO EM UM LINK RESETA INTERROMPE O EVENTO PADRAO
+	$('html').delegate('a', 'click', function(ev){
+           
 
-	
+		if(! $(this).hasClass('navegar')){
+			ev.preventDefault();
+			if($(this).hasClass('rotina')){
+				$('html').find('.container-principal').html('')
+				$('html').find('.container').html('')
+				let url = $(this).attr('href')
+				let objRender = $('html').find('#container-principal')
+				Utilitarios.assistentAjax('GET',url, 'HTML', objRender)
+				modifyUrlWithoutReload(url)
+			}
 
-	
+		}else{
+			
+		}
+		
+	})
+
+	if(document.cookie.indexOf('reload')==-1) {
+		// cookie doesn't exist, create it now
+		document.cookie = 'reload=1';
+	}
 
 
 
@@ -276,7 +296,7 @@ class Utilitarios{
 
 	static createModal(response='', widthModal='lg', title='Titulo', height = null, id=null){
 		let rand =  Math.floor(Math.random() * (999 - 1) + 1);
-
+		
 		if(id != null){
 			rand = id;
 		}
@@ -300,12 +320,12 @@ class Utilitarios{
 					<!-- Modal body -->
 					<div class="modal-body">
 						<div class="row">
-							<div class="col" id="messagem_modal`+rand+`">
+							<div class="col-md-12 col-sm-12" id="messagem_modal`+rand+`">
 								
 							</div>
 						</div>
 						<div class="row">
-							<div class="col" id="content_modal`+rand+`" >
+							<div class="col-md-12 col-sm-12" id="content_modal`+rand+`" >
 								${response}
 							</div>
 						</div>
@@ -354,13 +374,16 @@ class Utilitarios{
 		for(let i=0; !(i == arrLInks.length); i++){
 
 			let li = $('<li/>').append($('<a/>')
+				.attr('idModal', idModal)
+				.attr('idItem', arrLInks[i][4] ? arrLInks[i][4]: '')
+				.attr('onClick', ''+arrLInks[i][5] ? arrLInks[i][5]+'': '')
 				.attr('href', arrLInks[i][1]).html(arrLInks[i][0])
 				.addClass(arrLInks[i][2]).css('width',widthOptions)
 				.attr('id',arrLInks[i][3] ).css('box-sizing', 'border-box')
 				).css('box-sizing', 'border-box');
 
 			ul.append(li);
-			li.addClass('col-md-12 mb-3')
+			li.addClass('col-md-12 col-sm-12 mb-3')
 		}
 		ul.css('margin', 'auto')
 		let nav = $('<nav/>').html(ul).addClass('nav row');
@@ -406,7 +429,7 @@ class Utilitarios{
 
 
 		}else{
-
+			
 			$.ajax({
 				url:url,
 				type:type,
@@ -436,7 +459,7 @@ class Utilitarios{
 		}
 	}
 
-	static assistentAjaxModal(type,url, typeResponse, title='titulo', width='lg', heigh = null){
+	static assistentAjaxModal(type,url, typeResponse, title='titulo', width='lg', heigh = null, beforeSend=null, data=null){
 
 		const rand = this.gerarRandomico();
 		url+='/'+rand
@@ -456,7 +479,31 @@ class Utilitarios{
 
 
 		}else{
+			$.ajax({
+				url:url,
+				type:type,
+				dataType:typeResponse,
+				data:data,
+				processData:false,
+				contentType:false,
+				success:function(response){
+					Utilitarios.assistenteModal(response, width, title, heigh, rand);
+				},
+				beforeSend: function() {
+					if(beforeSend != null){
+						beforeSend()
+					}else{
+						
 
+					}
+				},
+				error:function(response, status, error){
+					console.log(response)
+
+				}
+
+
+			})
 
 		}
 		return rand;
@@ -611,9 +658,9 @@ class Utilitarios{
 
 	static adicionarLoading(obj){
 		let html = `
-			<div class="row">
-				<div class="col-md-12 col-sm-12">
-					<imt style="width: '150px'; height:'150px';text-align: 'center';" src="../img/configuracoes/loader.gif"/>
+			<div class="row"  style="height: 100%; width: 100%;">
+				<div class="col-md-12 col-sm-12" style="height: 100%; width: 100%;">
+					<div class="c-load"></div>
 				</div>
 			</div>
 		`;
@@ -670,6 +717,25 @@ class Utilitarios{
 		}
 
 
+	}
+
+	static modifyUrlWithoutReload(url, title=null){
+		const nextURL = url;
+		const nextTitle = title;
+		const nextState = {urlNow: url};
+
+		// This will create a new entry in the browser's history, without reloading
+		window.history.pushState(nextState, nextTitle, nextURL);
+
+		// This will replace the current entry in the browser's history, without reloading
+		window.history.replaceState(nextState, nextTitle, nextURL);
+		if(title){
+			$('title').html(title);
+		}
+	}
+	
+	static deleteCookie(name) {
+		document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 	}
 
 

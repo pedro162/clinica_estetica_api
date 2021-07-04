@@ -10,6 +10,7 @@ use \App\Produto;
 use \App\Marca;
 use \App\Categoria;
 use \App\Exceptions\ProdutoException;
+use Illuminate\Support\Facades\Auth;
 
 class ProdutoController extends Controller
 {
@@ -40,6 +41,7 @@ class ProdutoController extends Controller
             \DB::beginTransaction();
 
             $consulta = $request->all();
+            //dd($consulta);
 
             $parse = [
                 'marca_produto'=>'marca.name',
@@ -165,7 +167,7 @@ class ProdutoController extends Controller
 
             \DB::commit();
 
-            return view('admin.produto.index', compact('registro'));
+            return view('admin.produto.index', compact('registro', 'consulta'));
         }catch(ProdutoException $e){
             \DB::rollback();
             return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
@@ -218,7 +220,7 @@ class ProdutoController extends Controller
                 $dadosRequest['description']        = $dados['description'];
                 $dadosRequest['price']              = $dados['price'];
                 //$dadosRequest['spotigth']           = $dados['spotigth'];
-                $dadosRequest['stock']              = $dados['stock'];
+                $dadosRequest['stock']              = $dados['stock'] ?? 0;
                 $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
                 $dadosRequest['active']             = 'yes';
 
@@ -297,9 +299,19 @@ class ProdutoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id, $idAssistente)
     {
         try{
+
+            $dados = $request->all();
+
+            $id = $id ?? $dados['id'];
+            $callBack = $dados['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
+            if( (!isset($id)) || ($id <= 0)){
+                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            }
 
             if( (!isset($id)) || ($id <= 0)){
                 return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
@@ -312,7 +324,7 @@ class ProdutoController extends Controller
             }
             \DB::commit();
 
-            return view('admin.produto.container', compact('registro'));
+            return view('admin.produto.container', compact('registro', 'idAssistente', 'callBack'));
         
         }catch(ProdutoException $e){
             \DB::rollback();
@@ -325,10 +337,16 @@ class ProdutoController extends Controller
     }
 
 
-    public function info($id)
+    public function info(Request $request, $id, $idAssistente)
     {
         
         try{
+
+            $dados = $request->all();
+            $id = $id ?? $dados['id'];
+            $callBack = $dados['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
 
             if($id <= 0){
 
@@ -365,16 +383,26 @@ class ProdutoController extends Controller
         }
     }
 
+
+
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id, $idAssistente)
     {
         try{
-           // sleep(30);
+            
+            $dadosRequest = $request->all();
+
+            $callBack = $dadosRequest['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+            if(! isset($id)){
+                $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
+            }
+
             if($id <= 0){
 
                  \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
@@ -424,7 +452,7 @@ class ProdutoController extends Controller
             }
 
 
-            return view('admin.produto.edit', compact('registro', 'marcas', 'categorias'));
+            return view('admin.produto.edit', compact('registro', 'marcas', 'categorias', 'idAssistente', 'callBack'));
 
          }catch(\Exception $e){
 
@@ -436,6 +464,7 @@ class ProdutoController extends Controller
         }
     }
 
+    /**
     /**
      * Update the specified resource in storage.
      *
@@ -463,8 +492,8 @@ class ProdutoController extends Controller
                 $dadosRequest['description']        = $dados['description'];
                 $dadosRequest['price']              = $dados['price'];
                 //$dadosRequest['spotigth']           = $dados['spotigth'];
-                $dadosRequest['stock']              = $dados['stock'];
-                $dadosRequest['user_id']            = 1;//trocar pelo id do usuario logado
+                $dadosRequest['stock']              = $dados['stock'] ?? 0;
+                $dadosRequest['user_id']            = Auth::user()->id;//trocar pelo id do usuario logado
                 $dadosRequest['active']             = 'yes';
 
                 //tenta capturar a imagem do produto
@@ -502,14 +531,14 @@ class ProdutoController extends Controller
 
                     $produto->removeverCategoria($categorias[$i]);
                 }
-                $registro = $produto->update($dadosRequest);
+                $produto->update($dadosRequest);
 
                 $categoria      = Categoria::find($dadosRequest['categoria_id']);
                 $subCategoria   = Categoria::find($dadosRequest['sub_categoria_id']);
 
                 $resultCategoria    = $produto->adicionarCategoria($categoria,['active'=>'yes', 'tipo'=>'principal']);
                 $resultSubCategoria = $produto->adicionarCategoria($subCategoria, ['active'=>'yes', 'tipo'=>'secundaria']);
-
+                $registro = $produto;
             });
 
             if($registro != null){
@@ -596,10 +625,18 @@ class ProdutoController extends Controller
         }
     }
 
-    public function head()
+    public function head(Request $request)
     {
-
-        return view('admin.produto.head');
+        $dados = $request->all();
+        
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        if($isReload){
+           
+            return view('admin.produto.head_refresh', compact('isReload'));
+        }else{
+            return view('admin.produto.head', compact('isReload'));
+        }
+        
     }
 
     public function adicionarIngrediente($id)
