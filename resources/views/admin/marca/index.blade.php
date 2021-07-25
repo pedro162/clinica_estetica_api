@@ -2,7 +2,7 @@
 
 <div class="row">
 	<div class="col" style="">
-		<table style="width: 100%;" id="lista{{$randId}}"  class="table table-lg table-responsive table-hover">
+		<table style="width: 100%;" id="lista{{$randId}}"  class="data-table table table-lg table-responsive table-hover">
 			@csrf
 			<thead>
 				<tr>
@@ -47,7 +47,6 @@
 
 			let arrLinks = [
 				['Ediar', '/marca/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_editar{{$randId}}', id , 'editar(this);'],
-				['Visualizar', '/marca/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_visualizar{{$randId}}', id , 'visualizar(this);'],
 				['Excluir', '/marca/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_marca_deletar{{$randId}}', id , 'deletar(this);']
 
 			];
@@ -76,7 +75,7 @@
 			let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
 			data.append('_token', token)
 
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Editar', 'sm', '700px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Marca-Editar', 'xs', '300px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
@@ -96,11 +95,11 @@
 			data.append('idAssistente', '')
 			data.append('callBack', ''+callBack{{$randId}}+'')
 
-			let token = $('html').find('#lista-produtos{{$randId}}').find('input[name="_token"]').val()
+			let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
 			data.append('_token', token)
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Deletar', 'sm', '700px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Marca-Deletar', 'sm', '700px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}

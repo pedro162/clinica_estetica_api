@@ -4,7 +4,7 @@
 		<h4>Lista de produtos</h4>	
 	</div>-->
 	<div class="col">
-		<table style="width: 100%;" id="lista-produtos{{$randId}}" class="data-table table table-sm table-responsive table-hover display">
+		<table style="width: 100%;" id="lista-produtos{{$randId}}" class="table table-sm table-responsive table-hover display">
 			@csrf
 			<thead>
 				<tr>
@@ -86,7 +86,7 @@
 					<td>{{$valor->categoria}}</td>
 					<td class="text-right">{{$valor->price}}</td>
 					<td>{{($valor->spotlight == 'yes') ? 'Sim' : 'Não'}}</td>
-					<td><img src="{{asset($valor->image)}}" style="width: 100px; height: 50px;"></td>
+					<td><img src="{{asset($valor->image)}}" style="width: 100%; height: 50px;"></td>
 					<td class="text-right">{{$valor->stock}}</td>
 					<td class="text-right">{{$valor->sold_amout }}</td>
 					<td class="text-left">{{$valor->produto_final == 'yes' ? 'Sim': 'Não'}}</td>

@@ -373,7 +373,7 @@ class ProdutoController extends Controller
 
 
             //return view('admin.produto.info', compact('registro'));
-            return view('admin.produto.info', compact('registro'));
+            return view('admin.produto.info', compact('registro', 'idAssistente', 'callBack'));
 
         }catch(\Exception $e){
 

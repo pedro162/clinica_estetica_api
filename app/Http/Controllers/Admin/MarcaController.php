@@ -18,22 +18,58 @@ class MarcaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
 
     	try {
+            \DB::beginTransaction();
+    		
+            $consulta = $request->all();
 
-    		$registro = null;
-    		\DB::transaction(function() use (&$registro){
+            $campos =  null;
 
-    			$registro = Marca::where('active', '=', 'yes')->get();
+            $registro = Marca::where('active', '=', 'yes');
 
-    		});
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'codigo_marca':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('id', $val);
+                            }
+                            break;
+                        case 'nome_marca':
+                            if($val[0] == ','){
+                                $val = substr($val, 1);
+                            } 
+                            if($val[strlen($val) - 1] == ','){
+                                $val = substr($val, 0, -1);
+                            }
+                            
+                            $registro->where('name', 'like' , '%'.$val.'%');
+                            break;
+                    }
+                }
+            }
+
+    		$registro = $registro->get();
 
             return view('admin.marca.index', compact('registro'));
     		
+            \DB::commit();
+
     	} catch (\Exception $e) {
-    		 
+    		 \DB::rollback();
     		//\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
@@ -121,10 +157,16 @@ class MarcaController extends Controller
     }
 
 
-    public function info($id)
+    public function info(Request $request, $id, $idAssistente)
     {
         
         try{
+
+            $dados = $request->all();
+            $id = $id ?? $dados['id'];
+            $callBack = $dados['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
 
             if($id <= 0){
 
@@ -155,7 +197,7 @@ class MarcaController extends Controller
 
 
             //return view('admin.produto.info', compact('registro'));
-            return view('admin.marca.info', compact('registro'));
+            return view('admin.marca.info', compact('registro', 'idAssistente', 'callBack'));
 
         }catch(\Exception $e){
 

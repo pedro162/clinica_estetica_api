@@ -1,7 +1,8 @@
-
+@extends('layouts.app')
+@section('content')
 @php $randId = rand(11111, 999999); @endphp
 
-	<div class="container-fluid my-4 body">
+<div class="container-fluid my-4 body">
 		<div class="col-md-12">	
 			<nav aria-label="breadcrumb" class="my-2">
 				<ol class="breadcrumb">
@@ -57,55 +58,19 @@
 	</div>
 	<div class="container-fluid">
 		<div class="col-md-12 col-sm-12">
-			<div   id="response-request{{$randId}}">
+			<div id="response-request{{$randId}}">
 
 			</div>
 		</div>
 	</div>
 
 	<script type="text/javascript">
-		const body = document.getElementById('container-laraval-body');
-		if(!body){
-			
-			let url = window.location.href;
-			if(url.indexOf('?')){
 
-				
-				url = url.split('?')
-				let params =  url[1] ? url[1].split('&'): '';
-				let objParam = {}
-				if(Array.isArray(params) && params.length > 0){
-					for(let i = 0; !(i == params.length); i++){
-						let atual = params[i].split('=');
-						if(Array.isArray(atual) && atual.length > 0){
-							objParam[atual[0]] = atual[1] ? atual[1] : '';
-						}
-						
-					}
-				}
-				let newParams = '?';
-				objParam['isReload'] = 'true';
-				for(let ob in objParam){
-					if(String(ob) && String(objParam[ob])){
-						newParams += '&'+ob+'='+objParam[ob];
-					}
-				}
-
-				url = url[0]+newParams
-			}
-			console.log(url)
-			window.location = url;
-			
-		}
-
-
-		Utilitarios.modifyUrlWithoutReload('/pessoa/head', 'Pessoas')
-
-	let idModalOptions = null;
+		let idModalOptions = null;
 		/**
 	*	CHAMA O MODAL DE OPÇÕES DE PESSOA
 	*/
-	$('body').find('.assistenteModalPessoa').on('click', function(ev){
+	$('body').delegate('.assistenteModalPessoa', 'click', function(ev){
 
 		let id = $(this).find('input:hidden').val();
 
@@ -213,3 +178,4 @@
 	});
 
 	</script>
+@endsection

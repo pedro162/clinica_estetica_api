@@ -50,6 +50,7 @@
         <div class="dropdown-menu" aria-labelledby="vendas">
           <a class="dropdown-item" href="{{route('venda.pdv')}}">PDV</a>
           <a class="dropdown-item" href="#">Vendas</a>
+          <a class="dropdown-item rotina" href="{{route('pessoa.head')}}">Pessoas</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#">Outros</a>
         </div>
@@ -57,13 +58,16 @@
 
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="vendas" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Produtos
+          Fiscal
         </a>
         <div class="dropdown-menu" aria-labelledby="vendas">
-          
-          <a class="dropdown-item" href="{{route('produto.head')}}">Produtos</a>
+          <a class="dropdown-item" href="">Nf. entrada</a>
+          <a class="dropdown-item" href="">Nf. saída</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Outros</a>
+          <a class="dropdown-item" href="">CFOP</a>
+          <a class="dropdown-item" href="">CST</a>
+          <a class="dropdown-item rotina" href="{{route('ncm.head')}}">NCM</a>
+          <a class="dropdown-item" href="">Tributação</a>
         </div>
       </li>
       <li class="nav-item dropdown">

@@ -120,11 +120,7 @@
 
 					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
 						//Utilitarios.assistenteMensageAlert('Registro atualizado com sucesso');
-						Utilitarios.assistenteModal('<h2 class="alert alert-success">Registro atualizado com sucesso</h2>', 'md', 'Resultado', '500px')
-					}else{
-						Utilitarios.assistenteModal('<h2 class="alert alert-warning">Erro ao cadastrar registro</h2>', 'md', 'Resultado', '500px')
-						//Utilitarios.assistenteMensageAlert('Erro ao cadastrar registro', 'warning');
-						
+						Utilitarios.assistenteMensageAlert('Registrado com sucesso');
 					}
 				},
 				error:function(response, status, error){

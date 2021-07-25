@@ -503,10 +503,18 @@ class PessoaController extends Controller
         }
     }
 
-    public function head()
+    public function head(Request $request)
     {
-
-        return view('admin.pessoa.head');
+        $dados = $request->all();
+        
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        if($isReload){
+           
+            return view('admin.pessoa.head_refresh', compact('isReload'));
+        }else{
+            return view('admin.pessoa.head', compact('isReload'));
+        }
+        
     }
 
 

@@ -7,12 +7,35 @@ use Illuminate\Http\Request;
 use \App\Fiscal\Nfe;
 use \App\Fiscal\VaidateNfe;
 use NFePHP\NFe\Make;
-
+use \Mpdf\Mpdf;
 use \App\Fiscal\FacadeNfe;
+use \App\Exceptions\FiscalException;
 use stdClass;
 
 class NfeController extends Controller
 {
+
+    /*
+        Aual de modelagem 03 ok
+        
+        Modelo conceitual controle fiscal
+
+        Emitir nota fisca NFe e NFCe
+        Controlar as notas fiscais emitidas contra mim
+        Controlar as notas ficasi que eu emitir
+        Escriturar minhas notas
+        Auditar minhas notas, principalmente quando a contabilidade precisar
+        Cadastras meu produtos pela nota
+        Emitir nota de devolução tanto de cliente quanto de fornecedor
+
+        Modelo lógico
+
+        Modelo físico
+
+
+    */ 
+
+
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +43,9 @@ class NfeController extends Controller
      */
     public function index()
     {
-        //
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => __DIR__ . '/tmp']);
+        $mpdf->WriteHTML('<h1>Hello world!</h1>');
+        $mpdf->Output();
     }
 
     /**
@@ -48,7 +73,7 @@ class NfeController extends Controller
 
             $dados              = [];
             $dados['versao']    = '4.00';
-            $dados['Id']        = 'NFe52210303810070000101550010000000101000000010';
+            $dados['Id']        = 'NFe52210703810070000101550010000000101000000014';
             $dados['pk_nItem']  = null;
 
             $apenas = ['versao', 'Id', 'pk_nItem'];
@@ -287,11 +312,12 @@ class NfeController extends Controller
             //Este método retorna o XML em uma string, mesmo que existam erros.
             $xml = $objFacade->getXML();
 
-            echo $xml;
+            //echo $xml;
+            $this->getPdfXml($xml);
             //dd($objFacade->getErrors());
         }catch(\Exception $ex){
-            dd($ex);
-            //dd($objFacade->getErrors());
+            //dd($ex);
+            dd($objFacade->getErrors());
         }
 
     }
@@ -1259,30 +1285,12 @@ class NfeController extends Controller
 
 
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public function getPdfXml(String $xml = '<h1>Hello world!</h1>'){
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => __DIR__ . '/tmp']);
+        $mpdf->WriteHTML($xml);
+        $mpdf->Output();
 
     }
 
@@ -1341,4 +1349,5 @@ class NfeController extends Controller
     {
         //
     }
+
 }

@@ -17,7 +17,7 @@
 			<nav aria-label="breadcrumb" class="my-2">
 				<ol class="breadcrumb">
 					<li class="breadcrumb-item active"><a href="{{route('produto.index')}}">Inicio</a></li>
-					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de produtos</a></li>
+					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de ncm</a></li>
 				</ol>
 			</nav>
 		</div>
@@ -47,11 +47,6 @@
 								<div class="custom-control my-1 col-md-2 col-sm-12">
 									<label class="label  text-left" for="nome_produto">Nome produto</label>
 									<input type="text" name="nome_produto" class="form-control form-control-sm filtro" id="nome_produto">
-								</div>
-
-								<div class="custom-control my-1 col-md-2 col-sm-12">
-									<label class="label  text-left" for="marca_produto">Marca</label>
-									<input type="text" name="marca_produto" class="form-control form-control-sm filtro" id="marca_produto">
 								</div>
 
 								<div class="custom-control my-1 col-md-1 col-sm-12">
@@ -140,7 +135,7 @@
 		}
 
 
-		Utilitarios.modifyUrlWithoutReload('/produto/head', 'Produtos')
+		Utilitarios.modifyUrlWithoutReload('/ncm/head', 'Ncm')
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
@@ -159,7 +154,7 @@
 		});
 
 		function pesquisar{{$randId}}(){
-			let url = '/produto/index/post';
+			let url = '/ncm/index';
 
 			let objResponse = 'div#response-request{{$randId}}';
 			//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)

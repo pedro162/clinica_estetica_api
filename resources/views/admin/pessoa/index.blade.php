@@ -4,7 +4,7 @@
 		<h4>Lista de Categorias</h4>	
 	</div> -->
 	<div class="col">
-		<table style="width: 100%;" id="lista-pessoas{{$randId}}" class="table table-sm table-responsive table-hover display">
+		<table style="width: 100%;" id="lista-pessoas{{$randId}}" class="data-table table table-sm table-responsive table-hover display">
 			<thead>
 				<tr>
 					<th>

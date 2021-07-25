@@ -39,29 +39,11 @@
 
 					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
 
-						if(id == 'form_marca_atualizar'){
-
-							Utilitarios.assistenteMensageAlert('Registro atualizado com sucesso');
-
-						}else{
-
-							Utilitarios.assistenteMensageAlert('Registro cadastrado com sucesso');
-
-						}
-
-					}else{
-
-						if(id == 'form_marca_atualizar'){
-
-							Utilitarios.assistenteMensageAlert('Erro ao atuaolizar registro', 'warning');
-
-						}else{
-
-							Utilitarios.assistenteMensageAlert('Erro ao cadastrar registro', 'warning');
-
-						}
-
+						Utilitarios.fecharAssistente('{{$id_assistente}}');
 						
+						Utilitarios.assistenteMensage('Registrado com sucesso')
+						atualizaRelatorio();
+
 					}
 				},
 				error:function(response, status, error){
