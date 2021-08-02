@@ -62,3 +62,8 @@ border: 3px solid rgb(180, 173, 173, 0.5);
     text-transform: uppercase !important;
     width: 200px !important;
 }
+
+.modal-title{
+    text-transform: uppercase !important;
+    font-weight: bolder !important;
+}

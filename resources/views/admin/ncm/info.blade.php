@@ -6,44 +6,41 @@
 <div class="row" >
 	<div class="col-md-12 col-sm-12 "  >
 		<div class="row"  >
-			<div class="col-md-8 col-sm-12">
+			<div class="col-md-12 col-sm-12">
 				<table class="table table-responsive table-hover" style="width: 100%;">
 					<tbody>
 						<tr>
-							<td>Produto:</td>
-							<td>{{$registro->name ? $registro->name : ''}}</td>
+							<td>NCM:</td>
+							<td>{{$registro->codNcm ? $registro->codNcm : ''}}</td>
 						</tr>
 						<tr>
-							<td>Estoque:</td>
-							<td>{{$registro->stock ? $registro->stock : ''}}</td>
+							<td>Código NCM:</td>
+							<td>{{$registro->codNcm ? $registro->codNcm : ''}}</td>
 						</tr>
 						<tr>
-							<td>Preço:</td>
-							<td>{{$registro->price ? $registro->price : ''}}</td>
+							<td>Alíquota nacional:</td>
+							<td>{{$registro->vrAliqNacional ? number_format($registro->vrAliqNacional, 2, ',', '.') : ''}}</td>
 						</tr>
 						<tr>
-							<td>Quantidade vendida:</td>
-							<td>{{$registro->sold_amout ? $registro->sold_amout : ''}}</td>
+						<td>Alíquota importada:</td>
+							<td>{{$registro->vrAliqImportada ? number_format($registro->vrAliqImportada, 2, ',', '.') : ''}}</td>
 						</tr>
 						<tr>
-							<td>Destaque:</td>
-							<td>{{$registro->spotlight == 'yes' ? 'Sim' : 'Não'}}</td>
+						<td>Alíquota estadual:</td>
+						<td>{{$registro->vrAliqEstadual ? number_format($registro->vrAliqEstadual, 2, ',', '.') : ''}}</td>
 						</tr>
 						<tr>
-							<td>Marca:</td>
-							<td>{{$registro->marca->name ? $registro->marca->name : ''}}</td>
+						<td>Alíquota municipal:</td>
+							<td>{{$registro->vrAliqMunicipal ? number_format($registro->vrAliqMunicipal, 2, ',', '.') : ''}}</td>
 						</tr>
 					</tbody>							
 				</table>
-			</div>
-			<div class="col-md-4 col-sm-12">
-				<img src="{{asset($registro->image)}}" style="width: 100%; height: 300px;">
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-md-12 col-sm-12" align="right">
-				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('produto.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
+				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('ncm.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
 			</div>
 		</div>
 	</div>

@@ -24,6 +24,9 @@
 						Tipo código
 					</th>
 					<th>
+						Ex. tip
+					</th>
+					<th>
 						Tabela
 					</th>
 					<th>
@@ -64,9 +67,11 @@
 </div>
 
 <script type="text/javascript">
-	Utilitarios.useDataTable($('#lista{{$randId}}'))
+	let idTable = $('#lista{{$randId}}');
+	Utilitarios.useDataTable(idTable);
 
 	let idModalOptions{{$randId}} = null;
+
 	let callBack{{$randId}} = '{{$consulta["callBack"]}}'
 	//alert(callBack{{$randId}})
 
@@ -80,8 +85,8 @@
 
 			let arrLinks = [
 				//['Ediar', '/ncm/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
-				['Ediar', '/ncm/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar(this);'],
-				['Excluir', '/ncm/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'deletar(this);'],
+				['Ediar', '/ncm/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar{{$randId}}(this);'],
+				['Excluir', '/ncm/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'deletar{{$randId}}(this);'],
 				
 
 			];
@@ -95,7 +100,7 @@
 
 	
 
-	function editar(element){
+	function editar{{$randId}}(element){
 		try{
 			let url = $(element).attr('href');
 			let id = $(element).attr('idItem');
@@ -110,13 +115,13 @@
 			let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
 			data.append('_token', token)
 
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '700px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
 	}
 
-	function deletar(element){
+	function deletar{{$randId}}(element){
 		try{
 			
 			let url = $(element).attr('href');

@@ -3,10 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Produto;
 
 class Ncm extends Model
 {
+
     protected $table = 'ncms';
     protected $primaryKey = 'id';
 
@@ -22,8 +24,11 @@ class Ncm extends Model
         'vrAliqEstadual',
         'vrAliqMunicipal',
         'user_id',
-        'user_update_id'
+        'user_update_id',
+        'active'
     ];
+
+    use SoftDeletes;
 
     public function produto()
     {

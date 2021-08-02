@@ -4,11 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Exceptions\NcmException;
+use Illuminate\Validation\Rule;
 use App\Ncm;
 
 class NcmController extends Controller
 {
+
+    protected function ncmRequest(Request $request)
+    {
+        return Validator::make($request->all(),[
+            'name'=>'required'
+
+        ],[]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -147,9 +157,14 @@ class NcmController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request, $idAssistente)
     {
-        //
+        $dadosRequest = $request->all();
+
+        $callBack = $dadosRequest['callBack'] ?? '';
+        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+
+        return view('admin.ncm.create', compact('callBack','idAssistente'));
     }
 
     /**
@@ -160,18 +175,93 @@ class NcmController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+
+            \DB::beginTransaction();
+            $dados = $request->all();
+
+            $dadosRequest = [];
+
+            $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['active']             = 'yes';
+            $dadosRequest['codNcm']             = $dados['codNcm'];
+            $dadosRequest['nmNcm']              = $dados['nmNcm'];
+            $dadosRequest['excecaoNcm']         = $dados['excecaoNcm'] ?? null;
+            $dadosRequest['tpCodigo']           = $dados['tpCodigo'] ?? 'NCM';
+            $dadosRequest['exTipi']             = $dados['exTipi'] ?? null;
+            $dadosRequest['nmTabela']           = $dados['nmTabela'] ?? null;
+            $dadosRequest['vrAliqNacional']     = $dados['vrAliqNacional'] ?? 0;
+            $dadosRequest['vrAliqImportada']    = $dados['vrAliqImportada'] ?? 0;
+            $dadosRequest['vrAliqEstadual']     = $dados['vrAliqEstadual'] ?? 0;
+            $dadosRequest['vrAliqMunicipal']    = $dados['vrAliqMunicipal'] ?? 0;
+           
+            $registro = Ncm::create($dadosRequest);
+            \DB::commit();
+
+            if($registro){
+                return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
+            }else{
+                throw new NcmException('Erro ao cadastrar NCM');
+            }
+
+        }catch(NcmException $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
+
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function info(Request $request, $id, $idAssistente)
     {
-        //
+        
+        try{
+
+            $dados = $request->all();
+            $id = $id ?? $dados['id'];
+            $callBack = $dados['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
+
+            if($id <= 0){
+
+                throw new NcmException('Parâmetro ínválido');
+
+            }
+
+            \DB::beginTransaction();
+
+            $registro = Ncm::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+
+            if($registro == null){
+
+                throw new NcmException('Ncm não encontrado');
+            }
+
+            \DB::commit();
+
+            //return view('admin.produto.info', compact('registro'));
+            return view('admin.ncm.info', compact('registro', 'idAssistente', 'callBack'));
+
+        }catch(NcmException $e){
+            
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
+
+        }catch(\Exception $e){
+
+            $msg = 'Ocorreum um erro no servidor: '.$e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+           // \Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
+
+        }
     }
 
     /**
@@ -180,9 +270,55 @@ class NcmController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id, $idAssistente)
     {
-        //
+        try{
+            
+            $dadosRequest = $request->all();
+
+            $callBack = $dadosRequest['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+            if(! isset($id)){
+                $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
+            }
+
+            if($id <= 0){
+                throw new NcmException('Parâmetro ínválido');
+            }
+
+            $registro = null;
+            $marcas = null;
+            $categorias = null;
+
+            \DB::beginTransaction();
+
+            $registro = Ncm::where('active', '=', 'yes')
+                ->where('id', '=', $id)->first();
+
+            if($registro == null){
+                throw new NcmException('Registro não encontrado');
+                
+            }
+
+            \DB::commit();
+
+            return view('admin.ncm.edit', compact('registro', 'marcas', 'categorias', 'idAssistente', 'callBack'));
+
+         }catch(\NcmException $e){
+            \DB::rollback();
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
+
+             return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 400);
+
+        }catch(\Exception $e){
+            \DB::rollback();
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
+
+             return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+
+        }
     }
 
     /**
@@ -194,7 +330,48 @@ class NcmController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            //code...
+            \DB::beginTransaction();
+
+            $dados = $request->all();
+
+            $dadosRequest = [];
+
+            $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['active']             = 'yes';
+            $dadosRequest['codNcm']             = $dados['codNcm'];
+            $dadosRequest['nmNcm']              = $dados['nmNcm'];
+            $dadosRequest['excecaoNcm']         = $dados['excecaoNcm'] ?? null;
+            $dadosRequest['tpCodigo']           = $dados['tpCodigo'] ?? 'NCM';
+            $dadosRequest['exTipi']             = $dados['exTipi'] ?? null;
+            $dadosRequest['nmTabela']           = $dados['nmTabela'] ?? null;
+            $dadosRequest['vrAliqNacional']     = $dados['vrAliqNacional'] ?? 0;
+            $dadosRequest['vrAliqImportada']    = $dados['vrAliqImportada'] ?? 0;
+            $dadosRequest['vrAliqEstadual']     = $dados['vrAliqEstadual'] ?? 0;
+            $dadosRequest['vrAliqMunicipal']    = $dados['vrAliqMunicipal'] ?? 0;
+           
+            $ncm = Ncm::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $ncm->update($dadosRequest);
+
+            \DB::commit();
+
+            return response()->json(['mensagem'=>$ncm, 'class'=>'sucess'], 200);
+
+
+        }catch (NcmException $th) {
+
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            //throw $th;
+        }
     }
 
     /**
@@ -205,7 +382,35 @@ class NcmController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+
+            \DB::beginTransaction();
+
+            $dadosRequest = [];
+
+            $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['active']             = 'no';
+            $ncm = Ncm::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $ncm->update($dadosRequest);
+            $ncm->delete();
+
+            \DB::commit();
+
+            return response()->json(['mensagem'=>[], 'class'=>'sucess'], 200);
+
+        }catch (NcmException $th) {
+
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            //throw $th;
+        }
     }
 
     public function head(Request $request)
@@ -255,7 +460,7 @@ class NcmController extends Controller
         
         }catch(NcmException $e){
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
        
         }catch(\Exception $e){
             \DB::rollback();

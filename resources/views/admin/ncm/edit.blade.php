@@ -3,7 +3,7 @@
 <div class="container">
 	<div class="row mb-5">
 		<div class="col">
-			<form action="{{route('produto.update', $registro->id)}}" method="post" class="form" id="form_produto_atualizar" enctype="multipart/form-data">
+			<form action="{{route('ncm.update', $registro->id)}}" method="post" class="form" id="form_{{$randId}}" enctype="multipart/form-data">
 				@csrf
 				@method('PUT')
 				
@@ -12,17 +12,16 @@
 
 				<div class="row mt-5" >
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Nome</label>
-						<input type="text" name="name" class="form-control form-control-sm" value="{{$registro->name}}">
+						<label class="label">NCM</label>
+						<input type="text" name="codNcm" class="form-control form-control-sm" value="{{$registro->codNcm}}">
 					</div>
+					
 
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Descrição</label>
-						<input type="text" name="description" class="form-control form-control-sm" value="{{$registro->description}}">
+						<input type="text" name="nmNcm" class="form-control form-control-sm" value="{{$registro->nmNcm}}" >
 					</div>
 				</div>
-
-				
 
 				<div class="row">
 
@@ -40,7 +39,7 @@
 	const assistente = '{{$idAssistente}}';
 	$("#tabs{{$randId}}").tabs()
 	//edita ou salva um produto
-	$('html body').find('form#form_produto_cadastrar, form#form_produto_atualizar').on('submit', function(ev){
+	$('html body').find('#form_{{$randId}}').on('submit', function(ev){
 		ev.preventDefault();
 		try{
 

@@ -161,6 +161,7 @@
 			data.append('_token', token)
 
 			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Editar', 'sm', '700px', null, data)
+			
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}

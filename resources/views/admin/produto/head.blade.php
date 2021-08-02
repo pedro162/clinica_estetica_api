@@ -216,7 +216,7 @@
 				let id 		= String(atual.attr('id').trim())
 				let label 	= String($('html').find('#filtros{{$randId}}').find('label[for="'+id+'"]').text()).trim();
 
-				if(valor.length > 0){
+				if(valor.length > 0 && valor != 'null' && valor != 'undefined'){
 					let obj ={
 						'label': label,
 						'name': name,

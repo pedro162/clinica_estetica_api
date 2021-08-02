@@ -13,12 +13,17 @@
 			<hr/>
 
 			<div class="row  mt-5">
-				<div class="form-group col-md-6 col-sm-12">
-					<label class="label">Código NCM</label>
-					<input type="text" name="name" class="form-control form-control-sm">
-				
-					<label class="label">Descrição</label>
-					<input type="text" name="description" class="form-control form-control-sm">
+				<div class="form-group col-md-12 col-sm-12">
+					<div class="row">
+						<div class="col-md-2 col-sm-12 ">
+							<label class="label">Código NCM</label>
+							<input type="text" name="name" class="form-control form-control-sm">
+						</div>
+						<div class="col-md-10 col-sm-12">
+							<label class="label">Descrição</label>
+							<input type="text" name="description" class="form-control form-control-sm">
+							</div>
+					</div>
 				</div>
 			
 			</div>
@@ -86,7 +91,7 @@
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Mod. BCICMS</label>
 						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option alt="Modalidade de determinação da Base de Cálculo" value="{{$categoria->id}}">{{$categoria->name}}</option>
+							<option alt="Modalidade de determinação da Base de Cálculo" value=""></option>
 						</select>
 					</div>
 				</div>
@@ -124,7 +129,7 @@
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">CST PIS</label>
 						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value="{{$categoria->id}}">{{$categoria->name}}</option>
+							<option value=""></option>
 						</select>
 					</div>
 
@@ -138,7 +143,7 @@
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">CST COFINS</label>
 						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value="{{$categoria->id}}">{{$categoria->name}}</option>
+							<option value=""></option>
 						</select>
 					</div>
 
@@ -152,7 +157,7 @@
 					<div class="form-group col-md-12 col-sm-12">
 						<label class="label">Aliq. IPI (%)</label>
 						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value="{{$categoria->id}}">{{$categoria->name}}</option>
+							<option value=""></option>
 						</select>
 					</div>
 				</div>
@@ -203,7 +208,7 @@
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Aiq. Cal. Cred (%)</label>
 						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value="{{$categoria->id}}">{{$categoria->name}}</option>
+							<option value=""></option>
 						</select>
 					</div>
 				</div>

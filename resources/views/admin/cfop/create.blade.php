@@ -138,22 +138,160 @@
 </div>	
 
 <!--
-Nome do produto
-Preço de custo
-Preço de venda
-Referências = EAN.
-Unidade
-Categorização
+	CFOP:{
+		Código cfop,
+		Tipo de operação,
+		CFOP de devolução
+		CFOP inverso/estorno
+		CST escriutração de entrada
+		Descrição deste CFOP
+		Aplicação deste CFOP
+		Gera financeiro
+		Estado[Localização],
+		Tipo cfop:[entrada, saída]
+		Validar Sit. Tribut.: Marcando esta opção o sistema verificará se a situação tributária informada na nota fiscal é a mesma indicada na CFOP à qual a opção pertence, caso seja diferente o sistema emitirá um aviso para que a situação tributária seja alterada e não permitirá ainda que outra situação tributária diferente da configurada na referida CFOP seja posta na nota fiscal.
 
-Dados de tributação
-	Nomenclatura Comum do Mercosul (NCM);
-	Código Especificador da Substituição Tributária (CEST);
-	Imposto sobre Circulação de Mercadorias e Serviços (ICMS);
-	Imposto sobre Produtos Industrializados (IPI);
-	Programa de Integração Social (PIS);
-	Contribuição para o Financiamento da Seguridade Social (Cofins).
 
-	Preço Compra = (Preço Fábrica – Descontos do Fornecedor)
+		//----------------------------------------
+		•	Situações Tributárias por Filial
+ 
+
+		•	Filial: Neste campo serão mostradas as filiais existentes para a indicação de suas respectivas situações tributárias.
+		
+
+		•	Razão Social: Neste campo serão mostradas as razões sociais das filiais existentes mostradas no campo anterior.
+		
+
+		•	Situação de ICMS SN: Indique aqui o código da situação tributária de ICMS Simples Nacional da empresa caso a mesma esteja enquadrada como simples nacional.
+		
+
+		•	Situação de ICMS SN RPA: Indique aqui o código da situação tributária de ICMS SN RPA caso o emitente esteja enquadrada como simples nacional porém o destinatário seja uma empresa enquadrada no regime normal.
+		
+
+		•	Situação de ICMS: Indique aqui o código da situação tributária de ICMS Regime Normal da empresa caso o emitente esteja enquadrada como regime normal porém o destinatário esteja enquadrado como simples nacional.
+		
+
+		•	Situação de ICMS RPA: Indique aqui o código da situação tributária de ICMS RPA caso o emitente e o destinatário sejam empresas enquadradas no regime normal.
+		
+
+		•	Situação de IPI: Indique aqui o código da situação tributária de IPI.
+		
+
+		•	Situação de COFINS: Indique aqui o código da situação tributária de COFINS.
+		
+
+		•	Situação de PIS: Indique aqui o código da situação tributária de PIS.
+		
+
+		•	% base de crédito de ICMS p/ Industrialização: Neste campo é possível indicar qual a porcentagem de crédito de ICMS poderá ser utilizada nessa cfop referente à uma industrialização quando a mesma conter matéria-prima que não permitam aproveitamento total do ICMS vindo de sua compra. Ex: 5%.
+		
+
+		•	Obs: É possível redimensionar a janela de <Cadastro de CFOP> clicando-se em uma das bordas da janela e arrastando-a com o mouse.
+		
+
+		•	CFOP de Importação: Marque esse campo caso essa seja uma CFOP de importação
+		É aconselhável cadastrar todas as CFOP que serão utilizadas nas notas fiscais de entrada,saída,remessa,devolução e outras possíveis operações.
+	}
+
+
+	CfOP números iniciais e suas correspondências
+	1-> <-5
+	2-> <-6
+	3-> <-7
+
+	{
+		Sufixo,
+		Descriçao,
+		Variação,
+		Gera financeiro,
+		Tipo de utilizaçao,
+		operação fisca inversa,
+		operação fiscal para devolucao,
+		movimenta estoque,
+		solicitar documento fiscal de origem,
+		não tributa ICMS,
+		stituação tributária,
+		tipo de valor,
+		[
+			Sufixo: Preencha com os três últimos dígitos do código fiscal(CFOP). Exemplo: Código fiscal 1102, então o sufixo deve ser 102. 
+			Variação: Este campo seve para controle interno pois existem operações fiscais com o mesmo sufixo. Pode ser usado como um resumo do que se trata o CFOP. Este campo não tem impacto fiscal. Exemplo: Compra; Transf; EntRem; 
+			Descrição: É a identificação da CFOP cadastrada que será exibida. Ex: Devolução de Compra; Saída Transferência; Entrada remessa;
+			Gera Financeiro: Essa opção Indica que deverá ser informado os vencimentos das receitas/despesas no lançamento da nota fiscal. Na integração da nota serão gerados lançamentos de despesas/receitas no financeiro com o(s) vencimento(s) informados. Para notas fiscais de saída também indica que ela será considerada nas consultas comerciais.
+			Tipo de Utilização: Preencha este campo para identificar a finalidade da operação, sendo Saída, ou Entrada.
+			Operação Fiscal Inversa (Espelho): Este campo serve para identificar se será aceito uma operação inversa com base no documento de origem. No caso de CFOP de Saída é obrigatório seu preenchimento.
+			Operação Fiscal para Devolução: Este campo serve para informar se a operação realizada terá uma operação de devolução. Exemplo: A operação ‘Saída - venda’ pode ter ‘Entrada – Devolução’.
+			Movimenta Estoque: Este campo tem como finalidade identificar se os produtos contidos na NF vão sair/entrar no estoque ao gerar a NF.
+			Solicita Documento Fiscal de Origem: Esta opção é responsável por identificar se a operação realizada terá ou não que ter um documento de origem referenciado. Exemplo. Uma NF de devolução de compra deve ter sua NF de origem referenciada.
+			Não Tributa ICMS: Esta opção define a Tributação de ICMS incidente sobre a operação fiscal.
+		]
+	}
+
+	//-----------------------------------------
+
+	Natureza operação
+		E-Compras pra comercializaçaõ de outros estados
+		E-Compras para comercialização 
+		D-Devolução de compras para comercializaçao de outros estados
+		D-Devolução de compras para comercializaçao
+		E-Devolução de mercadoria
+		S-Industrialização efetuada para outras empresas
+		S-Outras saídas não especificadas
+		S-Prestação de serviços
+		S-Venda/Prestaçao de serviços
+		S-Venda de mercadoria adquirida e/ou recebida de terceiros
+		S-Vendas de mercadoria adquirida e/ou recebida de terceiros de outros estados
+		S-Vendas de mercadoria de dentro do estado
+
+	ICMS
+		Tabela
+			Descrição
+			Estado
+			Aliquota ICMS
+
+		Natureza operção
+		Estado
+		Aliquota ICMS %
+		Aliquota ICMS interna do estado emissor %
+		FCP (Fundo de combate a pobreza) %
+		MVA % 
+		Base Reduzida valor
+		ST
+		ST serviço
+		CSOSN
+		Base ICMS[Base simples, Base Dupla, Base trípla]
+
+	CST
+		O Código da Situação Tributária (CST) é o valor que identifica a origem da mercadoria e a forma de tributação que deverá incidir sobre a mesma.
+
+		CST	Descrição
+		00	Tributada integralmente
+		10	Tributada e com cobrança do ICMS por substituição tributária
+		20	Com redução da BC
+		30	Isenta / não tributada e com cobrança do ICMS por substituição tributária
+		40	Isenta
+		41	Não tributada
+		50	Com suspensão
+		51	Com diferimento
+		60	ICMS cobrado anteriormente por substituição tributária
+		70	Com redução da BC e cobrança do ICMS por substituição tributária
+		90	Outras
+	Código de Regime Tributário - CRT for igual a "1″.
+	
+
+
+	
+	#Movimentação de destoque
+	#Clientes e fornecedores
+	#Consulta clientes
+	#Notas fiscais
+	#Orçamentos O.S
+	#Histórico
+	#PDV
+	#Caixa
+	#Contas a receber
+	#Contas a pagar
+	#Compras
+	#Fechamento de caixa
 
  -->
 

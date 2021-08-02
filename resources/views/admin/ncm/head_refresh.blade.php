@@ -85,7 +85,8 @@
 				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
 				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
 				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
-				<a href="{{route('produto.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar_produto{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
+				<a href="{{route('ncm.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
+				<a href="{{route('ncm.tributacao.tributar', '1')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="tributar_ncm{{$randId}}"><i class="fas fa-plus"></i> Tributar NCM</a>
 			</div>
 
 		</div>
@@ -103,6 +104,20 @@
 	
 	Utilitarios.modifyUrlWithoutReload('/ncm/head', 'Produtos')
 	let idModalOptions = null;
+
+	//--------
+	$('html').find('#tributar_ncm{{$randId}}').on('click', function(ev){
+		
+		ev.preventDefault();
+
+		let url = $(this).attr('href');
+		let formData = new FormData();
+
+		let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
+		formData.append('_token', token);
+		Utilitarios.assistentAjaxModal('POST',url, 'HTML','Tributar-NCM', 'sm', '700px', null, formData)
+
+	})
 	
 	$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
 		ev.preventDefault();
@@ -177,7 +192,7 @@
 			let id 		= String(atual.attr('id').trim())
 			let label 	= String($('html').find('#filtros{{$randId}}').find('label[for="'+id+'"]').text()).trim();
 
-			if(valor.length > 0){
+			if(valor.length > 0 && valor != 'null' && valor != 'undefined'){
 				let obj ={
 					'label': label,
 					'name': name,
@@ -225,12 +240,12 @@
 	}
 
 	//cadastra um produto view
-	$('body').delegate('div.card a#cadastrar_produto{{$randId}}', 'click', function(ev){
+	$('body').delegate('div.card a#cadastrar{{$randId}}', 'click', function(ev){
 
 		ev.preventDefault();
 		let url = $(this).attr('href');
 
-		Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Cadastrar', 'sm', 'auto')
+		Utilitarios.assistentAjaxModal('GET',url, 'HTML','NCM-Cadastrar', 'sm', 'auto')
 		Utilitarios.toggleFiltro();
 
 	});

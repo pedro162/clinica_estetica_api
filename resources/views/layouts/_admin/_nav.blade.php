@@ -66,6 +66,7 @@
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="">CFOP</a>
           <a class="dropdown-item" href="">CST</a>
+          <a class="dropdown-item" href="">Sub. tributária</a>
           <a class="dropdown-item rotina" href="{{route('ncm.head')}}">NCM</a>
           <a class="dropdown-item" href="">Tributação</a>
         </div>

@@ -347,38 +347,37 @@ class ProdutoController extends Controller
             $callBack = $dados['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-
             if($id <= 0){
-
-                 \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
-
-                return redirect()->route('produto.index');
-
+                throw new ProdutoException('Parâmetro ínválido');
             }
 
-            $registro = null;
+            \DB::beginTransaction();
 
-            \DB::transaction(function() use (&$id, &$registro){
-
-                $registro = Produto::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
-        
-            } );
+            $registro = Produto::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
 
             if($registro == null){
-
-                \Session::flash('mensagem', ['msg'=>'Produto não encontrado', 'class'=>'alert alert-danger']);
-                return redirect()->back();
+                throw new ProdutoException('Produto não encontrado');
             }
 
+            \DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
             return view('admin.produto.info', compact('registro', 'idAssistente', 'callBack'));
 
+        }catch(ProdutoException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
         }catch(\Exception $e){
 
-            \Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            return redirect()->back();
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
 
         }
     }

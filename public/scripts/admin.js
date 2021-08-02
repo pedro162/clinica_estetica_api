@@ -312,8 +312,8 @@ class Utilitarios{
 					<div class="modal-content">
 		
 					<!-- Modal Header -->
-					<div class="modal-header">
-						<h4 class="modal-title">${title}</h4>
+					<div class="modal-header breadcrumb">
+						<h4 class="modal-title"><strong>${title}</strong></h4>
 						<button type="button" class="close" data-dismiss="modal" id="closeModal${rand}">&times;</button>
 					</div>
 		

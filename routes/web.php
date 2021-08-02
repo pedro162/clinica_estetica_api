@@ -170,12 +170,17 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/ncm/create/{id_assistente?}', ['as'=>'ncm.create', 'uses'=>'Admin\NcmController@create']);
 	Route::post('/ncm/store/{id_assistente?}', ['as'=>'ncm.store', 'uses'=>'Admin\NcmController@store']);
 	Route::get('/ncm/edit/{id}/{id_assistente?}', ['as'=>'ncm.edit', 'uses'=>'Admin\NcmController@edit']);
+	Route::post('/ncm/edit/{id}/{id_assistente?}', ['as'=>'ncm.edit', 'uses'=>'Admin\NcmController@edit']);
 	Route::put('/ncm/update/{id}/{id_assistente?}', ['as'=>'ncm.update', 'uses'=>'Admin\NcmController@update']);
 	Route::get('/ncm/show/{id}/{id_assistente?}', ['as'=>'ncm.show', 'uses'=>'Admin\NcmController@show']);
+	Route::post('/ncm/show/{id}/{id_assistente?}', ['as'=>'ncm.show', 'uses'=>'Admin\NcmController@show']);
 	Route::get('/ncm/info/{id}/{id_assistente?}', ['as'=>'ncm.info', 'uses'=>'Admin\NcmController@info']);
+	Route::post('/ncm/info/{id}/{id_assistente?}', ['as'=>'ncm.info', 'uses'=>'Admin\NcmController@info']);
 	Route::get('/ncm/head/{id_assistente?}', ['as'=>'ncm.head', 'uses'=>'Admin\NcmController@head']);
 	Route::get('/ncm/tributacao/tributar/{id}/{id_assistente?}', ['as'=>'ncm.tributacao.tributar', 'uses'=>'Admin\NcmController@tributar']);
 	Route::post('/ncm/tributacao/tributar/{id}/{id_assistente?}', ['as'=>'ncm.tributacao.tributar', 'uses'=>'Admin\NcmController@tributar']);
+	Route::get('/ncm/destroy/{id}/{id_assistente?}', ['as'=>'ncm.destroy', 'uses'=>'Admin\NcmController@destroy']);
+	Route::post('/ncm/destroy/{id}/{id_assistente?}', ['as'=>'ncm.destroy', 'uses'=>'Admin\NcmController@destroy']);
 
 	Route::get('/venda/index/{id_assistente?}', ['as'=>'contrato.index', 'uses'=>'Admin\VendaController@index']);//VendaController
 	Route::get('/venda/create/{id}/{id_assistente?}', ['as'=>'venda.create', 'uses'=>'Admin\VendaController@create']);

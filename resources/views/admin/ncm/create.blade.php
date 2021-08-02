@@ -1,7 +1,7 @@
-
+@php $randId = rand(11111, 99999);@endphp
 <div class="row mb-5 p-3">
 	<div class="col-md-12 col-sm-12">
-		<form action="{{route('produto.store')}}" method="post" class="form " id="form_produto_cadastrar" enctype="multipart/form-data">
+		<form action="{{route('ncm.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
 			@csrf
 
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
@@ -9,13 +9,14 @@
 
 			<div class="row  mt-5">
 				<div class="form-group col-md-6 col-sm-12">
-					<label class="label">Nome</label>
-					<input type="text" name="name" class="form-control form-control-sm">
+					<label class="label">NCM</label>
+					<input type="text" name="codNcm" class="form-control form-control-sm">
 				</div>
+				
 
 				<div class="form-group col-md-6 col-sm-12">
 					<label class="label">Descrição</label>
-					<input type="text" name="description" class="form-control form-control-sm">
+					<input type="text" name="nmNcm" class="form-control form-control-sm">
 				</div>
 			</div>
 
@@ -31,8 +32,10 @@
 </div>	
 
 <script>
+
+	const assistente{{$randId}} = '{{$idAssistente}}';
 	//edita ou salva um produto
-	$('html body').delegate('form#form_produto_cadastrar, form#form_produto_atualizar','submit', function(ev){
+	$('html body').find('#form{{$randId}}').on('submit', function(ev){
 
 		try{
 
@@ -52,14 +55,15 @@
 					console.log(response.mensagem.id);
 
 					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
-
-						Utilitarios.assistenteMensageAlert('Registrado com sucesso');
+						Utilitarios.fecharAssistente(assistente{{$randId}});
+						Utilitarios.assistenteMensage('Registrado com sucesso');
+						@php echo base64_decode($callBack) @endphp
 
 					}else{
 
-						Utilitarios.assistenteMensageAlert('Erro ao atuaolizar registro', 'warning');
+						Utilitarios.assistenteMensage('Erro ao atuaolizar registro', 'warning', 'Erro');
 
-						
+
 					}
 				},
 				error:function(response, status, error){
