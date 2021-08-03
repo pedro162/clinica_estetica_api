@@ -32,11 +32,16 @@
 			<hr/>
 			<div class="row">
 				<div class="form-group col-md-6 col-sm-12">
-					<label class="label">CFOP</label>
-					<input type="text" name="name" class="form-control form-control-sm">
-				
-					<label class="label">Descrição</label>
-					<input type="text" name="description" class="form-control form-control-sm">
+					<div class="row">
+						<div class="col-md-2 col-sm-12 ">
+							<label class="label">CFOP</label>
+							<input type="text" name="name" class="form-control form-control-sm">
+						</div>
+						<div class="col-md-10 col-sm-12">
+							<label class="label">Descrição</label>
+							<input type="text" name="description" class="form-control form-control-sm">
+							</div>
+					</div>
 				</div>
 
 				<div class="form-group col-md-6 col-sm-12">
@@ -90,8 +95,12 @@
 					</div>
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Mod. BCICMS</label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option alt="Modalidade de determinação da Base de Cálculo" value=""></option>
+						<select alt="Modalidade de determinação da Base de Cálculo ICMS"  type="text" name="sub_categoria_id" class="form-control form-control-sm">
+							<option  value="">Margem valor agregado (%)</option>
+							<option  value="">Pauta (valor)</option>
+							<option  value="">Preço tabelado máx sugerido (valor)</option>
+							<option  value="">Valor da operação (valor)</option>
+
 						</select>
 					</div>
 				</div>
@@ -100,10 +109,13 @@
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Mod. BC ICMS ST</label>
 						<select alt="Modalidade de determinação da Base de Cálculo do ICMS ST" type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option  value="">Margem valor agregado</option>
+							<option  value="">Margem valor agregado (%)</option>
 							<option  value="">Pauta (valor)</option>
-							<option  value="">Preço tabelado máx (valor)</option>
-							<option  value="">Valor da operação</option>
+							<option  value="">Preço tabelado máx sugerido (valor)</option>
+							<option  value="">Lista positiva (valor)</option>
+							<option  value="">Lista negativa (valor)</option>
+							<option  value="">Lista neutra (valor)</option>
+							
 						</select>
 					</div>
 
@@ -115,17 +127,36 @@
 
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Aliq. ICMS(%)</label>
+						<label class="label">Aliq. ICMS CF(%)</label>
 						<input alt="Alíquota ICMS" type="text" name="ean" class="form-control form-control-sm">
 					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Aliq. ICMS R(%)</label>
+						<input alt="Alíquota ICMS" type="text" name="ean" class="form-control form-control-sm">
+					</div>
+				</div>
+				
+
+				<div class="row">
 
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">MVA ICMS ST (%)</label>
 						<input alt="Percentual da margem do Valor Adicionado ao ICMS ST" type="text" name="ncm" class="form-control form-control-sm">
 					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Aliq. IPI (%)</label>
+						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
+							<option value=""></option>
+						</select>
+					</div>
 				</div>
 
+
 				<div class="row">
+					
+
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">CST PIS</label>
 						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
@@ -152,16 +183,6 @@
 						<input type="text" name="ncm" class="form-control form-control-sm">
 					</div>
 				</div>
-
-				<div class="row">
-					<div class="form-group col-md-12 col-sm-12">
-						<label class="label">Aliq. IPI (%)</label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value=""></option>
-						</select>
-					</div>
-				</div>
-
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Red. BC ICMS (%)</label>
@@ -172,7 +193,7 @@
 
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Aliq. ICMS ST(%)</label>
-						<input type="file" name="imagem" class="form-control form-control-sm ">
+						<input type="text" name="imagem" class="form-control form-control-sm ">
 					</div>
 				</div>
 				
@@ -230,6 +251,11 @@
 							@endforeach
 						</select>
 					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Cód. ex. da TIPI</label>
+						<input title="Código de excessão da incidência de IPI " type="text" name="imagem" class="form-control form-control-sm ">
+					</div>
 				</div>
 				<div  class="row" >
 					<div class="form-group col-md-6 col-sm-12">
@@ -242,18 +268,59 @@
 
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Aiq. IPI (%)</label>
-						<input type="file" name="imagem" class="form-control form-control-sm ">
+						<input type="text" name="imagem" class="form-control form-control-sm ">
 					</div>
 				</div>
 				<div  class="row" >
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">BC IPI</label>
-						<input type="file" name="imagem" class="form-control form-control-sm ">
+						<input type="text" name="imagem" class="form-control form-control-sm ">
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Vr. IPI</label>
-						<input type="file" name="imagem" class="form-control form-control-sm ">
+						<input type="text" name="imagem" class="form-control form-control-sm ">
+					</div>
+				</div>
+				<div  class="row" >
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Soma IPI BC do ICMS</label>
+						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
+							<option value="">sim.</option>
+							<option value="">Não</option>
+						</select>
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Soma IPI BC do ICMS ST</label>
+						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
+							<option value="">sim.</option>
+							<option value="">Não</option>
+						</select>
+					</div>
+				</div>		
+
+				<div  class="row" >
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Classe de enquadramento</label>
+						<input type="text" name="imagem" class="form-control form-control-sm ">
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Código de enquadramento</label>
+						<input type="text" name="imagem" class="form-control form-control-sm ">
+					</div>
+				</div>
+
+				<div  class="row" >
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">CNPJ do produtor</label>
+						<input type="text" name="imagem" class="form-control form-control-sm ">
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Código do celo de controle</label>
+						<input type="text" name="imagem" class="form-control form-control-sm ">
 					</div>
 				</div>
 

@@ -243,22 +243,52 @@
 		S-Vendas de mercadoria de dentro do estado
 
 	ICMS
-		Tabela
-			Descrição
-			Estado
-			Aliquota ICMS
 
 		Natureza operção
 		Estado
 		Aliquota ICMS %
 		Aliquota ICMS interna do estado emissor %
 		FCP (Fundo de combate a pobreza) %
-		MVA % 
+		MVA (Margem de valor agregado) % 
 		Base Reduzida valor
 		ST
 		ST serviço
 		CSOSN
 		Base ICMS[Base simples, Base Dupla, Base trípla]
+		Modalidade de determinação da BC do ICMS ST: [
+			*Preço tabelado ou máximo sugerido
+			*Lista positiva (valor)
+			*Margem valor agregado (%)
+			*Lista negativa (valor)
+			*Lista neutra (valor)
+			*Pauta
+		]
+		Base do ICMS ST
+		Base  ST Destino
+		Aliquota ST destino
+		BC Operação Própria
+		Base ICMS UF destino
+		Alíquota UF destino
+		Alíq. FCP UF Destino (Fundo de combate a pobresa destino)
+		Motivo da desoneração do ICMS:{
+			*Táxi
+			*Produtor Agropecuário
+			*Frotista/Locadora
+			*Diplomático/Consumidor
+			*Utilit./Motos da Am./Áreas Livre consumo
+			*Suframa
+			*Outros
+			*Deficiente Condutor
+			*Deficiente não condutor
+			*Ógão de fornecimento e desenvolvimento agropecuáreo
+
+		}
+		IVA (%)
+		Base do ICMS ST
+		Aliqota ST
+		IVA (%)
+		Base ST Retido
+		Alíq. ST ret
 
 	CST
 		O Código da Situação Tributária (CST) é o valor que identifica a origem da mercadoria e a forma de tributação que deverá incidir sobre a mesma.
@@ -276,9 +306,106 @@
 		70	Com redução da BC e cobrança do ICMS por substituição tributária
 		90	Outras
 	Código de Regime Tributário - CRT for igual a "1″.
-	
 
+	*Produto{
+		GTIN = "Código de barras"[
+			GTIN comercial (UNIDADE):
 
+			GTIN tributável (A caixa)
+		]
+
+		CEST:{Código especificador da subistituição tributária.}
+		
+		ANP (Código da agência nacional do petrôleo):{
+
+		},
+		Unidade,
+		Código externo,
+		Flags:{
+			Ativo,
+			Kit,
+			Controla estoque,
+			Permite devolução,
+		},
+		Preco de venda, 
+		Desconto,
+		Alterado em,
+
+		Tributação:{Situação tributária, ICMS, Produção própria},
+		Classificação:{
+			Grupo,
+			Departamento,
+			Marca,
+		},
+		Observações,
+		Descrição adiconada na venda,
+		Animação
+	}
+
+	IPI:{
+		Tipo de cálculo:[Percentual:{
+			Base de cálculo, Alíquota
+		}, em valor:{
+			Valor da unidade
+		}],
+		Classe de enquadramento,
+		Código de enquadramento,
+		CNPJ do produtor,
+		Código do selo de controle,
+		Soma ipi na base do ICMS:{Sim, não},
+		Soma ipi na base do ICMS ST:{Sim, não}
+
+	}
+
+	COFINS:{
+		Descrição,
+		Cód CST,
+		Tipo de calculo:{
+			Percentual:{
+				Base de calculo, Alíquota,
+			}, Em valor:{
+				Valor por unidade
+			}
+		}
+	}
+
+	PIS:{
+		Descrição,
+		Cód CST,
+		Tipo de calculo:{
+			Percentual:{
+				Base de calculo, Alíquota,
+			}, Em valor:{
+				Valor por unidade
+			}
+		}
+	}
+
+	COFINS Subistituição Tributária:{
+		Descrição,
+		Cód CST,
+		Tipo de calculo:{
+			Percentual:{
+				Base de calculo, Alíquota,
+			}, Em valor:{
+				Valor por unidade
+			}
+		}
+	}
+
+	PIS Subistituição Tributária:{
+		Descrição,
+		Cód CST,
+		Tipo de calculo:{
+			Percentual:{
+				Base de calculo, Alíquota,
+			}, Em valor:{
+				Valor por unidade
+			}
+		}
+	}
+	Inposto sobre importação,
+	ISSQN (Inposto sobre importação de qualquer natureza)
 	
 	#Movimentação de destoque
 	#Clientes e fornecedores
