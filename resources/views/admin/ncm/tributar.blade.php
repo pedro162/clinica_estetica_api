@@ -2,6 +2,7 @@
 @php 
 
 	$csosn = false;
+	$randId = rand(11111, 99999);
 
 @endphp
 <div class="row mb-5 p-3">
@@ -12,19 +13,38 @@
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
 			<hr/>
 
-			<div class="row  mt-5">
-				<div class="form-group col-md-12 col-sm-12">
-					<div class="row">
-						<div class="col-md-2 col-sm-12 ">
-							<label class="label">Código NCM</label>
-							<input type="text" name="name" class="form-control form-control-sm">
-						</div>
-						<div class="col-md-10 col-sm-12">
-							<label class="label">Descrição</label>
-							<input type="text" name="description" class="form-control form-control-sm">
-							</div>
-					</div>
-				</div>
+			<div class="  mt-5">
+				
+				@php
+				
+					$idCod = '01';
+					$typeCod = 'number';
+					$nameCod = 'idNcm';
+					$labelCod = 'Código NCM';
+					$idDescription = '02';
+					$typeDescrption = 'text';
+					$nameDescription = 'dsNcm';
+					$labelDescription = 'Descrição';
+					$valueDescription = "01";
+					$valueCod = "Teste 01";
+					$colCod = "2";
+					$colDescription = "10";
+				 
+				 @endphp
+				<x-controll-filter
+					:idCod="$idCod"
+					:typeCod="$typeCod"
+					:nameCod="$nameCod"
+					:labelCod="$labelCod"
+					:idDescription="$idDescription"
+					:typeDescrption="$typeDescrption"
+					:nameDescription="$nameDescription"
+					:labelDescription="$labelDescription"
+					:valueDescription="$valueDescription"
+					:valueCod="$valueCod"
+					:colCod="$colCod"
+					:colDescription="$colDescription"
+				/>
 			
 			</div>
 			
@@ -32,16 +52,37 @@
 			<hr/>
 			<div class="row">
 				<div class="form-group col-md-6 col-sm-12">
-					<div class="row">
-						<div class="col-md-2 col-sm-12 ">
-							<label class="label">CFOP</label>
-							<input type="text" name="name" class="form-control form-control-sm">
-						</div>
-						<div class="col-md-10 col-sm-12">
-							<label class="label">Descrição</label>
-							<input type="text" name="description" class="form-control form-control-sm">
-							</div>
-					</div>
+				
+					@php
+				
+						$idCodCfop = '001';
+						$typeCodCfop = 'number';
+						$nameCodCfop = 'idCFOP';
+						$labelCodCfop = 'CFOP';
+						$idDescriptionCfop = '002';
+						$typeDescrptionCfop = 'text';
+						$nameDescriptionCfop = 'dsCFOP';
+						$labelDescriptionCfop = 'Descrição';
+						$valueDescriptionCfop = "001";
+						$valueCodCfop = "Teste CFOP 001";
+						$colCodCfop = "3";
+						$colDescriptionCfop = "9";
+					@endphp
+					<x-controll-filter
+						:idCod="$idCodCfop"
+						:typeCod="$typeCodCfop"
+						:nameCod="$nameCodCfop"
+						:labelCod="$labelCodCfop"
+						:idDescription="$idDescriptionCfop"
+						:typeDescrption="$typeDescrptionCfop"
+						:nameDescription="$nameDescriptionCfop"
+						:labelDescription="$labelDescriptionCfop"
+						:valueDescription="$valueDescriptionCfop"
+						:valueCod="$valueCodCfop"
+						:colCod="$colCodCfop"
+						:colDescription="$colDescriptionCfop"
+					/>
+
 				</div>
 
 				<div class="form-group col-md-6 col-sm-12">
@@ -155,10 +196,8 @@
 
 
 				<div class="row">
-					
-
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">CST PIS</label>
+						<label class="label">PIS</label>
 						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
 							<option value=""></option>
 						</select>
@@ -172,7 +211,35 @@
 
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">CST COFINS</label>
+						<label class="label">Valor PIS (R$)</label>
+						<input type="text" name="ncm" class="form-control form-control-sm">
+					</div>
+
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">PIS ST</label>
+						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
+							<option value=""></option>
+						</select>
+					</div>
+
+				</div>
+				
+				<div class="row">
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Aliq. PIS ST (%)</label>
+						<input type="text" name="ncm" class="form-control form-control-sm">
+					</div>
+					
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Valor PIS ST (R$)</label>
+						<input type="text" name="ncm" class="form-control form-control-sm">
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">COFINS</label>
 						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
 							<option value=""></option>
 						</select>
@@ -183,6 +250,36 @@
 						<input type="text" name="ncm" class="form-control form-control-sm">
 					</div>
 				</div>
+
+				<div class="row">
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Valor COFINS (R$)</label>
+						<input type="text" name="ncm" class="form-control form-control-sm">
+					</div>
+
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">COFINS ST </label>
+						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
+							<option value=""></option>
+						</select>
+					</div>
+
+				</div>
+
+
+				<div class="row">
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Aliq. COFINS ST (%)</label>
+						<input type="text" name="ncm" class="form-control form-control-sm">
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Valor COFINS ST (R$)</label>
+						<input type="text" name="ncm" class="form-control form-control-sm">
+					</div>
+				</div>
+							
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Red. BC ICMS (%)</label>
@@ -197,6 +294,20 @@
 					</div>
 				</div>
 				
+
+				<div class="row">
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">CEST</label>
+						<input type="text" name="imagem" class="form-control form-control-sm ">
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">IVA (%) </label>
+						<input alt="O Imposto sobre o Valor Agregado (IVA)" type="text" name="imagem" class="form-control form-control-sm ">
+					</div>
+
+				</div>
+
 			@else
 
 				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">ICMS SIMPLES NACIONAL </h5>
@@ -233,6 +344,20 @@
 						</select>
 					</div>
 				</div>
+
+
+				<div class="row">
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">CEST</label>
+						<input type="text" name="imagem" class="form-control form-control-sm ">
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Alíq. simples nacional</label>
+						<input type="text" name="imagem" class="form-control form-control-sm ">
+					</div>
+				</div>
+
 			@endif
 
             <h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">IPI </h5>
@@ -260,27 +385,29 @@
 				<div  class="row" >
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Modalidade IPI</label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value="">Aliq.</option>
-							<option value="">Vr. por un.</option>
+						<select type="text" name="tpCalculoIpi" id="tpCalculoIpi{{$randId}}" class="form-control form-control-sm">
+							<option value="pc">Aliq.</option>
+							<option value="vr">Vr. por un.</option>
 						</select>
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Aiq. IPI (%)</label>
-						<input type="text" name="imagem" class="form-control form-control-sm ">
+						<input type="text" name="aliqIpi" id="aliqIpi{{$randId}}" class="form-control form-control-sm ">
 					</div>
 				</div>
 				<div  class="row" >
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">Vr. IPI</label>
+						<input readonly="readonly" type="text"  name="vrIpi" id="vrIpi{{$randId}}" class="form-control form-control-sm ">
+					</div>
+
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">BC IPI</label>
 						<input type="text" name="imagem" class="form-control form-control-sm ">
 					</div>
 
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Vr. IPI</label>
-						<input type="text" name="imagem" class="form-control form-control-sm ">
-					</div>
 				</div>
 				<div  class="row" >
 					<div class="form-group col-md-6 col-sm-12">
@@ -324,6 +451,20 @@
 					</div>
 				</div>
 
+				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">OUTROS </h5>
+				<hr/>
+				<div  class="row" >
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">I.I</label>
+						<input type="text" title="Imposto sobre importação" name="imagem" class="form-control form-control-sm ">
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">ISSQN</label>
+						<input type="text" title="Imposto sobre qualquer natureza" name="imagem" class="form-control form-control-sm ">
+					</div>
+				</div>
+
 			<div class="row">
 				<div class="col-md-8 col-sm-12">
 				</div>
@@ -336,6 +477,22 @@
 </div>	
 
 <script>
+
+	$('html').find('#tpCalculoIpi{{$randId}}').on('change', function(ev){
+		let val = $(this).val();
+		let objAliqIpi = $('html').find('#aliqIpi{{$randId}}');
+		let objVrIpi = $('html').find('#vrIpi{{$randId}}');
+
+		if(val && String(val).trim() == 'pc'){
+			objVrIpi.attr('readonly', 'readonly')
+			objAliqIpi.removeAttr('readonly')
+
+		}else{
+			objAliqIpi.attr('readonly', 'readonly')
+			objVrIpi.removeAttr('readonly')
+
+		}
+	})
 	//edita ou salva um produto
 	$('html body').delegate('form#form_produto_cadastrar, form#form_produto_atualizar','submit', function(ev){
 
