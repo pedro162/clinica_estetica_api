@@ -193,9 +193,144 @@
 						</select>
 					</div>
 				</div>
+				<div class="row">
+					<div class="form-group col-md-6 col-sm-12">
 
+						@php
+						
+							$idCodPis = '001';
+							$typeCodPis = 'number';
+							$nameCodPis = 'idPis';
+							$labelCodPis = 'PIS';
+							$idDescriptionPis = '002';
+							$typeDescrptionPis = 'text';
+							$nameDescriptionPis = 'dsPis';
+							$labelDescriptionPis = 'Descrição';
+							$valueDescriptionPis = "001";
+							$valueCodPis = "Teste PIS 001";
+							$colCodPis = "3";
+							$colDescriptionPis = "9";
+						@endphp
+						<x-controll-filter
+							:idCod="$idCodPis"
+							:typeCod="$typeCodPis"
+							:nameCod="$nameCodPis"
+							:labelCod="$labelCodPis"
+							:idDescription="$idDescriptionPis"
+							:typeDescrption="$typeDescrptionPis"
+							:nameDescription="$nameDescriptionPis"
+							:labelDescription="$labelDescriptionPis"
+							:valueDescription="$valueDescriptionPis"
+							:valueCod="$valueCodPis"
+							:colCod="$colCodPis"
+							:colDescription="$colDescriptionPis"
+						/>
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+
+						@php
+						
+							$idCodPisSt = '001';
+							$typeCodPisSt = 'number';
+							$nameCodPisSt = 'idPisSt';
+							$labelCodPisSt = 'PISST';
+							$idDescriptionPisSt = '002';
+							$typeDescrptionPisSt = 'text';
+							$nameDescriptionPisSt = 'dsPisSt';
+							$labelDescriptionPisSt = 'Descrição';
+							$valueDescriptionPisSt = "001";
+							$valueCodPisSt = "Teste PISST 001";
+							$colCodPisSt = "3";
+							$colDescriptionPisSt = "9";
+						@endphp
+						<x-controll-filter
+							:idCod="$idCodPisSt"
+							:typeCod="$typeCodPisSt"
+							:nameCod="$nameCodPisSt"
+							:labelCod="$labelCodPisSt"
+							:idDescription="$idDescriptionPisSt"
+							:typeDescrption="$typeDescrptionPisSt"
+							:nameDescription="$nameDescriptionPisSt"
+							:labelDescription="$labelDescriptionPisSt"
+							:valueDescription="$valueDescriptionPisSt"
+							:valueCod="$valueCodPisSt"
+							:colCod="$colCodPisSt"
+							:colDescription="$colDescriptionPisSt"
+						/>
+					</div>
+				</div>
+				
 
 				<div class="row">
+					<div class="form-group col-md-6 col-sm-12">
+
+						@php
+						
+							$idCodCofins = '001';
+							$typeCodCofins = 'number';
+							$nameCodCofins = 'idCofins';
+							$labelCodCofins = 'Cofins';
+							$idDescriptionCofins = '002';
+							$typeDescrptionCofins = 'text';
+							$nameDescriptionCofins = 'dsCofins';
+							$labelDescriptionCofins = 'Descrição';
+							$valueDescriptionCofins = "001";
+							$valueCodCofins = "Teste Cofins 001";
+							$colCodCofins = "3";
+							$colDescriptionCofins = "9";
+						@endphp
+						<x-controll-filter
+							:idCod="$idCodCofins"
+							:typeCod="$typeCodCofins"
+							:nameCod="$nameCodCofins"
+							:labelCod="$labelCodCofins"
+							:idDescription="$idDescriptionCofins"
+							:typeDescrption="$typeDescrptionCofins"
+							:nameDescription="$nameDescriptionCofins"
+							:labelDescription="$labelDescriptionCofins"
+							:valueDescription="$valueDescriptionCofins"
+							:valueCod="$valueCodCofins"
+							:colCod="$colCodCofins"
+							:colDescription="$colDescriptionCofins"
+						/>
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+
+						@php
+						
+							$idCodCofinsSt = '001';
+							$typeCodCofinsSt = 'number';
+							$nameCodCofinsSt = 'idCofinsst';
+							$labelCodCofinsSt = 'Cofinsst';
+							$idDescriptionCofinsSt = '002';
+							$typeDescrptionCofinsSt = 'text';
+							$nameDescriptionCofinsSt = 'dsCofinsSt';
+							$labelDescriptionCofinsSt = 'Descrição';
+							$valueDescriptionCofinsSt = "001";
+							$valueCodCofinsSt = "Teste CofinsSt 001";
+							$colCodCofinsSt = "3";
+							$colDescriptionCofinsSt = "9";
+						@endphp
+						<x-controll-filter
+							:idCod="$idCodCofinsSt"
+							:typeCod="$typeCodCofinsSt"
+							:nameCod="$nameCodCofinsSt"
+							:labelCod="$labelCodCofinsSt"
+							:idDescription="$idDescriptionCofinsSt"
+							:typeDescrption="$typeDescrptionCofinsSt"
+							:nameDescription="$nameDescriptionCofinsSt"
+							:labelDescription="$labelDescriptionCofinsSt"
+							:valueDescription="$valueDescriptionCofinsSt"
+							:valueCod="$valueCodCofinsSt"
+							:colCod="$colCodCofinsSt"
+							:colDescription="$colDescriptionCofinsSt"
+						/>
+					</div>
+				</div>
+
+				<!--<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">PIS</label>
 						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
@@ -207,9 +342,9 @@
 						<label class="label">Aliq. PIS (%)</label>
 						<input type="text" name="ncm" class="form-control form-control-sm">
 					</div>
-				</div>
+				</div>-->
 
-				<div class="row">
+				<!--<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Valor PIS (R$)</label>
 						<input type="text" name="ncm" class="form-control form-control-sm">
@@ -278,7 +413,7 @@
 						<label class="label">Valor COFINS ST (R$)</label>
 						<input type="text" name="ncm" class="form-control form-control-sm">
 					</div>
-				</div>
+				</div>-->
 							
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
