@@ -14,12 +14,17 @@ class ControllFilter extends Component
     protected $typeDescrption;
     protected $nameDescription;
     protected $labelDescription;
+    protected $valueDescription;
+    protected $valueCod;
+    protected $colCod;
+    protected $colDescription;
+    protected $searsh;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($idCod, $typeCod, $nameCod, $labelCod, $valueCod, $colCod, $idDescription, $typeDescrption, $nameDescription, $labelDescription, $valueDescription, $colDescription)
+    public function __construct($idCod, $typeCod, $nameCod, $labelCod, $valueCod, $colCod, $idDescription, $typeDescrption, $nameDescription, $labelDescription, $valueDescription, $colDescription, $searsh)
     {
         $this->idCod                = $idCod;
         $this->typeCod              = $typeCod;
@@ -33,6 +38,7 @@ class ControllFilter extends Component
         $this->valueCod             = $valueCod;
         $this->colCod               = $colCod;
         $this->colDescription       = $colDescription;
+        $this->searsh               = $searsh;
     }
 
     /**
@@ -105,4 +111,8 @@ class ControllFilter extends Component
         return $this->colDescription;   
     }
     
+    public function getSearsh()
+    {
+        return $this->searsh;
+    }
 }

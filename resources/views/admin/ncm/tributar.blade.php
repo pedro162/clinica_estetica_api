@@ -28,7 +28,8 @@
 					$valueDescription = "01";
 					$valueCod = "Teste 01";
 					$colCod = "2";
-					$colDescription = "10";
+					$colDescription = "9";
+					$searsh = "searshNcm".$randId."();";
 				 
 				 @endphp
 				<x-controll-filter
@@ -44,6 +45,8 @@
 					:valueCod="$valueCod"
 					:colCod="$colCod"
 					:colDescription="$colDescription"
+					:searsh="$searsh"
+
 				/>
 			
 			</div>
@@ -66,7 +69,9 @@
 						$valueDescriptionCfop = "001";
 						$valueCodCfop = "Teste CFOP 001";
 						$colCodCfop = "3";
-						$colDescriptionCfop = "9";
+						$colDescriptionCfop = "8";
+						$searshCfop = "";
+
 					@endphp
 					<x-controll-filter
 						:idCod="$idCodCfop"
@@ -81,6 +86,7 @@
 						:valueCod="$valueCodCfop"
 						:colCod="$colCodCfop"
 						:colDescription="$colDescriptionCfop"
+						:searsh="$searshCfop"
 					/>
 
 				</div>
@@ -209,7 +215,9 @@
 							$valueDescriptionPis = "001";
 							$valueCodPis = "Teste PIS 001";
 							$colCodPis = "3";
-							$colDescriptionPis = "9";
+							$colDescriptionPis = "8";
+							$searshPis = "searshPis".$randId."();";
+
 						@endphp
 						<x-controll-filter
 							:idCod="$idCodPis"
@@ -224,6 +232,7 @@
 							:valueCod="$valueCodPis"
 							:colCod="$colCodPis"
 							:colDescription="$colDescriptionPis"
+							:searsh="$searshPis"
 						/>
 					</div>
 
@@ -242,7 +251,8 @@
 							$valueDescriptionPisSt = "001";
 							$valueCodPisSt = "Teste PISST 001";
 							$colCodPisSt = "3";
-							$colDescriptionPisSt = "9";
+							$colDescriptionPisSt = "8";
+							$searshPisSt = "searshPisSt".$randId."();";
 						@endphp
 						<x-controll-filter
 							:idCod="$idCodPisSt"
@@ -257,6 +267,7 @@
 							:valueCod="$valueCodPisSt"
 							:colCod="$colCodPisSt"
 							:colDescription="$colDescriptionPisSt"
+							:searsh="$searshPisSt"
 						/>
 					</div>
 				</div>
@@ -278,7 +289,8 @@
 							$valueDescriptionCofins = "001";
 							$valueCodCofins = "Teste Cofins 001";
 							$colCodCofins = "3";
-							$colDescriptionCofins = "9";
+							$colDescriptionCofins = "8";
+							$searshCofins = "searshCofins".$randId."();";
 						@endphp
 						<x-controll-filter
 							:idCod="$idCodCofins"
@@ -293,6 +305,7 @@
 							:valueCod="$valueCodCofins"
 							:colCod="$colCodCofins"
 							:colDescription="$colDescriptionCofins"
+							:searsh="$searshCofins"
 						/>
 					</div>
 
@@ -311,7 +324,8 @@
 							$valueDescriptionCofinsSt = "001";
 							$valueCodCofinsSt = "Teste CofinsSt 001";
 							$colCodCofinsSt = "3";
-							$colDescriptionCofinsSt = "9";
+							$colDescriptionCofinsSt = "8";
+							$searshCofinsSt = "searshCofinsSt".$randId."();";
 						@endphp
 						<x-controll-filter
 							:idCod="$idCodCofinsSt"
@@ -326,6 +340,7 @@
 							:valueCod="$valueCodCofinsSt"
 							:colCod="$colCodCofinsSt"
 							:colDescription="$colDescriptionCofinsSt"
+							:searsh="$searshCofinsSt"
 						/>
 					</div>
 				</div>
@@ -680,5 +695,111 @@
 		}
 
 		ev.preventDefault();
-});
+	});
+
+	function searshNcm{{$randId}}(){
+		try{
+			let url = '/ncm/head';
+			//let idModal= $(element).attr('idModal');
+			// //
+			//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+			//let data = new FormData();
+			//data.append('id', id)
+			//data.append('idAssistente', '')
+			//data.append('callBack', ''+callBack{{$randId}}+'')
+
+			//let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
+			//data.append('_token', token)
+
+			//Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos', 'sm', '700px', null, null)
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
+	function searshPis{{$randId}}(){
+		try{
+			let url = '/pis/cofins/head/{id_assistente?}';
+			//let idModal= $(element).attr('idModal');
+			// //
+			//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+			//let data = new FormData();
+			//data.append('id', id)
+			//data.append('idAssistente', '')
+			//data.append('callBack', ''+callBack{{$randId}}+'')
+
+			//let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
+			//data.append('_token', token)
+
+			//Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos', 'sm', '700px', null, null)
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
+	function searshPisSt{{$randId}}(){
+		try{
+			let url = '/pis/cofins/head/{id_assistente?}';
+			//let idModal= $(element).attr('idModal');
+			// //
+			//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+			//let data = new FormData();
+			//data.append('id', id)
+			//data.append('idAssistente', '')
+			//data.append('callBack', ''+callBack{{$randId}}+'')
+
+			//let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
+			//data.append('_token', token)
+
+			//Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos', 'sm', '700px', null, null)
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
+	function searshCofins{{$randId}}(){
+		try{
+			let url = '/pis/cofins/head/{id_assistente?}';
+			//let idModal= $(element).attr('idModal');
+			// //
+			//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+			//let data = new FormData();
+			//data.append('id', id)
+			//data.append('idAssistente', '')
+			//data.append('callBack', ''+callBack{{$randId}}+'')
+
+			//let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
+			//data.append('_token', token)
+
+			//Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos', 'sm', '700px', null, null)
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
+	function searshCofinsSt{{$randId}}(){
+		try{
+			let url = '/pis/cofins/head/{id_assistente?}';
+			//let idModal= $(element).attr('idModal');
+			// //
+			//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+			//let data = new FormData();
+			//data.append('id', id)
+			//data.append('idAssistente', '')
+			//data.append('callBack', ''+callBack{{$randId}}+'')
+
+			//let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
+			//data.append('_token', token)
+
+			//Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos', 'sm', '700px', null, null)
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
 </script>

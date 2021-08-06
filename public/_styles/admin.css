@@ -1,3 +1,6 @@
+*{
+   box-sizing: border-box !important; 
+}
 
 div.card .card-body, div.card .card-footer{display: none;}
 .input-pdv{
@@ -66,4 +69,9 @@ border: 3px solid rgb(180, 173, 173, 0.5);
 .modal-title{
     text-transform: uppercase !important;
     font-weight: bolder !important;
+}
+
+form * label{
+    font-size: 14px !important;
+    text-transform: uppercase !important;
 }

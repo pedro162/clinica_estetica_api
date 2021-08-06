@@ -182,6 +182,21 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/ncm/destroy/{id}/{id_assistente?}', ['as'=>'ncm.destroy', 'uses'=>'Admin\NcmController@destroy']);
 	Route::post('/ncm/destroy/{id}/{id_assistente?}', ['as'=>'ncm.destroy', 'uses'=>'Admin\NcmController@destroy']);
 
+	Route::get('/pis/cofins/index/{id_assistente?}', ['as'=>'pis.cofins.index', 'uses'=>'Admin\PisCofinsController@index']);
+	Route::post('/pis/cofins/index/{id_assistente?}', ['as'=>'pis.cofins.index', 'uses'=>'Admin\PisCofinsController@index']);
+	Route::get('/pis/cofins/create/{id_assistente?}', ['as'=>'pis.cofins.create', 'uses'=>'Admin\PisCofinsController@create']);
+	Route::post('/pis/cofins/store/{id_assistente?}', ['as'=>'pis.cofins.store', 'uses'=>'Admin\PisCofinsController@store']);
+	Route::get('/pis/cofins/edit/{id}/{id_assistente?}', ['as'=>'pis.cofins.edit', 'uses'=>'Admin\PisCofinsController@edit']);
+	Route::post('/pis/cofins/edit/{id}/{id_assistente?}', ['as'=>'pis.cofins.edit', 'uses'=>'Admin\PisCofinsController@edit']);
+	Route::put('/pis/cofins/update/{id}/{id_assistente?}', ['as'=>'pis.cofins.update', 'uses'=>'Admin\PisCofinsController@update']);
+	Route::get('/pis/cofins/show/{id}/{id_assistente?}', ['as'=>'pis.cofins.show', 'uses'=>'Admin\PisCofinsController@show']);
+	Route::post('/pis/cofins/show/{id}/{id_assistente?}', ['as'=>'pis.cofins.show', 'uses'=>'Admin\PisCofinsController@show']);
+	Route::get('/pis/cofins/info/{id}/{id_assistente?}', ['as'=>'pis.cofins.info', 'uses'=>'Admin\PisCofinsController@info']);
+	Route::post('/pis/cofins/info/{id}/{id_assistente?}', ['as'=>'pis.cofins.info', 'uses'=>'Admin\PisCofinsController@info']);
+	Route::get('/pis/cofins/head/{id_assistente?}', ['as'=>'pis.cofins.head', 'uses'=>'Admin\PisCofinsController@head']);
+	Route::get('/pis/cofins/destroy/{id}/{id_assistente?}', ['as'=>'pis.cofins.destroy', 'uses'=>'Admin\PisCofinsController@destroy']);
+	Route::post('/pis/cofins/destroy/{id}/{id_assistente?}', ['as'=>'pis.cofins.destroy', 'uses'=>'Admin\PisCofinsController@destroy']);
+
 	Route::get('/venda/index/{id_assistente?}', ['as'=>'contrato.index', 'uses'=>'Admin\VendaController@index']);//VendaController
 	Route::get('/venda/create/{id}/{id_assistente?}', ['as'=>'venda.create', 'uses'=>'Admin\VendaController@create']);
 	Route::post('/venda/store/{idPessoa}/{id_assistente?}', ['as'=>'venda.store', 'uses'=>'Admin\VendaController@store']);

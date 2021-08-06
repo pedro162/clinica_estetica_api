@@ -82,4 +82,18 @@ class PisCofinsController extends Controller
     {
         //
     }
+
+    public function head(Request $request)
+    {
+        $dados = $request->all();
+        
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        if($isReload){
+           
+            return view('admin.pis_cofins.head_refresh', compact('isReload'));
+        }else{
+            return view('admin.pis_cofins.head', compact('isReload'));
+        }
+        
+    }
 }
