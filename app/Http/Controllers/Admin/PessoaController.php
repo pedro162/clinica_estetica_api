@@ -60,10 +60,13 @@ class PessoaController extends Controller
     		
     	} catch (\Exception $e) {
     		 
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            
     		//\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            //return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
     	}
 
     }

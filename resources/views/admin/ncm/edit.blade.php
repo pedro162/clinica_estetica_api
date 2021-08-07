@@ -1,7 +1,7 @@
 @php $randId = rand(11111, 99999); @endphp
 
 <div class="container">
-	<div class="row mb-5">
+	<div class="row">
 		<div class="col">
 			<form action="{{route('ncm.update', $registro->id)}}" method="post" class="form" id="form_{{$randId}}" enctype="multipart/form-data">
 				@csrf

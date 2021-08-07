@@ -5,50 +5,95 @@
 	$randId = rand(11111, 99999);
 
 @endphp
-<div class="row mb-5 p-3">
+<div class="row p-3">
 	<div class="col-md-12 col-sm-12">
-		<form action="{{route('produto.store')}}" method="post" class="form " id="form_produto_cadastrar" enctype="multipart/form-data">
+		<form action="{{route('produto.store')}}" method="post" class="form " id="form_{{$randId}}" enctype="multipart/form-data">
 			@csrf
 
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
 			<hr/>
 
 			<div class="  mt-5">
-				
-				@php
-				
-					$idCod = '01';
-					$typeCod = 'number';
-					$nameCod = 'idNcm';
-					$labelCod = 'Código NCM';
-					$idDescription = '02';
-					$typeDescrption = 'text';
-					$nameDescription = 'dsNcm';
-					$labelDescription = 'Descrição';
-					$valueDescription = "01";
-					$valueCod = "Teste 01";
-					$colCod = "2";
-					$colDescription = "9";
-					$searsh = "searshNcm".$randId."();";
-				 
-				 @endphp
-				<x-controll-filter
-					:idCod="$idCod"
-					:typeCod="$typeCod"
-					:nameCod="$nameCod"
-					:labelCod="$labelCod"
-					:idDescription="$idDescription"
-					:typeDescrption="$typeDescrption"
-					:nameDescription="$nameDescription"
-					:labelDescription="$labelDescription"
-					:valueDescription="$valueDescription"
-					:valueCod="$valueCod"
-					:colCod="$colCod"
-					:colDescription="$colDescription"
-					:searsh="$searsh"
+				<div class="row">
+					<div class="form-group col-md-6 col-sm-12">
+						@php
+						
+							$idCod = '01';
+							$typeCod = 'number';
+							$nameCod = 'idNcm';
+							$labelCod = 'NCM';
+							$idDescription = '02';
+							$typeDescrption = 'text';
+							$nameDescription = 'dsNcm';
+							$labelDescription = 'Descrição';
+							$valueDescription = "01";
+							$valueCod = "Teste 01";
+							$colCod = "2";
+							$colDescription = "9";
+							$searsh = "searshNcm".$randId."();";
+						
+						@endphp
+						<x-controll-filter
+							:idCod="$idCod"
+							:typeCod="$typeCod"
+							:nameCod="$nameCod"
+							:labelCod="$labelCod"
+							:idDescription="$idDescription"
+							:typeDescrption="$typeDescrption"
+							:nameDescription="$nameDescription"
+							:labelDescription="$labelDescription"
+							:valueDescription="$valueDescription"
+							:valueCod="$valueCod"
+							:colCod="$colCod"
+							:colDescription="$colDescription"
+							:searsh="$searsh"
 
-				/>
-			
+						/>
+					</div>
+					
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label">GTIN TRIBUTÁVEL</label>
+						<input alt="Código de barras de uma caixa, por exemploe." type="text" name="ncm" class="form-control form-control-sm">
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="form-group col-md-12 col-sm-12">
+						@php
+							
+							$idCodAnp = '01';
+							$typeCodAnp = 'number';
+							$nameCodAnp = 'anp';
+							$labelCodAnp = 'ANP';
+							$idDescriptionAnp = '02';
+							$typeDescrptionAnp = 'text';
+							$nameDescriptionAnp = 'dsNcm';
+							$labelDescriptionAnp = 'Descrição';
+							$valueDescriptionAnp = "01";
+							$valueCodAnp = "Teste 01";
+							$colCodAnp = "2";
+							$colDescriptionAnp = "9";
+							$searshAnp = "searshNcm".$randId."();";
+						
+						@endphp
+						<x-controll-filter
+							:idCod="$idCodAnp"
+							:typeCod="$typeCodAnp"
+							:nameCod="$nameCodAnp"
+							:labelCod="$labelCodAnp"
+							:idDescription="$idDescriptionAnp"
+							:typeDescrption="$typeDescrptionAnp"
+							:nameDescription="$nameDescriptionAnp"
+							:labelDescription="$labelDescriptionAnp"
+							:valueDescription="$valueDescriptionAnp"
+							:valueCod="$valueCodAnp"
+							:colCod="$colCodAnp"
+							:colDescription="$colDescriptionAnp"
+							:searsh="$searshAnp"
+
+						/>
+					</div>
+				</div>
 			</div>
 			
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Operação</h5>
@@ -628,6 +673,8 @@
 
 <script>
 
+	let callBack{{$randId}} = '{{$callBack}}'
+
 	$('html').find('#tpCalculoIpi{{$randId}}').on('change', function(ev){
 		let val = $(this).val();
 		let objAliqIpi = $('html').find('#aliqIpi{{$randId}}');
@@ -644,7 +691,7 @@
 		}
 	})
 	//edita ou salva um produto
-	$('html body').delegate('form#form_produto_cadastrar, form#form_produto_atualizar','submit', function(ev){
+	$('html body').delegate('form#form_{{$randId}}','submit', function(ev){
 
 		try{
 
@@ -720,20 +767,14 @@
 
 	function searshPis{{$randId}}(){
 		try{
-			let url = '/pis/cofins/head/{id_assistente?}';
-			//let idModal= $(element).attr('idModal');
-			// //
-			//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
-			//let data = new FormData();
-			//data.append('id', id)
-			//data.append('idAssistente', '')
-			//data.append('callBack', ''+callBack{{$randId}}+'')
+			
+			let url = '/pis/cofins/head';
+			let data =  preparaBasicRequestPost{{$randId}}();
+			data.append('tp', 'pis')
 
-			//let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
-			//data.append('_token', token)
+			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','PIS', 'sm', '700px', null, data)
 
-			//Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos', 'sm', '700px', null, null)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
@@ -741,20 +782,14 @@
 
 	function searshPisSt{{$randId}}(){
 		try{
-			let url = '/pis/cofins/head/{id_assistente?}';
-			//let idModal= $(element).attr('idModal');
-			// //
-			//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
-			//let data = new FormData();
-			//data.append('id', id)
-			//data.append('idAssistente', '')
-			//data.append('callBack', ''+callBack{{$randId}}+'')
+			
+			let url = '/pis/cofins/head';
+			let data =  preparaBasicRequestPost{{$randId}}();
+			data.append('tp', 'pisst')
 
-			//let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
-			//data.append('_token', token)
+			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','PIS ST', 'sm', '700px', null, data)
 
-			//Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos', 'sm', '700px', null, null)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
@@ -762,20 +797,14 @@
 
 	function searshCofins{{$randId}}(){
 		try{
-			let url = '/pis/cofins/head/{id_assistente?}';
-			//let idModal= $(element).attr('idModal');
-			// //
-			//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
-			//let data = new FormData();
-			//data.append('id', id)
-			//data.append('idAssistente', '')
-			//data.append('callBack', ''+callBack{{$randId}}+'')
+			
+			let url = '/pis/cofins/head';
+			let data =  preparaBasicRequestPost{{$randId}}();
+			data.append('tp', 'cofins')
 
-			//let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
-			//data.append('_token', token)
+			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','COFINS', 'sm', '700px', null, data)
 
-			//Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos', 'sm', '700px', null, null)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
@@ -783,23 +812,29 @@
 
 	function searshCofinsSt{{$randId}}(){
 		try{
-			let url = '/pis/cofins/head/{id_assistente?}';
-			//let idModal= $(element).attr('idModal');
-			// //
-			//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
-			//let data = new FormData();
-			//data.append('id', id)
-			//data.append('idAssistente', '')
-			//data.append('callBack', ''+callBack{{$randId}}+'')
+			
+			let url = '/pis/cofins/head';
+			let data =  preparaBasicRequestPost{{$randId}}();
+			data.append('tp', 'cofinsst')
 
-			//let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
-			//data.append('_token', token)
+			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','COFINS ST', 'sm', '700px', null, data)
 
-			//Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produtos', 'sm', '700px', null, null)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
+	}
+
+	function preparaBasicRequestPost{{$randId}}(){
+		let token = $('html').find('#form_{{$randId}}').find('input[name="_token"]').val()
+
+		let data = new FormData();
+		data.append('idAssistente', '')
+		data.append('callBack', ''+callBack{{$randId}}+'')
+		data.append('_token', token)
+
+		return data;
+
 	}
 
 </script>

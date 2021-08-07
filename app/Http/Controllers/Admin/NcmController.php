@@ -144,11 +144,18 @@ class NcmController extends Controller
 
         }catch(NcmException $e){
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
     
         }catch(\Exception $e){
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 

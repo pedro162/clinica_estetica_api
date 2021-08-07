@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\PisCofins;
+use App\Exceptions\PisCofinsException;
 
 class PisCofinsController extends Controller
 {
@@ -12,9 +14,140 @@ class PisCofinsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try{
+            \DB::beginTransaction();
+
+            $consulta = $request->all();
+            $campos =  null;
+            $parse = [
+                'name_pis_cofins'=>'pis_cofins.dsPisCofins'
+
+            ];
+
+            $registro = \DB::table('pis_cofins');
+            
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('pis_cofins.id', $val);
+                            }
+                            break;
+                        case 'tipo':
+                            if(is_string($val)){
+                                    
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                    
+                                $registro->whereIn('pis_cofins.tpRegistro', $val);
+                            }
+                        break;
+                        case 'name_pis_cofins':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                
+                                $registro->where('pis_cofins.dsPisCofins', 'like' , '%'.$val.'%');
+                            }
+                            break;
+                        case 'limite':
+                                $val = (int) $val;
+                                if(is_integer($val) && $val > 0){
+                                        
+                                   $registro->limit($val);
+                                }
+                            break;
+                        case 'ordem':
+
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $val = explode(',', $val);
+                                for($i= 0; !($i == count($val)); $i++) {
+                                    $atual = explode('-', $val[$i]);
+                                    if(array_key_exists(trim($atual[0]), $parse)){
+
+                                        $parsed = $parse[trim($atual[0])];
+                                        
+                                        if($parsed){
+                                           
+                                            $registro->orderBy($parsed,$atual[1]);
+                                        }
+                                    }
+                                    
+                                    
+                                }
+
+                                break;
+
+                        case'campos':
+                                if(is_array($val) && count($val) > 0){
+                                    //$campos = $this->montaCamposConsulta($registro, $val);
+                                    
+                                }
+                            break;
+
+                    }
+                }
+            }
+            if($campos){
+                $registro->select($campos);
+            }else{
+                $registro->select('pis_cofins.*');
+
+            }
+           
+            $registro = $registro->where('pis_cofins.active', '=', 'yes')->get();
+
+            
+            \DB::commit();
+
+            return view('admin.pis_cofins.index', compact('registro', 'consulta'));
+
+        }catch(PisCofinsException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
     }
 
     /**
@@ -22,9 +155,61 @@ class PisCofinsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function createPis(Request $request, $idAssistente)
     {
-        //
+        $dadosRequest = $request->all();
+
+        $callBack = $dadosRequest['callBack'] ?? '';
+        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+
+        return view('admin.pis_cofins.create', compact('callBack','idAssistente'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function createPisSt(Request $request, $idAssistente)
+    {
+        $dadosRequest = $request->all();
+
+        $callBack = $dadosRequest['callBack'] ?? '';
+        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+
+        return view('admin.pis_cofins.create_st', compact('callBack','idAssistente'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function createCofins(Request $request, $idAssistente)
+    {
+        $dadosRequest = $request->all();
+
+        $callBack = $dadosRequest['callBack'] ?? '';
+        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+        $formCofins = true;
+
+        return view('admin.pis_cofins.create', compact('callBack','idAssistente', 'formCofins'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function createCofinsSt(Request $request, $idAssistente)
+    {
+        $dadosRequest = $request->all();
+
+        $callBack = $dadosRequest['callBack'] ?? '';
+        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+        $formCofins = true;
+
+        return view('admin.pis_cofins.create_st', compact('callBack','idAssistente', 'formCofins'));
     }
 
     /**
@@ -35,7 +220,38 @@ class PisCofinsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       try{
+
+            \DB::beginTransaction();
+            $dados = $request->all();
+
+            $dadosRequest = [];
+
+            $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['active']             = 'yes';
+            $dadosRequest['dsPisCofins']        = $dados['dsPisCofins'] ?? 'teste';
+            $dadosRequest['tpCalculo']          = $dados['tpCalculo'] ?? 'pc';
+            $dadosRequest['tpRegistro']         = $dados['tpRegistro'] ?? 'pis';
+            $dadosRequest['vrPisCofins']        = $dados['vrPisCofins'] ?? 0;
+            $dadosRequest['pcPisCofins']        = $dados['pcPisCofins'] ?? 0;
+           
+            $registro = PisCofins::create($dadosRequest);
+            \DB::commit();
+
+            if($registro){
+                return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
+            }else{
+                throw new PisCofinsException('Erro ao cadastrar');
+            }
+
+        }catch(PisCofinsException $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
+
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
     }
 
     /**

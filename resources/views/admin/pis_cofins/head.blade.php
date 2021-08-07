@@ -17,7 +17,7 @@
 			<nav aria-label="breadcrumb" class="my-2">
 				<ol class="breadcrumb">
 					<li class="breadcrumb-item active"><a href="{{route('produto.index')}}">Inicio</a></li>
-					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de ncm</a></li>
+					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de pis & cofins</a></li>
 				</ol>
 			</nav>
 		</div>
@@ -39,17 +39,17 @@
 					<form class="" id="filtros{{$randId}}">
 							@csrf
 							<div class="row" >
-								<div class="custom-control my-1 col-md-1 col-sm-12">
+								<div class="custom-control my-1 col-md-2 col-sm-12">
 									<label class="label text-left" for="codigo_produto">Cód</label>
 									<input type="text" name="id" class="form-control form-control-sm filtro" id="codigo_produto">
 								</div>
 
 								<div class="custom-control my-1 col-md-2 col-sm-12">
-									<label class="label  text-left" for="nome_produto">Nome produto</label>
+									<label class="label  text-left" for="nome_produto">Descrição</label>
 									<input type="text" name="nome_produto" class="form-control form-control-sm filtro" id="nome_produto">
 								</div>
 
-								<div class="custom-control my-1 col-md-1 col-sm-12">
+								<div class="custom-control my-1 col-md-2 col-sm-12">
 									<label class="label  text-left" for="ordem">Ordenar por</label>
 									<select  name="ordem" class="form-control form-control-sm filtro" id="ordem">
 										@php
@@ -69,7 +69,7 @@
 									
 								</div>
 
-								<div class="custom-control my-1 col-md-1 col-sm-12">
+								<div class="custom-control my-1 col-md-2 col-sm-12">
 									<label class="label  text-left" for="limite">Limite</label>
 									<input type="number" value="150" name="limite" class="form-control form-control-sm filtro" id="limite">
 								</div>
@@ -81,10 +81,10 @@
 
 				<div class="card-footer bg-white form-inline">
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
-					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
-					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
-					<a href="{{route('ncm.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
-					<a href="{{route('ncm.tributacao.tributar', '1')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Tributar NCM</a>
+					<a href="{{route('pis.cofins.pis.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> PIS</a>
+					<a href="{{route('pis.cofins.cofins.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> COFINS</a>
+					<a href="{{route('pis.cofins.pis.st.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> PIS ST</a>
+					<a href="{{route('pis.cofins.cofins.st.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> COFINS ST</a>
 				</div>
 
 			</div>
@@ -136,7 +136,7 @@
 		}
 
 
-		Utilitarios.modifyUrlWithoutReload('/ncm/head', 'Ncm')
+		Utilitarios.modifyUrlWithoutReload('/pis/cofins/head', 'Ncm')
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
@@ -155,7 +155,7 @@
 		});
 
 		function pesquisar{{$randId}}(){
-			let url = '/ncm/index';
+			let url = '/pis/cofins/index';
 
 			let objResponse = 'div#response-request{{$randId}}';
 			//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)

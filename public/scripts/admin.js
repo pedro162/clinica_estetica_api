@@ -4,10 +4,34 @@ $(document).ready(function(ev){
 		CONFIGURÇÃO PARA AJUSTAR O MODAL QUANDO ESTIVER GRANDE
 	*/
 	$('html body').delegate('.modal-dialog-lg #closeModal', 'click', function(ev){
-
+		
 		$('html footer #assistenteModal').css('display', 'none').removeClass('show');
 		$('html .modal-backdrop').remove();
 	})
+
+	$('html').delegate('.modal', 'click', function(ev){
+		setTimeout(()=>{
+			$('html').find('.modal').each(function(){
+				if($(this).hasClass('show')){
+				
+					$('body').addClass('modal-open')
+					$('body').attr('cz-shortcut-listen', 'true')
+
+					return true;
+				}
+
+			})
+			
+			
+			
+		},1000)
+		
+	})
+
+	$('html').delegate('.custom-control-label', 'click', function(ev){
+		$(this).parent().find('input:checkbox').trigger('click')
+	})
+	
 	
 
 	/**

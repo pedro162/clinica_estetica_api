@@ -1,7 +1,7 @@
 @php $randId = rand(11111, 99999);@endphp
 <div class="row mb-5 p-3">
 	<div class="col-md-12 col-sm-12">
-		<form action="{{route('ncm.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
+		<form action="{{route('pis.cofins.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
 			@csrf
 
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>

@@ -184,7 +184,10 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 
 	Route::get('/pis/cofins/index/{id_assistente?}', ['as'=>'pis.cofins.index', 'uses'=>'Admin\PisCofinsController@index']);
 	Route::post('/pis/cofins/index/{id_assistente?}', ['as'=>'pis.cofins.index', 'uses'=>'Admin\PisCofinsController@index']);
-	Route::get('/pis/cofins/create/{id_assistente?}', ['as'=>'pis.cofins.create', 'uses'=>'Admin\PisCofinsController@create']);
+	Route::get('/pis/cofins/pis/create/{id_assistente?}', ['as'=>'pis.cofins.pis.create', 'uses'=>'Admin\PisCofinsController@createPis']);
+	Route::get('/pis/cofins/pis/st/create/{id_assistente?}', ['as'=>'pis.cofins.pis.st.create', 'uses'=>'Admin\PisCofinsController@createPisSt']);
+	Route::get('/pis/cofins/cofins/create/{id_assistente?}', ['as'=>'pis.cofins.cofins.create', 'uses'=>'Admin\PisCofinsController@createCofins']);
+	Route::get('/pis/cofins/cofins/st/create/{id_assistente?}', ['as'=>'pis.cofins.cofins.st.create', 'uses'=>'Admin\PisCofinsController@createCofinsSt']);
 	Route::post('/pis/cofins/store/{id_assistente?}', ['as'=>'pis.cofins.store', 'uses'=>'Admin\PisCofinsController@store']);
 	Route::get('/pis/cofins/edit/{id}/{id_assistente?}', ['as'=>'pis.cofins.edit', 'uses'=>'Admin\PisCofinsController@edit']);
 	Route::post('/pis/cofins/edit/{id}/{id_assistente?}', ['as'=>'pis.cofins.edit', 'uses'=>'Admin\PisCofinsController@edit']);
@@ -194,6 +197,7 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/pis/cofins/info/{id}/{id_assistente?}', ['as'=>'pis.cofins.info', 'uses'=>'Admin\PisCofinsController@info']);
 	Route::post('/pis/cofins/info/{id}/{id_assistente?}', ['as'=>'pis.cofins.info', 'uses'=>'Admin\PisCofinsController@info']);
 	Route::get('/pis/cofins/head/{id_assistente?}', ['as'=>'pis.cofins.head', 'uses'=>'Admin\PisCofinsController@head']);
+	Route::post('/pis/cofins/head/{id_assistente?}', ['as'=>'pis.cofins.head', 'uses'=>'Admin\PisCofinsController@head']);
 	Route::get('/pis/cofins/destroy/{id}/{id_assistente?}', ['as'=>'pis.cofins.destroy', 'uses'=>'Admin\PisCofinsController@destroy']);
 	Route::post('/pis/cofins/destroy/{id}/{id_assistente?}', ['as'=>'pis.cofins.destroy', 'uses'=>'Admin\PisCofinsController@destroy']);
 

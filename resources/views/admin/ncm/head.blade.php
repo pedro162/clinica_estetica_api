@@ -84,7 +84,7 @@
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
 					<a href="{{route('ncm.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
-					<a href="{{route('ncm.tributacao.tributar', '1')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Tributar NCM</a>
+					<a href="{{route('ncm.tributacao.tributar', '1')}}" onclick="tributar{{$randId}}('this');" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="tributar{{$randId}}"><i class="fas fa-plus"></i> Tributar NCM</a>
 				</div>
 
 			</div>
@@ -269,6 +269,28 @@
 			Utilitarios.toggleFiltro();
 
 		});
+
+		function tributar{{$randId}}(element){
+			
+			try{
+				let url = $(element).attr('href');
+				let id = $(element).attr('idItem');
+				let idModal= $(element).attr('idModal');
+				// //
+				Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+				let data = new FormData();
+				data.append('id', id)
+				data.append('idAssistente', '')
+				data.append('callBack', ''+btoa('pesquisar{{$randId}}();')+'')
+
+				let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
+				data.append('_token', token)
+
+				Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
+			}catch(ex){
+					console.log('Erro: '+ex.message);
+			}
+		}
 
 
 	</script>

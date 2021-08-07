@@ -12,34 +12,19 @@
 						Cód
 					</th>
 					<th>
-						NCM
-					</th>
-					<th>
 						Descrição
 					</th>
 					<th>
-						Ex. NCM
+						Tipo
 					</th>
 					<th>
-						Tipo código
+						Calculo
 					</th>
 					<th>
-						Ex. tip
+						Valor
 					</th>
 					<th>
-						Tabela
-					</th>
-					<th>
-						Alíquota nacional
-					</th>
-					<th>
-						Alíquota importada
-					</th>
-					<th>
-						Alíquota estadual
-					</th>
-					<th>
-						Alíquota municipal
+						Porcentagem
 					</th>
 					
 				</tr>
@@ -47,17 +32,12 @@
 			<tbody style="width: 100%;">
 				@foreach($registro as $valor)
 				<tr class="assistenteModalNCM">
-					<td class="text-right">{{$valor->id}}</td>
-					<td>{{$valor->codNcm}}</td>
-					<td>{{$valor->nmNcm}}</td>
-					<td>{{$valor->excecaoNcm}}</td>
-					<td>{{$valor->tpCodigo}}</td>
-					<td >{{$valor->exTipi}}</td>
-					<td>{{$valor->nmTabela}}</td>
-					<td class="text-right">{{$valor->vrAliqNacional}}</td>
-					<td class="text-right">{{$valor->vrAliqImportada }}</td>
-					<td class="text-right">{{$valor->vrAliqEstadual}}</td>
-					<td class="text-right">{{$valor->vrAliqMunicipal}}</td>
+					<td class="text-left">{{$valor->id}}</td>
+					<td class="text-left">{{$valor->dsPisCofins}}</td>
+					<td class="text-left">{{$valor->tpRegistro}}</td>
+					<td class="text-left">{{$valor->tpCalculo}}</td>
+					<td class="text-right">{{ $valor->tpCalculo == 'vr' ?  number_format($valor->vrPisCofins, 2, ',', '.') : '' }}</td>
+					<td class="text-right">{{$valor->tpCalculo == 'pc' ?  number_format($valor->pcPisCofins, 2, ',', '.') : '' }}</td>
 					<input type="hidden" name="item" value="{{$valor->id}}">
 				</tr>
 				@endforeach
