@@ -7,17 +7,18 @@
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
 			<hr/>
 			@if(isset($formCofins) && $formCofins == true)
-
+				<input type="hidden" name="tpRegistro" value="cofinsst" />
 				<div class="row  mt-5">
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Descrição</label>
-						<input type="text" name="nmNcm" class="form-control form-control-sm">
+						<label class="label" for="dsPisCofins{{$randId}}">Descrição</label>
+						<input id="dsPisCofins{{$randId}}" name="dsPisCofins" type="text" name="nmNcm" class="form-control form-control-sm">
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Tip. cal COFINS ST </label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value=""></option>
+						<label for="tpCalculo{{$randId}}" class="label">Tip. cal COFINS ST</label>
+						<select id="tpCalculo{{$randId}}" type="text" name="tpCalculo" class="form-control form-control-sm">
+							<option value="pc">Porcentagem ( % )</option>
+							<option value="vr">Valor ( R$ ) </option>
 						</select>
 					</div>
 
@@ -26,28 +27,29 @@
 
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Aliq. COFINS ST (%)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
+						<label class="label" for="pcPisCofins{{$randId}}">Aliq. COFINS  ST (%)</label>
+						<input type="text" name="pcPisCofins" id="pcPisCofins{{$randId}}" class="form-control form-control-sm">
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Valor COFINS ST  (R$)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
+						<label for="vrPisCofins{{$randId}}" class="label">Valor COFINS  ST (R$)</label>
+						<input type="text" id="vrPisCofins{{$randId}}" name="vrPisCofins" class="form-control form-control-sm">
 					</div>
 				</div>
 
 			@else
-
+				<input type="hidden" name="tpRegistro" value="pisst" />
 				<div class="row  mt-5">
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Descrição</label>
-						<input type="text" name="nmNcm" class="form-control form-control-sm">
+					<label class="label" for="dsPisCofins{{$randId}}">Descrição</label>
+						<input id="dsPisCofins{{$randId}}" name="dsPisCofins" type="text" name="nmNcm" class="form-control form-control-sm">
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Tip. cal PIS ST </label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value=""></option>
+						<label class="label">Tip. cal PIS  ST </label>
+						<select id="tpCalculo{{$randId}}" type="text" name="tpCalculo" class="form-control form-control-sm">
+							<option value="pc">Porcentagem ( % )</option>
+							<option value="vr">Valor ( R$ ) </option>
 						</select>
 					</div>
 
@@ -56,13 +58,13 @@
 
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Aliq. PIS ST (%)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
+					<label class="label" for="pcPisCofins{{$randId}}">Aliq. PIS ST (%)</label>
+						<input type="text" name="pcPisCofins" id="pcPisCofins{{$randId}}" class="form-control form-control-sm">
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Valor PIS ST (R$)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
+					<label for="vrPisCofins{{$randId}}" class="label">Valor PIS  ST (R$)</label>
+						<input type="text" id="vrPisCofins{{$randId}}" name="vrPisCofins" class="form-control form-control-sm">
 					</div>
 				</div>
 				

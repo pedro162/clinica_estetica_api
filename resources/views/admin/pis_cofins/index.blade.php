@@ -65,8 +65,8 @@
 
 			let arrLinks = [
 				//['Ediar', '/ncm/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
-				['Ediar', '/ncm/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar{{$randId}}(this);'],
-				['Excluir', '/ncm/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'deletar{{$randId}}(this);'],
+				['Ediar', '/pis/cofins/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar{{$randId}}(this);'],
+				['Excluir', '/pis/cofins/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'deletar{{$randId}}(this);'],
 				
 
 			];
@@ -119,7 +119,7 @@
 			data.append('_token', token)
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Deletar', 'sm', '700px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Deletar', 'sm', '400px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}

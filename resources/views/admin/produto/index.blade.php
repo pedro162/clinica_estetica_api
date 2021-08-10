@@ -131,10 +131,13 @@
 			let arrLinks = [
 				//['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
 				['Ediar', '/produto/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar(this);'],
+				['Tributar', '/ncm/tributacao/tributar/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'tributar{{$randId}}(this);'],
 				['Excluir', '/produto/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'deletar(this);'],
 				
 
 			];
+			
+
 			//widthOptions='200px', widModal = 'md', height=null //, 'HTML','Marca-Editar', 'sm', '400px'
 			idModal = Utilitarios.assitentOpcoes(arrLinks, '100%', 'xs');
 			idModalOptions{{$randId}} = idModal;
@@ -186,6 +189,29 @@
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
 			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Deletar', 'sm', '700px', null, data)
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
+	function tributar{{$randId}}(element){
+			
+		try{
+			let url = $(element).attr('href');
+			let id = $(element).attr('idItem');
+			let idModal= $(element).attr('idModal');
+
+			Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+			
+			let data = new FormData();
+			data.append('id', id)
+			data.append('idAssistente', idModal)
+			data.append('callBack', ''+callBack{{$randId}}+'')
+
+			let token = $('html').find('#lista-produtos{{$randId}}').find('input[name="_token"]').val()
+			data.append('_token', token)
+
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','PRODUTO-Tributar', 'sm', '300px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}

@@ -10,28 +10,28 @@
 				<table class="table table-responsive table-hover" style="width: 100%;">
 					<tbody>
 						<tr>
-							<td>NCM:</td>
-							<td>{{$registro->codNcm ? $registro->codNcm : ''}}</td>
+							<td>Cód:</td>
+							<td>{{$registro->id ? $registro->id : ''}}</td>
 						</tr>
 						<tr>
-							<td>Código NCM:</td>
-							<td>{{$registro->codNcm ? $registro->codNcm : ''}}</td>
+							<td>Descrição:</td>
+							<td>{{$registro->dsPisCofins ? $registro->dsPisCofins : ''}}</td>
 						</tr>
 						<tr>
-							<td>Alíquota nacional:</td>
-							<td>{{$registro->vrAliqNacional ? number_format($registro->vrAliqNacional, 2, ',', '.') : ''}}</td>
+							<td>Tipo:</td>
+							<td>{{$registro->tpRegistro ? $registro->tpRegistro : ''}}</td>
 						</tr>
 						<tr>
-						<td>Alíquota importada:</td>
-							<td>{{$registro->vrAliqImportada ? number_format($registro->vrAliqImportada, 2, ',', '.') : ''}}</td>
+						<td>Calculo:</td>
+							<td>{{$registro->tpCalculo ? $registro->tpCalculo : ''}}</td>
 						</tr>
 						<tr>
-						<td>Alíquota estadual:</td>
-						<td>{{$registro->vrAliqEstadual ? number_format($registro->vrAliqEstadual, 2, ',', '.') : ''}}</td>
+						<td>Valor:</td>
+						<td>{{$registro->vrPisCofins ? number_format($registro->vrPisCofins, 2, ',', '.') : ''}}</td>
 						</tr>
 						<tr>
-						<td>Alíquota municipal:</td>
-							<td>{{$registro->vrAliqMunicipal ? number_format($registro->vrAliqMunicipal, 2, ',', '.') : ''}}</td>
+						<td>Percentual:</td>
+							<td>{{$registro->pcPisCofins ? number_format($registro->pcPisCofins, 2, ',', '.') : ''}}</td>
 						</tr>
 					</tbody>							
 				</table>
@@ -40,7 +40,7 @@
 
 		<div class="row">
 			<div class="col-md-12 col-sm-12" align="right">
-				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('ncm.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
+				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('pis.cofins.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
 			</div>
 		</div>
 	</div>

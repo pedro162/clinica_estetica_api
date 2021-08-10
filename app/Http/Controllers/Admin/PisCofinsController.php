@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\PisCofins;
 use App\Exceptions\PisCofinsException;
+use Illuminate\Support\Facades\Validator;
 
 class PisCofinsController extends Controller
 {
@@ -222,6 +223,28 @@ class PisCofinsController extends Controller
     {
        try{
 
+            $validator = Validator::make($request->all(),[
+                'dsPisCofins'=> 'required|max:255|min:2',
+                'tpCalculo'=> 'required',
+                'tpRegistro'=> 'required',
+            ], [
+                'dsPisCofins.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
+                'tpCalculo.required' => 'O campo "TIP. CALCULO" é obrigatório.',
+                'tpRegistro.required' => 'O "Tipo de registro" é obrigatório. Ente em contato com o suporte.',
+                'dsPisCofins.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
+                'dsPisCofins.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
+            ]);
+            
+            if($validator->fails()) {
+                $errors = $validator->errors();
+                $msg = '';
+                foreach($errors->all() as $mensagem){
+                    $msg .= $mensagem.'<br/>';
+                }
+                
+                throw new PisCofinsException($msg);
+            }
+            
             \DB::beginTransaction();
             $dados = $request->all();
 
@@ -265,6 +288,52 @@ class PisCofinsController extends Controller
         //
     }
 
+    public function info(Request $request, $id, $idAssistente)
+    {
+        
+        try{
+
+            $dados = $request->all();
+            $id = $id ?? $dados['id'];
+            $callBack = $dados['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
+            if($id <= 0){
+                throw new PisCofinsException('Parâmetro ínválido');
+            }
+
+            \DB::beginTransaction();
+
+            $registro = PisCofins::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+
+            if($registro == null){
+                throw new PisCofinsException('Registro não encontrado');
+            }
+
+            \DB::commit();
+
+            //return view('admin.produto.info', compact('registro'));
+            return view('admin.pis_cofins.info', compact('registro', 'idAssistente', 'callBack'));
+
+        }catch(PisCofinsException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
+        }catch(\Exception $e){
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
+
+        }
+    }
+
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -296,7 +365,35 @@ class PisCofinsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+
+            \DB::beginTransaction();
+
+            $dadosRequest = [];
+
+            $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['active']             = 'no';
+            $piscofins = PisCofins::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $piscofins->update($dadosRequest);
+            $piscofins->delete();
+
+            \DB::commit();
+
+            return response()->json(['mensagem'=>[], 'class'=>'sucess'], 200);
+
+        }catch (PisCofinsException $th) {
+
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            //throw $th;
+        }
     }
 
     public function head(Request $request)
