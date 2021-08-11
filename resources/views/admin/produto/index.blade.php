@@ -78,7 +78,7 @@
 			</thead>
 			<tbody>
 				@foreach($registro as $valor)
-				<tr class="assistenteModalProduto">
+				<tr onclick="showOptions{{$randId}}(this);" >
 					<td class="text-right">{{$valor->id}}</td>
 					<td>{{$valor->name}}</td>
 					<td>{{$valor->description}}</td>
@@ -116,17 +116,15 @@
 <script type="text/javascript">
 	Utilitarios.useDataTable($('#lista-produtos{{$randId}}'))
 
-	let idModalOptions{{$randId}} = null;
-	let callBack{{$randId}} = '{{$consulta["callBack"]}}'
+	var idModalOptions{{$randId}} = null;
+	var callBack{{$randId}} = '{{$consulta["callBack"]}}'
 	//alert(callBack{{$randId}})
 
 
-	/**
-	*	CHAMA O MODAL DE OPÇÕES DE PRODUTO
-	*/
-	$('body').find('#lista-produtos{{$randId}}').find('.assistenteModalProduto').on('click', function(ev){
+	function showOptions{{$randId}}(element)
+	{
 		try{
-			let id = $(this).find('input:hidden').val();
+			let id = $(element).find('input:hidden').val();
 
 			let arrLinks = [
 				//['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
@@ -144,7 +142,7 @@
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
-	})
+	}
 
 	
 
@@ -188,7 +186,7 @@
 			data.append('_token', token)
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Deletar', 'sm', '700px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Deletar', 'sm', '400px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}

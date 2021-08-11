@@ -31,7 +31,7 @@
 			</thead>
 			<tbody style="width: 100%;">
 				@foreach($registro as $valor)
-				<tr class="assistenteModalNCM">
+				<tr onclick="showOptions{{$randId}}(this);">
 					<td class="text-left">{{$valor->id}}</td>
 					<td class="text-left">{{$valor->dsPisCofins}}</td>
 					<td class="text-left">{{$valor->tpRegistro}}</td>
@@ -50,18 +50,15 @@
 	let idTable = $('#lista{{$randId}}');
 	Utilitarios.useDataTable(idTable);
 
-	let idModalOptions{{$randId}} = null;
+	var idModalOptions{{$randId}} = null;
 
-	let callBack{{$randId}} = '{{$consulta["callBack"]}}'
+	var callBack{{$randId}} = '{{$consulta["callBack"]}}'
 	//alert(callBack{{$randId}})
 
-
-	/**
-	*	CHAMA O MODAL DE OPÇÕES DE NCM
-	*/
-	$('body').find('#lista{{$randId}}').find('.assistenteModalNCM').on('click', function(ev){
+	function showOptions{{$randId}}(element)
+	{
 		try{
-			let id = $(this).find('input:hidden').val();
+			let id = $(element).find('input:hidden').val();
 
 			let arrLinks = [
 				//['Ediar', '/ncm/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
@@ -76,7 +73,7 @@
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
-	})
+	}
 
 	
 
@@ -95,7 +92,7 @@
 			let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
 			data.append('_token', token)
 
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','PIS / COFINS-Editar', 'sm', '300px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}

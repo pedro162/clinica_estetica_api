@@ -1,34 +1,82 @@
 @php $randId = rand(11111, 99999); @endphp
 
 <div class="container">
-	<div class="row mb-5">
+	<div class="row">
 		<div class="col">
-			<form action="{{route('ncm.update', $registro->id)}}" method="post" class="form" id="form_{{$randId}}" enctype="multipart/form-data">
+			<form action="{{route('pis.cofins.update', $registro->id)}}" method="post" class="form" id="form_{{$randId}}" enctype="multipart/form-data">
 				@csrf
 				@method('PUT')
 				
 				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
 				<hr/>
+				@if(isset($formCofins) && $formCofins == true)
+					<input type="hidden" name="tpRegistro" value="{{$registro->tpRegistro}}" />
+					<div class="row  mt-5">
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="dsPisCofins{{$randId}}">Descrição</label>
+							<input title="Descrição" value="{{$registro->dsPisCofins}}" id="dsPisCofins{{$randId}}" name="dsPisCofins" type="text" name="nmNcm" class="form-control form-control-sm">
+						</div>
 
-				<div class="row mt-5" >
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">NCM</label>
-						<input type="text" name="codNcm" class="form-control form-control-sm" value="{{$registro->codNcm}}">
+						<div class="form-group col-md-6 col-sm-12">
+							<label for="tpCalculo{{$randId}}" class="label">Tip. cal COFINS {{$sufixo}}</label>
+							<select title="Tipo de cálculo" id="tpCalculo{{$randId}}" value="{{$registro->tpCalculo}}" type="text" name="tpCalculo" class="form-control form-control-sm">
+								<option {{isset($registro->tpCalculo) && trim($registro->tpCalculo) == 'pc' ? 'selected': ''}} value="pc">Porcentagem ( % )</option>
+								<option {{isset($registro->tpCalculo) && trim($registro->tpCalculo) == 'vr' ? 'selected': ''}} value="vr">Valor ( R$ ) </option>
+							</select>
+						</div>
+
+					</div>
+
+					<div class="row">
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="pcPisCofins{{$randId}}">Aliq. COFINS {{$sufixo}} (%)</label>
+							<input title="Aliquota" type="text" name="pcPisCofins" value="{{$registro->pcPisCofins}}" id="pcPisCofins{{$randId}}" class="form-control form-control-sm">
+						</div>
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label for="vrPisCofins{{$randId}}" class="label">Valor COFINS {{$sufixo}} (R$)</label>
+							<input title="Valor" type="text" id="vrPisCofins{{$randId}}" value="{{$registro->vrPisCofins}}" name="vrPisCofins" class="form-control form-control-sm">
+						</div>
+					</div>
+
+				@else
+					<input type="hidden" name="tpRegistro" value="{{$registro->tpRegistro}}" />
+					<div class="row  mt-5">
+						<div class="form-group col-md-6 col-sm-12">
+						<label class="label" for="dsPisCofins{{$randId}}">Descrição</label>
+							<input title="Descrição" id="dsPisCofins{{$randId}}" value="{{$registro->dsPisCofins}}" name="dsPisCofins" type="text" name="nmNcm" class="form-control form-control-sm">
+						</div>
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label">Tip. cal PIS {{$sufixo}} </label>
+							<select title="Tipo de cálculo" id="tpCalculo{{$randId}}" type="text" name="tpCalculo" class="form-control form-control-sm">
+								<option {{isset($registro->tpCalculo) && trim($registro->tpCalculo) == 'pc' ? 'selected': ''}} value="pc">Porcentagem ( % )</option>
+								<option {{isset($registro->tpCalculo) && trim($registro->tpCalculo) == 'vr' ? 'selected': ''}} value="vr">Valor ( R$ ) </option>
+							</select>
+						</div>
+
+					</div>
+
+
+					<div class="row">
+						<div class="form-group col-md-6 col-sm-12">
+						<label class="label" for="pcPisCofins{{$randId}}">Aliq. PIS {{$sufixo}} (%)</label>
+							<input title="Alíquota" type="text" value="{{$registro->pcPisCofins}}" name="pcPisCofins" id="pcPisCofins{{$randId}}" class="form-control form-control-sm">
+						</div>
+
+						<div class="form-group col-md-6 col-sm-12">
+						<label title="Valor" for="vrPisCofins{{$randId}}" class="label">Valor PIS {{$sufixo}} (R$)</label>
+							<input type="text" id="vrPisCofins{{$randId}}" value="{{$registro->vrPisCofins}}" name="vrPisCofins" class="form-control form-control-sm">
+						</div>
 					</div>
 					
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Descrição</label>
-						<input type="text" name="nmNcm" class="form-control form-control-sm" value="{{$registro->nmNcm}}" >
-					</div>
-				</div>
+				@endif
 
 				<div class="row">
-
 					<div class="col-md-8 col-sm-12">
 					</div>
 					<div class="col-md-4 col-sm-12" style="text-align: right;">
-						<button type="submit" class=" btn btn-md btn-primary">Salvar</button>
+						<button type="submit" class=" btn btn-md btn-primary"><b>Atualizar</b></button>
 					</div>
 				</div>
 			</form>

@@ -223,27 +223,7 @@ class PisCofinsController extends Controller
     {
        try{
 
-            $validator = Validator::make($request->all(),[
-                'dsPisCofins'=> 'required|max:255|min:2',
-                'tpCalculo'=> 'required',
-                'tpRegistro'=> 'required',
-            ], [
-                'dsPisCofins.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
-                'tpCalculo.required' => 'O campo "TIP. CALCULO" é obrigatório.',
-                'tpRegistro.required' => 'O "Tipo de registro" é obrigatório. Ente em contato com o suporte.',
-                'dsPisCofins.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
-                'dsPisCofins.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
-            ]);
-            
-            if($validator->fails()) {
-                $errors = $validator->errors();
-                $msg = '';
-                foreach($errors->all() as $mensagem){
-                    $msg .= $mensagem.'<br/>';
-                }
-                
-                throw new PisCofinsException($msg);
-            }
+            $this->validaRequest($request);
             
             \DB::beginTransaction();
             $dados = $request->all();
@@ -340,9 +320,65 @@ class PisCofinsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id, $idAssistente)
     {
-        //
+        try{
+            
+            $dadosRequest = $request->all();
+
+            $callBack = $dadosRequest['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+            if(! isset($id)){
+                $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
+            }
+
+            if($id <= 0){
+                throw new PisCofinsException('Parâmetro ínválido');
+            }
+
+            \DB::beginTransaction();
+
+            $registro = PisCofins::where('active', '=', 'yes')
+                ->where('id', '=', $id)->first();
+
+            if($registro == null){
+                throw new PisCofinsException('Registro não encontrado');
+                
+            }
+
+            $formCofins = false;
+            if(trim($registro->tpRegistro == 'cofins') || trim($registro->tpRegistro) == 'cofinsst'){
+                $formCofins = false;
+            }
+            
+            $sufixo = '';
+            if(trim($registro->tpRegistro == 'pis') || trim($registro->tpRegistro) == 'cofinsst'){
+                $sufixo = 'st';
+            }
+
+            \DB::commit();
+
+            return view('admin.pis_cofins.edit', compact('registro', 'idAssistente', 'callBack', 'formCofins', 'sufixo'));
+
+         }catch(PisCofinsException $e){
+
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
+
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
+
+        }
     }
 
     /**
@@ -354,7 +390,45 @@ class PisCofinsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+           
+            
+            $this->validaRequest($request);
+
+            \DB::beginTransaction();
+
+            $dados = $request->all();
+
+            $dadosRequest = [];
+
+            $dadosRequest['user_update_id']     = \Auth::User()->id;
+            $dadosRequest['dsPisCofins']        = $dados['dsPisCofins'];
+            $dadosRequest['tpCalculo']          = $dados['tpCalculo'];
+            $dadosRequest['tpRegistro']         = $dados['tpRegistro'];
+            $dadosRequest['vrPisCofins']        = $dados['vrPisCofins'] ?? 0;
+            $dadosRequest['pcPisCofins']        = $dados['pcPisCofins'] ?? 0;
+           
+            $pisCofins = PisCofins::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $pisCofins->update($dadosRequest);
+
+            \DB::commit();
+
+            return response()->json(['mensagem'=>$pisCofins, 'class'=>'sucess'], 200);
+
+
+        }catch (PisCofinsException $th) {
+
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            //throw $th;
+        }
     }
 
     /**
@@ -408,5 +482,32 @@ class PisCofinsController extends Controller
             return view('admin.pis_cofins.head', compact('isReload'));
         }
         
+    }
+
+    protected function validaRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'dsPisCofins'=> 'required|max:255|min:2',
+            'tpCalculo'=> 'required',
+            'tpRegistro'=> 'required',
+        ], [
+            'dsPisCofins.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
+            'tpCalculo.required' => 'O campo "TIP. CALCULO" é obrigatório.',
+            'tpRegistro.required' => 'O "Tipo de registro" é obrigatório. Ente em contato com o suporte.',
+            'dsPisCofins.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
+            'dsPisCofins.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
+        ]);
+        
+        if($validator->fails()) {
+            $errors = $validator->errors();
+            $msg = '';
+            foreach($errors->all() as $mensagem){
+                $msg .= $mensagem.'<br/>';
+            }
+            
+            throw new PisCofinsException($msg);
+        }
+
+        return true;
     }
 }

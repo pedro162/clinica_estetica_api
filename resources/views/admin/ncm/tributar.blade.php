@@ -16,39 +16,10 @@
 			<div class="  mt-5">
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
-						@php
-						
-							$idCod = '01';
-							$typeCod = 'number';
-							$nameCod = 'idNcm';
-							$labelCod = 'NCM';
-							$idDescription = '02';
-							$typeDescrption = 'text';
-							$nameDescription = 'dsNcm';
-							$labelDescription = 'Descrição';
-							$valueDescription = "01";
-							$valueCod = "Teste 01";
-							$colCod = "2";
-							$colDescription = "9";
-							$searsh = "searshNcm".$randId."();";
-						
-						@endphp
-						<x-controll-filter
-							:idCod="$idCod"
-							:typeCod="$typeCod"
-							:nameCod="$nameCod"
-							:labelCod="$labelCod"
-							:idDescription="$idDescription"
-							:typeDescrption="$typeDescrption"
-							:nameDescription="$nameDescription"
-							:labelDescription="$labelDescription"
-							:valueDescription="$valueDescription"
-							:valueCod="$valueCod"
-							:colCod="$colCod"
-							:colDescription="$colDescription"
-							:searsh="$searsh"
-
-						/>
+						<label class="label">Estado</label>
+						<select type="text" name="uf" id="uf{{$randId}}" class="form-control form-control-sm">
+							<option value=""></option>
+						</select>
 					</div>
 					
 					<div class="form-group col-md-6 col-sm-12">
@@ -389,91 +360,6 @@
 						/>
 					</div>
 				</div>
-
-				<!--<div class="row">
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">PIS</label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value=""></option>
-						</select>
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Aliq. PIS (%)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
-					</div>
-				</div>-->
-
-				<!--<div class="row">
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Valor PIS (R$)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
-					</div>
-
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">PIS ST</label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value=""></option>
-						</select>
-					</div>
-
-				</div>
-				
-				<div class="row">
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Aliq. PIS ST (%)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
-					</div>
-					
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Valor PIS ST (R$)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">COFINS</label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value=""></option>
-						</select>
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Aliq. COFINS (%)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Valor COFINS (R$)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
-					</div>
-
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">COFINS ST </label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value=""></option>
-						</select>
-					</div>
-
-				</div>
-
-
-				<div class="row">
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Aliq. COFINS ST (%)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Valor COFINS ST (R$)</label>
-						<input type="text" name="ncm" class="form-control form-control-sm">
-					</div>
-				</div>-->
 							
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
@@ -674,6 +560,7 @@
 <script>
 
 	let callBack{{$randId}} = '{{$callBack}}'
+	
 
 	$('html').find('#tpCalculoIpi{{$randId}}').on('change', function(ev){
 		let val = $(this).val();
