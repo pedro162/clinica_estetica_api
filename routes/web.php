@@ -200,6 +200,23 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::post('/pis/cofins/head/{id_assistente?}', ['as'=>'pis.cofins.head', 'uses'=>'Admin\PisCofinsController@head']);
 	Route::get('/pis/cofins/destroy/{id}/{id_assistente?}', ['as'=>'pis.cofins.destroy', 'uses'=>'Admin\PisCofinsController@destroy']);
 	Route::post('/pis/cofins/destroy/{id}/{id_assistente?}', ['as'=>'pis.cofins.destroy', 'uses'=>'Admin\PisCofinsController@destroy']);
+	
+	Route::get('/ipi/index/{id_assistente?}', ['as'=>'ipi.index', 'uses'=>'Admin\IpiController@index']);
+	Route::post('/ipi/index/{id_assistente?}', ['as'=>'ipi.index', 'uses'=>'Admin\IpiController@index']);
+	Route::get('/ipi/ipi/create/{id_assistente?}', ['as'=>'ipi.create', 'uses'=>'Admin\IpiController@create']);
+	Route::get('/ipi/create/{id_assistente?}', ['as'=>'ipi.create', 'uses'=>'Admin\IpiController@creat']);
+	Route::post('/ipi/store/{id_assistente?}', ['as'=>'ipi.store', 'uses'=>'Admin\IpiController@store']);
+	Route::get('/ipi/edit/{id}/{id_assistente?}', ['as'=>'ipi.edit', 'uses'=>'Admin\IpiController@edit']);
+	Route::post('/ipi/edit/{id}/{id_assistente?}', ['as'=>'ipi.edit', 'uses'=>'Admin\IpiController@edit']);
+	Route::put('/ipi/update/{id}/{id_assistente?}', ['as'=>'ipi.update', 'uses'=>'Admin\IpiController@update']);
+	Route::get('/ipi/show/{id}/{id_assistente?}', ['as'=>'ipi.show', 'uses'=>'Admin\IpiController@show']);
+	Route::post('/ipi/show/{id}/{id_assistente?}', ['as'=>'ipi.show', 'uses'=>'Admin\IpiController@show']);
+	Route::get('/ipi/info/{id}/{id_assistente?}', ['as'=>'ipi.info', 'uses'=>'Admin\IpiController@info']);
+	Route::post('/ipi/info/{id}/{id_assistente?}', ['as'=>'ipi.info', 'uses'=>'Admin\IpiController@info']);
+	Route::get('/ipi/head/{id_assistente?}', ['as'=>'ipi.head', 'uses'=>'Admin\IpiController@head']);
+	Route::post('/ipi/head/{id_assistente?}', ['as'=>'ipi.head', 'uses'=>'Admin\IpiController@head']);
+	Route::get('/ipi/destroy/{id}/{id_assistente?}', ['as'=>'ipi.destroy', 'uses'=>'Admin\IpiController@destroy']);
+	Route::post('/ipi/destroy/{id}/{id_assistente?}', ['as'=>'ipi.destroy', 'uses'=>'Admin\IpiController@destroy']);
 
 	Route::get('/venda/index/{id_assistente?}', ['as'=>'contrato.index', 'uses'=>'Admin\VendaController@index']);//VendaController
 	Route::get('/venda/create/{id}/{id_assistente?}', ['as'=>'venda.create', 'uses'=>'Admin\VendaController@create']);

@@ -9,9 +9,58 @@
 			@if(isset($formCofins) && $formCofins == true)
 				<input type="hidden" name="tpRegistro" value="cofins" />
 				<div class="row  mt-5">
-					<div class="form-group col-md-6 col-sm-12">
+					<div class="form-group col-md-12 col-sm-12">
 						<label class="label" for="dsPisCofins{{$randId}}">Descrição</label>
 						<input id="dsPisCofins{{$randId}}" name="dsPisCofins" type="text" name="nmNcm" class="form-control form-control-sm">
+					</div>
+				</div>
+
+				<div class="row">
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label for="st{{$randId}}" class="label">CST</label>
+						<select id="st{{$randId}}" type="text" name="st" class="form-control form-control-sm">
+							<@php $trib_icms_csosn = [
+									'01'=>'Operação Tributável com Alíquota Básica',
+									'02'=>'Operação Tributável com Alíquota Diferenciada',
+									'03'=>'Operação Tributável com Alíquota por Unidade de Medida de Produto',
+									'04'=>'Operação Tributável Monofásica – Revenda a Alíquota Zero',
+									'05'=>'Operação Tributável por Substituição Tributária',
+									'06'=>'Operação Tributável a Alíquota Zero',
+									'07'=>'Operação Isenta da Contribuição',
+									'08'=>'Operação sem Incidência da Contribuição',
+									'09'=>'Operação com Suspensão da Contribuição',
+									'49'=>'Outras Operações de Saída',
+									'50'=>'Operação com Direito a Crédito – Vinculado Exclusivamente a Receita Tributada no Mercado Interno',
+									'51'=>'Operação com Direito a Crédito – Vinculado Exclusivamente a Receita Não Tributada no Mercado Interno',
+									'52'=>'Operação com Direito a Crédito – Vinculado Exclusivamente a Receita de Exportação',
+									'53'=>'Operação com Direito a Crédito – Vinculado a Receitas Tributadas e Não-Tributadas no Mercado Interno',
+									'54'=>'Operação com Direito a Crédito – Vinculado a Receitas Tributadas no Mercado Interno e de Exportação',
+									'55'=>'Operação com Direito a Crédito – Vinculado a Receitas Não-Tributadas no Mercado Interno e de Exportação',
+									'56'=>'Operação com Direito a Crédito – Vinculado a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação',
+									'60'=>'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno',
+									'61'=>'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno',
+									'62'=>'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação',
+									'63'=>'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno',
+									'64'=>'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação',
+									'65'=>'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação',
+									'66'=>'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação',
+									'67'=>'Crédito Presumido – Outras Operações',
+									'70'=>'Operação de Aquisição sem Direito a Crédito',
+									'71'=>'Operação de Aquisição com Isenção',
+									'72'=>'Operação de Aquisição com Suspensão',
+									'73'=>'Operação de Aquisição a Alíquota Zero',
+									'74'=>'Operação de Aquisição sem Incidência da Contribuição',
+									'75'=>'Operação de Aquisição por Substituição Tributária',
+									'98'=>'Outras Operações de Entrada',
+									'99'=>'Outras Operações',
+								]; 
+							@endphp
+
+							@foreach($trib_icms_csosn as $key=>$al)
+								<option value="{{$key}}">{{$al}}</option>
+							@endforeach
+						</select>
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
@@ -40,10 +89,62 @@
 			@else
 				<input type="hidden" name="tpRegistro" value="pis" />
 				<div class="row  mt-5">
-					<div class="form-group col-md-6 col-sm-12">
+					<div class="form-group col-md-12 col-sm-12">
 					<label class="label" for="dsPisCofins{{$randId}}">Descrição</label>
 						<input id="dsPisCofins{{$randId}}" name="dsPisCofins" type="text" name="nmNcm" class="form-control form-control-sm">
 					</div>
+
+				</div>
+
+				<div class="row">
+					
+					<div class="form-group col-md-6 col-sm-12">
+						<label for="st{{$randId}}" class="label">CST</label>
+						<select id="st{{$randId}}" type="text" name="st" class="form-control form-control-sm">
+							<@php $trib_icms_csosn = [
+									'01'=>'Operação Tributável com Alíquota Básica',
+									'02'=>'Operação Tributável com Alíquota Diferenciada',
+									'03'=>'Operação Tributável com Alíquota por Unidade de Medida de Produto',
+									'04'=>'Operação Tributável Monofásica – Revenda a Alíquota Zero',
+									'05'=>'Operação Tributável por Substituição Tributária',
+									'06'=>'Operação Tributável a Alíquota Zero',
+									'07'=>'Operação Isenta da Contribuição',
+									'08'=>'Operação sem Incidência da Contribuição',
+									'09'=>'Operação com Suspensão da Contribuição',
+									'49'=>'Outras Operações de Saída',
+									'50'=>'Operação com Direito a Crédito – Vinculado Exclusivamente a Receita Tributada no Mercado Interno',
+									'51'=>'Operação com Direito a Crédito – Vinculado Exclusivamente a Receita Não Tributada no Mercado Interno',
+									'52'=>'Operação com Direito a Crédito – Vinculado Exclusivamente a Receita de Exportação',
+									'53'=>'Operação com Direito a Crédito – Vinculado a Receitas Tributadas e Não-Tributadas no Mercado Interno',
+									'54'=>'Operação com Direito a Crédito – Vinculado a Receitas Tributadas no Mercado Interno e de Exportação',
+									'55'=>'Operação com Direito a Crédito – Vinculado a Receitas Não-Tributadas no Mercado Interno e de Exportação',
+									'56'=>'Operação com Direito a Crédito – Vinculado a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação',
+									'60'=>'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno',
+									'61'=>'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno',
+									'62'=>'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação',
+									'63'=>'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno',
+									'64'=>'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação',
+									'65'=>'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação',
+									'66'=>'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação',
+									'67'=>'Crédito Presumido – Outras Operações',
+									'70'=>'Operação de Aquisição sem Direito a Crédito',
+									'71'=>'Operação de Aquisição com Isenção',
+									'72'=>'Operação de Aquisição com Suspensão',
+									'73'=>'Operação de Aquisição a Alíquota Zero',
+									'74'=>'Operação de Aquisição sem Incidência da Contribuição',
+									'75'=>'Operação de Aquisição por Substituição Tributária',
+									'98'=>'Outras Operações de Entrada',
+									'99'=>'Outras Operações',
+								]; 
+							@endphp
+
+							@foreach($trib_icms_csosn as $key=>$al)
+								<option value="{{$key}}">{{$al}}</option>
+							@endforeach
+						</select>
+					</div>
+					
+
 
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Tip. cal PIS </label>
@@ -52,7 +153,7 @@
 							<option value="vr">Valor ( R$ ) </option>
 						</select>
 					</div>
-
+					
 				</div>
 
 

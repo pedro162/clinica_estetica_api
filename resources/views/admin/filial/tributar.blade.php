@@ -377,6 +377,7 @@
 					</div>
 				</div>
 				
+
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">CEST</label>
@@ -445,41 +446,6 @@
             <h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">IPI </h5>
 				<hr/>
 				<div class="row">
-					<div class="form-group col-md-6 col-sm-12">	
-						@php
-							
-							$idCodIpi = '001';
-							$typeCodIpi = 'number';
-							$nameCodIpi = 'idIpi';
-							$labelCodIpi = 'Ipi';
-							$idDescriptionIpi = '002';
-							$typeDescrptionIpi = 'text';
-							$nameDescriptionIpi = 'dsIpi';
-							$labelDescriptionIpi = 'Descrição';
-							$valueDescriptionIpi = "001";
-							$valueCodIpi = "Teste Ipi 001";
-							$colCodIpi = "3";
-							$colDescriptionIpi = "8";
-							$searshIpi = "searshIpi".$randId."();";
-						@endphp
-						<x-controll-filter
-							:idCod="$idCodIpi"
-							:typeCod="$typeCodIpi"
-							:nameCod="$nameCodIpi"
-							:labelCod="$labelCodIpi"
-							:idDescription="$idDescriptionIpi"
-							:typeDescrption="$typeDescrptionIpi"
-							:nameDescription="$nameDescriptionIpi"
-							:labelDescription="$labelDescriptionIpi"
-							:valueDescription="$valueDescriptionIpi"
-							:valueCod="$valueCodIpi"
-							:colCod="$colCodIpi"
-							:colDescription="$colDescriptionIpi"
-							:searsh="$searshIpi"
-						/>
-					</div>
-				</div>
-				<!--<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">CST</label>
 						<select type="text" name="categoria_id" class="form-control form-control-sm">
@@ -566,7 +532,7 @@
 						<label class="label">Código do celo de controle</label>
 						<input type="text" name="imagem" class="form-control form-control-sm ">
 					</div>
-				</div> -->
+				</div>
 
 				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">OUTROS </h5>
 				<hr/>
@@ -748,22 +714,6 @@
 		}
 	}
 
-	function searshIpi{{$randId}}(){
-		try{
-			
-			let url = '/ipi/head';
-			let data =  preparaBasicRequestPost{{$randId}}();
-			data.append('tp', 'cofinsst')
-
-			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','IPI', 'sm', '700px', null, data)
-
-		}catch(ex){
-				console.log('Erro: '+ex.message);
-		}
-	}
-
-	
 	function preparaBasicRequestPost{{$randId}}(){
 		let token = $('html').find('#form_{{$randId}}').find('input[name="_token"]').val()
 

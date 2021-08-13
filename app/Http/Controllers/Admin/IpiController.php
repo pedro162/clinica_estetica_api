@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Exceptions\IpiException;
+use App\Ipi;
 use Illuminate\Http\Request;
-use App\PisCofins;
-use App\Exceptions\PisCofinsException;
 use Illuminate\Support\Facades\Validator;
 
-class PisCofinsController extends Controller
+class IpiController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,11 +23,11 @@ class PisCofinsController extends Controller
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'name_pis_cofins'=>'pis_cofins.dsPisCofins'
+                'name_ipi'=>'ipi.dsPisCofins'
 
             ];
 
-            $registro = \DB::table('pis_cofins');
+            $registro = \DB::table('ipi');
             
             if(is_array($consulta) && count($consulta) > 0){
                 foreach($consulta as $key=>$val){
@@ -44,7 +44,7 @@ class PisCofinsController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('pis_cofins.id', $val);
+                                $registro->whereIn('ipi.id', $val);
                             }
                             break;
                         case 'tipo':
@@ -133,7 +133,7 @@ class PisCofinsController extends Controller
 
             return view('admin.pis_cofins.index', compact('registro', 'consulta'));
 
-        }catch(PisCofinsException $e){
+        }catch(IpiException $e){
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -156,62 +156,16 @@ class PisCofinsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function createPis(Request $request, $idAssistente)
+    public function create(Request $request, $idAssistente)
     {
         $dadosRequest = $request->all();
 
         $callBack = $dadosRequest['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
 
-        return view('admin.pis_cofins.create', compact('callBack','idAssistente'));
+        return view('admin.ipi.create', compact('callBack','idAssistente'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function createPisSt(Request $request, $idAssistente)
-    {
-        $dadosRequest = $request->all();
-
-        $callBack = $dadosRequest['callBack'] ?? '';
-        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-
-        return view('admin.pis_cofins.create_st', compact('callBack','idAssistente'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function createCofins(Request $request, $idAssistente)
-    {
-        $dadosRequest = $request->all();
-
-        $callBack = $dadosRequest['callBack'] ?? '';
-        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-        $formCofins = true;
-
-        return view('admin.pis_cofins.create', compact('callBack','idAssistente', 'formCofins'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function createCofinsSt(Request $request, $idAssistente)
-    {
-        $dadosRequest = $request->all();
-
-        $callBack = $dadosRequest['callBack'] ?? '';
-        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-        $formCofins = true;
-
-        return view('admin.pis_cofins.create_st', compact('callBack','idAssistente', 'formCofins'));
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -239,16 +193,16 @@ class PisCofinsController extends Controller
             $dadosRequest['pcPisCofins']        = $dados['pcPisCofins'] ?? 0;
             $dadosRequest['st']                 = $dados['st'];
             
-            $registro = PisCofins::create($dadosRequest);
+            $registro = Ipi::create($dadosRequest);
             \DB::commit();
 
             if($registro){
                 return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
             }else{
-                throw new PisCofinsException('Erro ao cadastrar');
+                throw new IpiException('Erro ao cadastrar');
             }
 
-        }catch(PisCofinsException $e){
+        }catch(IpiException $e){
             \DB::rollback();
             return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
 
@@ -280,24 +234,24 @@ class PisCofinsController extends Controller
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
             if($id <= 0){
-                throw new PisCofinsException('Parâmetro ínválido');
+                throw new IpiException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
-            $registro = PisCofins::where('active', '=', 'yes')
+            $registro = Ipi::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
             if($registro == null){
-                throw new PisCofinsException('Registro não encontrado');
+                throw new IpiException('Registro não encontrado');
             }
 
             \DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
-            return view('admin.pis_cofins.info', compact('registro', 'idAssistente', 'callBack'));
+            return view('admin.ipi.info', compact('registro', 'idAssistente', 'callBack'));
 
-        }catch(PisCofinsException $e){
+        }catch(IpiException $e){
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -334,16 +288,16 @@ class PisCofinsController extends Controller
             }
 
             if($id <= 0){
-                throw new PisCofinsException('Parâmetro ínválido');
+                throw new IpiException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
-            $registro = PisCofins::where('active', '=', 'yes')
+            $registro = Ipi::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
 
             if($registro == null){
-                throw new PisCofinsException('Registro não encontrado');
+                throw new IpiException('Registro não encontrado');
                 
             }
 
@@ -359,9 +313,9 @@ class PisCofinsController extends Controller
 
             \DB::commit();
 
-            return view('admin.pis_cofins.edit', compact('registro', 'idAssistente', 'callBack', 'formCofins', 'sufixo'));
+            return view('admin.ipi.edit', compact('registro', 'idAssistente', 'callBack', 'formCofins', 'sufixo'));
 
-         }catch(PisCofinsException $e){
+         }catch(IpiException $e){
 
             \DB::rollback();
 
@@ -410,7 +364,7 @@ class PisCofinsController extends Controller
             $dadosRequest['pcPisCofins']        = $dados['pcPisCofins'] ?? 0;
             $dadosRequest['st']                 = $dados['st'];
             
-            $pisCofins = PisCofins::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $pisCofins = Ipi::where('active', '=', 'yes')->where('id', '=', $id)->first();
             $pisCofins->update($dadosRequest);
 
             \DB::commit();
@@ -418,7 +372,7 @@ class PisCofinsController extends Controller
             return response()->json(['mensagem'=>$pisCofins, 'class'=>'sucess'], 200);
 
 
-        }catch (PisCofinsException $th) {
+        }catch (IpiException $th) {
 
             \DB::rollback();
 
@@ -449,7 +403,7 @@ class PisCofinsController extends Controller
 
             $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']             = 'no';
-            $piscofins = PisCofins::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $piscofins = Ipi::where('active', '=', 'yes')->where('id', '=', $id)->first();
             $piscofins->update($dadosRequest);
             $piscofins->delete();
 
@@ -457,7 +411,7 @@ class PisCofinsController extends Controller
 
             return response()->json(['mensagem'=>[], 'class'=>'sucess'], 200);
 
-        }catch (PisCofinsException $th) {
+        }catch (IpiException $th) {
 
             \DB::rollback();
 
@@ -479,9 +433,9 @@ class PisCofinsController extends Controller
         $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
         if($isReload){
            
-            return view('admin.pis_cofins.head_refresh', compact('isReload'));
+            return view('admin.ipi.head_refresh', compact('isReload'));
         }else{
-            return view('admin.pis_cofins.head', compact('isReload'));
+            return view('admin.ipi.head', compact('isReload'));
         }
         
     }
@@ -507,7 +461,7 @@ class PisCofinsController extends Controller
                 $msg .= $mensagem.'<br/>';
             }
             
-            throw new PisCofinsException($msg);
+            throw new IpiException($msg);
         }
 
         return true;

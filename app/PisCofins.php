@@ -16,6 +16,7 @@ class PisCofins extends Model
         'pcPisCofins',
         'user_id',
         'user_update_id',
+        'st',
         'active',
     ];
 
