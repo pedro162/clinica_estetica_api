@@ -75,7 +75,7 @@
 
 	let callBack{{$randId}} = '{{$consulta["callBack"]}}'
 	//alert(callBack{{$randId}})
-
+//
 
 	/**
 	*	CHAMA O MODAL DE OPÇÕES DE NCM
