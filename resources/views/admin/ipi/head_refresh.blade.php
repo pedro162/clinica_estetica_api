@@ -85,8 +85,7 @@
 				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
 				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
 				<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
-				<a href="{{route('ncm.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
-				<a href="{{route('ncm.tributacao.tributar', '1')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="tributar_ncm{{$randId}}"><i class="fas fa-plus"></i> Tributar NCM</a>
+				<a href="{{route('ipi.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
 			</div>
 
 		</div>
@@ -102,22 +101,8 @@
 </div>
 <script type="text/javascript">
 	
-	Utilitarios.modifyUrlWithoutReload('/ncm/head', 'Produtos')
+	Utilitarios.modifyUrlWithoutReload('/ipi/head', 'Ipi')
 	let idModalOptions = null;
-
-	//--------
-	$('html').find('#tributar_ncm{{$randId}}').on('click', function(ev){
-		
-		ev.preventDefault();
-
-		let url = $(this).attr('href');
-		let formData = new FormData();
-
-		let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
-		formData.append('_token', token);
-		Utilitarios.assistentAjaxModal('POST',url, 'HTML','Tributar-NCM', 'sm', '700px', null, formData)
-
-	})
 	
 	$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
 		ev.preventDefault();
@@ -135,7 +120,7 @@
 	});
 
 	function pesquisar{{$randId}}(){
-		let url = '/ncm/index';
+		let url = '/ipi/index';
 
 		let objResponse = 'div#response-request';
 		//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)

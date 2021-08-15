@@ -23,11 +23,11 @@ class IpiController extends Controller
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'name_ipi'=>'ipi.dsPisCofins'
+                'name_ipi'=>'ipis.dsIpi'
 
             ];
 
-            $registro = \DB::table('ipi');
+            $registro = \DB::table('ipis');
             
             if(is_array($consulta) && count($consulta) > 0){
                 foreach($consulta as $key=>$val){
@@ -44,7 +44,7 @@ class IpiController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('ipi.id', $val);
+                                $registro->whereIn('ipis.id', $val);
                             }
                             break;
                         case 'tipo':
@@ -58,10 +58,10 @@ class IpiController extends Controller
                                 }
                                 $val = explode(',', $val);
                                     
-                                $registro->whereIn('pis_cofins.tpRegistro', $val);
+                                $registro->whereIn('ipis.tpCalculo', $val);
                             }
                         break;
-                        case 'name_pis_cofins':
+                        case 'name_ipi':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -71,7 +71,7 @@ class IpiController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
                                 
-                                $registro->where('pis_cofins.dsPisCofins', 'like' , '%'.$val.'%');
+                                $registro->where('ipis.dsIpi', 'like' , '%'.$val.'%');
                             }
                             break;
                         case 'limite':
@@ -122,16 +122,15 @@ class IpiController extends Controller
             if($campos){
                 $registro->select($campos);
             }else{
-                $registro->select('pis_cofins.*');
+                $registro->select('ipis.*');
 
             }
            
-            $registro = $registro->where('pis_cofins.active', '=', 'yes')->get();
+            $registro = $registro->where('ipis.active', '=', 'yes')->get();
 
-            
             \DB::commit();
 
-            return view('admin.pis_cofins.index', compact('registro', 'consulta'));
+            return view('admin.ipi.index', compact('registro', 'consulta'));
 
         }catch(IpiException $e){
             \DB::rollback();
@@ -177,7 +176,7 @@ class IpiController extends Controller
     {
        try{
 
-            $this->validaRequest($request);
+            //-- falta ajustar as validaçoes $this->validaRequest($request);
             
             \DB::beginTransaction();
             $dados = $request->all();
@@ -186,12 +185,19 @@ class IpiController extends Controller
 
             $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']             = 'yes';
-            $dadosRequest['dsPisCofins']        = $dados['dsPisCofins'] ?? 'teste';
-            $dadosRequest['tpCalculo']          = $dados['tpCalculo'] ?? 'pc';
-            $dadosRequest['tpRegistro']         = $dados['tpRegistro'] ?? 'pis';
-            $dadosRequest['vrPisCofins']        = $dados['vrPisCofins'] ?? 0;
-            $dadosRequest['pcPisCofins']        = $dados['pcPisCofins'] ?? 0;
-            $dadosRequest['st']                 = $dados['st'];
+            $dadosRequest['cst']                = $dados['cst'];
+            $dadosRequest['cdExTipi']           = $dados['cdExTipi'];
+            $dadosRequest['tpCalculo']          = $dados['tpCalculo'];
+            $dadosRequest['pcIpi']              = $dados['pcIpi'] ?? 0;
+            $dadosRequest['vrIpi']              = $dados['vrIpi'] ?? 0;
+            $dadosRequest['bcIpi']              = $dados['bcIpi'] ?? 0;
+            $dadosRequest['somaBcIcms']         = $dados['somaBcIcms']  ?? 'no';           
+            $dadosRequest['somaBcIcmsSt']       = $dados['somaBcIcmsSt'] ?? 'no';
+            $dadosRequest['dsClassEnquadra']    = $dados['dsClassEnquadra'] ?? null;
+            $dadosRequest['cdEnquadra']         = $dados['cdEnquadra'] ?? null;
+            $dadosRequest['cnpjProdutor']       = $dados['cnpjProdutor'] ?? null;
+            $dadosRequest['cdCeloControle']     = $dados['cdCeloControle'] ?? null;
+            $dadosRequest['dsIpi']              = $dados['dsIpi'];
             
             $registro = Ipi::create($dadosRequest);
             \DB::commit();

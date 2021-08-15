@@ -12,34 +12,34 @@
 						Cód
 					</th>
 					<th>
-						NCM
-					</th>
-					<th>
 						Descrição
 					</th>
 					<th>
-						Ex. NCM
+						Modalidade
 					</th>
 					<th>
-						Tipo código
+						Aliq. IPI ( % )
 					</th>
 					<th>
-						Ex. tip
+						Vr. IPI ( R$ )
 					</th>
 					<th>
-						Tabela
+						Somoa BC
 					</th>
 					<th>
-						Alíquota nacional
+					Somoa BC ICMS
 					</th>
 					<th>
-						Alíquota importada
+						Classe de enquadramento
 					</th>
 					<th>
-						Alíquota estadual
+						Cód. enquadramento
 					</th>
 					<th>
-						Alíquota municipal
+						CNPJ do produtor
+					</th>
+					<th>
+						Cód. controle
 					</th>
 					
 				</tr>
@@ -48,20 +48,21 @@
 				@foreach($registro as $valor)
 				<tr class="assistenteModalNCM">
 					<td class="text-right">{{$valor->id}}</td>
-					<td>{{$valor->codNcm}}</td>
-					<td>{{$valor->nmNcm}}</td>
-					<td>{{$valor->excecaoNcm}}</td>
-					<td>{{$valor->tpCodigo}}</td>
-					<td >{{$valor->exTipi}}</td>
-					<td>{{$valor->nmTabela}}</td>
-					<td class="text-right">{{$valor->vrAliqNacional}}</td>
-					<td class="text-right">{{$valor->vrAliqImportada }}</td>
-					<td class="text-right">{{$valor->vrAliqEstadual}}</td>
-					<td class="text-right">{{$valor->vrAliqMunicipal}}</td>
+					<td>{{$valor->dsIpi}}</td>
+					<td>{{$valor->tpCalculo}}</td>
+					<td>{{$valor->pcIpi}}</td>
+					<td>{{$valor->vrIpi}}</td>
+					<td >{{$valor->somaBcIcms}}</td>
+					<td>{{$valor->somaBcIcmsSt}}</td>
+					<td class="text-right">{{$valor->dsClassEnquadra}}</td>
+					<td class="text-right">{{$valor->cdEnquadra }}</td>
+					<td class="text-right">{{$valor->cnpjProdutor}}</td>
+					<td class="text-right">{{$valor->cdCeloControle}}</td>
 					<input type="hidden" name="item" value="{{$valor->id}}">
 				</tr>
 				@endforeach
 			</tbody>
+
 		</table>
 	</div>
 </div>
@@ -84,9 +85,9 @@
 			let id = $(this).find('input:hidden').val();
 
 			let arrLinks = [
-				//['Ediar', '/ncm/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
-				['Ediar', '/ncm/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar{{$randId}}(this);'],
-				['Excluir', '/ncm/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'deletar{{$randId}}(this);'],
+				//['Ediar', '/ncm/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_editar'],
+				['Ediar', '/ipi/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_editar{{$randId}}', id , 'editar{{$randId}}(this);'],
+				['Excluir', '/ipi/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_deletar{{$randId}}', id, 'deletar{{$randId}}(this);'],
 				
 
 			];
@@ -115,7 +116,7 @@
 			let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
 			data.append('_token', token)
 
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','IPI-Editar', 'sm', '300px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
@@ -139,7 +140,7 @@
 			data.append('_token', token)
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Deletar', 'sm', '700px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','IPI-Deletar', 'sm', '700px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}

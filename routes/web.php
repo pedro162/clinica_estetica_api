@@ -204,7 +204,7 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/ipi/index/{id_assistente?}', ['as'=>'ipi.index', 'uses'=>'Admin\IpiController@index']);
 	Route::post('/ipi/index/{id_assistente?}', ['as'=>'ipi.index', 'uses'=>'Admin\IpiController@index']);
 	Route::get('/ipi/ipi/create/{id_assistente?}', ['as'=>'ipi.create', 'uses'=>'Admin\IpiController@create']);
-	Route::get('/ipi/create/{id_assistente?}', ['as'=>'ipi.create', 'uses'=>'Admin\IpiController@creat']);
+	Route::get('/ipi/create/{id_assistente?}', ['as'=>'ipi.create', 'uses'=>'Admin\IpiController@create']);
 	Route::post('/ipi/store/{id_assistente?}', ['as'=>'ipi.store', 'uses'=>'Admin\IpiController@store']);
 	Route::get('/ipi/edit/{id}/{id_assistente?}', ['as'=>'ipi.edit', 'uses'=>'Admin\IpiController@edit']);
 	Route::post('/ipi/edit/{id}/{id_assistente?}', ['as'=>'ipi.edit', 'uses'=>'Admin\IpiController@edit']);

@@ -16,8 +16,8 @@
 		<div class="col-md-12">	
 			<nav aria-label="breadcrumb" class="my-2">
 				<ol class="breadcrumb">
-					<li class="breadcrumb-item active"><a href="{{route('produto.index')}}">Inicio</a></li>
-					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de ncm</a></li>
+					<li class="breadcrumb-item active"><a href="{{route('ipi.index')}}">Inicio</a></li>
+					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de ipi</a></li>
 				</ol>
 			</nav>
 		</div>
@@ -83,7 +83,7 @@
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
-					<a href="{{route('ncm.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
+					<a href="{{route('ipi.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
 					
 				</div>
 
@@ -136,7 +136,7 @@
 		}
 
 
-		Utilitarios.modifyUrlWithoutReload('/ncm/head', 'Ncm')
+		Utilitarios.modifyUrlWithoutReload('/ipi/head', 'IPI')
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
@@ -155,7 +155,7 @@
 		});
 
 		function pesquisar{{$randId}}(){
-			let url = '/ncm/index';
+			let url = '/ipi/index';
 
 			let objResponse = 'div#response-request{{$randId}}';
 			//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
@@ -265,7 +265,7 @@
 			ev.preventDefault();
 			let url = $(this).attr('href');
 
-			Utilitarios.assistentAjaxModal('GET',url, 'HTML','NCM-Cadastrar', 'sm', 'auto')
+			Utilitarios.assistentAjaxModal('GET',url, 'HTML','IPI-Cadastrar', 'sm', 'auto')
 			Utilitarios.toggleFiltro();
 
 		});

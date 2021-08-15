@@ -9,11 +9,17 @@
 				
 				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
 				<hr/>
+				<div  class="row" >
+					<div class="form-group col-md-12 col-sm-12">
+						<label class="label" for="dsIpi{{$randId}}" >Descrição</label>
+						<input value="{{$registro->dsIpi}}" type="text" name="dsIpi" id="dsIpi{{$randId}}" class="form-control form-control-sm ">
+					</div>
+				</div>
 
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">CST</label>
-						<select title="Código da situação tributária referente ao imposto sobre produtos industrializados (CST-IPI):" type="text" name="categoria_id" class="form-control form-control-sm">
+						<label class="label" for="cst{{$randId}}">CST</label>
+						<select id="cst{{$randId}}" title="Código da situação tributária referente ao imposto sobre produtos industrializados (CST-IPI):" type="text" name="cst" class="form-control form-control-sm">
 							
 							@php $cst = [
 									'0'	=>'Entrada com Recuperação de Crédito',
@@ -34,73 +40,85 @@
 							@endphp
 
 							@foreach($cst as $key=>$al)
-								<option {{isset($registro->st) && trim($registro->st) == $key ? 'selected': ''}} value="{{$key}}">{{$al}}</option>
+								<option {{isset($registro->cst) && trim($registro->cst) == $key ? 'selected' : ''}} value="{{$key}}">{{$al}}</option>
 							@endforeach
 						</select>
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Cód. ex. da TIPI</label>
-						<input title="Código de excessão da incidência de IPI" value="{{$registro->cdTip}}" type="text" name="cdTip" class="form-control form-control-sm ">
+						<label class="label" for="cdExTipi{{$randId}}" >Cód. ex. da TIPI</label>
+						<input value="{{$registro->cdExTipi}}" id="cdExTipi{{$randId}}" title="Código de excessão da incidência de IPI " type="text" name="cdExTipi" class="form-control form-control-sm ">
 					</div>
 				</div>
 				<div  class="row" >
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Modalidade IPI</label>
-						<select type="text"  name="tpCalculoIpi" id="tpCalculoIpi{{$randId}}" class="form-control form-control-sm">
-							<option {{isset($registro->tpCalculoIpi) && trim($registro->tpCalculoIpi) == 'pc' ? 'selected': ''}} value="pc">Aliq.</option>
-							<option {{isset($registro->tpCalculoIpi) && trim($registro->tpCalculoIpi) == 'vr' ? 'selected': ''}} value="vr">Vr. por un.</option>
+						<label class="label" for="tpCalculo{{$randId}}" >Tip. calculo IPI</label>
+						<select type="text" title="Tipo de cálculo do IPI" name="tpCalculo" id="tpCalculo{{$randId}}" class="form-control form-control-sm">
+							<option {{isset($registro->tpCalculo) && trim($registro->tpCalculo) == 'pc' ? 'selected' : ''}} value="pc">Aliq.</option>
+							<option {{isset($registro->tpCalculo) && trim($registro->tpCalculo) == 'vr' ? 'selected' : ''}} value="vr">Vr. por un.</option>
 						</select>
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Aiq. IPI (%)</label>
-						<input type="text" value="{{$registro->aliqIpi}}" name="aliqIpi" id="aliqIpi{{$randId}}" class="form-control form-control-sm ">
+						<label class="label" for="pcIpi{{$randId}}">Aiq. IPI (%)</label>
+						<input type="text" name="pcIpi" id="pcIpi{{$randId}}" title="Alíquota do ipi" class="form-control form-control-sm ">
 					</div>
 				</div>
 				<div  class="row" >
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Vr. IPI</label>
-						<input readonly="readonly" value="{{$registro->vrIpi}}" type="text"  name="vrIpi" id="vrIpi{{$randId}}" class="form-control form-control-sm ">
+						<label class="label" for="vrIpi{{$randId}}" >Vr. IPI</label>
+						<input value="{{$registro->vrIpi}}" title="Valor do ipi" readonly="readonly" type="text"  name="vrIpi" id="vrIpi{{$randId}}" class="form-control form-control-sm ">
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">BC IPI</label>
-						<input type="text" name="baseCalculo" value="{{$registro->baseCalculo}}" class="form-control form-control-sm ">
+						<label class="label" for="bcIpi{{$randId}}">BC IPI</label>
+						<input value="{{$registro->bcIpi}}" type="text" name="bcIpi" title="Base ce cálculo do IPI" id="bcIpi{{$randId}}" class="form-control form-control-sm ">
 					</div>
 
 				</div>
 				<div  class="row" >
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Soma IPI BC do ICMS</label>
-						<select type="text" name="somaIpiIcms" class="form-control form-control-sm">
-							<option  {{isset($registro->somaIpiIcms) && trim($registro->somaIpiIcms) == 'yes' ? 'selected': ''}} value="yes">sim.</option>
-							<option  {{isset($registro->somaIpiIcms) && trim($registro->somaIpiIcms) == 'no' ? 'selected': ''}} value="no">Não</option>
+						<label class="label" for="somaBcIcms{{$randId}}">Soma IPI BC do ICMS</label>
+						<select type="text"  name="somaBcIcms" title="Base ce cálculo do IPI" id="somaBcIcms{{$randId}}" class="form-control form-control-sm">
+							<option {{isset($registro->somaBcIcms) && trim($registro->somaBcIcms) == 'yes' ? 'selected' : ''}} value="yes">sim.</option>
+							<option {{isset($registro->somaBcIcms) && trim($registro->somaBcIcms) == 'no' ? 'selected' : ''}} value="no">Não</option>
 						</select>
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Soma IPI BC do ICMS ST</label>
-						<select type="text" name="somaIpiIcmsSt" class="form-control form-control-sm">
-							<option  {{isset($registro->somaIpiIcmsSt) && trim($registro->somaIpiIcmsSt) == 'yes' ? 'selected': ''}} value="yes">sim.</option>
-							<option  {{isset($registro->somaIpiIcmsSt) && trim($registro->somaIpiIcmsSt) == 'no' ? 'selected': ''}} value="no">Não</option>
+						<label class="label" for="somaBcIcmsSt{{$randId}}" >Soma IPI BC do ICMS ST</label>
+						<select type="text" name="somaBcIcmsSt" title="Base ce cálculo do IPI ST" id="somaBcIcmsSt{{$randId}}" class="form-control form-control-sm">
+							<option {{isset($registro->somaBcIcms) && trim($registro->somaBcIcms) == 'yes' ? 'selected' : ''}} value="yes">sim.</option>
+							<option {{isset($registro->somaBcIcms) && trim($registro->somaBcIcms) == 'no' ? 'selected' : ''}} value="no">Não</option>
 						</select>
 					</div>
 				</div>		
 
 				<div  class="row" >
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Classe de enquadramento</label>
-						<input type="text" value="{{$registro->classEnquadra}}" name="classEnquadra" class="form-control form-control-sm ">
+						<label class="label" for="dsClassEnquadra{{$randId}}" >Classe de enquadramento</label>
+						<input type="text"  value="{{$registro->dsClassEnquadra}}" name="dsClassEnquadra" title="Classe de enquadramento" id="dsClassEnquadra{{$randId}}" class="form-control form-control-sm ">
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Código de enquadramento</label>
-						<input type="text" value="{{$registro->cdEnquadra}}" name="cdEnquadra" class="form-control form-control-sm ">
+						<label class="label" for="cdEnquadra{{$randId}}" >Código de enquadramento</label>
+						<input type="text"  value="{{$registro->cdEnquadra}}" name="cdEnquadra" title="Classe de enquadramento" id="cdEnquadra{{$randId}}" class="form-control form-control-sm ">
 					</div>
 				</div>
 
+				<div  class="row" >
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label" for="cnpjProdutor{{$randId}}" >CNPJ do produtor</label>
+						<input type="text"  value="{{$registro->cnpjProdutor}}" name="cnpjProdutor" title="CNPJ do produtor" id="cnpjProdutor{{$randId}}" class="form-control form-control-sm ">
+					</div>
+
+					<div class="form-group col-md-6 col-sm-12">
+						<label class="label" for="cdCeloControle{{$randId}}">Código do celo de controle</label>
+						<input type="text"  value="{{$registro->cdCeloControle}}" name="cdCeloControle" title="CNPJ do produtor" id="cdCeloControle{{$randId}}" class="form-control form-control-sm ">
+					</div>
+				</div>
+				
 				<div class="row">
 
 					<div class="col-md-8 col-sm-12">
