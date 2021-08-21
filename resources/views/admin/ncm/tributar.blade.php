@@ -363,7 +363,7 @@
 					</div>
 				</div>
 							
-				<div class="row">
+				<!--<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Red. BC ICMS (%)</label>
 						<select type="text" name="origem" class="form-control form-control-sm">						
@@ -388,7 +388,7 @@
 						<input alt="O Imposto sobre o Valor Agregado (IVA)" type="text" name="imagem" class="form-control form-control-sm ">
 					</div>
 
-				</div>
+				</div>-->
 
 			@else
 
@@ -479,94 +479,6 @@
 						/>
 					</div>
 				</div>
-				<!--<div class="row">
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">CST</label>
-						<select type="text" name="categoria_id" class="form-control form-control-sm">
-							
-							@php $trib_icms_csosn = [
-								]; 
-							@endphp
-
-							@foreach($trib_icms_csosn as $key=>$al)
-								<option value="{{$key}}">{{$al}}</option>
-							@endforeach
-						</select>
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Cód. ex. da TIPI</label>
-						<input title="Código de excessão da incidência de IPI " type="text" name="imagem" class="form-control form-control-sm ">
-					</div>
-				</div>
-				<div  class="row" >
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Modalidade IPI</label>
-						<select type="text" name="tpCalculoIpi" id="tpCalculoIpi{{$randId}}" class="form-control form-control-sm">
-							<option value="pc">Aliq.</option>
-							<option value="vr">Vr. por un.</option>
-						</select>
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Aiq. IPI (%)</label>
-						<input type="text" name="aliqIpi" id="aliqIpi{{$randId}}" class="form-control form-control-sm ">
-					</div>
-				</div>
-				<div  class="row" >
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Vr. IPI</label>
-						<input readonly="readonly" type="text"  name="vrIpi" id="vrIpi{{$randId}}" class="form-control form-control-sm ">
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">BC IPI</label>
-						<input type="text" name="imagem" class="form-control form-control-sm ">
-					</div>
-
-				</div>
-				<div  class="row" >
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Soma IPI BC do ICMS</label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value="">sim.</option>
-							<option value="">Não</option>
-						</select>
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Soma IPI BC do ICMS ST</label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value="">sim.</option>
-							<option value="">Não</option>
-						</select>
-					</div>
-				</div>		
-
-				<div  class="row" >
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Classe de enquadramento</label>
-						<input type="text" name="imagem" class="form-control form-control-sm ">
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Código de enquadramento</label>
-						<input type="text" name="imagem" class="form-control form-control-sm ">
-					</div>
-				</div>
-
-				<div  class="row" >
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">CNPJ do produtor</label>
-						<input type="text" name="imagem" class="form-control form-control-sm ">
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label">Código do celo de controle</label>
-						<input type="text" name="imagem" class="form-control form-control-sm ">
-					</div>
-				</div> -->
 
 				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">OUTROS </h5>
 				<hr/>

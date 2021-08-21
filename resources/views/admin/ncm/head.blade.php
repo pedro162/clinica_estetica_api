@@ -83,7 +83,7 @@
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
-					<a href="{{route('ncm.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
+					<a href="{{route('ncm.create')}}" onClick="cadastrar{{$randId}}(this);" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
 					
 				</div>
 
@@ -260,7 +260,7 @@
 		}
 
 		//cadastra um produto view
-		$('body').delegate('div.card a#cadastrar{{$randId}}', 'click', function(ev){
+		/*$('body').delegate('div.card a#cadastrar{{$randId}}', 'click', function(ev){
 
 			ev.preventDefault();
 			let url = $(this).attr('href');
@@ -268,7 +268,29 @@
 			Utilitarios.assistentAjaxModal('GET',url, 'HTML','NCM-Cadastrar', 'sm', 'auto')
 			Utilitarios.toggleFiltro();
 
-		});
+		});*/
+
+		function cadastrar{{$randId}}(element){
+			try{
+				let url = $(element).attr('href');
+				let id = $(element).attr('idItem');
+				let idModal= $(element).attr('idModal');
+
+				//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
+				let data = new FormData();
+				data.append('id', id)
+				data.append('idAssistente', '')
+				data.append('callBack', ''+btoa('pesquisar{{$randId}}();')+'')
+
+				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
+				data.append('_token', token)
+
+				Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Cadastrar', 'sm', '300px', null, data)
+				Utilitarios.toggleFiltro();
+			}catch(ex){
+					console.log('Erro: '+ex.message);
+			}
+		}
 
 		function tributar{{$randId}}(element){
 			

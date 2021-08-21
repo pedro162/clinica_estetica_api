@@ -78,16 +78,16 @@
 				<div class="form-group col-md-6 col-sm-12">
 					<label class="label" for="somaBcIcms{{$randId}}">Soma IPI BC do ICMS</label>
 					<select type="text"  name="somaBcIcms" title="Base ce cálculo do IPI" id="somaBcIcms{{$randId}}" class="form-control form-control-sm">
-						<option value="">sim.</option>
-						<option value="">Não</option>
+						<option value="yes">sim.</option>
+						<option value="no">Não</option>
 					</select>
 				</div>
 
 				<div class="form-group col-md-6 col-sm-12">
 					<label class="label" for="somaBcIcmsSt{{$randId}}" >Soma IPI BC do ICMS ST</label>
 					<select type="text" name="somaBcIcmsSt" title="Base ce cálculo do IPI ST" id="somaBcIcmsSt{{$randId}}" class="form-control form-control-sm">
-						<option value="">sim.</option>
-						<option value="">Não</option>
+						<option value="yes">sim.</option>
+						<option value="no">Não</option>
 					</select>
 				</div>
 			</div>		

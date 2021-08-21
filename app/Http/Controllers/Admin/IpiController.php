@@ -17,6 +17,7 @@ class IpiController extends Controller
      */
     public function index(Request $request)
     {
+        
         try{
             \DB::beginTransaction();
 
@@ -176,7 +177,7 @@ class IpiController extends Controller
     {
        try{
 
-            //-- falta ajustar as validaçoes $this->validaRequest($request);
+           $this->validaRequest($request);
             
             \DB::beginTransaction();
             $dados = $request->all();
@@ -363,12 +364,19 @@ class IpiController extends Controller
             $dadosRequest = [];
 
             $dadosRequest['user_update_id']     = \Auth::User()->id;
-            $dadosRequest['dsPisCofins']        = $dados['dsPisCofins'];
+            $dadosRequest['cst']                = $dados['cst'];
+            $dadosRequest['cdExTipi']           = $dados['cdExTipi'];
             $dadosRequest['tpCalculo']          = $dados['tpCalculo'];
-            $dadosRequest['tpRegistro']         = $dados['tpRegistro'];
-            $dadosRequest['vrPisCofins']        = $dados['vrPisCofins'] ?? 0;
-            $dadosRequest['pcPisCofins']        = $dados['pcPisCofins'] ?? 0;
-            $dadosRequest['st']                 = $dados['st'];
+            $dadosRequest['pcIpi']              = $dados['pcIpi'] ?? 0;
+            $dadosRequest['vrIpi']              = $dados['vrIpi'] ?? 0;
+            $dadosRequest['bcIpi']              = $dados['bcIpi'] ?? 0;
+            $dadosRequest['somaBcIcms']         = $dados['somaBcIcms']  ?? 'no';           
+            $dadosRequest['somaBcIcmsSt']       = $dados['somaBcIcmsSt'] ?? 'no';
+            $dadosRequest['dsClassEnquadra']    = $dados['dsClassEnquadra'] ?? null;
+            $dadosRequest['cdEnquadra']         = $dados['cdEnquadra'] ?? null;
+            $dadosRequest['cnpjProdutor']       = $dados['cnpjProdutor'] ?? null;
+            $dadosRequest['cdCeloControle']     = $dados['cdCeloControle'] ?? null;
+            $dadosRequest['dsIpi']              = $dados['dsIpi'];
             
             $pisCofins = Ipi::where('active', '=', 'yes')->where('id', '=', $id)->first();
             $pisCofins->update($dadosRequest);
@@ -449,16 +457,21 @@ class IpiController extends Controller
     protected function validaRequest(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'dsPisCofins'=> 'required|max:255|min:2',
+            'dsIpi'=> 'required|max:255|min:2',
             'tpCalculo'=> 'required',
-            'tpRegistro'=> 'required',
+            'cst'=> 'required',
+            'somaBcIcms'=> 'required',
+            'somaBcIcmsSt'=> 'required',
         ], [
-            'dsPisCofins.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
-            'tpCalculo.required' => 'O campo "TIP. CALCULO" é obrigatório.',
-            'tpRegistro.required' => 'O "Tipo de registro" é obrigatório. Ente em contato com o suporte.',
-            'dsPisCofins.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
-            'dsPisCofins.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
+            'dsIpi.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
+            'dsIpi.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
+            'dsIpi.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
+            'tpCalculo.required' => 'O campo "TIP. CALCULO IPI" é obrigatório.',
+            'cst.required' => 'O campo "CST" é obrigatório.',
+            'somaBcIcms.required' => 'O campo "SOMA IPI BC DO ICMS" é obrigatório.',
+            'somaBcIcmsSt.required' => 'O campo "SOMA IPI BC DO ICMS" é obrigatório.',
         ]);
+
         
         if($validator->fails()) {
             $errors = $validator->errors();

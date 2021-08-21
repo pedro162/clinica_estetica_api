@@ -18,10 +18,10 @@ Route::get('/prato/index',['as' =>'prato.index', 'uses'=>'Site\PratoController@i
 
 Route::get('/admin/login', ['as'=>'admin.login', function(){
 	return view('admin.login.index');
-}]);
-Route::post('/admin/login', ['as' => 'admin.login', 'uses' => 'UsuarioController@login']);
+}])->middleware('tenant');
+Route::post('/admin/login', ['as' => 'admin.login', 'uses' => 'UsuarioController@login'])->middleware('tenant');;
 
-Route::group(['middleware' => 'auth'], function(){
+Route::group(['middleware' => ['tenant','auth']], function(){
 
 	Route::get('/produto/index/{id_assistente?}', ['as'=>'produto.index', 'uses'=>'Admin\ProdutoController@index']);
 	Route::post('/produto/index/post', ['as'=>'produto.index.post', 'uses'=>'Admin\ProdutoController@index']);
@@ -168,6 +168,7 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/ncm/index/{id_assistente?}', ['as'=>'ncm.index', 'uses'=>'Admin\NcmController@index']);
 	Route::post('/ncm/index/{id_assistente?}', ['as'=>'ncm.index', 'uses'=>'Admin\NcmController@index']);
 	Route::get('/ncm/create/{id_assistente?}', ['as'=>'ncm.create', 'uses'=>'Admin\NcmController@create']);
+	Route::post('/ncm/create/{id_assistente?}', ['as'=>'ncm.create', 'uses'=>'Admin\NcmController@create']);
 	Route::post('/ncm/store/{id_assistente?}', ['as'=>'ncm.store', 'uses'=>'Admin\NcmController@store']);
 	Route::get('/ncm/edit/{id}/{id_assistente?}', ['as'=>'ncm.edit', 'uses'=>'Admin\NcmController@edit']);
 	Route::post('/ncm/edit/{id}/{id_assistente?}', ['as'=>'ncm.edit', 'uses'=>'Admin\NcmController@edit']);
@@ -185,9 +186,13 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/pis/cofins/index/{id_assistente?}', ['as'=>'pis.cofins.index', 'uses'=>'Admin\PisCofinsController@index']);
 	Route::post('/pis/cofins/index/{id_assistente?}', ['as'=>'pis.cofins.index', 'uses'=>'Admin\PisCofinsController@index']);
 	Route::get('/pis/cofins/pis/create/{id_assistente?}', ['as'=>'pis.cofins.pis.create', 'uses'=>'Admin\PisCofinsController@createPis']);
+	Route::post('/pis/cofins/pis/create/{id_assistente?}', ['as'=>'pis.cofins.pis.create', 'uses'=>'Admin\PisCofinsController@createPis']);
 	Route::get('/pis/cofins/pis/st/create/{id_assistente?}', ['as'=>'pis.cofins.pis.st.create', 'uses'=>'Admin\PisCofinsController@createPisSt']);
+	Route::post('/pis/cofins/pis/st/create/{id_assistente?}', ['as'=>'pis.cofins.pis.st.create', 'uses'=>'Admin\PisCofinsController@createPisSt']);
 	Route::get('/pis/cofins/cofins/create/{id_assistente?}', ['as'=>'pis.cofins.cofins.create', 'uses'=>'Admin\PisCofinsController@createCofins']);
+	Route::post('/pis/cofins/cofins/create/{id_assistente?}', ['as'=>'pis.cofins.cofins.create', 'uses'=>'Admin\PisCofinsController@createCofins']);
 	Route::get('/pis/cofins/cofins/st/create/{id_assistente?}', ['as'=>'pis.cofins.cofins.st.create', 'uses'=>'Admin\PisCofinsController@createCofinsSt']);
+	Route::post('/pis/cofins/cofins/st/create/{id_assistente?}', ['as'=>'pis.cofins.cofins.st.create', 'uses'=>'Admin\PisCofinsController@createCofinsSt']);
 	Route::post('/pis/cofins/store/{id_assistente?}', ['as'=>'pis.cofins.store', 'uses'=>'Admin\PisCofinsController@store']);
 	Route::get('/pis/cofins/edit/{id}/{id_assistente?}', ['as'=>'pis.cofins.edit', 'uses'=>'Admin\PisCofinsController@edit']);
 	Route::post('/pis/cofins/edit/{id}/{id_assistente?}', ['as'=>'pis.cofins.edit', 'uses'=>'Admin\PisCofinsController@edit']);
@@ -203,8 +208,8 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	
 	Route::get('/ipi/index/{id_assistente?}', ['as'=>'ipi.index', 'uses'=>'Admin\IpiController@index']);
 	Route::post('/ipi/index/{id_assistente?}', ['as'=>'ipi.index', 'uses'=>'Admin\IpiController@index']);
-	Route::get('/ipi/ipi/create/{id_assistente?}', ['as'=>'ipi.create', 'uses'=>'Admin\IpiController@create']);
 	Route::get('/ipi/create/{id_assistente?}', ['as'=>'ipi.create', 'uses'=>'Admin\IpiController@create']);
+	Route::post('/ipi/create/{id_assistente?}', ['as'=>'ipi.create', 'uses'=>'Admin\IpiController@create']);
 	Route::post('/ipi/store/{id_assistente?}', ['as'=>'ipi.store', 'uses'=>'Admin\IpiController@store']);
 	Route::get('/ipi/edit/{id}/{id_assistente?}', ['as'=>'ipi.edit', 'uses'=>'Admin\IpiController@edit']);
 	Route::post('/ipi/edit/{id}/{id_assistente?}', ['as'=>'ipi.edit', 'uses'=>'Admin\IpiController@edit']);
@@ -217,6 +222,23 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::post('/ipi/head/{id_assistente?}', ['as'=>'ipi.head', 'uses'=>'Admin\IpiController@head']);
 	Route::get('/ipi/destroy/{id}/{id_assistente?}', ['as'=>'ipi.destroy', 'uses'=>'Admin\IpiController@destroy']);
 	Route::post('/ipi/destroy/{id}/{id_assistente?}', ['as'=>'ipi.destroy', 'uses'=>'Admin\IpiController@destroy']);
+
+	Route::get('/icms/index/{id_assistente?}', ['as'=>'icms.index', 'uses'=>'Admin\IcmsController@index']);
+	Route::post('/icms/index/{id_assistente?}', ['as'=>'icms.index', 'uses'=>'Admin\IcmsController@index']);
+	Route::get('/icms/create/{id_assistente?}', ['as'=>'icms.create', 'uses'=>'Admin\IcmsController@create']);
+	Route::post('/icms/create/{id_assistente?}', ['as'=>'icms.create', 'uses'=>'Admin\IcmsController@create']);
+	Route::post('/icms/store/{id_assistente?}', ['as'=>'icms.store', 'uses'=>'Admin\IcmsController@store']);
+	Route::get('/icms/edit/{id}/{id_assistente?}', ['as'=>'icms.edit', 'uses'=>'Admin\IcmsController@edit']);
+	Route::post('/icms/edit/{id}/{id_assistente?}', ['as'=>'icms.edit', 'uses'=>'Admin\IcmsController@edit']);
+	Route::put('/icms/update/{id}/{id_assistente?}', ['as'=>'icms.update', 'uses'=>'Admin\IcmsController@update']);
+	Route::get('/icms/show/{id}/{id_assistente?}', ['as'=>'icms.show', 'uses'=>'Admin\IcmsController@show']);
+	Route::post('/icms/show/{id}/{id_assistente?}', ['as'=>'icms.show', 'uses'=>'Admin\IcmsController@show']);
+	Route::get('/icms/info/{id}/{id_assistente?}', ['as'=>'icms.info', 'uses'=>'Admin\IcmsController@info']);
+	Route::post('/icms/info/{id}/{id_assistente?}', ['as'=>'icms.info', 'uses'=>'Admin\IcmsController@info']);
+	Route::get('/icms/head/{id_assistente?}', ['as'=>'icms.head', 'uses'=>'Admin\IcmsController@head']);
+	Route::post('/icms/head/{id_assistente?}', ['as'=>'icms.head', 'uses'=>'Admin\IcmsController@head']);
+	Route::get('/icms/destroy/{id}/{id_assistente?}', ['as'=>'icms.destroy', 'uses'=>'Admin\IcmsController@destroy']);
+	Route::post('/icms/destroy/{id}/{id_assistente?}', ['as'=>'icms.destroy', 'uses'=>'Admin\IcmsController@destroy']);
 
 	Route::get('/venda/index/{id_assistente?}', ['as'=>'contrato.index', 'uses'=>'Admin\VendaController@index']);//VendaController
 	Route::get('/venda/create/{id}/{id_assistente?}', ['as'=>'venda.create', 'uses'=>'Admin\VendaController@create']);
@@ -232,3 +254,8 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	
 });
 
+
+Route::get('/tent', function(){
+
+
+})->name('tenent')->middleware('tenant');
