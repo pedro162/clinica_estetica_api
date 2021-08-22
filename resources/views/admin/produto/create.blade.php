@@ -187,6 +187,8 @@ Preço de venda
 Referências = EAN.
 Unidade
 Categorização
+Vr frete *
+outras despesas *
 
 Dados de tributação
 	Nomenclatura Comum do Mercosul (NCM);
@@ -198,7 +200,26 @@ Dados de tributação
 
 	Preço Compra = (Preço Fábrica – Descontos do Fornecedor)
 
+Embalagem (em cm){
+
+	Largura,
+	Altura,
+	profundidade
+}
+
+Kit{
+	isKit
+	desmenbra iten do kit no momento da venda
+	Controle de estoque{
+		Movimentar estoque somente do kit
+		Movimentar estoque dos produtos do kit (Materia - prima)
+	},
+	qtdItens Kit,
+}
+
  -->
+
+
 
 <script>
 	//edita ou salva um produto

@@ -68,6 +68,7 @@
           <a class="dropdown-item" href="">CST</a>
           <a class="dropdown-item" href="">Sub. tributária</a>
           <a class="dropdown-item rotina" href="{{route('ncm.head')}}">NCM</a>
+          <a class="dropdown-item rotina" href="{{route('icms.head')}}">ICMS</a>
           <a class="dropdown-item" href="">Tributação</a>
         </div>
       </li>

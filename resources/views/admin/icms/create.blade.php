@@ -3,10 +3,11 @@
 	<div class="col-md-12 col-sm-12">
 		<form action="{{route('ipi.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
 			@csrf
+			
+			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
+			@if((isset($csosn) && $csosn == false) )
 
-			@if(isset($csosn) && $csosn == false)
-
-				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
+				
 				<hr/>
 				<div  class="row" >
 					<div class="form-group col-md-12 col-sm-12">
@@ -122,9 +123,7 @@
 				<div class="row">
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Red. BC ICMS (%)</label>
-						<select type="text" name="origem" class="form-control form-control-sm">						
-							<option value=""></option>						
-						</select>
+						<input id="cdExTipi{{$randId}}" title="Código de excessão da incidência de IPI " type="text" name="cdExTipi" class="form-control form-control-sm ">
 					</div>
 
 					<div class="form-group col-md-6 col-sm-12">
@@ -148,7 +147,7 @@
 
 				<div class="row">
 					
-				<div class="form-group col-md-6 col-sm-12">
+					<div class="form-group col-md-6 col-sm-12">
 						<label class="label" for="cst{{$randId}}">Mot. desoneração do ICMS </label>
 						<select id="cst{{$randId}}" title="Código da situação tributária referente ao imposto sobre produtos industrializados (CST-IPI):" type="text" name="cst" class="form-control form-control-sm">
 							
@@ -178,8 +177,8 @@
 					</div>
 				</div>
 			@else
-				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">ICMS SIMPLES NACIONAL </h5>
-				<hr/>
+				<!-- <h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">ICMS SIMPLES NACIONAL </h5>
+				<hr/>-->
 				<div  class="row" >
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">COSN</label>
@@ -207,9 +206,7 @@
 
 					<div class="form-group col-md-6 col-sm-12">
 						<label class="label">Aiq. Cal. Cred (%)</label>
-						<select type="text" name="sub_categoria_id" class="form-control form-control-sm">
-							<option value=""></option>
-						</select>
+						<input type="text" name="imagem" class="form-control form-control-sm " />
 					</div>
 				</div>
 

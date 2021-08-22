@@ -15,49 +15,50 @@
 						Descrição
 					</th>
 					<th>
-						Modalidade
+						Aliq. ICMS ( % )
 					</th>
 					<th>
-						Aliq. IPI ( % )
+						Aliq. ICMSST ( % )
 					</th>
 					<th>
-						Vr. IPI ( R$ )
+						PC. FCP ( % )
 					</th>
 					<th>
-						Somoa BC
+						PC. MVA ( % )
 					</th>
 					<th>
-					Somoa BC ICMS
+						Val. Red. BC
 					</th>
 					<th>
-						Classe de enquadramento
+						Val. Red. ST
 					</th>
 					<th>
-						Cód. enquadramento
+						ST
 					</th>
 					<th>
-						CNPJ do produtor
+						CEST
 					</th>
 					<th>
-						Cód. controle
+						Mod. BC
 					</th>
 					
 				</tr>
 			</thead>
+			
 			<tbody style="width: 100%;">
 				@foreach($registro as $valor)
 				<tr class="assistenteModalNCM">
 					<td class="text-right">{{$valor->id}}</td>
-					<td>{{$valor->dsIpi}}</td>
-					<td>{{$valor->tpCalculo}}</td>
-					<td>{{$valor->pcIpi}}</td>
-					<td>{{$valor->vrIpi}}</td>
-					<td >{{$valor->somaBcIcms}}</td>
-					<td>{{$valor->somaBcIcmsSt}}</td>
-					<td class="text-right">{{$valor->dsClassEnquadra}}</td>
-					<td class="text-right">{{$valor->cdEnquadra }}</td>
-					<td class="text-right">{{$valor->cnpjProdutor}}</td>
-					<td class="text-right">{{$valor->cdCeloControle}}</td>
+					<td>{{$valor->nmIcms}}</td>
+					<td>{{$valor->pcAliq}}</td>
+					<td>{{$valor->pcAliqSt}}</td>
+					<td>{{$valor->pcFcp}}</td>
+					<td >{{$valor->pcMva}}</td>
+					<td>{{$valor->vrReduzBc}}</td>
+					<td class="text-right">{{$valor->vrReduzBcSt}}</td>
+					<td class="text-right">{{$valor->st}}</td>
+					<td class="text-right">{{$valor->cest}}</td>
+					<td class="text-right">{{$valor->modBcIcms}}</td>
 					<input type="hidden" name="item" value="{{$valor->id}}">
 				</tr>
 				@endforeach
@@ -86,8 +87,8 @@
 
 			let arrLinks = [
 				//['Ediar', '/ncm/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_editar'],
-				['Ediar', '/ipi/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_editar{{$randId}}', id , 'editar{{$randId}}(this);'],
-				['Excluir', '/ipi/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_deletar{{$randId}}', id, 'deletar{{$randId}}(this);'],
+				['Ediar', '/icms/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_editar{{$randId}}', id , 'editar{{$randId}}(this);'],
+				['Excluir', '/icms/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_deletar{{$randId}}', id, 'deletar{{$randId}}(this);'],
 				
 
 			];
@@ -116,7 +117,7 @@
 			let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
 			data.append('_token', token)
 
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','IPI-Editar', 'sm', '300px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','ICMS-Editar', 'sm', '300px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
@@ -140,10 +141,12 @@
 			data.append('_token', token)
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','IPI-Deletar', 'sm', '700px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','ICMS-Deletar', 'sm', '700px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
 	}
+
+	
 
 </script>
