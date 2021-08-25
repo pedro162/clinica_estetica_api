@@ -240,6 +240,40 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/icms/destroy/{id}/{id_assistente?}', ['as'=>'icms.destroy', 'uses'=>'Admin\IcmsController@destroy']);
 	Route::post('/icms/destroy/{id}/{id_assistente?}', ['as'=>'icms.destroy', 'uses'=>'Admin\IcmsController@destroy']);
 
+	Route::get('/pais/index/{id_assistente?}', ['as'=>'pais.index', 'uses'=>'Admin\PaisController@index']);
+	Route::post('/pais/index/{id_assistente?}', ['as'=>'pais.index', 'uses'=>'Admin\PaisController@index']);
+	Route::get('/pais/create/{id_assistente?}', ['as'=>'pais.create', 'uses'=>'Admin\PaisController@create']);
+	Route::post('/pais/create/{id_assistente?}', ['as'=>'pais.create', 'uses'=>'Admin\PaisController@create']);
+	Route::post('/pais/store/{id_assistente?}', ['as'=>'pais.store', 'uses'=>'Admin\PaisController@store']);
+	Route::get('/pais/edit/{id}/{id_assistente?}', ['as'=>'pais.edit', 'uses'=>'Admin\PaisController@edit']);
+	Route::post('/pais/edit/{id}/{id_assistente?}', ['as'=>'pais.edit', 'uses'=>'Admin\PaisController@edit']);
+	Route::put('/pais/update/{id}/{id_assistente?}', ['as'=>'pais.update', 'uses'=>'Admin\PaisController@update']);
+	Route::get('/pais/show/{id}/{id_assistente?}', ['as'=>'pais.show', 'uses'=>'Admin\PaisController@show']);
+	Route::post('/pais/show/{id}/{id_assistente?}', ['as'=>'pais.show', 'uses'=>'Admin\PaisController@show']);
+	Route::get('/pais/info/{id}/{id_assistente?}', ['as'=>'pais.info', 'uses'=>'Admin\PaisController@info']);
+	Route::post('/pais/info/{id}/{id_assistente?}', ['as'=>'pais.info', 'uses'=>'Admin\PaisController@info']);
+	Route::get('/pais/head/{id_assistente?}', ['as'=>'pais.head', 'uses'=>'Admin\PaisController@head']);
+	Route::post('/pais/head/{id_assistente?}', ['as'=>'pais.head', 'uses'=>'Admin\PaisController@head']);
+	Route::get('/pais/destroy/{id}/{id_assistente?}', ['as'=>'pais.destroy', 'uses'=>'Admin\PaisController@destroy']);
+	Route::post('/pais/destroy/{id}/{id_assistente?}', ['as'=>'pais.destroy', 'uses'=>'Admin\PaisController@destroy']);
+
+	Route::get('/estado/index/{id_assistente?}', ['as'=>'estado.index', 'uses'=>'Admin\EstadoController@index']);
+	Route::post('/estado/index/{id_assistente?}', ['as'=>'estado.index', 'uses'=>'Admin\EstadoController@index']);
+	Route::get('/estado/create/{id_assistente?}', ['as'=>'estado.create', 'uses'=>'Admin\EstadoController@create']);
+	Route::post('/estado/create/{id_assistente?}', ['as'=>'estado.create', 'uses'=>'Admin\EstadoController@create']);
+	Route::post('/estado/store/{id_assistente?}', ['as'=>'estado.store', 'uses'=>'Admin\EstadoController@store']);
+	Route::get('/estado/edit/{id}/{id_assistente?}', ['as'=>'estado.edit', 'uses'=>'Admin\EstadoController@edit']);
+	Route::post('/estado/edit/{id}/{id_assistente?}', ['as'=>'estado.edit', 'uses'=>'Admin\EstadoController@edit']);
+	Route::put('/estado/update/{id}/{id_assistente?}', ['as'=>'estado.update', 'uses'=>'Admin\EstadoController@update']);
+	Route::get('/estado/show/{id}/{id_assistente?}', ['as'=>'estado.show', 'uses'=>'Admin\EstadoController@show']);
+	Route::post('/estado/show/{id}/{id_assistente?}', ['as'=>'estado.show', 'uses'=>'Admin\EstadoController@show']);
+	Route::get('/estado/info/{id}/{id_assistente?}', ['as'=>'estado.info', 'uses'=>'Admin\EstadoController@info']);
+	Route::post('/estado/info/{id}/{id_assistente?}', ['as'=>'estado.info', 'uses'=>'Admin\EstadoController@info']);
+	Route::get('/estado/head/{id_assistente?}', ['as'=>'estado.head', 'uses'=>'Admin\EstadoController@head']);
+	Route::post('/estado/head/{id_assistente?}', ['as'=>'estado.head', 'uses'=>'Admin\EstadoController@head']);
+	Route::get('/estado/destroy/{id}/{id_assistente?}', ['as'=>'estado.destroy', 'uses'=>'Admin\EstadoController@destroy']);
+	Route::post('/estado/destroy/{id}/{id_assistente?}', ['as'=>'estado.destroy', 'uses'=>'Admin\EstadoController@destroy']);
+
 	Route::get('/venda/index/{id_assistente?}', ['as'=>'contrato.index', 'uses'=>'Admin\VendaController@index']);//VendaController
 	Route::get('/venda/create/{id}/{id_assistente?}', ['as'=>'venda.create', 'uses'=>'Admin\VendaController@create']);
 	Route::post('/venda/store/{idPessoa}/{id_assistente?}', ['as'=>'venda.store', 'uses'=>'Admin\VendaController@store']);

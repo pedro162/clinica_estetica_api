@@ -21,7 +21,8 @@ class CreatePlanoPagamentoPrazosTable extends Migration
             $table->enum('active',['yes', 'no'])->default('no');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);    
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);  
+            $table->softDeletes();  
             $table->timestamps();
         });
     }

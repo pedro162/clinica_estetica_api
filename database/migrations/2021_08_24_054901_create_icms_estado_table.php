@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCobrancaReceberFilialTable extends Migration
+class CreateIcmsEstadoTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateCobrancaReceberFilialTable extends Migration
      */
     public function up()
     {
-        Schema::table('cobranca_recebers', function (Blueprint $table) {
-            $table->bigInteger('filial_id')->unsigned();
-            $table->foreign('filial_id')->references('id')->on('filials')->onUpdate('cascade')->onDelete('cascade');
+        Schema::table('icms', function (Blueprint $table) {
+            $table->bigInteger('estados_id')->unsigned();
+            $table->foreign('estados_id')->references('id')->on('estadoss')->onUpdate('cascade')->onDelete('cascade');
+
         });
     }
 
@@ -26,6 +27,6 @@ class CreateCobrancaReceberFilialTable extends Migration
      */
     public function down()
     {
-        //Schema::dropIfExists('cobranca_recebers');
+        //Schema::dropIfExists('icms_estado');
     }
 }

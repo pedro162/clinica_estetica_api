@@ -9,6 +9,7 @@ use App\Telefone;
 use App\CobrancaReceber;
 use App\Venda;
 use App\User;
+use App\Filial;
 
 class Pessoa extends Model
 {
@@ -75,5 +76,10 @@ class Pessoa extends Model
 	public function user()
 	{
 		return $this->hasOne(User::class, 'user_id');
+	}
+
+	public function filial()
+	{
+		return $this->hasOne(Filial::class, 'pessoa_id' , 'id');
 	}
 }

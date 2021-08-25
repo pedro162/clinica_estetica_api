@@ -22,6 +22,8 @@ class CreateSessaosTable extends Migration
             $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
             $table->enum('preseparacao', ['yes', 'no'])->default('no');
             $table->enum('active',['yes', 'no'])->default('no');
+            $table->softDeletes();
+            
             $table->timestamps();
         });
     }

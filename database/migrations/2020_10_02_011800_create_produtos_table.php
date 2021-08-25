@@ -55,6 +55,7 @@ class CreateProdutosTable extends Migration
             $table->decimal('peso_liquido', 10, 2)->default(0);
             $table->decimal('peso_bruto', 10, 2)->default(0);
             $table->decimal('desconto_liberado', 10, 2)->default(0);
+            $table->softDeletes();
 
             $table->timestamps();
         });

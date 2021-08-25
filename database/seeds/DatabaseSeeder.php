@@ -20,5 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LogradourosSeeds::class);
         $this->call(OperadorFinanceiro::class);
         $this->call(FiliaisSeeds::class);
+        $this->call(PaisSeeds::class);
+        $this->call(EstadoSeeds::class);
     }
 }

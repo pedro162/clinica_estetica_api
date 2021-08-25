@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Estado;
 
 class Icms extends Model
 {
@@ -32,8 +33,13 @@ class Icms extends Model
         'estado_id',
         'user_update_id',
         'active',
+        'estados_id',
 
     ];
 
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class, 'pais_id', 'id');
+    }
 
 }

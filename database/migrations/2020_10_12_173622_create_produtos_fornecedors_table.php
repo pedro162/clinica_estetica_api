@@ -26,6 +26,7 @@ class CreateProdutosFornecedorsTable extends Migration
 
             $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
             $table->enum('active',['yes', 'no'])->default('no');
+            $table->softDeletes();
 
             $table->timestamps();
         });

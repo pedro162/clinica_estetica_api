@@ -19,6 +19,7 @@ class Filial extends Model
 	
 	public function pessoa()
 	{
-		return $this->hasOne(Pessoa::class, 'id' , 'pessoa_id');
+		//return $this->hasOne(Pessoa::class, 'id' , 'pessoa_id');
+		return $this->belongsTo(Pessoa::class, 'pessoa_id' , 'id');
 	}
 }

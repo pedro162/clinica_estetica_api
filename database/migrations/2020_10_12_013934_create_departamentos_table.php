@@ -24,6 +24,8 @@ class CreateDepartamentosTable extends Migration
             $table->enum('active',['yes', 'no'])->default('no');
             $table->decimal('margem_minima', 10, 2)->default(0);
             $table->decimal('margem_ideal', 10, 2)->default(0);
+            $table->softDeletes();
+            
             $table->timestamps();
         });
     }

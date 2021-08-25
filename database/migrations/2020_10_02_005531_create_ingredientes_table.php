@@ -17,6 +17,8 @@ class CreateIngredientesTable extends Migration
             $table->id();
             $table->string('descricao');
             $table->enum('active', ['yes', 'no'])->default('yes');
+            $table->softDeletes();
+            
             $table->timestamps();
         });
     }

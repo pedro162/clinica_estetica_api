@@ -39,11 +39,6 @@ class CreateIcmsTable extends Migration
             
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-
-            /*
-            $table->bigInteger('estado_id')->unsigned();
-            $table->foreign('estado_id')->references('id')->on('estados')->onUpdate('cascade')->onDelete('cascade');
-            */
             
             $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);  
             $table->enum('active',['yes', 'no'])->default('no');

@@ -22,6 +22,8 @@ class CreateCategoriasTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name');
             $table->enum('active', ['yes', 'no'])->default('yes');
+            $table->softDeletes();
+            
             $table->timestamps();
         });
 

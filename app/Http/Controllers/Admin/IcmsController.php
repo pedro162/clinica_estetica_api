@@ -161,7 +161,7 @@ class IcmsController extends Controller
 
         $callBack = $dadosRequest['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-        $csosn = true;
+        $csosn = false;
 
         return view('admin.icms.create', compact('callBack','idAssistente', 'csosn'));
     }

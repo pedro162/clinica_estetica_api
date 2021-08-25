@@ -155,7 +155,7 @@
 		});
 
 		function pesquisar{{$randId}}(){
-			let url = '/ipi/index';
+			let url = '/icms/index';
 
 			let objResponse = 'div#response-request{{$randId}}';
 			//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
