@@ -10,29 +10,30 @@
 				<table class="table table-responsive table-hover" style="width: 100%;">
 					<tbody>
 						<tr>
-							<td>NCM:</td>
-							<td>{{$registro->codNcm ? $registro->codNcm : ''}}</td>
+							<td>Cód:</td>
+							<td>{{$registro->id ?? ''}}</td>
 						</tr>
 						<tr>
-							<td>Código NCM:</td>
-							<td>{{$registro->codNcm ? $registro->codNcm : ''}}</td>
+							<td>País:</td>
+							<td>{{$registro->pais->nmPais ?? ''}}</td>
 						</tr>
 						<tr>
-							<td>Alíquota nacional:</td>
-							<td>{{$registro->vrAliqNacional ? number_format($registro->vrAliqNacional, 2, ',', '.') : ''}}</td>
+							<td>Descrição:</td>
+							<td>{{$registro->nmEStado ?? ''}}</td>
 						</tr>
 						<tr>
-						<td>Alíquota importada:</td>
-							<td>{{$registro->vrAliqImportada ? number_format($registro->vrAliqImportada, 2, ',', '.') : ''}}</td>
+							<td>Sigla:</td>
+							<td>{{$registro->sigla ?? ''}}</td>
 						</tr>
 						<tr>
-						<td>Alíquota estadual:</td>
-						<td>{{$registro->vrAliqEstadual ? number_format($registro->vrAliqEstadual, 2, ',', '.') : ''}}</td>
+						<td>Cód. do estado:</td>
+							<td>{{$registro->codEstado ?? ''}}</td>
 						</tr>
 						<tr>
-						<td>Alíquota municipal:</td>
-							<td>{{$registro->vrAliqMunicipal ? number_format($registro->vrAliqMunicipal, 2, ',', '.') : ''}}</td>
+							<td>Definido como padrão:</td>
+							<td>{{$registro->padrao == 'ys' ? 'Sim' : 'Não'}}</td>
 						</tr>
+						
 					</tbody>							
 				</table>
 			</div>
@@ -40,7 +41,7 @@
 
 		<div class="row">
 			<div class="col-md-12 col-sm-12" align="right">
-				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('ncm.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
+				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('estado.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
 			</div>
 		</div>
 	</div>

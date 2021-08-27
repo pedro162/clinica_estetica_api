@@ -127,7 +127,7 @@ class EstadoController extends Controller
             if($campos){
                 $registro->select($campos);
             }else{
-                $registro->select('estadoss.*', 'pais.id', 'pais.nmPais', 'pais.cdPais');
+                $registro->select('estadoss.*', 'pais.nmPais', 'pais.cdPais');
 
             }
            

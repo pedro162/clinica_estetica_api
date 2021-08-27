@@ -4,7 +4,7 @@
 		<h4>Lista de produtos</h4>	
 	</div>-->
 	<div class="col">
-		<table style="width: 100%;" id="lista{{$randId}}" class=" data-table table table-sm table-responsive table-hover display">
+		<!--<table style="width: 100%;" id="lista{{$randId}}" class=" data-table table table-sm table-responsive table-hover display">
 			@csrf
 			<thead style="width: 100%;">
 				<tr>
@@ -36,19 +36,156 @@
 			<tbody style="width: 100%;">
 				@foreach($registro as $valor)
 				<tr class="assistenteModalNCM">
-					<td class="text-right">{{$valor->id}}</td>
-					<td>{{$valor->nmEStado}}</td>
-					<td>{{$valor->sigla}}</td>
-					<td>{{$valor->codEstado}}</td>
+					<td class="text-left">{{$valor->id}}</td>
+					<td class="text-left">{{$valor->nmEStado}}</td>
+					<td class="text-left">{{$valor->sigla}}</td>
+					<td class="text-left">{{$valor->codEstado}}</td>
 					<td class="text-left">{{$valor->padrao == 'yes' ? 'Sim' : 'Não'}}</td>
-					<td>{{$valor->nmPais}}</td>
-					<td>{{$valor->pais_id}}</td>
+					<td class="text-left">{{$valor->nmPais}}</td>
+					<td class="text-left">{{$valor->pais_id}}</td>
 					<input type="hidden" name="item" value="{{$valor->id}}">
 				</tr>
 				@endforeach
 			</tbody>
 
-		</table>
+		</table> -->
+
+		@php
+		
+			$tituloColunas = [
+
+				'style_row'=>'',
+				'class_row'=>'',
+				'onClick'=>null,
+				'dados'=>[
+
+					[
+						'nmColuna'=>'Cód',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					],
+					[
+						'nmColuna'=>'Descrição',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					],
+					[
+						'nmColuna'=>'Sigla',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					],
+					[
+						'nmColuna'=>'Código do estado',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					],
+					[
+						'nmColuna'=>'Definido como padrão',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					],
+					[
+						'nmColuna'=>'País',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					]
+					,
+					[
+						'nmColuna'=>'Código do país',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					]
+
+				],
+			];
+
+			$dados = [];
+
+			foreach($registro as $valor){
+				$row = [];
+				$row['id'] = $valor->id;
+				$row['style_row'] = '';
+				$row['class_row'] = '';
+
+				$row['dados'] = [
+					[
+						'val'=>$valor->id,
+						'class'=>'',
+						'style_cel'=>'',
+                            
+                    ],
+					[
+						'val'=>$valor->nmEStado,
+						'class'=>'',
+						'style_cel'=>'',
+						
+                    ],
+					[
+						'val'=>$valor->sigla,
+						'class'=>'',
+						'style_cel'=>'',
+                            
+                    ],
+					[
+						'val'=>$valor->codEstado,
+						'class'=>'',
+						'style_cel'=>'',
+                            
+                    ],
+					[
+						'val'=>$valor->padrao,
+						'class'=>'',
+						'style_cel'=>'',
+                            
+                    ],
+					[
+						'val'=>$valor->nmPais,
+						'class'=>'',
+						'style_cel'=>'',
+                            
+                    ],
+					[
+						'val'=>$valor->pais_id,
+						'class'=>'',
+						'style_cel'=>'',
+                            
+                    ]
+
+				];
+				
+				$row['acoes']=[
+
+                       	[ 
+							'label'=>'Editar',
+							'link'=>'/estado/edit/'. $valor->id,
+							'style_action'=>'',
+							'class_action'=>'btn btn-lg btn-outline-primary',
+							'onClick'=>null
+						],
+						[ 
+							'label'=>'Excluir',
+							'link'=>'/estado/info/'. $valor->id,
+							'style_action'=>'',
+							'class_action'=>'btn btn-lg btn-outline-primary',
+							'onClick'=>null
+						]
+                    ];
+
+				
+				
+				$dados[] = ['row'=>$row];
+			}
+
+			$calback = null;
+
+		
+		@endphp
+		<x-table
+			:tituloColunas="$tituloColunas"
+			:dados="$dados"
+			:calback="$calback"
+		/>
+		
 	</div>
 </div>
 
@@ -125,7 +262,7 @@
 			data.append('_token', token)
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Estado-Deletar', 'sm', '700px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Estado-Deletar', 'xs', '300px', null, data)
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
