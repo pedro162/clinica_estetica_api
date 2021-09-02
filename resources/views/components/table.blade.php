@@ -6,9 +6,6 @@
 
  @endphp
 <div class="row">
-	<!--<div class="col-md-12">
-		<h4>Lista de produtos</h4>	
-	</div>-->
 	<div class="col">
 		<table style="width: 100%;" id="lista{{$randId}}" class=" data-table table table-sm table-responsive table-hover display">
 			@csrf
@@ -107,7 +104,7 @@
 </div>
 
 <script type="text/javascript">
-	Utilitarios.useDataTable($('#lista-produtos{{$randId}}'))
+	Utilitarios.useDataTable($('#lista{{$randId}}'))
 
 	var idModalOptions{{$randId}} = null;
 	var callBack{{$randId}} = '{{$getCallback()}}'
@@ -135,7 +132,7 @@
                         ''+atual.class_action+'',
                         ''+atual.id_action+'',
                         ''+id+'',
-                        `action{{$randId}}(this, ${tpRequestAssistente}, ${title}, ${widthAssistente}, ${heightAssistente});`
+                        "action{{$randId}}(this, '"+tpRequestAssistente+"', '"+title+"', '"+widthAssistente+"', '"+heightAssistente+"');"
                         
                     ];
                     
@@ -150,12 +147,16 @@
 		}
 	}
 
-    function action{{$randId}}(element, typeRequest='POST' ,title='Dados', width='sm', height='700px'){
+    async function action{{$randId}}(element, typeRequest='POST' ,title='Dados', width='sm', height='700px'){
 
         try{
+            let attrClick = $(element).attr('onclick')
+            $(element).removeAttr('onclick')
+
 			let url = $(element).attr('href');
 			let id = $(element).attr('idItem');
 			let idModal= $(element).attr('idModal');
+            //console.log(element);return ;
 			// //
 			Utilitarios.fecharAssistente(idModalOptions{{$randId}});
 			let data = new FormData();
@@ -163,10 +164,11 @@
 			data.append('idAssistente', '')
 			data.append('callBack', ''+callBack{{$randId}}+'')
 
-			let token = $('html').find('#lista-produtos{{$randId}}').find('input[name="_token"]').val()
+			let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
 			data.append('_token', token)
 
-			Utilitarios.assistentAjaxModal(typeRequest,url, 'HTML',title, width, height, null, data)
+			await Utilitarios.assistentAjaxModal(typeRequest,url, 'HTML',title, width, height, null, data)
+            $(element).attr('onclick', attrClick)
 			
 		}catch(ex){
 				console.log('Erro: '+ex.message);

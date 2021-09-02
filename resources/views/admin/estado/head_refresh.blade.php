@@ -34,7 +34,6 @@
 					<div style="box-sizing: border-box;" class="col-md-11 col-sm-12 p-2" id="container_filtred{{$randId}}">
 					</div>
 				</div>
-				
 			</div>
 
 			<div class="card-body">
@@ -49,6 +48,11 @@
 							<div class="custom-control my-1 col-md-2 col-sm-12">
 								<label class="label  text-left" for="nmEStado">Descrição</label>
 								<input type="text" name="nmEStado" class="form-control form-control-sm filtro" id="nmEStado">
+							</div>
+
+							<div class="custom-control my-1 col-md-2 col-sm-12">
+								<label class="label  text-left" for="sigla">Sigla</label>
+								<input type="text" name="sigla" class="form-control form-control-sm filtro" id="sigla">
 							</div>
 
 							<div class="custom-control my-1 col-md-1 col-sm-12">

@@ -88,7 +88,7 @@
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
 					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
-					<a href="{{route('produto.create')}}" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar_produto{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
+					<a href="{{route('produto.create')}}" onClick="cadastrar{{$randId}}(this);" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar_produto{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
 				</div>
 
 			</div>
@@ -264,7 +264,7 @@
 		}
 
 		//cadastra um produto view
-		$('body').delegate('div.card a#cadastrar_produto{{$randId}}', 'click', function(ev){
+		/*$('body').delegate('div.card a#cadastrar_produto{{$randId}}', 'click', function(ev){
 
 			ev.preventDefault();
 			let url = $(this).attr('href');
@@ -272,7 +272,34 @@
 			Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Cadastrar', 'sm', 'auto')
 			Utilitarios.toggleFiltro();
 
-		});
+		});*/
+
+		let item_cadastrar{{$randId}} = document.getElementById('cadastrar_produto{{$randId}}');
+		item_cadastrar{{$randId}}.removeEventListener('onclick', cadastrar{{$randId}}, false);
+		item_cadastrar{{$randId}}.addEventListener('onclick', cadastrar{{$randId}}, false);
+
+		async function cadastrar{{$randId}}(element){
+			try{
+
+				let url = $(element).attr('href');
+
+				let data = new FormData();
+				data.append('id', '')
+				data.append('idAssistente', '')
+				data.append('callBack', ''+btoa('pesquisar{{$randId}}();')+'')
+
+				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
+				data.append('_token', token)
+
+				await Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Cadastrar', 'sm', '700px', null, data)
+				
+				Utilitarios.toggleFiltro();
+				
+			}catch(ex){
+					console.log('Erro: '+ex.message);
+			}
+
+		}
 
 
 	</script>

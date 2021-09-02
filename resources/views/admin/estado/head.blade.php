@@ -13,89 +13,226 @@
 		}
 	</style>
 	<div class="container-fluid my-4 body">
-		<div class="col-md-12">	
-			<nav aria-label="breadcrumb" class="my-2">
-				<ol class="breadcrumb">
-					<li class="breadcrumb-item active"><a href="{{route('estado.index')}}">Inicio</a></li>
-					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de estados</a></li>
-				</ol>
-			</nav>
+		<div class="row">
+			<div class="col-md-12">	
+				<nav aria-label="breadcrumb" class="my-2">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active"><a href="{{route('estado.index')}}">Inicio</a></li>
+						<li class="breadcrumb-item desable" aria-current="page"><a >Lista de estados</a></li>
+					</ol>
+				</nav>
+			</div>
 		</div>
-		<div class="col-md-12" id="container_filtros{{$randId}}">
-			<div class="card card-togle" >
+		<div class="row">
+			<div class="col-md-4 col-sm-12">
+			
+				<!--
+				<div class="row">
+					<div class="col-md-12" id="container_filtros{{$randId}}">
+						<div class="card card-togle card-sistem" >
 
-				<div class="card-header bg-white form-inline">
-					<div class="row" style="width: 100%;text-align: left;">
-						<div class="col-md-1 col-sm-12" id="container_icon_filter{{$randId}}">
-							<button type="button" class="btn btn-sm btn-outline-primary mb-sm-1" id="form_filtro{{$randId}}"><i class="fas fa-filter"></i></button>
-						</div>
-						<div style="box-sizing: border-box;" class="col-md-11 col-sm-12 p-2" id="container_filtred{{$randId}}">
+							<div class="card-header form-inline"  style="background-color: #E9ECEF;" >
+								<div class="row" style="width: 100%;text-align: left;">
+									<div class="col-md-1 col-sm-3" id="container_icon_filter{{$randId}}">
+										<button type="button" class="btn btn-sm btn-outline-primary mb-sm-1" id="form_filtro{{$randId}}"><i class="fas fa-filter"></i></button>
+									</div>
+									<div class="col-md-11 col-sm-9 p-2" id="container_filtred{{$randId}}">
+										
+									</div>
+								</div>
+								
+							</div>
+
+							<div class="card-body" >
+								<form class="" id="filtros{{$randId}}">
+										@csrf
+										<div class="row" >
+											<div class="custom-control my-1 col-md-4 col-sm-12">
+												<label class="label text-left" for="id">Cód</label>
+												<input type="text" name="id" class="form-control form-control-sm filtro" id="id">
+											</div>
+
+											<div class="custom-control my-1 col-md-4 col-sm-12">
+												<label class="label  text-left" for="nmEStado">Descrição</label>
+												<input type="text" name="nmEStado" class="form-control form-control-sm filtro" id="nmEStado">
+											</div>
+
+											<div class="custom-control my-1 col-md-4 col-sm-12">
+												<label class="label  text-left" for="sigla">Sigla</label>
+												<input type="text" name="sigla" class="form-control form-control-sm filtro" id="sigla">
+											</div>
+
+											<div class="custom-control my-1 col-md-4 col-sm-12">
+												<label class="label  text-left" for="ordem">Ordenar por</label>
+												<select  name="ordem" class="form-control form-control-sm filtro" id="ordem">
+													@php
+														$ordem = [
+															'nome_produto-ASC'=>'Nome produto AZ',
+															'nome_produto-DESC'=>'Nome produto ZA',
+														];
+														foreach( $ordem as $key=>$val){
+															@endphp
+																<option value="{{$key}}">{{$val}}</option>
+															@php
+
+														}
+													@endphp
+													
+												</select>
+												
+											</div>
+
+											<div class="custom-control my-1 col-md-4 col-sm-12">
+												<label class="label  text-left" for="limite">Limite</label>
+												<input type="number" value="150" name="limite" class="form-control form-control-sm filtro" id="limite">
+											</div>
+
+										</div>
+									
+								</form>
+							</div>
+
+							<div class="card-footer bg-white form-inline"  >
+								<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" onClick="pesquisar{{$randId}}();" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
+								<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
+								<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
+								<a href="{{route('estado.create')}}" onClick="cadastrar{{$randId}}(this);" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
+								
+							</div>
+
 						</div>
 					</div>
-					
 				</div>
+				-->
 
-				<div class="card-body">
-					<form class="" id="filtros{{$randId}}">
-							@csrf
-							<div class="row" >
-								<div class="custom-control my-1 col-md-1 col-sm-12">
-									<label class="label text-left" for="id">Cód</label>
-									<input type="text" name="id" class="form-control form-control-sm filtro" id="id">
-								</div>
+				@php
+					$fieldsForm = [
+						[
+							'label'     =>'Cód',
+							'value'     =>'',
+							'name'      =>'id',
+							'class'     =>'',
+							'onChange'  =>'',
+							'onClick'   =>'',
+							'type'      =>'text',
+							'options'   =>[],
 
-								<div class="custom-control my-1 col-md-2 col-sm-12">
-									<label class="label  text-left" for="nome_produto">Descrição</label>
-									<input type="text" name="nome_produto" class="form-control form-control-sm filtro" id="nome_produto">
-								</div>
+						],
+						[
+							'label'     =>'Descrição',
+							'value'     =>'',
+							'name'      =>'nmEStado',
+							'class'     =>'',
+							'onChange'  =>'',
+							'onClick'   =>'',
+							'type'      =>'text',
+							'options'   =>[],
 
-								<div class="custom-control my-1 col-md-1 col-sm-12">
-									<label class="label  text-left" for="ordem">Ordenar por</label>
-									<select  name="ordem" class="form-control form-control-sm filtro" id="ordem">
-										@php
-											$ordem = [
-												'nome_produto-ASC'=>'Nome produto AZ',
-												'nome_produto-DESC'=>'Nome produto ZA',
-											];
-											foreach( $ordem as $key=>$val){
-												@endphp
-													<option value="{{$key}}">{{$val}}</option>
-												@php
+						],
+						[
+							'label'     =>'Sigla',
+							'value'     =>'',
+							'name'      =>'sigla',
+							'class'     =>'',
+							'onChange'  =>'',
+							'onClick'   =>'',
+							'type'      =>'text',
+							'options'   =>[],
 
-											}
-										@endphp
-										
-									</select>
-									
-								</div>
+						],
+						[
+							'label'     =>'Ordenar por',
+							'value'     =>'',
+							'name'      =>'ordem',
+							'class'     =>'',
+							'onChange'  =>'',
+							'onClick'   =>'',
+							'type'      =>'select',
+							'options'   =>[
+								'id-ASC'=>'Cód',
+								'id-DESC'=>'Cód',
+								'nmEStado-ASC'=>'Descrição',
+								'nmEStado-DESC'=>'Descrição',
+							],
 
-								<div class="custom-control my-1 col-md-1 col-sm-12">
-									<label class="label  text-left" for="limite">Limite</label>
-									<input type="number" value="150" name="limite" class="form-control form-control-sm filtro" id="limite">
-								</div>
+						],
+						[
+							'label'     =>'LIMIT',
+							'value'     =>'150',
+							'name'      =>'limite',
+							'class'     =>'',
+							'onChange'  =>'',
+							'onClick'   =>'',
+							'type'      =>'number',
+							'options'   =>[],
 
-							</div>
+						],
+
+
 						
-					</form>
+					];
+
+					$acoes 		= [
+
+						[
+							'type'      =>'buttom',
+							'onClick'   =>'pesquisar'.$randId.'();',
+							'href'      =>'',
+							'class'     =>'btn btn-md btn-outline-primary mr-2 mb-sm-1',
+							'style'     =>'',
+							'id'        =>'form_search'.$randId,
+							'icone'     =>'fas fa-search',
+							'label'     =>'Pesquisar',
+						],
+						[
+							'type'      =>'link',
+							'onClick'   =>'cadastrar'.$randId.'(this);',
+							'href'      =>''.route('estado.create').'',
+							'class'     =>'btn btn-md btn-outline-primary mr-2 mb-sm-1',
+							'style'     =>'',
+							'id'        =>'form_cadastrar'.$randId,
+							'icone'     =>'fas fa-plus',
+							'label'     =>'Cadastrar',
+						]
+							
+					];
+
+					//dd($acoes);
+					$callback 	= '';
+				@endphp
+				<div id="filtros{{$randId}}">
+					@csrf
 				</div>
 
-				<div class="card-footer bg-white form-inline">
-					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
-					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
-					<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
-					<a href="{{route('estado.create')}}" onClick="cadastrar{{$randId}}(this);" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
-					
+				<x-form-filtro-relatorio
+					:fieldsForm="$fieldsForm"
+					:acoes="$acoes"
+					:callback="$callback"
+
+				/>
+
+			</div>
+			<div class="col-md-8 col-sm-12">
+
+				<div class="card card-sistem" >
+
+					<div class="card-header form-inline"  style="background-color: #E9ECEF;">
+						<div class="row" style="width: 100%;text-align: left;">
+							<div class="col-md-12 col-sm-12">
+								<h5 class="text-primary p-1" style="text-transform:uppercase;font-weight: bolder;">Relatório</h5>
+							</div>
+							
+						</div>
+								
+					</div>
+					<div class="card-body" style="display: block !important;">
+						<div id="response-request{{$randId}}">
+
+						</div>
+					</div>
 				</div>
-
 			</div>
-		</div>
-	</div>
-
-	<div class="container-fluid">
-		<div class="col-md-12 col-sm-12">	
-			<div id="response-request{{$randId}}">
-
-			</div>
+			
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -141,25 +278,16 @@
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
 			ev.preventDefault();
-			Utilitarios.toggleFiltro();
-		});
-
-		//lista os produtos cadastrados
-		$('body').delegate('div.card #form_search_produto{{$randId}}', 'click', function(ev){
-
-
-			ev.preventDefault();
-			
-			pesquisar{{$randId}}();
-
-		});
+			//Utilitarios.toggleFiltro();
+			togleFiltros();
+		});	
 
 		function pesquisar{{$randId}}(){
 			let url = '/estado/index';
 
-			let objResponse = 'div#response-request{{$randId}}';
+			let objResponse = '#response-request{{$randId}}';
 			//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
-			togleFiltros();
+			//togleFiltros();
 			carregarItens{{$randId}}('POST', url, 'HTML', objResponse)
 
 		}
@@ -275,7 +403,7 @@
 				data.append('_token', token)
 
 				Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Cadastrar', 'sm', '300px', null, data)
-				Utilitarios.toggleFiltro();
+				//Utilitarios.toggleFiltro();
 			}catch(ex){
 					console.log('Erro: '+ex.message);
 			}
@@ -299,10 +427,15 @@
 				data.append('_token', token)
 
 				Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
+				
+
 			}catch(ex){
 					console.log('Erro: '+ex.message);
 			}
 		}
+
+		togleFiltros();
+		pesquisar{{$randId}}()
 
 
 	</script>

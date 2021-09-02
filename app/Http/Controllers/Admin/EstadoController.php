@@ -27,6 +27,21 @@ class EstadoController extends Controller
                 'name_estado'=>'estadoss.dsIpi'
 
             ];
+            /*
+
+				
+					<!--
+						'nmEStado',
+						'codEstado',
+						'sigla',
+						'padrao',
+						'pais_id',
+						'user_id',
+						'user_update_id',
+						'active',
+
+					 
+            */
 
             $registro = \DB::table('estadoss');
             $registro->join('pais', function($join){
@@ -78,6 +93,19 @@ class EstadoController extends Controller
                                 
                                 $registro->where('estadoss.codEstado', '=' , ''.$val.'');
                             }
+                            break;
+                            case 'sigla':
+                                if(is_string($val)){
+                                    
+                                    if($val[0] == ','){
+                                        $val = substr($val, 1);
+                                    } 
+                                    if($val[strlen($val) - 1] == ','){
+                                        $val = substr($val, 0, -1);
+                                    }
+                                    
+                                    $registro->where('estadoss.sigla', '=' , ''.$val.'');
+                                }
                             break;
                         case 'limite':
                                 $val = (int) $val;

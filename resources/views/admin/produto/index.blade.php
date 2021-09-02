@@ -120,6 +120,12 @@
 	var callBack{{$randId}} = '{{$consulta["callBack"]}}'
 	//alert(callBack{{$randId}})
 
+	let item_showOPtions{{$randId}} = document.querySelectorAll('#cadastrar_produto{{$randId}} tbody tr');
+	[...item_showOPtions{{$randId}}].map((item)=>{
+		item.removeEventListener('onclick', showOptions{{$randId}}, false);
+		item.addEventListener('onclick', showOptions{{$randId}}, false);
+	})
+	
 
 	function showOptions{{$randId}}(element)
 	{
@@ -129,7 +135,7 @@
 			let arrLinks = [
 				//['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
 				['Ediar', '/produto/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar(this);'],
-				['Tributar', '/ncm/tributacao/tributar/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'tributar{{$randId}}(this);'],
+				['Tributar', '/ncm/tributacao/tributar/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_tributar{{$randId}}', id, 'tributar{{$randId}}(this);'],
 				['Excluir', '/produto/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'deletar(this);'],
 				
 
@@ -139,11 +145,15 @@
 			//widthOptions='200px', widModal = 'md', height=null //, 'HTML','Marca-Editar', 'sm', '400px'
 			idModal = Utilitarios.assitentOpcoes(arrLinks, '100%', 'xs');
 			idModalOptions{{$randId}} = idModal;
+			
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
 	}
 
+	//let item_edit{{$randId}} =document.getElementById('#id_produto_editar{{$randId}}');
+	//item_edit{{$randId}}.removeEventListener('onclick', editar, false);
+	//item_edit{{$randId}}.addEventListener('onclick', editar, false);
 	
 
 	function editar(element){
@@ -162,11 +172,16 @@
 			data.append('_token', token)
 
 			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Editar', 'sm', '700px', null, data)
-			
+			$(element).removeEventListener('onclick', "editar", false);
+
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
 	}
+
+	//let item_del{{$randId}} =document.getElementById('#id_produto_editar{{$randId}}');
+	//item_del{{$randId}}.removeEventListener('onclick', deletar, false);
+	//item_del{{$randId}}.addEventListener('onclick', deletar, false);
 
 	function deletar(element){
 		try{
@@ -187,10 +202,15 @@
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
 			Utilitarios.assistentAjaxModal('POST',url, 'HTML','Produto-Deletar', 'sm', '400px', null, data)
+			
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
 	}
+
+	//let item_tributar{{$randId}} =document.getElementById('#id_produto_tributar{{$randId}}');
+	//item_tributar{{$randId}}.removeEventListener('onclick', tributar, false);
+	//item_tributar{{$randId}}.addEventListener('onclick', tributar, false);
 
 	function tributar{{$randId}}(element){
 			
@@ -210,6 +230,7 @@
 			data.append('_token', token)
 
 			Utilitarios.assistentAjaxModal('POST',url, 'HTML','PRODUTO-Tributar', 'sm', '300px', null, data)
+			
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}

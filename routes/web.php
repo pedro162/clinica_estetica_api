@@ -26,6 +26,7 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 	Route::get('/produto/index/{id_assistente?}', ['as'=>'produto.index', 'uses'=>'Admin\ProdutoController@index']);
 	Route::post('/produto/index/post', ['as'=>'produto.index.post', 'uses'=>'Admin\ProdutoController@index']);
 	Route::get('/produto/create/{id_assistente?}', ['as'=>'produto.create', 'uses'=>'Admin\ProdutoController@create']);
+	Route::post('/produto/create/{id_assistente?}', ['as'=>'produto.create', 'uses'=>'Admin\ProdutoController@create']);
 	Route::post('/produto/store/{id_assistente?}', ['as'=>'produto.store', 'uses'=>'Admin\ProdutoController@store']);
 	Route::get('/produto/edit/{id}/{id_assistente?}', ['as'=>'produto.edit', 'uses'=>'Admin\ProdutoController@edit']);
 	Route::post('/produto/edit/{id}/{id_assistente?}', ['as'=>'produto.edit', 'uses'=>'Admin\ProdutoController@edit']);

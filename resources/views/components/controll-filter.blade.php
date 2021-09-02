@@ -13,6 +13,9 @@
     </div>
 </div>-->
 @php 
+    /*
+    *   Este componente é um include de pesquisa e controle de formulario
+     */
     $randId = rand(11111, 99999);
 @endphp
 
