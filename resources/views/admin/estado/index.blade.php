@@ -138,12 +138,16 @@
 
 			$calback = "{{$consulta["callBack"]}}";
 
-		
+			$id = $consulta['idTable'] ?? null;
+			$selectorsLine = $consulta['selectorsLine'] ?? false;
+			
 		@endphp
 		<x-table
 			:tituloColunas="$tituloColunas"
 			:dados="$dados"
 			:calback="$calback"
+			:idTable="$id"
+			:selectorsLine="$selectorsLine"
 		/>
 		
 	</div>

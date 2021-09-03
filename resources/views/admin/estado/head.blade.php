@@ -24,87 +24,8 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-4 col-sm-12">
+			<div class="col-md-3 col-sm-12">
 			
-				<!--
-				<div class="row">
-					<div class="col-md-12" id="container_filtros{{$randId}}">
-						<div class="card card-togle card-sistem" >
-
-							<div class="card-header form-inline"  style="background-color: #E9ECEF;" >
-								<div class="row" style="width: 100%;text-align: left;">
-									<div class="col-md-1 col-sm-3" id="container_icon_filter{{$randId}}">
-										<button type="button" class="btn btn-sm btn-outline-primary mb-sm-1" id="form_filtro{{$randId}}"><i class="fas fa-filter"></i></button>
-									</div>
-									<div class="col-md-11 col-sm-9 p-2" id="container_filtred{{$randId}}">
-										
-									</div>
-								</div>
-								
-							</div>
-
-							<div class="card-body" >
-								<form class="" id="filtros{{$randId}}">
-										@csrf
-										<div class="row" >
-											<div class="custom-control my-1 col-md-4 col-sm-12">
-												<label class="label text-left" for="id">Cód</label>
-												<input type="text" name="id" class="form-control form-control-sm filtro" id="id">
-											</div>
-
-											<div class="custom-control my-1 col-md-4 col-sm-12">
-												<label class="label  text-left" for="nmEStado">Descrição</label>
-												<input type="text" name="nmEStado" class="form-control form-control-sm filtro" id="nmEStado">
-											</div>
-
-											<div class="custom-control my-1 col-md-4 col-sm-12">
-												<label class="label  text-left" for="sigla">Sigla</label>
-												<input type="text" name="sigla" class="form-control form-control-sm filtro" id="sigla">
-											</div>
-
-											<div class="custom-control my-1 col-md-4 col-sm-12">
-												<label class="label  text-left" for="ordem">Ordenar por</label>
-												<select  name="ordem" class="form-control form-control-sm filtro" id="ordem">
-													@php
-														$ordem = [
-															'nome_produto-ASC'=>'Nome produto AZ',
-															'nome_produto-DESC'=>'Nome produto ZA',
-														];
-														foreach( $ordem as $key=>$val){
-															@endphp
-																<option value="{{$key}}">{{$val}}</option>
-															@php
-
-														}
-													@endphp
-													
-												</select>
-												
-											</div>
-
-											<div class="custom-control my-1 col-md-4 col-sm-12">
-												<label class="label  text-left" for="limite">Limite</label>
-												<input type="number" value="150" name="limite" class="form-control form-control-sm filtro" id="limite">
-											</div>
-
-										</div>
-									
-								</form>
-							</div>
-
-							<div class="card-footer bg-white form-inline"  >
-								<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" onClick="pesquisar{{$randId}}();" id="form_search_produto{{$randId}}"><i class="fas fa-search"></i> Pesquisar</buttom>
-								<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="exportar_relatorio{{$randId}}">Exportar para excel</buttom>
-								<buttom type="buttom" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="relatorio{{$randId}}">Relatório</buttom>
-								<a href="{{route('estado.create')}}" onClick="cadastrar{{$randId}}(this);" class="btn btn-md btn-outline-primary mr-2 mb-sm-1" id="cadastrar{{$randId}}"><i class="fas fa-plus"></i> Cadastrar</a>
-								
-							</div>
-
-						</div>
-					</div>
-				</div>
-				-->
-
 				@php
 					$fieldsForm = [
 						[
@@ -212,7 +133,7 @@
 				/>
 
 			</div>
-			<div class="col-md-8 col-sm-12">
+			<div class="col-md-9 col-sm-12">
 
 				<div class="card card-sistem" >
 
@@ -229,6 +150,47 @@
 						<div id="response-request{{$randId}}">
 
 						</div>
+					</div>
+					<div class="card-footer bg-white form-inline" style="display: block !important;">
+						@php
+								$acoesTable = [
+									[
+										'type'=>'link',
+										'onClick'=>'teste'.$randId.'();',
+										'href'=>'faf',
+										'class'=>'btn btn-md btn-outline-primary mr-2 mb-sm-1',
+										'style'=>'',
+										'id'=>'',
+										'icone'=>'fas fa-plus',
+										'label'=>'Teste',
+									],
+								];				
+						@endphp
+
+						@for($i=0; !($i == count($acoesTable)); $i++)
+								@php
+									$atual 		= $acoesTable[$i];
+									$type 		= $atual['type'] 		?? '';
+									$onClick 	= $atual['onClick'] 	?? '';
+									$href 		= $atual['href'] 		?? '';
+									$class 		= $atual['class'] 		?? '';
+									$style 		= $atual['style'] 		?? '';
+									$id 		= $atual['id'] 			?? '';
+									$icone 		= $atual['icone'] 		?? '';
+									$label 		= $atual['label'] 		?? '';
+
+								@endphp
+							<x-link
+								:type="$type"
+								:onClick="$onClick"
+								:href="$href"
+								:class="$class"
+								:style="$style"
+								:id="$id"
+								:icone="$icone"
+								:label="$label"
+							/>
+						@endfor
 					</div>
 				</div>
 			</div>
@@ -307,6 +269,9 @@
 			let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
 			formData.append('_token', token)
 			formData.append('callBack', btoa('carregarItens{{$randId}}("'+type+'", "'+url+'", "'+dataType+'", "'+objResponse+'");'))
+
+			formData.append('idTable', 'lista{{$randId}}') // id para a tabela
+			formData.append('selectorsLine', true) // para exibir os checkbox
 
 			if(Array.isArray(filtro) && filtro.length > 0){
 				let escuta = false;
@@ -433,7 +398,16 @@
 					console.log('Erro: '+ex.message);
 			}
 		}
+		
+		//--- ids da tabela
+		//let ids = Utilitarios.selecionadosTable('lista{{$randId}}');
+		//console.log(ids);
 
+		function teste{{$randId}}(){
+			let ids = Utilitarios.selecionadosTable('lista{{$randId}}');
+			console.log(ids);
+		}
+		
 		togleFiltros();
 		pesquisar{{$randId}}()
 

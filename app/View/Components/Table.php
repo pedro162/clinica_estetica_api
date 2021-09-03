@@ -9,6 +9,8 @@ class Table extends Component
     protected $dados = [];
     protected $tituloColunas = [];
     protected $callback;
+    protected $idTable;
+    protected $selectorsLine;
 
       /*
       Ex de formado do array de dados passado
@@ -61,12 +63,14 @@ class Table extends Component
      *
      * @return void
      */
-    public function __construct($tituloColunas,$dados, $calback = null)
+    public function __construct($tituloColunas,$dados, $calback = null, $idTable = null, $selectorsLine=false)
     {
         $this->setColunas($tituloColunas);
         $this->setDados($dados);
         $this->setCallback($calback);
-
+        $this->setIdTable($idTable);
+        $this->setSelectorsLine($selectorsLine);
+        
     }
 
   
@@ -112,6 +116,41 @@ class Table extends Component
     public function getCallback()
     {
         return $this->callback ?? null;
+    }
+
+    /**
+     * Define um id para a tabela
+     */
+
+    public function setIdTable($idTable)
+    {
+        $this->idTable = $idTable;
+        return true;
+    }
+
+    /**
+     * Retorna o id da tabela caso tenha sido definido
+     */
+    public function getIdTable()
+    {
+        return $this->idTable ?? null;
+    }
+
+    /**
+     * Se deve ser exibido o checkbox pra selecionar
+     */
+    public function setSelectorsLine($selectorsLine)
+    {
+        $this->selectorsLine = $selectorsLine;
+        return true;
+    }
+
+    /**
+     * Retorna um boleano indicando se deve ser exibido as checkbox
+     */
+    public function getSelectorsLine()
+    {
+        return $this->selectorsLine ?? false;
     }
 
 }

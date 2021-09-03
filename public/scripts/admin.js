@@ -635,8 +635,9 @@ class Utilitarios{
 
 	static selecionadosTable(idTable){
 		let ids = '';
-		$('html body').find('#'+idTable).find('tbody tr').each(function(){
-			let obj = $(this).find(' td:eq(0) input:checkbox');
+		$('html').find('#'+idTable).find('tbody tr').each(function(){
+			
+			let obj = $(this).find('td:eq(0) input:checkbox');
 			if(obj.prop('checked') == true){
 				let id = obj.parents('tr').find('input.id').val();
 				if(Number(id) > 0){
@@ -646,8 +647,9 @@ class Utilitarios{
 			}
 
 		})
-
+		
 		if(ids.trim().length > 0){
+			
 			return ids.substr(0, ids.length - 1)
 		}
 		return false;

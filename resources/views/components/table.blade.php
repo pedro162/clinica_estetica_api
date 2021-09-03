@@ -1,13 +1,15 @@
 @php 
     $randId = rand(11111, 99999);
 
-    $tituloColunas = $getColunas()['dados'] ?? [];
-    $bodyDados = $getDados();
+    $tituloColunas  = $getColunas()['dados'] ?? [];
+    $bodyDados      = $getDados();
+    $id             = $getIdTable() ?? 'lista'.$randId;
+    $selectorsLine  = $getSelectorsLine() ?? false;
 
  @endphp
 <div class="row">
 	<div class="col">
-		<table style="width: 100%;" id="lista{{$randId}}" class=" data-table table table-sm table-responsive table-hover display">
+		<table style="width: 100%;" id="{{$id}}" class=" data-table table table-sm table-responsive table-hover display">
 			@csrf
 			<thead style="width: 100%;">
                
@@ -19,6 +21,9 @@
                         onClick="{{$getColunas()['onClick'] ? 'return '.$getColunas()['onClick'] : '' }}"
                         
                     >
+                        @if($selectorsLine == true)
+                            <th style="" ><input class="custom-control" style="curosr:pointer !important;" type="checkbox" name="" onchange="+Utilitarios.selecionarMultiplosTable('{{$id}}')"></th>
+                        @endif
                      @foreach($tituloColunas as $key=>$val)
                         <th
                         
@@ -77,14 +82,19 @@
 
                             style=" {{$atualRow['style_row'] ?? ''}}"
 
-                            onClick="showOptions{{$randId}}(this, {{$acoes}});"
+                            
                         >
+                            
+                            @if($selectorsLine == true)
+                                <td index="0"><input type="checkbox" style="cursor:pointer !important;" name="" ></td>
+                            @endif
 
                             @for($i = 0; !($i == count($dados)); $i++)
                                 <td 
                                         
                                     class=" {$dados[$i]['class'] ?? ''}}"
                                     style=" {{$dados[$i]['style_cel'] ?? ''}}"
+                                    onClick="showOptions{{$randId}}(this, {{$acoes}});"
 
                                 >
                                     {{$dados[$i]['val'] ?? ''}}
@@ -92,7 +102,7 @@
 
                             @endfor
 
-                            <input type="hidden" value="{{$atualRow['id'] ?? ''}}">
+                            <input type="hidden" class="id" value="{{$atualRow['id'] ?? ''}}">
                         </tr>
                         
                     @endif
@@ -104,7 +114,7 @@
 </div>
 
 <script type="text/javascript">
-	Utilitarios.useDataTable($('#lista{{$randId}}'))
+	Utilitarios.useDataTable($('#{{$id}}'))
 
 	var idModalOptions{{$randId}} = null;
 	var callBack{{$randId}} = '{{$getCallback()}}'
@@ -114,7 +124,12 @@
 	function showOptions{{$randId}}(element, arrLinks)
 	{
 		try{
-			let id = $(element).find('input:hidden').val();
+
+            if($(element).attr('index')){
+                return false;
+		    }
+
+			let id = $(element).parent('tr').find('input:hidden').val();
 
             let arrLinksActions = [];
 
@@ -164,7 +179,7 @@
 			data.append('idAssistente', '')
 			data.append('callBack', ''+callBack{{$randId}}+'')
 
-			let token = $('html').find('#lista{{$randId}}').find('input[name="_token"]').val()
+			let token = $('html').find('#{{$id}}').find('input[name="_token"]').val()
 			data.append('_token', token)
 
 			await Utilitarios.assistentAjaxModal(typeRequest,url, 'HTML',title, width, height, null, data)
