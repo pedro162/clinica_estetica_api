@@ -26,20 +26,24 @@
 
     $callback = $getCallback() ?? '';
 
+	$idContainer = $getIdContainer() ?? 'container_filtros'.$randId;
+	$idAreaFiltrados = $getIdAreaFiltrados() ?? 'container_filtred'.$randId;
+
 @endphp
 
 
 <div class="row">
-    <div class="col-md-12" id="container_filtros{{$randId}}">
+    <div class="col-md-12" id="{{$idContainer}}">
         <div class="card card-togle card-sistem" >
 
-            <div class="card-header form-inline"  style="background-color: #E9ECEF;" >
+            <div class="card-header form-inline"  style="background-color: #E9ECEF; height: 60px !important" >
                 <div class="row" style="width: 100%;text-align: left;">
                     <div class="col-md-1 col-sm-3" id="container_icon_filter{{$randId}}">
                         <button type="button" class="btn btn-sm btn-outline-primary mb-sm-1" id="form_filtro{{$randId}}"><i class="fas fa-filter"></i></button>
                     </div>
-                    <div class="col-md-11 col-sm-9 p-2" id="container_filtred{{$randId}}">
-                        
+                    <div class="col-md-11 col-sm-9">
+                        <div  id="{{$idAreaFiltrados}}" style="overflow: auto;max-height: 40px !important;flex-wrap: wrap;display: flex;">
+						</div>
                     </div>
                 </div>
                 

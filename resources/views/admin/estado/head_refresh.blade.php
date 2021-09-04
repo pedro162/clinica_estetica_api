@@ -2,17 +2,7 @@
 @extends('layouts.app')
 @section('content')
 @php $randId = rand(11111, 999999); @endphp
-<style>
-		.filtred{
-			padding: 2px 4px;
-			border-radius: 10px;
-			color: #000;
-			background-color: #ccc;
-			margin-right: 3px;
-			margin-left: 3px;
-			cursor: pointer;
-		}
-	</style>
+
 	<div class="container-fluid my-4 body">
 		<div class="row">
 			<div class="col-md-12">	
@@ -121,24 +111,29 @@
 
 					//dd($acoes);
 					$callback 	= '';
+
+					$idContainer = '';
+					$idAreaFiltrados = 'container_filtred'.$randId;
+
 				@endphp
 				<div id="filtros{{$randId}}">
 					@csrf
+				
+
+					<x-form-filtro-relatorio
+						:fieldsForm="$fieldsForm"
+						:acoes="$acoes"
+						:callback="$callback"
+						:idContainer="$idContainer"
+						:idAreaFiltrados="$idAreaFiltrados"
+					/>
 				</div>
-
-				<x-form-filtro-relatorio
-					:fieldsForm="$fieldsForm"
-					:acoes="$acoes"
-					:callback="$callback"
-
-				/>
-
 			</div>
 			<div class="col-md-9 col-sm-12">
 
 				<div class="card card-sistem" >
 
-					<div class="card-header form-inline"  style="background-color: #E9ECEF;">
+					<div class="card-header form-inline"  style="background-color: #E9ECEF;height: 60px !important">
 						<div class="row" style="width: 100%;text-align: left;">
 							<div class="col-md-12 col-sm-12">
 								<h5 class="text-primary p-1" style="text-transform:uppercase;font-weight: bolder;">Relatório</h5>

@@ -9,16 +9,20 @@ class FormFiltroRelatorio extends Component
     protected $fieldsForm;
     protected $acoes;
     protected $callback;
+    protected $idContainer;
+    protected $idAreaFiltrados;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($fieldsForm=[], $acoes=[], $callback=null)
+    public function __construct($fieldsForm=[], $acoes=[], $callback=null, $idContainer =null, $idAreaFiltrados=null)
     {
         $this->fieldsForm   = $fieldsForm;
         $this->acoes        = $acoes;
         $this->callback     = $callback;
+        $this->idContainer = $idContainer;
+        $this->idAreaFiltrados = $idAreaFiltrados;
     }
 
     /**
@@ -45,5 +49,20 @@ class FormFiltroRelatorio extends Component
     {
         return $this->callback;   
     }
+
+
+    public function getIdContainer()
+    {
+        return $this->idContainer;   
+    }
+
+
+    public function getIdAreaFiltrados()
+    {
+        return $this->idAreaFiltrados;   
+    }
+
+    
+
 }
  

@@ -114,3 +114,14 @@ form * label{
     overflow-x: hidden !important;
     overflow-y: auto !important;
 }
+
+.filtred{
+    padding: 2px 4px;
+    border-radius: 10px;
+    color: #000;
+    background-color: #ccc;
+    margin-right: 3px;
+    margin-left: 3px;
+    cursor: pointer;
+    display: inline-block;
+}
