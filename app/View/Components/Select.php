@@ -15,6 +15,7 @@ class Select extends Component
     protected $type;
     protected $id;
     protected $options;
+    protected $classContainer; 
 
     /**
      * Create a new component instance.
@@ -31,7 +32,8 @@ class Select extends Component
         $onClick     =  '',
         $type        =  '',
         $id          =  '',
-        $options     =  []
+        $options     =  [],
+        $classContainer = ''
     )
     {
         $this->label      = $label; 
@@ -43,6 +45,7 @@ class Select extends Component
         $this->type       = $type; 
         $this->id         = $id; 
         $this->options    = $options;
+        $this->classContainer = $classContainer;
     }
 
     /**
@@ -99,5 +102,10 @@ class Select extends Component
     public function getOptions()
     {
         return $this->options;   
+    }
+
+    public function getClassContainer()
+    {
+        return $this->classContainer;
     }
 }

@@ -49,7 +49,7 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 	Route::post('/marca/store', ['as'=>'marca.store', 'uses'=>'Admin\MarcaController@store']);
 	Route::get('/marca/edit/{id}/{id_assistente?}', ['as'=>'marca.edit', 'uses'=>'Admin\MarcaController@edit']);
 	Route::post('/marca/edit/{id}/{id_assistente?}', ['as'=>'marca.edit', 'uses'=>'Admin\MarcaController@edit']);
-	Route::put('/marca/update/{id}', ['as'=>'marca.update', 'uses'=>'Admin\MarcaController@update']);
+	Route::put('/marca/update/{id}/{id_assistente?}', ['as'=>'marca.update', 'uses'=>'Admin\MarcaController@update']);
 	Route::get('/marca/show/{id}/{id_assistente?}', ['as'=>'marca.show', 'uses'=>'Admin\MarcaController@show']);
 	Route::get('/marca/info/{id}/{id_assistente?}', ['as'=>'marca.info', 'uses'=>'Admin\MarcaController@info']);
 	Route::post('/marca/info/{id}/{id_assistente?}', ['as'=>'marca.info', 'uses'=>'Admin\MarcaController@info']);

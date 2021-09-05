@@ -3,7 +3,7 @@
 <div class="container">
 	<div class="row mb-5">
 		<div class="col">
-			<form action="{{route('marca.store')}}" method="post" class="form row p-5" id="form_marca_cadastrar{{$randId}}">
+			<form action="{{route('marca.store')}}" method="post" class="form row p-5" id="form{{$randId}}">
 				@csrf
 				<div class="form-group col-md-12 col-sm-12">
 					<label class="label">Nome</label>
@@ -18,56 +18,61 @@
 </div>
 
 <script>
-	$('html body').delegate('form#form_marca_cadastrar{{$randId}}','submit', function(ev){
 
-		try{
+const assistente{{$randId}} = '{{$idAssistente}}';
+	//edita ou salva um produto
+	$('html body').find('#form{{$randId}}').on('submit', function(ev){
 
-			let url = $(this).attr('action');
-			let id = $(this).attr('id');
+			try{
 
-			let form = new FormData($(this)[0]);
-			$.ajax({
-				url:url,
-				type:'POST',
-				dataType:'json',
-				data:form,
-				processData:false,
-				contentType:false,
-				success:function(response){
-					console.log(response);
-					console.log(response.mensagem.id);
+				let url = $(this).attr('action');
+				let id = $(this).attr('id');
 
-					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
+				let form = new FormData($(this)[0]);
+				$.ajax({
+					url:url,
+					type:'POST',
+					dataType:'json',
+					data:form,
+					processData:false,
+					contentType:false,
+					success:function(response){
+						console.log(response);
+						console.log(response.mensagem.id);
 
-						Utilitarios.fecharAssistente('{{$id_assistente}}');
-						
-						Utilitarios.assistenteMensage('Registrado com sucesso')
-						atualizaRelatorio();
+						if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
+							Utilitarios.fecharAssistente(assistente{{$randId}});
+							Utilitarios.assistenteMensage('Registrado com sucesso');
+							@php echo base64_decode($callBack) @endphp
 
+						}else{
+
+							Utilitarios.assistenteMensage('Erro ao atuaolizar registro', 'warning', 'Erro');
+
+
+						}
+					},
+					error:function(response, status, error){
+						//console.log(response, status, error)
+						console.log(response.responseJSON);
+						let objErros = response.responseJSON.errors
+						let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
+						for (let prop in objErros){
+							msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
+						}
+
+						Utilitarios.assistenteMensageAlert(msg, 'warning');
 					}
-				},
-				error:function(response, status, error){
-					//console.log(response, status, error)
-					console.log(response.responseJSON);
-					let objErros = response.responseJSON.errors
-					let msg = 'Atenção, os seguintes erros foram encontrados: <br/>';
-					for (let prop in objErros){
-						msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
-					}
-
-					Utilitarios.assistenteMensageAlert(msg, 'warning');
-				}
 
 
-			})
+				})
 
-		}catch(ex){
+			}catch(ex){
 
-			console.log(ex.message);
-		}
+				console.log(ex.message);
+			}
 
-		ev.preventDefault();
+			ev.preventDefault();
 	});
-
 
 </script>

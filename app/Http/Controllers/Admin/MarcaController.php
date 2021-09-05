@@ -9,6 +9,7 @@ use \App\Http\Requests\MarcaRequest;
 use \App\Produto;
 use \App\Marca;
 use \App\Categoria;
+use \App\Exceptions\MarcaException;
 
 
 class MarcaController extends Controller
@@ -64,7 +65,7 @@ class MarcaController extends Controller
 
     		$registro = $registro->get();
 
-            return view('admin.marca.index', compact('registro'));
+            return view('admin.marca.index', compact('registro', 'consulta'));
     		
             \DB::commit();
 
@@ -78,14 +79,20 @@ class MarcaController extends Controller
 
     }
 
+
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request, $idAssistente)
     {
-        return view('admin.marca.create');
+        $dadosRequest = $request->all();
+
+        $callBack = $dadosRequest['callBack'] ?? '';
+        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+
+        return view('admin.marca.create', compact('callBack','idAssistente'));
     }
 
     /**
@@ -215,7 +222,7 @@ class MarcaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, $id, $id_assistente)
+    public function edit(Request $request, $id, $idAssistente)
     {
 
 
@@ -223,108 +230,92 @@ class MarcaController extends Controller
 
     	try {
             $dadosRequest = $request->all();
+
+            $callBack = $dadosRequest['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
             if(! isset($id)){
                 $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
             }
+
+            if($id <= 0){
+                throw new MarcaException('Parâmetro ínválido');
+            }
+
+            \DB::beginTransaction();
+
+            $registro = Marca::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+
+            if($registro == null){
+                throw new MarcaException('Registro não encontrado');
+                
+            }
+
+            \DB::commit();
+
+	        return view('admin.marca.edit', compact('registro',  'idAssistente', 'callBack'));
+
+
+    	} catch(MarcaException $e){
+
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
             
-
-    		if($id <= 0){
-
-	             //\Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
-
-	            //return redirect()->route('marca.index');
-
-                return response()->json(['mensagem'=>'Erro, parâmetro inválido', 'class'=>'warning'], 400);
-
-       		 }
-    		
-       		 \DB::transaction(function() use (&$id, &$registro){
-
-	            $registro = Marca::where('active', '=', 'yes')
-	                ->where('id', '=', $id)->first();
-
-	        } );
-
-
-	        if($registro == null){
-
-	            //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
-	            //return redirect()->back();
-                return response()->json(['mensagem'=>'Erro, registro não encontrado', 'class'=>'warning', '$id_assistente'=>$$id_assistente], 400);
-	        }
-
-
-	        return view('admin.marca.edit', compact('registro', 'id_assistente'));
-
-
-    	} catch (\Exception $e) {
-
-    		 //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
-    	}
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
+        }
 
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(MarcaRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        try{
+        try {
+           
+            
+            $this->validaRequest($request);
 
-            $validator = $request->validated();
+            \DB::beginTransaction();
 
             $dados = $request->all();
-            $registro = null;
 
-            \DB::transaction(function() use (&$dados, &$id, &$registro){
+            $dadosRequest = [];
 
-                $dadosRequest = [];
+            $dadosRequest['name']               = $dados['name'];
+            $dadosRequest['user_id']            = \Auth::user()->id;//trocar pelo id do usuario logado
+            $dadosRequest['active']             = 'yes';
 
-                $dadosRequest['name']               = $dados['name'];
-                $dadosRequest['user_id']            = \Auth::user()->id;//trocar pelo id do usuario logado
-                $dadosRequest['active']             = 'yes';
+            $marca = Marca::find($id);
+           
+            $marca->update($dadosRequest);
 
-                $marca = Marca::find($id);
-                
-                $response = $marca->update($dadosRequest);
-                
-                if($response == true){
-                    $registro = $marca;
-                }
-            });
+            \DB::commit();
 
-            if($registro != null){
-
-                //\Session::flash('mensagem', ['msg'=>'Registro atualizado com sucesso', 'class'=>'alert alert-success']);
-
-                //return redirect()->route('marca.head');
-                return response()->json(['data'=>$registro, 'class'=>'success'], 200);
-            }
-
-            //\Session::flash('mensagem', ['msg'=>'Erroa ao atualizar registro', 'class'=>'alert alert-warning']);
-
-                //return redirect()->route('marca.index');
-
-            //return redirect()->back();
-
-            return response()->json(['mensagem'=>'Erro ao atualizar registro', 'class'=>'warning'], 400);
+            return response()->json(['mensagem'=>$marca, 'class'=>'sucess'], 200);
 
 
-        } catch (\Exception $e) {
+        }catch (MarcaException $th) {
 
-             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+            \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor: '.$th->getMessage(), 'class'=>'warning'], 500);
+            //throw $th;
         }
-
     }
 
     /**
@@ -392,5 +383,28 @@ class MarcaController extends Controller
             return view('admin.marca.head', compact('isReload'));
         }
         
+    }
+
+    protected function validaRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'name'=> 'required|max:255|min:2',
+        ], [
+            'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
+            'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
+            'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
+        ]);
+        
+        if($validator->fails()) {
+            $errors = $validator->errors();
+            $msg = '';
+            foreach($errors->all() as $mensagem){
+                $msg .= $mensagem.'<br/>';
+            }
+            
+            throw new EstadoException($msg);
+        }
+
+        return true;
     }
 }

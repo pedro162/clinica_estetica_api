@@ -28,6 +28,7 @@
 							'onClick'   =>'',
 							'type'      =>'text',
 							'options'   =>[],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
 						[
@@ -39,6 +40,7 @@
 							'onClick'   =>'',
 							'type'      =>'text',
 							'options'   =>[],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
 						[
@@ -50,6 +52,7 @@
 							'onClick'   =>'',
 							'type'      =>'text',
 							'options'   =>[],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
 						[
@@ -66,6 +69,7 @@
 								'nmEStado-ASC'=>'Descrição',
 								'nmEStado-DESC'=>'Descrição',
 							],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
 						[
@@ -77,6 +81,7 @@
 							'onClick'   =>'',
 							'type'      =>'number',
 							'options'   =>[],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
 
@@ -327,7 +332,7 @@
 				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
 				data.append('_token', token)
 
-				Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Cadastrar', 'sm', '300px', null, data)
+				Utilitarios.assistentAjaxModal('POST',url, 'HTML','Estado - Cadastrar', 'sm', '300px', null, data)
 				//Utilitarios.toggleFiltro();
 			}catch(ex){
 					console.log('Erro: '+ex.message);

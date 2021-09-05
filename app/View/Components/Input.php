@@ -14,6 +14,7 @@ class Input extends Component
     protected $onClick;
     protected $type;
     protected $id;
+    protected $classContainer; 
     /**
      * Create a new component instance.
      *
@@ -28,7 +29,8 @@ class Input extends Component
         $onChange    =  '',
         $onClick     =  '',
         $type        =  '',
-        $id          =  ''
+        $id          =  '',
+        $classContainer= ''
 
     )
     {
@@ -41,6 +43,7 @@ class Input extends Component
         $this->onClick    =   $onClick; 
         $this->type       =   $type; 
         $this->id         =   $id; 
+        $this->classContainer = $classContainer;
 
 
     }
@@ -95,5 +98,10 @@ class Input extends Component
         return $this->id;   
     }
 
+
+    public function getClassContainer()
+    {
+        return $this->classContainer;
+    }
 
 }

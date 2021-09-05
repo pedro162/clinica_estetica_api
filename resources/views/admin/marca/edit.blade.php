@@ -1,8 +1,10 @@
-@php $randId = rand(11111, 99999); @endphp
+@php $randId = rand(11111, 99999);
+	
+ @endphp
 <div class="container">
-	<div class="row mb-5">
+	<div class="row">
 		<div class="col">
-			<form action="{{route('marca.update', $registro->id)}}" method="post" class="form row p-5" id="form_marca_atualizar{{$randId}}">
+			<form action="{{route('marca.update', $registro->id)}}" method="post" class="form row p-5" id="form_{{$randId}}">
 				@csrf
 				@method('PUT')
 				<div class="form-group col-md-12 col-sm-12">
@@ -18,8 +20,12 @@
 </div>
 
 <script>
-	$('html body').delegate('form#form_marca_atualizar{{$randId}}','submit', function(ev){
 
+	const assistente = '{{$idAssistente}}';
+	$("#tabs{{$randId}}").tabs()
+	//edita ou salva um produto
+	$('html body').find('#form_{{$randId}}').on('submit', function(ev){
+		ev.preventDefault();
 		try{
 
 			let url = $(this).attr('action');
@@ -35,13 +41,18 @@
 				contentType:false,
 				success:function(response){
 					console.log(response);
-					console.log(response.data.id);
+					console.log(response.mensagem.id);
 
-					if(response.data.id && (response.data.id > 0)){
-						Utilitarios.fecharAssistente('{{$id_assistente}}');
-						
-						Utilitarios.assistenteMensage('Registro atualizado com sucesso')
-						atualizaRelatorio();
+					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
+						Utilitarios.fecharAssistente(assistente);
+						Utilitarios.assistenteMensage('Registrado com sucesso');
+						@php echo base64_decode($callBack) @endphp
+
+					}else{
+
+						Utilitarios.assistenteMensage('Erro ao atuaolizar registro', 'warning', 'Erro');
+
+
 					}
 				},
 				error:function(response, status, error){
@@ -53,7 +64,7 @@
 						msg+='<strong>'+prop+': </strong>'+objErros[prop]+'<br/>';
 					}
 
-					Utilitarios.assistenteMensageAlert(msg, 'warning');
+					Utilitarios.assistenteMensage(msg, 'warning', 'Erro');
 				}
 
 
@@ -64,6 +75,7 @@
 			console.log(ex.message);
 		}
 
-		ev.preventDefault();
+		
 	});
+
 </script>

@@ -26,6 +26,7 @@
 							'onClick'   =>'',
 							'type'      =>'text',
 							'options'   =>[],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
 						[
@@ -37,6 +38,7 @@
 							'onClick'   =>'',
 							'type'      =>'text',
 							'options'   =>[],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
 						[
@@ -48,6 +50,7 @@
 							'onClick'   =>'',
 							'type'      =>'text',
 							'options'   =>[],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
 						[
@@ -64,6 +67,7 @@
 								'nome_produto-ASC'=>'Descrição',
 								'nome_produto-DESC'=>'Descrição',
 							],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
 						[
@@ -75,8 +79,10 @@
 							'onClick'   =>'',
 							'type'      =>'number',
 							'options'   =>[],
+							'classContainer' =>'col-md-6 col-sm-12'
 
 						],
+						
 
 
 						

@@ -66,6 +66,7 @@
                                     $type       =   $fieldsForm[$i]['type']             ?? ''; 
                                     $options    =   $fieldsForm[$i]['options']          ?? []; 
                                     $id         =   $fieldsForm[$i]['name'].$randId     ?? ''; 
+									$classContainer = $fieldsForm[$i]['classContainer'] ?? '';
 
                                     @endphp
 
@@ -81,6 +82,7 @@
                                                 :type="$type"
                                                 :options="$options"
                                                 :id="$id"
+												:classContainer="$classContainer"
                                             
                                             />
                                         @break
@@ -106,6 +108,7 @@
                                                 :onClick="$onClick"
                                                 :type="$type"
                                                 :id="$id"
+												:classContainer="$classContainer"
                                             
                                             />
                                             
