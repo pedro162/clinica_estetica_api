@@ -69,13 +69,22 @@ class MarcaController extends Controller
     		
             \DB::commit();
 
-    	} catch (\Exception $e) {
-    		 \DB::rollback();
-    		//\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+    	} catch(MarcaException $e){
+            \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
-    	}
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
 
     }
 

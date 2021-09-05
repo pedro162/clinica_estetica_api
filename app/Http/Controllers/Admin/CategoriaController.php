@@ -9,43 +9,98 @@ use \App\Http\Requests\CategoriaRequest;
 use \App\Produto;
 use \App\Marca;
 use \App\Categoria;
+use App\Exceptions\CategoriaException;
 
 class CategoriaController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
 
     	try {
-
-    		$registro = null;
-    		\DB::transaction(function() use (&$registro){
-
-    			$registro = Categoria::where('active', '=', 'yes')->get();
-
-    		});
+            \DB::beginTransaction();
     		
-    	} catch (\Exception $e) {
-    		 
-    		\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            return redirect()->back();
-    	}
+            $consulta = $request->all();
 
-        return view('admin.categoria.index', compact('registro'));
+            $campos =  null;
+
+            $registro = Categoria::where('active', '=', 'yes');
+
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'codigo_marca':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('id', $val);
+                            }
+                            break;
+                        case 'nome_marca':
+                            if($val[0] == ','){
+                                $val = substr($val, 1);
+                            } 
+                            if($val[strlen($val) - 1] == ','){
+                                $val = substr($val, 0, -1);
+                            }
+                            
+                            $registro->where('name', 'like' , '%'.$val.'%');
+                            break;
+                    }
+                }
+            }
+
+    		$registro = $registro->get();
+
+            return view('admin.categoria.index', compact('registro', 'consulta'));
+    		
+            \DB::commit();
+
+    	}catch(CategoriaException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+        }
+
     }
 
+   
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request, $idAssistente)
     {
-        return view('admin.categoria.create');
+        $dadosRequest = $request->all();
+
+        $callBack = $dadosRequest['callBack'] ?? '';
+        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+
+        return view('admin.categoria.create', compact('callBack','idAssistente'));
     }
 
     /**
@@ -54,50 +109,51 @@ class CategoriaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CategoriaRequest $request)
+    public function store(Request $request)
     {
 
         try{
 
 
-            $validator = $request->validated();
+            $this->validaRequest($request);
+             
+            \DB::beginTransaction();
 
-            $sentinela = null;
-            \DB::transaction(function() use (&$request, &$sentinela){
-
-                $dados = $request->all();
-
-                $dadosRequest = [];
-
-                $dadosRequest['name']               = $dados['name'];
-                $dadosRequest['user_id']            = 1;//trocar pelo id do usuario logado
-                $dadosRequest['active']             = 'yes';
-
-                $sentinela      = $categoria = Categoria::create($dadosRequest);
-
-                
-                
-
-            });
-
-            if($sentinela){
-
-                \Session::flash('mensagem', ['msg'=>'Registro salvo com sucesso', 'class'=>'alert alert-success']);
-                return redirect()->route('categoria.head');
-
+            $dados = $request->all();
+ 
+            $dadosRequest = [];
+             
+            $dadosRequest['user_id']            = \Auth::User()->id;
+            $dadosRequest['user_update_id']     = \Auth::User()->id;
+            $dadosRequest['name']               = $dados['name'];
+            $dadosRequest['active']             = 'yes';
+             
+            $registro = Categoria::create($dadosRequest);
+            \DB::commit();
+ 
+            if($registro){
+                return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
             }else{
-
-                \Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
-
-                return redirect()->back();
+                throw new CategoriaException('Erro ao cadastrar');
             }
 
+        }catch(CategoriaException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
         }catch(\Exception $e){
+            \DB::rollback();
 
-            \Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            return redirect()->back();
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
 
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
+
     }
 
     /**
@@ -111,43 +167,47 @@ class CategoriaController extends Controller
         //
     }
 
-
-    public function info($id)
+    public function info(Request $request, $id, $idAssistente)
     {
         
         try{
 
+            $dados = $request->all();
+            $id = $id ?? $dados['id'];
+            $callBack = $dados['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
             if($id <= 0){
-
-                 \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
-
-                return redirect()->route('categoria.index');
-
+                throw new CategoriaException('Parâmetro ínválido');
             }
 
-            $registro = null;
+            \DB::beginTransaction();
 
-            \DB::transaction(function() use (&$id, &$registro){
-
-                $registro = Categoria::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
-        
-            } );
+            $registro = Categoria::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
 
             if($registro == null){
-
-                \Session::flash('mensagem', ['msg'=>'Categoria não encontrada', 'class'=>'alert alert-danger']);
-                return redirect()->back();
+                throw new CategoriaException('Registro não encontrado');
             }
 
+            \DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
-            return view('admin.categoria.info', compact('registro'));
+            return view('admin.categoria.info', compact('registro', 'idAssistente', 'callBack'));
 
+        }catch(CategoriaException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
         }catch(\Exception $e){
 
-            \Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            return redirect()->back();
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
 
         }
     }
@@ -158,89 +218,103 @@ class CategoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id, $idAssistente)
     {
+        try{
+            
+            $dadosRequest = $request->all();
 
+            $callBack = $dadosRequest['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+            if(! isset($id)){
+                $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
+            }
 
-        $registro = null;
+            if($id <= 0){
+                throw new CategoriaException('Parâmetro ínválido');
+            }
 
-    	try {
+            \DB::beginTransaction();
 
-    		if($id <= 0){
+            $registro = Categoria::where('active', '=', 'yes')
+                ->where('id', '=', $id)->first();
 
-	             \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
+            if($registro == null){
+                throw new CategoriaException('Registro não encontrado');
+                
+            }
 
-	            return redirect()->route('categoria.index');
+            \DB::commit();
 
-       		 }
-    		
-       		 \DB::transaction(function() use (&$id, &$registro){
+            return view('admin.categoria.edit', compact('registro', 'idAssistente', 'callBack'));
 
-	            $registro = Categoria::where('active', '=', 'yes')
-	                ->where('id', '=', $id)->first();
+         }catch(CategoriaException $e){
 
-	        } );
+            \DB::rollback();
 
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
 
-	        if($registro == null){
+        }catch(\Exception $e){
+            \DB::rollback();
 
-	            \Session::flash('mensagem', ['msg'=>'Categoria não encontrada', 'class'=>'alert alert-danger']);
-	            return redirect()->back();
-	        }
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
 
-
-	        return view('admin.categoria.edit', compact('registro'));
-
-
-    	} catch (\Exception $e) {
-
-    		 \Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            return redirect()->back();
-    	}
-
+        }
     }
 
-    /**
+     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CategoriaRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        $validator = $request->validated();
-
-        $dados = $request->all();
-        $registro = null;
-
-        \DB::transaction(function() use (&$dados, &$id, &$registro){
-
-            $dadosRequest = [];
-
-            $dadosRequest['name']               = $dados['name'];
-            $dadosRequest['user_id']            = 1;//trocar pelo id do usuario logado
-            $dadosRequest['active']             = 'yes';
-
-            $categoria = Categoria::find($id);
+        try {
+           
             
-            $registro = $categoria->update($dadosRequest);
+            $this->validaRequest($request);
 
-        });
+            \DB::beginTransaction();
 
-        if($registro != null){
+            $dados = $request->all();
 
-            \Session::flash('mensagem', ['msg'=>'Registro atualizado com sucesso', 'class'=>'alert alert-success']);
+            
+            $dadosRequest = [];            
 
-            return redirect()->route('categoria.index');
+            $dadosRequest['user_update_id']    = \Auth::User()->id;
+            $dadosRequest['name']              = $dados['name'];
+            $dadosRequest['active']            = 'yes';
+           
+            $categoria = Categoria::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $categoria->update($dadosRequest);
+
+            \DB::commit();
+
+            return response()->json(['mensagem'=>$categoria, 'class'=>'sucess'], 200);
+
+
+        }catch (CategoriaException $th) {
+
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            //throw $th;
         }
-
-        \Session::flash('mensagem', ['msg'=>'Erroa ao atualizar registro', 'class'=>'alert alert-warning']);
-
-            return redirect()->route('categoria.index');
-
-        return redirect()->back();
-
     }
 
     /**
@@ -253,44 +327,70 @@ class CategoriaController extends Controller
     {
         try{
 
-            if($id <= 0){
+            \DB::beginTransaction();
 
-                 \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
+            $dadosRequest = [];
 
-                return redirect()->route('categoria.index');
+            $dadosRequest['user_update_id']     = \Auth::User()->id;
+            $dadosRequest['active']             = 'no';
+            $piscofins = Categoria::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $piscofins->update($dadosRequest);
+            $piscofins->delete();
 
-            }
+            \DB::commit();
 
-            $registro = null;
+            return response()->json(['mensagem'=>[], 'class'=>'sucess'], 200);
 
-            \DB::transaction(function() use (&$id, &$registro){
+        }catch (EstadoException $th) {
 
-                $registro = Categoria::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first()->update(['active'=>'no']);
+            \DB::rollback();
 
-        
-            } );
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
 
-            if($registro == null){
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
 
-                \Session::flash('mensagem', ['msg'=>'Categoria não encontrada', 'class'=>'alert alert-danger']);
-                return redirect()->back();
-            }
-
-
-            return 'Registro atulizado com sucesso';
-
-        }catch(\Exception $e){
-
-            \Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            return redirect()->back();
-
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            //throw $th;
         }
     }
 
-    public function head()
+    public function head(Request $request)
     {
+        $dados = $request->all();
+        
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        if($isReload){
+           
+            return view('admin.categoria.head_refresh', compact('isReload'));
+        }else{
+            return view('admin.categoria.head', compact('isReload'));
+        }
+        
+    }
 
-        return view('admin.categoria.head');
+
+    protected function validaRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'name'=> 'required|max:255|min:2',
+        ], [
+            'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
+            'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
+            'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
+        ]);
+        
+        if($validator->fails()) {
+            $errors = $validator->errors();
+            $msg = '';
+            foreach($errors->all() as $mensagem){
+                $msg .= $mensagem.'<br/>';
+            }
+            
+            throw new CategoriaException($msg);
+        }
+
+        return true;
     }
 }

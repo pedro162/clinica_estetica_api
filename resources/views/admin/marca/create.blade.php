@@ -1,19 +1,17 @@
 
 @php $randId = rand(11111, 99999); @endphp
-<div class="container">
-	<div class="row mb-5">
-		<div class="col">
-			<form action="{{route('marca.store')}}" method="post" class="form row p-5" id="form{{$randId}}">
-				@csrf
-				<div class="form-group col-md-12 col-sm-12">
-					<label class="label">Nome</label>
-					<input type="text" name="name" class="form-control form-control-sm">
-				</div>
-				<div class="col">
-					<button id="btn-salvar{{$randId}}" type="submit" class=" btn btn-sm btn-primary">Salvar</button>
-				</div>
-			</form>
-		</div>
+<div class="row p-3">
+	<div class="col-md-12 col-sm-12">
+		<form action="{{route('marca.store')}}" method="post" class="form" id="form{{$randId}}">
+			@csrf
+			<div class="form-group col-md-12 col-sm-12">
+				<label class="label">Nome</label>
+				<input type="text" name="name" class="form-control form-control-sm">
+			</div>
+			<div class="col">
+				<button id="btn-salvar{{$randId}}" type="submit" class=" btn btn-sm btn-primary">Salvar</button>
+			</div>
+		</form>
 	</div>	
 </div>
 

@@ -183,11 +183,15 @@ class ProdutoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request, $idAssistente)
     {
+        $dadosRequest = $request->all();
+        $callBack = $dadosRequest['callBack'] ?? '';
+        $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+
         $marcas = Marca::where('active', '=', 'yes')->get();
         $categorias = Categoria::where('active', '=', 'yes')->get();
-        return view('admin.produto.create', compact('marcas', 'categorias'));
+        return view('admin.produto.create', compact('marcas', 'categorias', 'callBack','idAssistente'));
     }
 
     /**

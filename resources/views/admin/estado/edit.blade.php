@@ -1,63 +1,62 @@
 @php $randId = rand(11111, 99999); @endphp
 
-<div class="container">
-	<div class="row">
-		<div class="col">
-			<form action="{{route('estado.update', $registro->id)}}" method="post" class="form" id="form_{{$randId}}" enctype="multipart/form-data">
-				@csrf
-				@method('PUT')
-				
-				<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
-				<hr/>
-				<div  class="row" >
-					<div class="form-group col-md-12 col-sm-12">
-						<label class="label" for="nmEStado{{$randId}}" >Descrição</label>
-						<input type="text" value="{{$registro->nmEStado}}" name="nmEStado" id="nmEStado{{$randId}}" class="form-control form-control-sm ">
-					</div>
+<div class="row p-3">
+	<div class="col-md-12 col-sm-12">
+
+		<form action="{{route('estado.update', $registro->id)}}" method="post" class="form" id="form_{{$randId}}" enctype="multipart/form-data">
+			@csrf
+			@method('PUT')
+			
+			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
+			<hr/>
+			<div  class="row" >
+				<div class="form-group col-md-12 col-sm-12">
+					<label class="label" for="nmEStado{{$randId}}" >Descrição</label>
+					<input type="text" value="{{$registro->nmEStado}}" name="nmEStado" id="nmEStado{{$randId}}" class="form-control form-control-sm ">
+				</div>
+			</div>
+
+			<div  class="row" >
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="pais_id{{$randId}}">País</label>
+					<select type="text"  name="pais_id" title="Define o país do estado" id="pais_id{{$randId}}" class="form-control form-control-sm">
+						@foreach($paises as $pais)
+							<option {{isset($registro->pais_id) && $registro->pais_id == $pais->id ? 'selected' : ''}} value="{{$pais->id}}">{{$pais->nmPais}}</option>
+						@endforeach
+					</select>
 				</div>
 
-				<div  class="row" >
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label" for="pais_id{{$randId}}">País</label>
-						<select type="text"  name="pais_id" title="Define o país do estado" id="pais_id{{$randId}}" class="form-control form-control-sm">
-							@foreach($paises as $pais)
-								<option {{isset($registro->pais_id) && $registro->pais_id == $pais->id ? 'selected' : ''}} value="{{$pais->id}}">{{$pais->nmPais}}</option>
-							@endforeach
-						</select>
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label" for="padrao{{$randId}}" >Definir como padrão</label>
-						<select type="text" name="padrao" title="Define o estado como padrão" id="padrao{{$randId}}" class="form-control form-control-sm">
-							<option {{isset($registro->padrao) && trim($registro->padrao) == 'yes' ? 'selected' : ''}} value="yes">Sim</option>
-							<option {{isset($registro->padrao) && trim($registro->padrao) == 'no' ? 'selected' : ''}} value="no" >Não</option>
-						</select>
-					</div>
-				</div>	
-
-				<div  class="row" >
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label" for="codEstado{{$randId}}" >Código do estado</label>
-						<input type="text" value="{{$registro->codEstado}}" name="codEstado" title="Classe de enquadramento" id="codEstado{{$randId}}" class="form-control form-control-sm ">
-					</div>
-
-					<div class="form-group col-md-6 col-sm-12">
-						<label class="label" for="sigla{{$randId}}" >Sigla</label>
-						<input type="text" value="{{$registro->sigla}}"  name="sigla" title="Classe de enquadramento" id="sigla{{$randId}}" class="form-control form-control-sm ">
-					</div>
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="padrao{{$randId}}" >Definir como padrão</label>
+					<select type="text" name="padrao" title="Define o estado como padrão" id="padrao{{$randId}}" class="form-control form-control-sm">
+						<option {{isset($registro->padrao) && trim($registro->padrao) == 'yes' ? 'selected' : ''}} value="yes">Sim</option>
+						<option {{isset($registro->padrao) && trim($registro->padrao) == 'no' ? 'selected' : ''}} value="no" >Não</option>
+					</select>
 				</div>
-				
-				
-				<div class="row">
+			</div>	
 
-					<div class="col-md-8 col-sm-12">
-					</div>
-					<div class="col-md-4 col-sm-12" style="text-align: right;">
-						<button type="submit" class=" btn btn-md btn-primary">Salvar</button>
-					</div>
+			<div  class="row" >
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="codEstado{{$randId}}" >Código do estado</label>
+					<input type="text" value="{{$registro->codEstado}}" name="codEstado" title="Classe de enquadramento" id="codEstado{{$randId}}" class="form-control form-control-sm ">
 				</div>
-			</form>
-		</div>
+
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="sigla{{$randId}}" >Sigla</label>
+					<input type="text" value="{{$registro->sigla}}"  name="sigla" title="Classe de enquadramento" id="sigla{{$randId}}" class="form-control form-control-sm ">
+				</div>
+			</div>
+			
+			
+			<div class="row">
+
+				<div class="col-md-8 col-sm-12">
+				</div>
+				<div class="col-md-4 col-sm-12" style="text-align: right;">
+					<button type="submit" class=" btn btn-md btn-primary">Salvar</button>
+				</div>
+			</div>
+		</form>
 	</div>	
 </div>
 <script>

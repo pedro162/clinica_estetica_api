@@ -5,7 +5,7 @@
 
 <div class="row p-3">
 	<div class="col-md-12 col-sm-12">
-		<form action="{{route('produto.store')}}" method="post" class="form " id="form_produto_cadastrar" enctype="multipart/form-data">
+		<form action="{{route('produto.store')}}" method="post" class="form " id="form_{{$randId}}" enctype="multipart/form-data">
 			@csrf
 
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
@@ -223,7 +223,7 @@ Kit{
 
 <script>
 	//edita ou salva um produto
-	$('html body').delegate('form#form_produto_cadastrar, form#form_produto_atualizar','submit', function(ev){
+	$('html body').delegate('form#form_{{$randId}}','submit', function(ev){
 
 		try{
 
@@ -243,14 +243,15 @@ Kit{
 					console.log(response.mensagem.id);
 
 					if(response.mensagem.hasOwnProperty('id') || response.mensagem == true){
-
-						Utilitarios.assistenteMensageAlert('Registrado com sucesso');
+						Utilitarios.fecharAssistente(assistente);
+						Utilitarios.assistenteMensage('Registrado com sucesso');
+						@php echo base64_decode($callBack) @endphp
 
 					}else{
 
-						Utilitarios.assistenteMensageAlert('Erro ao atuaolizar registro', 'warning');
+						Utilitarios.assistenteMensage('Erro ao atuaolizar registro', 'warning', 'Erro');
 
-						
+
 					}
 				},
 				error:function(response, status, error){

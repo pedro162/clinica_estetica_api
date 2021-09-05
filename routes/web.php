@@ -57,14 +57,19 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 	Route::get('/marca/destroy/{id}/{id_assistente?}', ['as'=>'marca.destroy', 'uses'=>'Admin\MarcaController@destroy']);
 
 
-	Route::get('/categoria/index', ['as'=>'categoria.index', 'uses'=>'Admin\CategoriaController@index']);
-	Route::get('/categoria/create', ['as'=>'categoria.create', 'uses'=>'Admin\CategoriaController@create']);
+	Route::get('/categoria/index/{id_assistente?}', ['as'=>'categoria.index', 'uses'=>'Admin\CategoriaController@index']);
+	Route::post('/categoria/index/{id_assistente?}', ['as'=>'categoria.index', 'uses'=>'Admin\CategoriaController@index']);
+	Route::get('/categoria/create/{id_assistente?}', ['as'=>'categoria.create', 'uses'=>'Admin\CategoriaController@create']);
+	Route::post('/categoria/create/{id_assistente?}', ['as'=>'categoria.create', 'uses'=>'Admin\CategoriaController@create']);
 	Route::post('/categoria/store', ['as'=>'categoria.store', 'uses'=>'Admin\CategoriaController@store']);
-	Route::get('/categoria/edit/{id}', ['as'=>'categoria.edit', 'uses'=>'Admin\CategoriaController@edit']);
-	Route::put('/categoria/update/{id}', ['as'=>'categoria.update', 'uses'=>'Admin\CategoriaController@update']);
-	Route::get('/categoria/show/id', ['as'=>'categoria.show', 'uses'=>'Admin\CategoriaController@show']);
-	Route::get('/categoria/info/{id}', ['as'=>'categoria.info', 'uses'=>'Admin\CategoriaController@info']);
-	Route::get('/categoria/head', ['as'=>'categoria.head', 'uses'=>'Admin\CategoriaController@head']);
+	Route::get('/categoria/edit/{id}/{id_assistente?}', ['as'=>'categoria.edit', 'uses'=>'Admin\CategoriaController@edit']);
+	Route::post('/categoria/edit/{id}/{id_assistente?}', ['as'=>'categoria.edit', 'uses'=>'Admin\CategoriaController@edit']);
+	Route::put('/categoria/update/{id}/{id_assistente?}', ['as'=>'categoria.update', 'uses'=>'Admin\CategoriaController@update']);
+	Route::get('/categoria/show/id/{id_assistente?}', ['as'=>'categoria.show', 'uses'=>'Admin\CategoriaController@show']);
+	Route::post('/categoria/show/id/{id_assistente?}', ['as'=>'categoria.show', 'uses'=>'Admin\CategoriaController@show']);
+	Route::get('/categoria/info/{id}/{id_assistente?}', ['as'=>'categoria.info', 'uses'=>'Admin\CategoriaController@info']);
+	Route::post('/categoria/info/{id}/{id_assistente?}', ['as'=>'categoria.info', 'uses'=>'Admin\CategoriaController@info']);
+	Route::get('/categoria/head/{id_assistente?}', ['as'=>'categoria.head', 'uses'=>'Admin\CategoriaController@head']);
 	Route::get('/categoria/destroy/{id}', ['as'=>'categoria.destroy', 'uses'=>'Admin\CategoriaController@destroy']);
 
 	Route::get('/pessoa/index/{id_assistente?}', ['as'=>'pessoa.index', 'uses'=>'Admin\PessoaController@index']);

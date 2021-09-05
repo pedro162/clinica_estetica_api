@@ -91,7 +91,7 @@
 					[
 						'type'      =>'link',
 						'onClick'   =>'cadastrar'.$randId.'(this);',
-						'href'      =>''.route('marca.create').'',
+						'href'      =>''.route('categoria.create').'',
 						'class'     =>'btn btn-md btn-outline-primary mr-2 mb-sm-1',
 						'style'     =>'',
 						'id'        =>'form_cadastrar'.$randId,
@@ -188,7 +188,7 @@
 	</div>
 </div>
 	<script type="text/javascript">
-		Utilitarios.modifyUrlWithoutReload('/marca/head', 'Marcas')
+		Utilitarios.modifyUrlWithoutReload('/categoria/head', 'Categorias')
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
@@ -198,7 +198,7 @@
 		});	
 
 		function pesquisar{{$randId}}(){
-			let url = '/marca/index';
+			let url = '/categoria/index';
 
 			let objResponse = '#response-request{{$randId}}';
 			//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
@@ -320,38 +320,12 @@
 				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
 				data.append('_token', token)
 
-				Utilitarios.assistentAjaxModal('POST',url, 'HTML','Marca - Cadastrar', 'sm', '300px', null, data)
+				Utilitarios.assistentAjaxModal('POST',url, 'HTML','Categoria - Cadastrar', 'sm', '200px', null, data)
 				//Utilitarios.toggleFiltro();
 			}catch(ex){
 					console.log('Erro: '+ex.message);
 			}
 		}
-
-
-		function tributar{{$randId}}(element){
-			
-			try{
-				let url = $(element).attr('href');
-				let id = $(element).attr('idItem');
-				let idModal= $(element).attr('idModal');
-				// //
-				//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
-				let data = new FormData();
-				data.append('id', id)
-				data.append('idAssistente', '')
-				data.append('callBack', ''+btoa('pesquisar{{$randId}}();')+'')
-
-				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
-				data.append('_token', token)
-
-				Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
-				
-
-			}catch(ex){
-					console.log('Erro: '+ex.message);
-			}
-		}
-		
 		//--- ids da tabela
 		//let ids = Utilitarios.selecionadosTable('lista{{$randId}}');
 		//console.log(ids);

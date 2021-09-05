@@ -21,7 +21,7 @@
 					[
 						'label'     =>'Cód',
 						'value'     =>'',
-						'name'      =>'id',
+						'name'      =>'codigo_marca',
 						'class'     =>'',
 						'onChange'  =>'',
 						'onClick'   =>'',
@@ -31,21 +31,9 @@
 
 					],
 					[
-						'label'     =>'Descrição',
+						'label'     =>'nome_marca',
 						'value'     =>'',
-						'name'      =>'nmEStado',
-						'class'     =>'',
-						'onChange'  =>'',
-						'onClick'   =>'',
-						'type'      =>'text',
-						'options'   =>[],
-						'classContainer' =>'col-md-6 col-sm-12'
-
-					],
-					[
-						'label'     =>'Sigla',
-						'value'     =>'',
-						'name'      =>'sigla',
+						'name'      =>'name',
 						'class'     =>'',
 						'onChange'  =>'',
 						'onClick'   =>'',

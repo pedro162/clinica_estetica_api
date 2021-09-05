@@ -1,38 +1,101 @@
+
+@php $randId = rand(11111, 99999); @endphp
 <div class="row">
-	<div class="col-md-6">
-		<h4>Lista de Categorias</h4>	
-	</div> 
-	<div class="col-md-6">
-		<div class="form-inline" style="float:right;">
-			Buscar:
-			<input type="search" name="busca_tabela" class="form-control form-control-sm ml-2">
-		</div>
-	</div> 
 	<div class="col">
-		<table style="width: 100%;" class="table table-lg table-responsive table-hover">
-			<thead>
-				<tr>
-					<th>
-						Cód
-					</th>
-					<th>
-						Nome Categoria
-					</th>
-					<th>
-						Ativo
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach($registro as $valor)
-				<tr class="assistenteModalCategoria">
-					<td class="text-right">{{$valor->id}}</td>
-					<td>{{$valor->name}}</td>
-					<td>{{$valor->active == 'yes' ? 'Sim' : 'Não'}}</td>
-					<input type="hidden" name="produto" value="{{$valor->id}}">
-				</tr>
-				@endforeach
-			</tbody>
-		</table>
+		
+
+		@php
+		
+			$tituloColunas = [
+
+				'style_row'=>'',
+				'class_row'=>'',
+				'onClick'=>null,
+				'dados'=>[
+
+					[
+						'nmColuna'=>'Cód',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					],
+					[
+						'nmColuna'=>'Descrição',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					
+
+				],
+			];
+
+			$dados = [];
+
+			foreach($registro as $valor){
+				$row = [];
+				$row['id'] = $valor->id;
+				$row['style_row'] = '';
+				$row['class_row'] = '';
+
+				$row['dados'] = [
+					[
+						'val'=>$valor->id,
+						'class'=>'',
+						'style_cel'=>'',
+                            
+                    ],
+					[
+						'val'=>$valor->name,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+					
+
+				];
+				
+				$row['acoes']=[
+
+                       	[ 
+							'label'=>'Editar',
+							'link'=>'/categoria/edit/'. $valor->id,
+							'style_action'=>'',
+							'class_action'=>'btn btn-lg btn-outline-primary',
+							'onClick'=>null,
+							'title_assistente'=>'CATEGORIA - EDITAR',
+							'width_assistente'=>'sm',
+							'height_assistente'=>'200px;'
+
+						],
+						[ 
+							'label'=>'Excluir',
+							'link'=>'/categoria/info/'. $valor->id,
+							'style_action'=>'',
+							'class_action'=>'btn btn-lg btn-outline-primary',
+							'onClick'=>null,
+							'title_assistente'=>'Categoria - DELETAR',
+							'width_assistente'=>'sm',
+							'height_assistente'=>'300px;'
+						]
+                    ];
+
+				
+				
+				$dados[] = ['row'=>$row];
+			}
+
+			$calback = "{{$consulta["callBack"]}}";
+
+			$id = $consulta['idTable'] ?? null;
+			$selectorsLine = $consulta['selectorsLine'] ?? false;
+			
+		@endphp
+		<x-table
+			:tituloColunas="$tituloColunas"
+			:dados="$dados"
+			:calback="$calback"
+			:idTable="$id"
+			:selectorsLine="$selectorsLine"
+		/>
+		
 	</div>
 </div>
