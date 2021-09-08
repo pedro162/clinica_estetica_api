@@ -80,7 +80,7 @@ class Nfe
         $std->ISUF          = $dados['ISUF'];
         $std->IM            = $dados['IM'];
         $std->email         = $dados['email'];
-
+        
         if(isset($dados['CPF']) && $dados['CPF']){
             $std->CPF       = $dados['CPF'];
         }else{
@@ -177,10 +177,41 @@ class Nfe
         $this->objFacadeNfe->tagide($std);
     } 
 
+    /** 
+     * Node referente a NFe referenciada
+     */
+    public function nfReferenciada(Array $dados)
+    {
+        //
+
+        $std = new \stdClass();
+        $std->refNFe    = $dados['refNFe'];
+        
+        $this->objFacadeNfe->tagrefNFe($std);
+    } 
+
+    public function nfReferenciadaDetalhes(Array $dados)
+    {
+        //
+
+        $std = new \stdClass();
+        $std->cUF   = $dados['cUF'];
+        $std->AAMM  = $dados['AAMM'];
+        $std->CNPJ  = $dados['CNPJ'];
+        $std->mod   = $dados['mod'];
+        $std->serie = $dados['serie'];
+        $std->nNF   = $dados['nNF'];
+        
+        $this->objFacadeNfe->tagrefNF($std);
+    } 
+
+    /** 
+     * Node de dados do produto/serviço
+     */
     public function Produto(Array $dados)
     {
-        //Node de dados do produto/serviço
-
+        //
+       
         $std = new \stdClass();
         $std->item      = $dados['item']; //item da NFe
         $std->cProd     = $dados['cProd'];
@@ -208,16 +239,166 @@ class Nfe
         $std->xPed      = $dados['xPed'];
         $std->nItemPed  = $dados['nItemPed'];
         $std->nFCI      = $dados['nFCI'];
-        
         $this->objFacadeNfe->tagprod($std);
     } 
 
-
-    public function Icms(Array $dados)
+    /**
+     * Informções adicionais para o item da nota
+     */
+    public function infoAdocionaisProduto(Array $dados)
     {
-
+        $std = new \stdClass();
+        $std->item    = $dados['infAdProd'];
+        $std->infAdProd    = $dados['infAdProd'];
+        
+        $this->objFacadeNfe->taginfAdProd($std);
     } 
 
+    /** 
+     * NOTA: Ajustado para NT 2018.005 Node indicativo de local de retirada diferente do endereço do emitente
+     */
+    public function localRetirada(Array $dados)
+    {
+        
+        $std = new \stdClass();
+        if(isset($dados['CPF']) && $dados['CPF']){
+            $std->CPF       = $dados['CPF'];//indicar apenas um CNPJ ou CPF
+        }else{
+            $std->CNPJ      = $dados['CNPJ']; //indicar apenas um CNPJ ou CPF
+        }
+        $std->IE        = $dados['IE'];
+        $std->xNome     = $dados['xNome'];
+        $std->xLgr      = $dados['xLgr'];
+        $std->nro       = $dados['nro'];
+        $std->xCpl      = $dados['xCpl'];
+        $std->xBairro   = $dados['xBairro'];
+        $std->cMun      = $dados['cMun'];
+        $std->xMun      = $dados['xMun'];
+        $std->UF        = $dados['UF'];
+        $std->CEP       = $dados['CEP'];
+        $std->cPais     = $dados['cPais'];
+        $std->xPais     = $dados['xPais'];
+        $std->fone      = $dados['fone'];
+        $std->email     = $dados['email'];
+
+        $this->objFacadeNfe->tagretirada($std);
+    }
+
+    /** 
+     * NOTA: Ajustado para NT 2018.005 Node indicativo de local de retirada diferente do endereço do emitente
+     */
+    public function localEntrega(Array $dados)
+    {
+        
+        $std = new \stdClass();
+        if(isset($dados['CPF']) && $dados['CPF']){
+            $std->CPF       = $dados['CPF'];//indicar apenas um CNPJ ou CPF
+        }else{
+            $std->CNPJ      = $dados['CNPJ']; //indicar apenas um CNPJ ou CPF
+        }
+        $std->IE        = $dados['IE'];
+        $std->xNome     = $dados['xNome'];
+        $std->xLgr      = $dados['xLgr'];
+        $std->nro       = $dados['nro'];
+        $std->xCpl      = $dados['xCpl'];
+        $std->xBairro   = $dados['xBairro'];
+        $std->cMun      = $dados['cMun'];
+        $std->xMun      = $dados['xMun'];
+        $std->UF        = $dados['UF'];
+        $std->CEP       = $dados['CEP'];
+        $std->cPais     = $dados['cPais'];
+        $std->xPais     = $dados['xPais'];
+        $std->fone      = $dados['fone'];
+        $std->email     = $dados['email'];
+
+        $this->objFacadeNfe->tagentrega($std);
+    }
+
+    /**
+     * Node inicial dos Tributos incidentes no Produto ou Serviço do item da NFe
+     */
+    public function imposto(Array $dados)
+    {
+        //
+        $std = new \stdClass();
+        $std->item = $dados['item']; //item da NFe
+        $std->vTotTrib = $dados['vTotTrib'];
+
+        $this->objFacadeNfe->tagimposto($std);
+    } 
+
+    /**
+     * NOTA: Ajustado conforme NT 2018.005_1.10 Node com informações do ICMS do item da NFe
+     */
+    public function icms(Array $dados)
+    {
+        $std = new \stdClass();
+        $std->item          = $dados['item']; //item da NFe
+        $std->orig          = $dados['orig'];
+        $std->CST           = $dados['CST'];
+        $std->modBC         = $dados['modBC'];
+        $std->vBC           = $dados['vBC'];
+        $std->pICMS         = $dados['pICMS'];
+        $std->vICMS         = $dados['vICMS'];
+        $std->pFCP          = $dados['pFCP'];
+        $std->vFCP          = $dados['vFCP'];
+        $std->vBCFCP        = $dados['vBCFCP'];
+        $std->modBCST       = $dados['modBCST'];
+        $std->pMVAST        = $dados['pMVAST'];
+        $std->pRedBCST      = $dados['pRedBCST'];
+        $std->vBCST         = $dados['vBCST'];
+        $std->pICMSST       = $dados['pICMSST'];
+        $std->vICMSST       = $dados['vICMSST'];
+        $std->vBCFCPST      = $dados['vBCFCPST'];
+        $std->pFCPST        = $dados['pFCPST'];
+        $std->vFCPST        = $dados['vFCPST'];
+        $std->vICMSDeson    = $dados['vICMSDeson'];
+        $std->motDesICMS    = $dados['motDesICMS'];
+        $std->pRedBC        = $dados['pRedBC'];
+        $std->vICMSOp       = $dados['vICMSOp'];
+        $std->pDif          = $dados['pDif'];
+        $std->vICMSDif      = $dados['vICMSDif'];
+        $std->vBCSTRet      = $dados['vBCSTRet'];
+        $std->pST           = $dados['pST'];
+        $std->vICMSSTRet    = $dados['vICMSSTRet'];
+        $std->vBCFCPSTRet   = $dados['vBCFCPSTRet'];
+        $std->pFCPSTRet     = $dados['pFCPSTRet'];
+        $std->vFCPSTRet     = $dados['vFCPSTRet'];
+        $std->pRedBCEfet    = $dados['pRedBCEfet'];
+        $std->vBCEfet       = $dados['vBCEfet'];
+        $std->pICMSEfet     = $dados['pICMSEfet'];
+        $std->vICMSEfet     = $dados['vICMSEfet'];
+        $std->vICMSSubstituto  = $dados['vICMSSubstituto']; //NT2018.005_1.10_Fevereiro de 2019
+
+        $this->objFacadeNfe->tagICMS($std);
+    } 
+
+    /**
+     * Node com informações da partilha do ICMS entre a UF de origem e UF de destino ou a UF definida na legislação
+     */
+    public function imcsPartilha(Array $dados)
+    {
+        
+        $std = new \stdClass();
+        $std->item          = $dados['item']; //item da NFe
+        $std->orig          = $dados['orig'];
+        $std->CST           = $dados['CST'];
+        $std->modBC         = $dados['modBC'];
+        $std->vBC           = $dados['vBC'];
+        $std->pRedBC        = $dados['pRedBC'];
+        $std->pICMS         = $dados['pICMS'];
+        $std->vICMS         = $dados['vICMS'];
+        $std->modBCST       = $dados['modBCST'];
+        $std->pMVAST        = $dados['pMVAST'];
+        $std->pRedBCST      = $dados['pRedBCST'];
+        $std->vBCST         = $dados['vBCST'];;
+        $std->pICMSST       = $dados['pICMSST'];
+        $std->vICMSST       = $dados['vICMSST'];
+        $std->pBCOp         = $dados['pBCOp'];
+        $std->UFST          = $dados['UFST'];
+
+        $this->objFacadeNfe->tagICMSPart($std);
+    }
 
     public function IcmsSn(Array $dados)
     {
@@ -267,6 +448,36 @@ class Nfe
 
 
     //-------------------------------------------------------------------------------------------------------
+    public function config($razaoSocial, $siglauf, $cnpj, $tokenIbpt, $csc, $cscId, $chemes="PL_009_V4", $versao='4.00', $dtAtualizaçao= null, $tpAmbiente=2, $proxyConf = [
+            "proxyIp"   => "",
+            "proxyPort" => "",
+            "proxyUser" => "",
+            "proxyPass" => ""
+        ]
+    )
+    {
+        $arr = [
+            "atualizacao" => $dtAtualizaçao ?? date('Y-m-d H:i:s'),
+            "tpAmb"       => $tpAmbiente,
+            "razaosocial" => $razaoSocial,
+            "cnpj"        => $cnpj,
+            "siglaUF"     => $siglauf,
+            "schemes"     => $chemes,
+            "versao"      => $versao,
+            "tokenIBPT"   => $tokenIbpt,
+            "CSC"         => $csc,//"GPB0JBWLUR6HWFTVEAS6RJ69GPCROFPBBB8G"
+            "CSCid"       => $cscId,//"000001",
+            "proxyConf"   => $proxyConf,
+        ];
+        $configJson = json_encode($arr);
 
+        return $configJson;
+    }
+
+    public function getCertificade($path)
+    {
+        $pfxcontent = file_get_contents($path);
+        return $pfxcontent;
+    }
 
 }

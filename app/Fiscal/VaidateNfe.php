@@ -631,13 +631,544 @@ class VaidateNfe
     }
     
 
+    public function nfReferenciada(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('refNFe', $apenas)){
+            if(! (strlen(trim( $dados['refNFe'])) > 0)){
+                $this->errors[] = 'A nota fiscal de referência é obrigatória';
+            }
+        }
+        
+        return $this->errors;
+    }
+
+    public function infoAdocionaisProduto(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('item', $apenas)){
+            if(! (strlen(trim( $dados['item'])) > 0)){
+                $this->errors[] = 'O itempara informações adicionais é obrigatório';
+            }
+        }
+
+        if(in_array('infAdProd', $apenas)){
+            if(! (strlen(trim( $dados['infAdProd'])) > 0)){
+                $this->errors[] = 'A informação adicional do item é obrigatória';
+            }
+        }
+        
+        return $this->errors;
+    }
+
+    public function localEntregaRetirada(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('IE', $apenas)){
+            if(! (strlen(trim( $dados['IE'])) > 0)){
+                $this->errors[] = 'A inscrição estadual é obrigatória para entrega / retirada';
+            }
+        }
+
+        if(in_array('xNome', $apenas)){
+            if(! (strlen(trim( $dados['xNome'])) > 0)){
+                $this->errors[] = 'O nome do responsável pela entrega / retirada é obrigatória';
+            }
+        }
+
+        if(in_array('xLgr', $apenas)){
+            if(! (strlen(trim( $dados['xLgr'])) > 0)){
+                $this->errors[] = 'O logradouro para entrega / retirada é obrigatória';
+            }
+        }
+
+        if(in_array('nro', $apenas)){
+            if(! (strlen(trim( $dados['nro'])) > 0)){
+                $this->errors[] = 'O número do endereço para entrega / retirada é obrigatória';
+            }
+        }
+
+        if(in_array('xCpl', $apenas)){
+            if(! (strlen(trim( $dados['xCpl'])) > 0)){
+                $this->errors[] = 'A caixa postal do endereço para entrega / retirada é obrigatório';
+            }
+        }
+
+        if(in_array('xBairro', $apenas)){
+            if(! (strlen(trim( $dados['xBairro'])) > 0)){
+                $this->errors[] = 'O bairro do endereço para entrega / retirada é obrigatório';
+            }
+        }
+
+        if(in_array('cMun', $apenas)){
+            if(! (strlen(trim( $dados['cMun'])) > 0)){
+                $this->errors[] = 'O código do minicípio do endereço para entrega / retirada é obrigatório';
+            }
+        }
+
+        if(in_array('xMun', $apenas)){
+            if(! (strlen(trim( $dados['xMun'])) > 0)){
+                $this->errors[] = 'O nome do minicípio do endereço para entrega / retirada é obrigatório';
+            }
+        }
+
+        if(in_array('UF', $apenas)){
+            if(! (strlen(trim( $dados['UF'])) > 0)){
+                $this->errors[] = 'A UF do endereço para entrega / retirada é obrigatória';
+            }
+        }
+
+        if(in_array('CEP', $apenas)){
+            if(! (strlen(trim( $dados['CEP'])) > 0)){
+                $this->errors[] = 'O cep do endereço para entrega / retirada é obrigatório';
+            }
+        }
+
+        if(in_array('cPais', $apenas)){
+            if(! (strlen(trim( $dados['cPais'])) > 0)){
+                $this->errors[] = 'O código do país do endereço para entrega / retirada é obrigatório';
+            }
+        }
+
+        if(in_array('xPais', $apenas)){
+            if(! (strlen(trim( $dados['xPais'])) > 0)){
+                $this->errors[] = 'O nome do país do endereço para entrega / retirada é obrigatório';
+            }
+        }
+
+        if(in_array('fone', $apenas)){
+            if(! (strlen(trim( $dados['fone'])) > 0)){
+                $this->errors[] = 'O telefone de contato do responsável pela entrega / retirada é obrigatório';
+            }
+        }
+
+        if(in_array('email', $apenas)){
+            if(! (strlen(trim( $dados['email'])) > 0)){
+                $this->errors[] = 'O e-mail de contato do responsável pela entrega / retirada é obrigatório';
+            }
+        }     
+        
+        return $this->errors;
+    }
 
 
+    public function nfReferenciadaDetalhes(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('IE', $apenas)){
+            if(! (strlen(trim( $dados['cUF'])) > 0)){
+                $this->errors[] = 'O código da UF da nota fiscal referencia é obrigatório';
+            }
+        }
+        
+        if(in_array('AAMM', $apenas)){
+            if(! (strlen(trim( $dados['AAMM'])) > 0)){
+                $this->errors[] = 'O AAMM da nota fiscal referencia é obrigatório';
+            }
+        }
+
+        if(in_array('CNPJ', $apenas)){
+            if(! (strlen(trim( $dados['CNPJ'])) > 0)){
+                $this->errors[] = 'O CNPJ da nota fiscal referencia é obrigatório';
+            }
+        }
+
+        if(in_array('mod', $apenas)){
+            if(! (strlen(trim( $dados['mod'])) > 0)){
+                $this->errors[] = 'O modelo da nota fiscal referencia é obrigatório';
+            }
+        }
+
+        if(in_array('serie', $apenas)){
+            if(! (strlen(trim( $dados['serie'])) > 0)){
+                $this->errors[] = 'O número de série da nota fiscal referencia obrigatório';
+            }
+        }
+        
+        if(in_array('nNF', $apenas)){
+            if(! (strlen(trim( $dados['nNF'])) > 0)){
+                $this->errors[] = 'O número da nota fiscal referencia obrigatório';
+            }
+        }
+        
+        return $this->errors;
+    }
 
 
+    public function imposto(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('item', $apenas)){
+            if(! (strlen(trim( $dados['item'])) > 0)){
+                $this->errors[] = 'O item para imposto é obrigatório';
+            }
+        }
+
+        if(in_array('vTotTrib', $apenas)){
+            if(! (strlen(trim( $dados['vTotTrib'])) > 0)){
+                $this->errors[] = 'O valor total para imposto é obrigatório';
+            }
+        }
+
+        return $this->errors;
+    }
+
+    public function icms(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('item', $apenas)){
+            if(! (strlen(trim( $dados['item'])) > 0)){
+                $this->errors[] = 'O item para icms é obrigatório';
+            }
+        }
+
+        if(in_array('orig', $apenas)){
+            if(! (strlen(trim( $dados['orig'])) > 0)){
+                $this->errors[] = 'A origem do item para icms é obrigatório';
+            }
+        }
+
+        if(in_array('CST', $apenas)){
+            if(! (strlen(trim( $dados['CST'])) > 0)){
+                $this->errors[] = 'O CST do item para icms é obrigatório';
+            }
+        }
+        
+        if(in_array('modBC', $apenas)){
+            if(! (strlen(trim( $dados['modBC'])) > 0)){
+                $this->errors[] = 'A modalidade da base de calculao para icms é obrigatório';
+            }
+        }
+
+        if(in_array('vBC', $apenas)){
+            if(! (strlen(trim( $dados['vBC'])) > 0)){
+                $this->errors[] = 'A base de calculao para icms é obrigatório';
+            }
+        }
+
+        if(in_array('pICMS', $apenas)){
+            if(! (strlen(trim( $dados['pICMS'])) > 0)){
+                $this->errors[] = 'A porcentagem de icms do item é obrigatório';
+            }
+        }
+
+        if(in_array('vICMS', $apenas)){
+            if(! (strlen(trim( $dados['vICMS'])) > 0)){
+                $this->errors[] = 'O valor de icms do item é obrigatório';
+            }
+        }
+
+        if(in_array('pFCP', $apenas)){
+            if(! (strlen(trim( $dados['pFCP'])) > 0)){
+                $this->errors[] = 'A porecentagem do fundo de combate a pobreza do icms do item é obrigatório';
+            }
+        }
+
+        if(in_array('vFCP', $apenas)){
+            if(! (strlen(trim( $dados['vFCP'])) > 0)){
+                $this->errors[] = 'O valor do fundo de combate a pobreza do icms do item é obrigatório';
+            }
+        }
+
+        if(in_array('vBCFCP', $apenas)){
+            if(! (strlen(trim( $dados['vBCFCP'])) > 0)){
+                $this->errors[] = 'O valor da base de calculo do fundo de combate a pobreza do icms do item é obrigatório';
+            }
+        }
+
+        if(in_array('modBCST', $apenas)){
+            if(! (strlen(trim( $dados['modBCST'])) > 0)){
+                $this->errors[] = 'A modalidade da base de calculo da substituição tributária do icms do item é obrigatório';
+            }
+        }
+        
+        if(in_array('pMVAST', $apenas)){
+            if(! (strlen(trim( $dados['pMVAST'])) > 0)){
+                $this->errors[] = 'A porcentagem da margem do valor agregado  da substituição tributária do icms do item é obrigatória';
+            }
+        }
+        
+        if(in_array('pRedBCST', $apenas)){
+            if(! (strlen(trim( $dados['pRedBCST'])) > 0)){
+                $this->errors[] = 'A porcentagem da redução da base de calculo da substituição tributária do icms do item é obrigatória';
+            }
+        }
+
+        if(in_array('vBCST', $apenas)){
+            if(! (strlen(trim( $dados['vBCST'])) > 0)){
+                $this->errors[] = 'O valor da redução da base de calculo da substituição tributária do icms do item é obrigatório';
+            }
+        }
+        
+        if(in_array('pICMSST', $apenas)){
+            if(! (strlen(trim( $dados['pICMSST'])) > 0)){
+                $this->errors[] = 'A porcentagem do imcs de substituição tributária  do item é obrigatório';
+            }
+        }
+        
+        if(in_array('vICMSST', $apenas)){
+            if(! (strlen(trim( $dados['vICMSST'])) > 0)){
+                $this->errors[] = 'O valor do imcs de substituição tributária  do item é obrigatório';
+            }
+        }
+        
+
+        if(in_array('vBCFCPST', $apenas)){
+            if(! (strlen(trim( $dados['vBCFCPST'])) > 0)){
+                $this->errors[] = 'O valor da base de calculo do fundo de combate a pobresa da substituição tributária  do item é obrigatório';
+            }
+        }
+        
+        if(in_array('pFCPST', $apenas)){
+            if(! (strlen(trim( $dados['pFCPST'])) > 0)){
+                $this->errors[] = 'A porcentagem do fundo de combate a pobresa da substituição tributária  do item é obrigatória';
+            }
+        }
+
+        if(in_array('vFCPST', $apenas)){
+            if(! (strlen(trim( $dados['vFCPST'])) > 0)){
+                $this->errors[] = 'O valor do fundo de combate a pobresa da substituição tributária  do item é obrigatório';
+            }
+        }
+        
+        if(in_array('vICMSDeson', $apenas)){
+            if(! (strlen(trim( $dados['vICMSDeson'])) > 0)){
+                $this->errors[] = 'O valor do icms desonerado do item é obrigatório';
+            }
+        }
+        
+
+        if(in_array('motDesICMS', $apenas)){
+            if(! (strlen(trim( $dados['motDesICMS'])) > 0)){
+                $this->errors[] = 'Motivo da desoneração do item é obrigatório';
+            }
+        }
+
+        if(in_array('pRedBC', $apenas)){
+            if(! (strlen(trim( $dados['pRedBC'])) > 0)){
+                $this->errors[] = 'Porcentagem de redução da base de calculo do item é obrigatório';
+            }
+        }
+
+        if(in_array('vICMSOp', $apenas)){
+            if(! (strlen(trim( $dados['vICMSOp'])) > 0)){
+                $this->errors[] = 'O  valor do imcms Op do item é obrigatório';
+            }
+        }
+        
+
+        if(in_array('pDif', $apenas)){
+            if(! (strlen(trim( $dados['pDif'])) > 0)){
+                $this->errors[] = 'A porcentagem do difal do  icms Op do item é obrigatório';
+            }
+        }
+        
+
+        if(in_array('vICMSDif', $apenas)){
+            if(! (strlen(trim( $dados['vICMSDif'])) > 0)){
+                $this->errors[] = 'O valor do difal do  icms Op do item é obrigatório';
+            }
+        }
+
+        if(in_array('vBCSTRet', $apenas)){
+            if(! (strlen(trim( $dados['vBCSTRet'])) > 0)){
+                $this->errors[] = 'O valor da base de calculo da subistituição tributária retida do  icms do item é obrigatório';
+            }
+        }
+
+        if(in_array('pST', $apenas)){
+            if(! (strlen(trim( $dados['pST'])) > 0)){
+                $this->errors[] = 'A porcentagem  da subistituição tributária do icms do item é obrigatório';
+            }
+        }
+
+        if(in_array('vICMSSTRet', $apenas)){
+            if(! (strlen(trim( $dados['vICMSSTRet'])) > 0)){
+                $this->errors[] = 'O valor do ims de subistituição tributária  retida item é obrigatório';
+            }
+        }
+
+        if(in_array('vBCFCPSTRet', $apenas)){
+            if(! (strlen(trim( $dados['vBCFCPSTRet'])) > 0)){
+                $this->errors[] = 'O valor da base de calculo do fundo de combate a pobreza de subistituição tributária  retida item é obrigatório';
+            }
+        }
+
+        if(in_array('pFCPSTRet', $apenas)){
+            if(! (strlen(trim( $dados['pFCPSTRet'])) > 0)){
+                $this->errors[] = 'A porcentagem do fundo de combate a pobreza de subistituição tributária  retida item é obrigatória';
+            }
+        }
+
+        if(in_array('vFCPSTRet', $apenas)){
+            if(! (strlen(trim( $dados['vFCPSTRet'])) > 0)){
+                $this->errors[] = 'O valor do fundo de combate a pobreza de subistituição tributária  retida item é obrigatório';
+            }
+        }
+
+        if(in_array('pRedBCEfet', $apenas)){
+            if(! (strlen(trim( $dados['pRedBCEfet'])) > 0)){
+                $this->errors[] = 'A porcentagem de redução da base de calculo efetuada do item é obrigatório';
+            }
+        }
+
+        if(in_array('vBCEfet', $apenas)){
+            if(! (strlen(trim( $dados['vBCEfet'])) > 0)){
+                $this->errors[] = 'O valor da base de calculo efetualda do item é obrigatório';
+            }
+        }
+
+        if(in_array('pICMSEfet', $apenas)){
+            if(! (strlen(trim( $dados['pICMSEfet'])) > 0)){
+                $this->errors[] = 'A porcentagem valor da base de calculo efetualda do item é obrigatória';
+            }
+        }
+
+        if(in_array('vICMSEfet', $apenas)){
+            if(! (strlen(trim( $dados['vICMSEfet'])) > 0)){
+                $this->errors[] = 'O valor do icms efetualdo do item é obrigatório';
+            }
+        }
+
+        if(in_array('vICMSSubstituto', $apenas)){
+            if(! (strlen(trim( $dados['vICMSSubstituto'])) > 0)){
+                $this->errors[] = 'O valor do icms subistituto do item é obrigatório';
+            }
+        }
+        
+        return $this->errors;
+    }
 
 
+    public function imcsPartilha(Array $dados, Array $apenas)
+    {
 
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
 
+        if(in_array('item', $apenas)){
+            if(! (strlen(trim( $dados['item'])) > 0)){
+                $this->errors[] = 'O item para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('orig', $apenas)){
+            if(! (strlen(trim( $dados['orig'])) > 0)){
+                $this->errors[] = 'A origem para partilha do icms é obrigatória';
+            }
+        }
+
+        if(in_array('CST', $apenas)){
+            if(! (strlen(trim( $dados['CST'])) > 0)){
+                $this->errors[] = 'O CST para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('modBC', $apenas)){
+            if(! (strlen(trim( $dados['modBC'])) > 0)){
+                $this->errors[] = 'A modalidade da base de cálculo para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('vBC', $apenas)){
+            if(! (strlen(trim( $dados['vBC'])) > 0)){
+                $this->errors[] = 'O valor da base de cálculo para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('pRedBC', $apenas)){
+            if(! (strlen(trim( $dados['pRedBC'])) > 0)){
+                $this->errors[] = 'A porcentagem de redução da base de cálculo para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('pICMS', $apenas)){
+            if(! (strlen(trim( $dados['pICMS'])) > 0)){
+                $this->errors[] = 'A porcentagem  do icms para partilha do icms é obrigatória';
+            }
+        }
+
+        if(in_array('vICMS', $apenas)){
+            if(! (strlen(trim( $dados['vICMS'])) > 0)){
+                $this->errors[] = 'O valor do icms para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('modBCST', $apenas)){
+            if(! (strlen(trim( $dados['modBCST'])) > 0)){
+                $this->errors[] = 'A modalidade da base de cáculo de substituição tributária do icms para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('pMVAST', $apenas)){
+            if(! (strlen(trim( $dados['pMVAST'])) > 0)){
+                $this->errors[] = 'A porcentagem da margem de valor agregado de substituição tributária do icms para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('pRedBCST', $apenas)){
+            if(! (strlen(trim( $dados['pRedBCST'])) > 0)){
+                $this->errors[] = 'A porcentagem de redução da base de cáldulo de substituição tributária do icms para partilha do icms é obrigatório';
+            }
+        }
+        
+
+        if(in_array('vBCST', $apenas)){
+            if(! (strlen(trim( $dados['vBCST'])) > 0)){
+                $this->errors[] = 'O valor da base de cáldulo de substituição tributária do icms para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('pICMSST', $apenas)){
+            if(! (strlen(trim( $dados['pICMSST'])) > 0)){
+                $this->errors[] = 'A porcentagem do icms de substituição tributária  para partilha do icms é obrigatória';
+            }
+        }
+
+        if(in_array('vICMSST', $apenas)){
+            if(! (strlen(trim( $dados['vICMSST'])) > 0)){
+                $this->errors[] = 'O valor do icms de substituição tributária  para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('pBCOp', $apenas)){
+            if(! (strlen(trim( $dados['pBCOp'])) > 0)){
+                $this->errors[] = 'A porcentagem da base de calculo da operação para partilha do icms é obrigatório';
+            }
+        }
+
+        if(in_array('UFST', $apenas)){
+            if(! (strlen(trim( $dados['UFST'])) > 0)){
+                $this->errors[] = 'UF da subistituição tributária para partilha do icms é obrigatório';
+            }
+        }
+        
+        
+    }
 
 }

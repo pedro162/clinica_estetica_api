@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use \App\Fiscal\Nfe;
 use \App\Fiscal\VaidateNfe;
+use NFePHP\NFe\Tools;
 use NFePHP\NFe\Make;
+use NFePHP\Common\Certificate;
+use NFePHP\Common\Soap\SoapFake;
 use \Mpdf\Mpdf;
 use \App\Fiscal\FacadeNfe;
 use \App\Exceptions\FiscalException;
@@ -63,17 +66,25 @@ class NfeController extends Controller
     {
 
         try{
-        
+            
+
             $objFacade = new FacadeNfe();
             $validadorXml = new VaidateNfe();
             $nfe = new Nfe($objFacade);
+
+          //  $configJson = $nfe->config('Pedro','MA', '03810070000101','AAAAAAA', 'GPB0JBWLUR6HWFTVEAS6RJ69GPCROFPBBB8G', '000001', 'PL_009_V4', '4.00', date('Y-m-d H:i:s'), 2);
+            //$pfxcontent = $nfe->getCertificade(public_path('config/certificado.pfx'));
+           // $tools = new Tools($configJson, Certificate::readPfx($pfxcontent, 'associacao'));
+           // $tools->disableCertValidation(true); //tem que desabilitar
+            //$tools->model('55');
+
 
 
             //--------------------------------------------------------------------
 
             $dados              = [];
             $dados['versao']    = '4.00';
-            $dados['Id']        = 'NFe52210703810070000101550010000000101000000014';
+            $dados['Id']        = 'NFe52210903810070000101550010000000101000000011';
             $dados['pk_nItem']  = null;
 
             $apenas = ['versao', 'Id', 'pk_nItem'];
@@ -82,9 +93,69 @@ class NfeController extends Controller
                 //
             }
             $nfe->infNfe($dados);
+            
+            //---------------------------------------------------------------------------
+            $dados              = [];
+            $dados['cUF']       = '52'; //codigo numerico do estado
+            $dados['cNF']       = '1'; //numero aleatório da NF
+            $dados['natOp']     = 'Venda de Produto'; //natureza da operação
+            $dados['indPag']    = '1'; //0=Pagamento à vista; 1=Pagamento a prazo; 2=Outros
+            $dados['mod']       = '55'; //modelo da NFe 55 ou 65 essa última NFCe
+            $dados['serie']     = '1'; //serie da NFe
+            $dados['nNF']       = '10'; // numero da NFe 
+            $dados['dhEmi']     = date("Y-m-d\TH:i:sP");;
+            $dados['dhSaiEnt']  = date("Y-m-d\TH:i:sP"); // Nâo informar para nfce
+            $dados['tpNF']      = '1'; 
+            $dados['idDest']    = '1'; //1=Operação interna; 2=Operação interestadual; 3=Operação com exterior.
+            $dados['cMunFG']    = '5200258';
+            $dados['tpImp']     = '1';
+            $dados['tpEmis']    = '1';
+            $dados['cDV']       = '';
+            $dados['tpAmb']     = '2';  //1=Produção; 2=Homologação
+            $dados['finNFe']    = '1';  //1=NF-e normal; 2=NF-e complementar; 3=NF-e de ajuste; 4=Devolução/Retorno.
+            $dados['indFinal']  = '0';  //0=Normal; 1=Consumidor final;       
+            $dados['indPres']   = '9';  //0=Não se aplica (por exemplo, Nota Fiscal complementar ou de ajuste);
+                                        //1=Operação presencial;
+                                        //2=Operação não presencial, pela Internet;
+                                        //3=Operação não presencial, Teleatendimento;
+                                        //4=NFC-e em operação com entrega a domicílio;
+                                        //9=Operação não presencial, outros.
+            
+            $dados['procEmi']   = '0';  //0=Emissão de NF-e com aplicativo do contribuinte;
+                                        //1=Emissão de NF-e avulsa pelo Fisco;
+                                        //2=Emissão de NF-e avulsa, pelo contribuinte com seu certificado digital, através do site do Fisco;
+                                        //3=Emissão NF-e pelo contribuinte com aplicativo fornecido pelo Fisco.
+            $dados['dhCont']    = '';   //entrada em contingência AAAA-MM-DDThh:mm:ssTZD
+            $dados['xJust']     = '';   //Justificativa da entrada em contingência
+            $dados['verProc']   = '1,0'; //versão do aplicativo emissor
+            
+            $apenas =[
+                'cUF','cNF','natOp','mod', 'serie', 'nNF', 'dhEmi', 'dhSaiEnt', 'tpNF', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'procEmi', 'verProc'
+            ];
+            $errors = $validadorXml->IdentificacaoDaNota($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                //
+            }
+
+            $nfe->IdentificacaoDaNota($dados);
+
+            
+
+            //---------------------------------------
+            //Node referente a NFe referenciada
+            $dados              = [];
+            $dados['refNFe']       = '35150271780456000160550010000253101000253101'; //codigo numerico do estado
+            $apenas =[
+                'refNFe'
+            ];
+            $errors = $validadorXml->nfReferenciada($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                //
+            }
+
+            $nfe->nfReferenciada($dados);
+
             //--------------------------------------------------------------------
-
-
             $dados              = [];
             $dados['xNome']     = 'Pedro';
             $dados['xFant']     = 'Pedro Produções';
@@ -141,6 +212,7 @@ class NfeController extends Controller
             $dados['IM']                = null;
             $dados['email']             = 'lucy@gmail.com';
             $dados['CNPJ']              = '59635091000184';
+            $dados['CPF']               = null;
             $dados['CEP']               = null;
             $dados['idEstrangeiro']     = null;
             $apenas =[
@@ -176,52 +248,6 @@ class NfeController extends Controller
 
             $nfe->enderecoDestinatario($dados);
             
-            //---------------------------------------------------------------------------
-            $dados              = [];
-            $dados['cUF']       = '52'; //codigo numerico do estado
-            $dados['cNF']       = '1'; //numero aleatório da NF
-            $dados['natOp']     = 'Venda de Produto'; //natureza da operação
-            $dados['indPag']    = '1'; //0=Pagamento à vista; 1=Pagamento a prazo; 2=Outros
-            $dados['mod']       = '55'; //modelo da NFe 55 ou 65 essa última NFCe
-            $dados['serie']     = '1'; //serie da NFe
-            $dados['nNF']       = '10'; // numero da NFe 
-            $dados['dhEmi']     = date("Y-m-d\TH:i:sP");;
-            $dados['dhSaiEnt']  = date("Y-m-d\TH:i:sP"); // Nâo informar para nfce
-            $dados['tpNF']      = '1'; 
-            $dados['idDest']    = '1'; //1=Operação interna; 2=Operação interestadual; 3=Operação com exterior.
-            $dados['cMunFG']    = '5200258';
-            $dados['tpImp']     = '1';
-            $dados['tpEmis']    = '1';
-            $dados['cDV']       = '';
-            $dados['tpAmb']     = '2';  //1=Produção; 2=Homologação
-            $dados['finNFe']    = '1';  //1=NF-e normal; 2=NF-e complementar; 3=NF-e de ajuste; 4=Devolução/Retorno.
-            $dados['indFinal']  = '0';  //0=Normal; 1=Consumidor final;       
-            $dados['indPres']   = '9';  //0=Não se aplica (por exemplo, Nota Fiscal complementar ou de ajuste);
-                                        //1=Operação presencial;
-                                        //2=Operação não presencial, pela Internet;
-                                        //3=Operação não presencial, Teleatendimento;
-                                        //4=NFC-e em operação com entrega a domicílio;
-                                        //9=Operação não presencial, outros.
-            
-            $dados['procEmi']   = '0';  //0=Emissão de NF-e com aplicativo do contribuinte;
-                                        //1=Emissão de NF-e avulsa pelo Fisco;
-                                        //2=Emissão de NF-e avulsa, pelo contribuinte com seu certificado digital, através do site do Fisco;
-                                        //3=Emissão NF-e pelo contribuinte com aplicativo fornecido pelo Fisco.
-            $dados['dhCont']    = '';   //entrada em contingência AAAA-MM-DDThh:mm:ssTZD
-            $dados['xJust']     = '';   //Justificativa da entrada em contingência
-            $dados['verProc']   = '1,0'; //versão do aplicativo emissor
-            
-            $apenas =[
-                'cUF','cNF','natOp','mod', 'serie', 'nNF', 'dhEmi', 'dhSaiEnt', 'tpNF', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'procEmi', 'verProc'
-            ];
-            $errors = $validadorXml->IdentificacaoDaNota($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
-                //
-            }
-
-            $nfe->IdentificacaoDaNota($dados);
-
-
             //-----------------------------------------------------------------------------------------------
             
             $aP[] = array(
@@ -231,13 +257,14 @@ class NfeController extends Controller
                 'cEAN' => '97899072659522',
                 'xProd' => 'Chopp Pilsen - Barril 30 Lts',
                 'NCM' => '22030000',
+                'cBenef' => '',
                 'EXTIPI' => '',
                 'CFOP' => '5101',
                 'uCom' => 'Un',
                 'qCom' => '4',
                 'vUnCom' => '210.00',
                 'vProd' => '840.00',
-                'cEANTrib' => '',
+                'cEANTrib' => 'SEM GTIN',
                 'uTrib' => 'Lt',
                 'qTrib' => '120',
                 'vUnTrib' => '7.00',
@@ -249,7 +276,6 @@ class NfeController extends Controller
                 'xPed' => '16',
                 'nItemPed' => '1',
                 'nFCI' => '',
-                'cBenef'=>''
             );
             $apenas =[
                 'item',
@@ -258,6 +284,7 @@ class NfeController extends Controller
                 'cEAN',
                 'CFOP',
                 'NCM',
+                'cBenef',
                 'uCom',
                 'qCom',
                 'vUnCom',
@@ -269,7 +296,7 @@ class NfeController extends Controller
             ];
                
             foreach ($aP as $prod) {
-                $prod = (object) $prod;
+                $prod               = (object) $prod;
                 $dados              = [];
                 $dados['item']      = $prod->item; //item da NFe
                 $dados['cProd']     = $prod->cProd;
@@ -303,21 +330,216 @@ class NfeController extends Controller
                 }
 
                 $nfe->Produto($dados);
+
+                $dadosInfoAdd = [];
+                $dadosInfoAdd['item'] = $prod->item;
+                $dadosInfoAdd['infAdProd'] ='Informações adicionais ';
+                
+                $apenasInfoAdd = [];
+                $apenasInfoAdd[] = 'item';
+                $apenasInfoAdd[] = 'infAdProd';
+
+                $errors = $validadorXml->infoAdocionaisProduto($dadosInfoAdd, $apenasInfoAdd);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+
+                //--- informações adicionais para o produto
+                $nfe->infoAdocionaisProduto($dadosInfoAdd);
+
+                $dadosImposto = [];
+                $dadosImposto['item']     = $prod->item;
+                $dadosImposto['vTotTrib'] = $prod->qCom * $prod->vProd;
+                
+                $apenasImposto = [];
+                $apenasImposto[] = 'item';
+                $apenasImposto[] = 'vTotTrib';
+
+                $errors = $validadorXml->imposto($dadosImposto, $apenasImposto);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+
+                $nfe->imposto($dadosImposto);
+
+                $dadosIcms = [];
+                $dadosIcms['item']          = $prod->item;
+                $dadosIcms['orig']          = '';
+                $dadosIcms['CST']           = '';
+                $dadosIcms['modBC']         = '';
+                $dadosIcms['vBC']           = '';
+                $dadosIcms['pICMS']         = '';
+                $dadosIcms['vICMS']         = '';
+                $dadosIcms['pFCP']          = '';
+                $dadosIcms['vFCP']          = '';
+                $dadosIcms['vBCFCP']        = '';
+                $dadosIcms['modBCST']       = '';
+                $dadosIcms['pMVAST']        = '';
+                $dadosIcms['pRedBCST']      = '';
+                $dadosIcms['vBCST']         = '';
+                $dadosIcms['pICMSST']       = '';
+                $dadosIcms['vICMSST']       = '';
+                $dadosIcms['vBCFCPST']      = '';
+                $dadosIcms['pFCPST']        = '';
+                $dadosIcms['vFCPST']        = '';
+                $dadosIcms['vICMSDeson']    = '';
+                $dadosIcms['motDesICMS']    = '';
+                $dadosIcms['pRedBC']        = '';
+                $dadosIcms['vICMSOp']       = '';
+                $dadosIcms['pDif']          = '';
+                $dadosIcms['vICMSDif']      = '';
+                $dadosIcms['vBCSTRet']      = '';
+                $dadosIcms['pST']           = '';
+                $dadosIcms['vICMSSTRet']    = '';
+                $dadosIcms['vBCFCPSTRet']   = '';
+                $dadosIcms['pFCPSTRet']     = '';
+                $dadosIcms['vFCPSTRet']     = '';
+                $dadosIcms['pRedBCEfet']    = '';
+                $dadosIcms['vBCEfet']       = '';
+                $dadosIcms['pICMSEfet']     = '';
+                $dadosIcms['vICMSEfet']     = '';
+                $dadosIcms['vICMSSubstituto'] = '';
+                
+                $apenasIcms = [];
+                $apenasIcms[] = 'item';
+
+
+                $errors = $validadorXml->icms($dadosIcms, $apenasIcms);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+                $nfe->icms($dadosIcms);
+
+                $dadosPartilha = [];
+                $dadosPartilha['item']      = $prod->item;
+                $dadosPartilha['orig']      = '0';
+                $dadosPartilha['CST']       = '90';
+                $dadosPartilha['modBC']     = 0;
+                $dadosPartilha['vBC']       = 1000.00;
+                $dadosPartilha['pRedBC']    = null;
+                $dadosPartilha['pICMS']     = 18.00;
+                $dadosPartilha['vICMS']     = 180.00;
+                $dadosPartilha['modBCST']   = 1000.00;
+                $dadosPartilha['pMVAST']    = 40.00;
+                $dadosPartilha['pRedBCST']  = null;
+                $dadosPartilha['vBCST']     = 1400.00;
+                $dadosPartilha['pICMSST']   = 10.00;
+                $dadosPartilha['vICMSST']   = 140.00;
+                $dadosPartilha['pBCOp']     = 10.00;
+                $dadosPartilha['UFST']      = 'MA';
+                
+                $apenasPartilha = [];
+                $apenasPartilha[] = 'item';
+
+                $errors = $validadorXml->imcsPartilha($dadosPartilha, $apenasPartilha);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+                $nfe->imcsPartilha($dadosPartilha);
+                //dd($dados);
+                
             }
             
+            //---------------------NOTA: Ajustado para NT 2018.005 Node indicativo de local de retirada diferente do endereço do emitente 
+            $dados = [];
+            $dados['CPF']       = null; // OU cpf ou cnpj
+            $dados['CNPJ']      = '03810070000101';// OU cpf ou cnpj
+            $dados['IE']        = '03810070000101';
+            $dados['xNome']     = 'Pedro';
+            $dados['xLgr']      = 'Logradouro de teste';
+            $dados['nro']       = '12B';
+            $dados['xCpl']      = '000';
+            $dados['xBairro']   = 'Bairro de teste';
+            $dados['cMun']      = '11300';
+            $dados['xMun']      = 'Munípio de teste';
+            $dados['UF']        = 'MA';
+            $dados['CEP']       = '65061220';
+            $dados['cPais']     = '1058';
+            $dados['xPais']     = 'BRAZIL';
+            $dados['fone']      = '98984256645';
+            $dados['email']     = 'teste@gmail.com';
+
+            $apenas = [];
+            $apenas[] = 'CPF';
+            $apenas[] = 'CNPJ';
+            $apenas[] = 'IE';
+            $apenas[] = 'xNome';
+            $apenas[] = 'xLgr';
+            $apenas[] = 'nro';
+            $apenas[] = 'xCpl';
+            $apenas[] = 'xBairro';
+            $apenas[] = 'cMun';
+            $apenas[] = 'xMun';
+            $apenas[] = 'UF';
+            $apenas[] = 'CEP';
+            $apenas[] = 'cPais';
+            $apenas[] = 'xPais';
+            $apenas[] = 'fone';
+            $apenas[] = 'email';
+
+            $errors = $validadorXml->localEntregaRetirada($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                   //
+            }
+            $nfe->localRetirada($dados);
+
+            //---------------------NOTA: NOTA: Ajustado para NT 2018.005 Node indicativo de local de entrega diferente do endereço do destinatário 
+            $dados = [];
+            $dados['CPF']       = null; // OU cpf ou cnpj
+            $dados['CNPJ']      = '03810070000101';// OU cpf ou cnpj
+            $dados['IE']        = '03810070000101';
+            $dados['xNome']     = 'Pedro';
+            $dados['xLgr']      = 'Logradouro de teste';
+            $dados['nro']       = '12B';
+            $dados['xCpl']      = '000';
+            $dados['xBairro']   = 'Bairro de teste';
+            $dados['cMun']      = '11300';
+            $dados['xMun']      = 'Munípio de teste';
+            $dados['UF']        = 'MA';
+            $dados['CEP']       = '65061220';
+            $dados['cPais']     = '1058';
+            $dados['xPais']     = 'BRAZIL';
+            $dados['fone']      = '98984256645';
+            $dados['email']     = 'teste@gmail.com';
+
+            $apenas = [];
+            $apenas[] = 'CPF';
+            $apenas[] = 'CNPJ';
+            $apenas[] = 'IE';
+            $apenas[] = 'xNome';
+            $apenas[] = 'xLgr';
+            $apenas[] = 'nro';
+            $apenas[] = 'xCpl';
+            $apenas[] = 'xBairro';
+            $apenas[] = 'cMun';
+            $apenas[] = 'xMun';
+            $apenas[] = 'UF';
+            $apenas[] = 'CEP';
+            $apenas[] = 'cPais';
+            $apenas[] = 'xPais';
+            $apenas[] = 'fone';
+            $apenas[] = 'email';
+
+            $errors = $validadorXml->localEntregaRetirada($dados, $apenas);
+            if(is_array($errors) && (count($errors)> 0)){
+                   //
+            }
+            $nfe->localEntrega($dados);
             
 
             //------------------------------------------------------------------------------------------------
 
             //Este método retorna o XML em uma string, mesmo que existam erros.
             $xml = $objFacade->getXML();
+            //$xml = $nfe->getXML();
 
-            //echo $xml;
-            $this->getPdfXml($xml);
+            echo $xml;
+            //$this->getPdfXml($xml);
             //dd($objFacade->getErrors());
         }catch(\Exception $ex){
             //dd($ex);
-            dd($objFacade->getErrors());
+            dd($ex->getMessage());
+            dd($objFacade->getErrors()); // Erros no xml
         }
 
     }
