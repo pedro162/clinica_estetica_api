@@ -101,8 +101,16 @@
 	</div>
 </div>
 <script type="text/javascript">
+	@php 
+			
+		if(! isset($modifyUrlTitle)){
+
+			@endphp
+				Utilitarios.modifyUrlWithoutReload('/ncm/head', 'Produtos')
+			@php
+		}
+	@endphp
 	
-	Utilitarios.modifyUrlWithoutReload('/ncm/head', 'Produtos')
 	let idModalOptions = null;
 
 	//--------

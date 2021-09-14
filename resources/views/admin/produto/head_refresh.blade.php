@@ -22,13 +22,13 @@
 						[
 							'label'     =>'Cód',
 							'value'     =>'',
-							'name'      =>'codigo_produto',
+							'name'      =>'id',
 							'class'     =>'',
 							'onChange'  =>'',
 							'onClick'   =>'',
 							'type'      =>'text',
 							'options'   =>[],
-							'classContainer' =>'col-md-6 col-sm-12'
+							'classContainer' =>'my-1 col-md-6 col-sm-12'
 
 						],
 						[
@@ -40,7 +40,7 @@
 							'onClick'   =>'',
 							'type'      =>'text',
 							'options'   =>[],
-							'classContainer' =>'col-md-6 col-sm-12'
+							'classContainer' =>'my-1 col-md-6 col-sm-12'
 
 						],
 						[
@@ -52,7 +52,7 @@
 							'onClick'   =>'',
 							'type'      =>'text',
 							'options'   =>[],
-							'classContainer' =>'col-md-6 col-sm-12'
+							'classContainer' =>'my-1 col-md-6 col-sm-12'
 
 						],
 						[
@@ -69,7 +69,7 @@
 								'nome_produto-ASC'=>'Descrição',
 								'nome_produto-DESC'=>'Descrição',
 							],
-							'classContainer' =>'col-md-6 col-sm-12'
+							'classContainer' =>'my-1 col-md-6 col-sm-12'
 
 						],
 						[
@@ -81,7 +81,7 @@
 							'onClick'   =>'',
 							'type'      =>'number',
 							'options'   =>[],
-							'classContainer' =>'col-md-6 col-sm-12'
+							'classContainer' =>'my-1 col-md-6 col-sm-12'
 
 						],
 
@@ -199,8 +199,16 @@
 		</div>
 	</div>
 <script type="text/javascript">
+	@php 
+			
+		if(! isset($modifyUrlTitle)){
+
+			@endphp
+				Utilitarios.modifyUrlWithoutReload('/produto/head', 'Produtos')
+			@php
+		}
+	@endphp
 	
-	Utilitarios.modifyUrlWithoutReload('/produto/head', 'Produtos')
 	let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){

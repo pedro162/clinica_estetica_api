@@ -135,8 +135,16 @@
 			
 		}
 
+		@php 
+			
+			if(! isset($modifyUrlTitle)){
 
-		Utilitarios.modifyUrlWithoutReload('/icms/head', 'ICMS')
+				@endphp
+					Utilitarios.modifyUrlWithoutReload('/icms/head', 'ICMS')
+				@php
+			}
+		@endphp
+		
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){

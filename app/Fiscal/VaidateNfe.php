@@ -1168,7 +1168,108 @@ class VaidateNfe
             }
         }
         
+        return $this->errors;
         
     }
 
+
+    public function autorizaPessoaAcessXml(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('CPF', $apenas)){
+            if(! (strlen(trim( $dados['CPF'])) > 0)){
+                $this->errors[] = 'O CPF da pessoa autorizada a ter acesso ao xml obrigatório';
+            }
+        }
+
+        if(in_array('CNPJ', $apenas)){
+            if(! (strlen(trim( $dados['CNPJ'])) > 0)){
+                $this->errors[] = 'O CNPJ da pessoa autorizada a ter acesso ao xml obrigatório';
+            }
+        }
+
+        return $this->errors;
+    }
+
+    public function nomeclaturaAdicAtuaneiro(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('item', $apenas)){
+            if(! (strlen(trim( $dados['item'])) > 0)){
+                $this->errors[] = 'O item para adiconal aduaneiro obrigatório';
+            }
+        }
+
+        if(in_array('NVE', $apenas)){
+            if(! (strlen(trim( $dados['NVE'])) > 0)){
+                $this->errors[] = 'O NVE para adicional aduaneiro obrigatório';
+            }
+        }
+
+        return $this->errors;
+    }
+
+    public function cest(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('item', $apenas)){
+            if(! (strlen(trim( $dados['item'])) > 0)){
+                $this->errors[] = 'O item para o CEST é obrigatório';
+            }
+        }
+
+        if(in_array('CEST', $apenas)){
+            if(! (strlen(trim( $dados['CEST'])) > 0)){
+                $this->errors[] = 'O CEST é obrigatório';
+            }
+        }
+
+        if(in_array('indEscala', $apenas)){
+            if(! (strlen(trim( $dados['indEscala'])) > 0)){
+                $this->errors[] = 'O Indicador de escala é obrigatório';
+            }
+        }
+
+        if(in_array('CNPJFab', $apenas)){
+            if(! (strlen(trim( $dados['CNPJFab'])) > 0)){
+                $this->errors[] = 'O CNPJ do fabricante é obrigatório';
+            }
+        }
+
+        return $this->errors;
+    }
+
+    public function recopi(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('item', $apenas)){
+            if(! (strlen(trim( $dados['item'])) > 0)){
+                $this->errors[] = 'O item para o CEST é obrigatório';
+            }
+        }
+
+        if(in_array('nRECOPI', $apenas)){
+            if(! (strlen(trim( $dados['nRECOPI'])) > 0)){
+                $this->errors[] = 'O número do RECOPI é obrigatório';
+            }
+        }
+
+        return $this->errors;
+    }
 }

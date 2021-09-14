@@ -27,7 +27,7 @@
 						'onClick'   =>'',
 						'type'      =>'text',
 						'options'   =>[],
-						'classContainer' =>'col-md-6 col-sm-12'
+						'classContainer' =>'my-1 col-md-6 col-sm-12'
 
 					],
 					[
@@ -39,7 +39,7 @@
 						'onClick'   =>'',
 						'type'      =>'text',
 						'options'   =>[],
-						'classContainer' =>'col-md-6 col-sm-12'
+						'classContainer' =>'my-1 col-md-6 col-sm-12'
 
 					],
 					[
@@ -56,7 +56,7 @@
 							'nmEStado-ASC'=>'Descrição',
 							'nmEStado-DESC'=>'Descrição',
 						],
-						'classContainer' =>'col-md-6 col-sm-12'
+						'classContainer' =>'my-1 col-md-6 col-sm-12'
 
 					],
 					[
@@ -68,7 +68,7 @@
 						'onClick'   =>'',
 						'type'      =>'number',
 						'options'   =>[],
-						'classContainer' =>'col-md-6 col-sm-12'
+						'classContainer' =>'my-1 col-md-6 col-sm-12'
 
 					],
 
@@ -188,7 +188,17 @@
 	</div>
 </div>
 	<script type="text/javascript">
-		Utilitarios.modifyUrlWithoutReload('/marca/head', 'Marcas')
+
+		@php 
+			
+			if(! isset($modifyUrlTitle)){
+
+				@endphp
+					Utilitarios.modifyUrlWithoutReload('/marca/head', 'Marcas')
+				@php
+			}
+		@endphp
+
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){

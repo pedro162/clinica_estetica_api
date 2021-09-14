@@ -146,25 +146,31 @@
 		</div>
 
 		<div class="row">
-			<div class="custom-control custom-checkbox col-md-4 col-sm-12">
-				
-				<input type="checkbox" name="sale_without_stok" class="custom-control-input" id="sale_without_stok"/>
-				<label class="custom-control-label" for="sale_without_stok">Venda sem estoque</label>
-			</div>
+				<div class="form-group col-md-4 col-sm-12">
+					<label class="label">Venda sem estoque</label>
+					<select type="text" name="sale_without_stok" id="sale_without_stok" class="form-control form-control-sm">						
+						<option value="no">No</option>
+						<option value="yes">Yes</option>						
+					</select>
+				</div>
 
-			<div class="custom-control custom-checkbox col-md-4 col-sm-12">
-				
-				<input type="checkbox" name="blokade_stok" class="custom-control-input" id="blokade_stok"/>
-				<label class="custom-control-label"  for="blokade_stok">Bloqueio entrada de estoque</label>
-			</div>
+				<div class="form-group col-md-4 col-sm-12">
+					<label class="label">Entrada bloqueada</label>
+					<select type="text" name="blokade_stok" id="blokade_stok" class="form-control form-control-sm">						
+						<option value="no">No</option>
+						<option value="yes">Yes</option>						
+					</select>
+				</div>
 
-			<div class="custom-control custom-checkbox col-md-4 col-sm-12">
-				
-				<input type="checkbox" name="fracioned_sale" class="custom-control-input" id="fracioned_sale"/>
-				<label class="custom-control-label" for="fracioned_sale">Venda fracionada</label>
-			</div>
+				<div class="form-group col-md-4 col-sm-12">
+					<label class="label">Venda fracionada</label>
+					<select type="text" name="fracioned_sale" id="fracioned_sale" class="form-control form-control-sm">						
+						<option value="no">No</option>
+						<option value="yes">Yes</option>						
+					</select>
+				</div>
 
-		</div>
+			</div>
 
 			<div class="row">
 

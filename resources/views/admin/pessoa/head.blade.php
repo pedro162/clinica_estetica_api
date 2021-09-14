@@ -98,8 +98,16 @@
 			
 		}
 
+		@php 
+			
+			if(! isset($modifyUrlTitle)){
 
-		Utilitarios.modifyUrlWithoutReload('/pessoa/head', 'Pessoas')
+				@endphp
+					Utilitarios.modifyUrlWithoutReload('/pessoa/head', 'Pessoas')
+				@php
+			}
+		@endphp
+		
 
 	let idModalOptions = null;
 		/**

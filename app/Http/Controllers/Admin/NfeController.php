@@ -71,6 +71,8 @@ class NfeController extends Controller
             $objFacade = new FacadeNfe();
             $validadorXml = new VaidateNfe();
             $nfe = new Nfe($objFacade);
+            
+            $autorizarAcessoPessoaXml = true;
 
           //  $configJson = $nfe->config('Pedro','MA', '03810070000101','AAAAAAA', 'GPB0JBWLUR6HWFTVEAS6RJ69GPCROFPBBB8G', '000001', 'PL_009_V4', '4.00', date('Y-m-d H:i:s'), 2);
             //$pfxcontent = $nfe->getCertificade(public_path('config/certificado.pfx'));
@@ -331,6 +333,7 @@ class NfeController extends Controller
 
                 $nfe->Produto($dados);
 
+                //--- informações adicionais para o produto
                 $dadosInfoAdd = [];
                 $dadosInfoAdd['item'] = $prod->item;
                 $dadosInfoAdd['infAdProd'] ='Informações adicionais ';
@@ -344,8 +347,58 @@ class NfeController extends Controller
                     //
                 }
 
-                //--- informações adicionais para o produto
+                
                 $nfe->infoAdocionaisProduto($dadosInfoAdd);
+
+                //--- Nomeclatura adicional aduaneiro
+                $dadosAdicionaAduaneiro = [];
+                $dadosAdicionaAduaneiro['item']          = $prod->item;
+                $dadosAdicionaAduaneiro['NVE']           = 'AA0001';
+
+                $apenasAdicionaAduaneiro = [];
+                $apenasAdicionaAduaneiro[] = 'item';
+                $apenasAdicionaAduaneiro[] = 'infAdProd';
+
+                $errors = $validadorXml->nomeclaturaAdicAtuaneiro($dadosAdicionaAduaneiro, $apenasAdicionaAduaneiro);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+                $nfe->nomeclaturaAdicAtuaneiro($dadosAdicionaAduaneiro);
+               
+                //--- Node de detalhamento do Especificador da Substituição Tributária do item da NFe
+                $dadosCest = [];
+                $dadosCest['item']          = $prod->item;
+                $dadosCest['CEST']          = '0200100';
+                $dadosCest['indEscala']     = 'N';
+                $dadosCest['CNPJFab']       = '12345678901234';
+
+                $apenasCest = [];
+                $apenasCest[] = 'item';
+                $apenasCest[] = 'CEST';
+                $apenasCest[] = 'indEscala';
+                $apenasCest[] = 'CNPJFab';
+
+                $errors = $validadorXml->cest($dadosCest, $apenasCest);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+                $nfe->cest($dadosCest);
+
+                //----  Node com o número do RECOPI-------------------------------------
+                $dadosRecopi = [];
+                $dadosRecopi['item']          = $prod->item;
+                $dadosRecopi['nRECOPI']          = '0200100';
+
+                $apenasRecopi = [];
+                $apenasRecopi[] = 'item';
+                $apenasRecopi[] = 'nRECOPI';
+
+                $errors = $validadorXml->recopi($dadosRecopi, $apenasRecopi);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+                $nfe->recopi($dadosRecopi);
+                //------------------------------------
 
                 $dadosImposto = [];
                 $dadosImposto['item']     = $prod->item;
@@ -528,7 +581,22 @@ class NfeController extends Controller
             
 
             //------------------------------------------------------------------------------------------------
+            if($autorizarAcessoPessoaXml){
+                $dados = [];
+                $dados['CPF']       = null; // OU cpf ou cnpj
+                $dados['CNPJ']      = '03810070000101';// OU cpf ou cnpj
 
+                $apenas = [];
+                $apenas[] = 'CPF';
+                $apenas[] = 'CNPJ';
+
+                $errors = $validadorXml->autorizaPessoaAcessXml($dados, $apenas);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+
+                $nfe->autorizaPessoaAcessXml($dados);
+            }
             //Este método retorna o XML em uma string, mesmo que existam erros.
             $xml = $objFacade->getXML();
             //$xml = $nfe->getXML();

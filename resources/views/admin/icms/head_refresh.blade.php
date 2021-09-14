@@ -101,7 +101,17 @@
 </div>
 <script type="text/javascript">
 	
-	Utilitarios.modifyUrlWithoutReload('/icms/head', 'Ipi')
+	@php 
+			
+		if(! isset($modifyUrlTitle)){
+
+			@endphp
+				Utilitarios.modifyUrlWithoutReload('/icms/head', 'Ipi')
+			@php
+		}
+	@endphp
+	
+	
 	let idModalOptions = null;
 	
 	$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){

@@ -45,6 +45,7 @@ class ProdutoController extends Controller
 
             $parse = [
                 'marca_produto'=>'marca.name',
+                'codigo_produto'=>'produtos.id',
                 'nome_produto'=>'produtos.name'
 
             ];
@@ -707,12 +708,16 @@ class ProdutoController extends Controller
     {
         try{
 
-            $params = $request->all();
+            $consulta = $request->all();
+            //dd($consulta);
 
-            
-            \DB::beginTransaction();
+            $parse = [
+                'marca_produto'=>'marca.name',
+                'codigo_produto'=>'produtos.id',
+                'nome_produto'=>'produtos.name'
 
-            //$registro = \App\Produto::where('active', '=', 'yes')->get();
+            ];
+
             $registro = \DB::table('produtos')->join('categoria_produto', function($join){
                 
                 $join->on('produtos.id', '=', 'categoria_produto.produto_id');
@@ -725,22 +730,113 @@ class ProdutoController extends Controller
 
                 $join->on('marcas.id', '=' ,'produtos.marca_id');
 
-            })->select('produtos.*', 'categorias.name as categoria', 'marcas.name as marca')
-                ->where('categoria_produto.active', '=', 'yes')
-                ->where('produtos.active', '=', 'yes')
-                ->where('categoria_produto.tipo', '=', 'principal')
-                ->where('produtos.produto_final', '=', 'yes')
-                ->where('produtos.revenda', '=', 'yes');
-           
-            if(isset($params['nmProduto']) && (strlen(trim($params['nmProduto'])) > 0)  ){
-                $registro->where('produtos.name', 'like', '%'.trim($params['nmProduto']).'%');
-            }
+            });
 
-            $data = $registro->get();
+            $campos =  null;
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('produtos.id', $val);
+                            }
+                            break;
+                        case 'nome_produto':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                
+                                $registro->where('produtos.name', 'like' , '%'.$val.'%');
+                            }
+                            break;
+                            case 'marca_produto':
+                                if(is_string($val)){
+                                    
+                                    if($val[0] == ','){
+                                        $val = substr($val, 1);
+                                    } 
+                                    if($val[strlen($val) - 1] == ','){
+                                        $val = substr($val, 0, -1);
+                                    }
+                                    
+                                    $registro->where('marcas.name', 'like' , '%'.$val.'%');
+                                }
+                                break;
+                            case 'limite':
+                                $val = (int) $val;
+                                if(is_integer($val) && $val > 0){
+                                        
+                                    $registro->limit($val);
+                                }
+                                break;
+                            case 'ordem':
+
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $val = explode(',', $val);
+                                for($i= 0; !($i == count($val)); $i++) {
+                                    $atual = explode('-', $val[$i]);
+                                    if(array_key_exists(trim($atual[0]), $parse)){
+
+                                        $parsed = $parse[trim($atual[0])];
+                                        
+                                        if($parsed){
+                                           
+                                            $registro->orderBy($parsed,$atual[1]);
+                                        }
+                                    }
+                                    
+                                    
+                                }
+
+                                break;
+
+                        case'campos':
+                                if(is_array($val) && count($val) > 0){
+                                    $campos = $this->montaCamposConsulta($registro, $val);
+                                    
+                                }
+                            break;
+
+                    }
+                }
+            }
+            if($campos){
+                $registro->select($campos);
+
+            }else{
+                $registro->select('produtos.*', 'categorias.name as categoria', 'marcas.name as marca');
+
+            }
+            //$registro = \App\Produto::where('active', '=', 'yes')->get();
+            $registro = $registro->where('categoria_produto.active', '=', 'yes')
+                ->where('produtos.active', '=', 'yes')
+                ->where('categoria_produto.tipo', '=', 'principal')->get();
 
             \DB::commit();
 
-            return response()->json(['data'=>$data, 'class'=>'success'], 201);
+            return response()->json(['data'=>$registro, 'class'=>'success'], 201);
 
         }catch(ProdutoException $e){
             \DB::rollback();

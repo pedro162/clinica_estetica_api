@@ -66,6 +66,16 @@
 
 	<script type="text/javascript">
 
+		@php 
+			
+			if(! isset($modifyUrlTitle)){
+
+				@endphp
+					Utilitarios.modifyUrlWithoutReload('/pessoa/head', 'Pessoas')
+				@php
+			}
+		@endphp
+
 		let idModalOptions = null;
 		/**
 	*	CHAMA O MODAL DE OPÇÕES DE PESSOA

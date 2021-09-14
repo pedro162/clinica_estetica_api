@@ -139,8 +139,16 @@
 			
 		}
 
+		@php 
+			
+			if(! isset($modifyUrlTitle)){
 
-		Utilitarios.modifyUrlWithoutReload('/produto/head', 'Produtos')
+				@endphp
+					Utilitarios.modifyUrlWithoutReload('/produto/head', 'Produtos')
+				@php
+			}
+		@endphp
+		
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){

@@ -134,8 +134,10 @@
 
 			let arrLinks = [
 				//['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar'],
-				['Ediar', '/produto/show/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar(this);'],
+				['Ediar', '/produto/edit/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_editar{{$randId}}', id , 'editar(this);'],
 				['Tributar', '/ncm/tributacao/tributar/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_tributar{{$randId}}', id, 'tributar{{$randId}}(this);'],
+				['Embalagem', '/ncm/tributacao/tributar/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_embalagem{{$randId}}', id, 'tributar{{$randId}}(this);'],
+				['Estoque', '/ncm/tributacao/tributar/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_estoque{{$randId}}', id, 'tributar{{$randId}}(this);'],
 				['Excluir', '/produto/info/'+id+'', 'btn btn-lg btn-outline-primary', 'id_produto_deletar{{$randId}}', id, 'deletar(this);'],
 				
 

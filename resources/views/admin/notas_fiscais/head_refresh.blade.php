@@ -105,8 +105,16 @@
 	</div>
 </div>
 <script type="text/javascript">
+	@php 
+			
+		if(! isset($modifyUrlTitle)){
+
+			@endphp
+				Utilitarios.modifyUrlWithoutReload('/produto/head', 'Produtos')
+			@php
+		}
+	@endphp
 	
-	Utilitarios.modifyUrlWithoutReload('/produto/head', 'Produtos')
 	let idModalOptions = null;
 	
 	$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){

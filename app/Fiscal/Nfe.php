@@ -254,6 +254,47 @@ class Nfe
         $this->objFacadeNfe->taginfAdProd($std);
     } 
 
+
+    /**
+     * Node com a Nomenclatura de Valor Aduaneiro e Estatística do item da NFe
+     */
+    public function nomeclaturaAdicAtuaneiro(Array $dados)
+    {
+        $std = new \stdClass();
+        $std->item  = $dados['item']; //item da NFe
+        $std->NVE   = $dados['NVE'];
+
+        $this->objFacadeNfe->tagNVE($std);
+    } 
+
+    /**
+     * Node de detalhamento do Especificador da Substituição Tributária do item da NFe
+     */
+    public function cest(Array $dados)
+    {
+        $std = new \stdClass();
+
+        $std->item      = $dados['item']; //item da NFe
+        $std->CEST      = $dados['CEST'];
+        $std->indEscala = $dados['indEscala']; //incluido no layout 4.00
+        $std->CNPJFab   = $dados['CNPJFab']; //incluido no layout 4.00
+
+        $this->objFacadeNfe->tagCEST($std);
+    } 
+
+     /**
+     * Node com o número do RECOPI
+     */
+    public function recopi(Array $dados)
+    {
+        $std = new \stdClass();
+
+        $std->item      = $dados['item']; //item da NFe
+        $std->nRECOPI   = $dados['nRECOPI'];
+        $this->objFacadeNfe->tagRECOPI($std);
+    }
+
+
     /** 
      * NOTA: Ajustado para NT 2018.005 Node indicativo de local de retirada diferente do endereço do emitente
      */
@@ -398,6 +439,22 @@ class Nfe
         $std->UFST          = $dados['UFST'];
 
         $this->objFacadeNfe->tagICMSPart($std);
+    }
+
+    /**
+     * Node de registro de pessoas autorizadas a acessar a NFe
+     * Indicar um CNPJ ou CPF
+     */
+    public function autorizaPessoaAcessXml(Array $dados)
+    {
+        $std = new \stdClass();
+        if(isset($dados['CPF']) && $dados['CPF']){
+            $std->CPF       = $dados['CPF'];//indicar apenas um CNPJ ou CPF
+        }else{
+            $std->CNPJ      = $dados['CNPJ']; //indicar apenas um CNPJ ou CPF
+        }
+     
+        $this->objFacadeNfe->tagautXML($std);
     }
 
     public function IcmsSn(Array $dados)

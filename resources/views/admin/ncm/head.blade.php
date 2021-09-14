@@ -135,8 +135,16 @@
 			
 		}
 
+		@php 
+			
+			if(! isset($modifyUrlTitle)){
 
-		Utilitarios.modifyUrlWithoutReload('/ncm/head', 'Ncm')
+				@endphp
+					Utilitarios.modifyUrlWithoutReload('/ncm/head', 'Ncm')
+				@php
+			}
+		@endphp
+		
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){

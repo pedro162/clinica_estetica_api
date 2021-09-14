@@ -135,8 +135,16 @@
 			
 		}
 
+		@php 
+			
+			if(! isset($modifyUrlTitle)){
 
-		Utilitarios.modifyUrlWithoutReload('/ipi/head', 'IPI')
+				@endphp
+					Utilitarios.modifyUrlWithoutReload('/ipi/head', 'IPI')
+				@php
+			}
+		@endphp
+		
 		let idModalOptions = null;
 		
 		$('html body').delegate('#form_filtro{{$randId}}', 'click', function(ev){
