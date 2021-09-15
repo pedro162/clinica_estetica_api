@@ -30,7 +30,7 @@
             @include('layouts._admin._nav')
         </header>
         @endif
-        <main>
+        <main class="col-md-12 col-sm-12">
             @if(isset($errors) && (count($errors) > 0))
             <div class="container-fluid">
                 <div class="row">

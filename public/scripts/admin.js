@@ -117,7 +117,7 @@ $(document).ready(function(ev){
 				let url = $(this).attr('href')
 				let objRender = $('html').find('#container-principal')
 				Utilitarios.assistentAjax('GET',url, 'HTML', objRender)
-				modifyUrlWithoutReload(url)
+				Utilitarios.modifyUrlWithoutReload(url)
 			}
 
 		}else{

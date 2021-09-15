@@ -23,7 +23,9 @@ class PaisController extends Controller
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'name_Pais'=>'pais.dsIpi'
+                'name_Pais'=>'pais.dsIpi',
+                'nmPais'=>'pais.nmPais',
+                'id'=>'pais.id',
 
             ];
 
@@ -61,7 +63,7 @@ class PaisController extends Controller
                                 $registro->whereIn('pais.tpCalculo', $val);
                             }
                         break;
-                        case 'name_ipi':
+                        case 'nmPais':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -71,7 +73,7 @@ class PaisController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
                                 
-                                $registro->where('pais.dsIpi', 'like' , '%'.$val.'%');
+                                $registro->where('pais.nmPais', 'like' , '%'.$val.'%');
                             }
                             break;
                         case 'limite':

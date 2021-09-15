@@ -19,7 +19,7 @@
         <header>
             @include('layouts._site._nav')
         </header>
-        <main>
+        <main class="col-md-12 col-sm-12">
             @if(Session::has('mensagem'))
             <div class="container">
                 <div class="row">

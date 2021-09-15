@@ -9,29 +9,29 @@
  @endphp
 <div class="row">
 	<div class="col">
-		<table style="width: 100%;" id="{{$id}}" class=" data-table table table-sm table-responsive table-hover display">
+		<table style="width: 100%;" id="@php echo $id; @endphp" class=" data-table table table-sm table-responsive table-hover display">
 			@csrf
 			<thead style="width: 100%;">
                
                     <tr
-                        style="{{ ($getColunas()['style_row'] ?? '') }}"
+                        style="@php echo ($getColunas()['style_row'] ?? ''); @endphp"
                              
-                        class="{{($getColunas()['style_row'] ?? '')}}"
+                        class="@php echo ($getColunas()['style_row'] ?? ''); @endphp"
 
-                        onClick="{{$getColunas()['onClick'] ? 'return '.$getColunas()['onClick'] : '' }}"
+                        onClick="@php echo $getColunas()['onClick'] ? 'return '.$getColunas()['onClick'] : ''; @endphp"
                         
                     >
                         @if($selectorsLine == true)
-                            <th style="" ><input class="custom-control" style="curosr:pointer !important;" type="checkbox" name="" onchange="+Utilitarios.selecionarMultiplosTable('{{$id}}')"></th>
+                            <th style="" ><input class="custom-control" style="curosr:pointer !important;" type="checkbox" name="" onchange="+Utilitarios.selecionarMultiplosTable('@php echo $id; @endphp')"></th>
                         @endif
                      @foreach($tituloColunas as $key=>$val)
                         <th
                         
-                             style="{{ ($val['style_cel'] ?? '') }}"
+                             style="@php echo ($val['style_cel'] ?? ''); @endphp"
                              
-                            class="{{($val['class_cel'] ?? '')}}"
+                            class="@php echo ($val['class_cel'] ?? ''); @endphp"
                         >
-                            {{$val['nmColuna']}}
+                            @php echo $val['nmColuna']; @endphp
                         </th>
                         @endforeach
                     </tr>
@@ -78,9 +78,9 @@
                     @if(is_array($dados) && count($dados) > 0)
                         
                         <tr 
-                            class="{{$atualRow['class_row'] ?? ''}}"
+                            class="@php echo $atualRow['class_row'] ?? ''; @endphp"
 
-                            style=" {{$atualRow['style_row'] ?? ''}}"
+                            style=" @php echo $atualRow['style_row'] ?? ''; @endphp"
 
                             
                         >
@@ -92,17 +92,17 @@
                             @for($i = 0; !($i == count($dados)); $i++)
                                 <td 
                                         
-                                    class=" {$dados[$i]['class'] ?? ''}}"
-                                    style=" {{$dados[$i]['style_cel'] ?? ''}}"
+                                    class=" @php echo $dados[$i]['class'] ?? ''; @endphp"
+                                    style=" @php echo $dados[$i]['style_cel'] ?? ''@endphp"
                                     onClick="showOptions{{$randId}}(this, {{$acoes}});"
 
                                 >
-                                    {{$dados[$i]['val'] ?? ''}}
+                                    @php echo $dados[$i]['val'] ?? ''; @endphp
                                 </td>
 
                             @endfor
 
-                            <input type="hidden" class="id" value="{{$atualRow['id'] ?? ''}}">
+                            <input type="hidden" class="id" value="@php echo $atualRow['id'] ?? ''; @endphp">
                         </tr>
                         
                     @endif
@@ -114,10 +114,10 @@
 </div>
 
 <script type="text/javascript">
-	Utilitarios.useDataTable($('#{{$id}}'))
+	Utilitarios.useDataTable($('#@php echo $id;@endphp'))
 
 	var idModalOptions{{$randId}} = null;
-	var callBack{{$randId}} = '{{$getCallback()}}'
+	var callBack{{$randId}} = '@php echo $getCallback();@endphp'
 	//alert(callBack{{$randId}})
 
 
