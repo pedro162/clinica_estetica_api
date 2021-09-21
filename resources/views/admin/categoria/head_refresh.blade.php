@@ -8,7 +8,7 @@
 			<nav aria-label="breadcrumb" class="my-2">
 				<ol class="breadcrumb">
 					<li class="breadcrumb-item active"><a href="{{route('marca.index')}}">Inicio</a></li>
-					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de marcas</a></li>
+					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de categorias</a></li>
 				</ol>
 			</nav>
 		</div>
