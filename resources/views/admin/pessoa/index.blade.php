@@ -1,57 +1,160 @@
+
 @php $randId = rand(11111, 99999); @endphp
 <div class="row">
-	<!--<div class="col-md-6">
-		<h4>Lista de Categorias</h4>	
-	</div> -->
 	<div class="col">
-		<table style="width: 100%;" id="lista-pessoas{{$randId}}" class="data-table table table-sm table-responsive table-hover display">
-			<thead>
-				<tr>
-					<th>
-						Cód
-					</th>
-					<th>
-						Nome / Razão Social
-					</th>
-					<th>
-						Sobrenome / Nome Fantazia
-					</th>
-					<th>
-						CP / CNPJ
-					</th>
-					<th>
-						RG / IE
-					</th>
-					<th>
-						Grupo
-					</th>
-					<th>
-						Email
-					</th>
-					<th>
-						Ativo
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach($registro as $valor)
-				<tr class="assistenteModalPessoa">
-					<td class="text-left">{{$valor->id}}</td>
-					<td class="text-left">{{$valor->name}}</td>
-					<td class="text-left">{{$valor->name_opcional ?? '-'}}</td>
-					<td class="text-left">{{$valor->documento}}</td>
-					<td class="text-left">{{$valor->documento_complementar ?? '-'}}</td>
-					<td class="text-left">{{$valor->grupo[0]->name ?? '-'}}</td>
-					<td class="text-left">{{$valor->email ?? '-'}}</td>
-					<td class="text-left">{{$valor->active == 'yes' ? 'Sim' : 'Não'}}</td>
-					<input type="hidden" name="pessoa" value="{{$valor->id}}">
-				</tr>
-				@endforeach
-			</tbody>
-		</table>
+		
+
+		@php
+		
+			$tituloColunas = [
+
+				'style_row'=>'',
+				'class_row'=>'',
+				'onClick'=>null,
+				'dados'=>[
+
+					[
+						'nmColuna'=>'Cód',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					],
+					[
+						'nmColuna'=>'Nome / Razão Social',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'Sobrenome / Nome Fantazia',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'CP / CNPJ',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'RG / IE',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'Email',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'Grupo',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					
+				],
+			];
+
+			$dados = [];
+
+			foreach($registro as $valor){
+				$row = [];
+				$row['id'] = $valor->id;
+				$row['style_row'] = '';
+				$row['class_row'] = '';
+
+				$row['dados'] = [
+					[
+						'val'=>$valor->id,
+						'class'=>'',
+						'style_cel'=>'',
+                            
+                    ],
+					[
+						'val'=>$valor->name,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+					[
+						'val'=>$valor->name_opcional ?? '-',
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+					[
+						'val'=>$valor->documento,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+					[
+						'val'=>$valor->documento_complementar ?? '-',
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+					[
+						'val'=>$valor->grupo[0]->name ?? '-',
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+					
+					
+
+				];
+				
+				$row['acoes']=[
+
+                       	[ 
+							'label'=>'Editar',
+							'link'=>'/pessoa/edit/'. $valor->id,
+							'style_action'=>'',
+							'class_action'=>'btn btn-lg btn-outline-primary',
+							'onClick'=>null,
+							'title_assistente'=>'PESSOA - EDITAR',
+							'width_assistente'=>'sm',
+							'height_assistente'=>'700px;'
+
+						],
+						[ 
+							'label'=>'Visualizar',
+							'link'=>'/pessoa/show/'. $valor->id,
+							'style_action'=>'',
+							'class_action'=>'btn btn-lg btn-outline-primary',
+							'onClick'=>null,
+							'title_assistente'=>'PESSOA - DELETAR',
+							'width_assistente'=>'xs',
+							'height_assistente'=>'300px;'
+						],
+						[ 
+							'label'=>'Excluir',
+							'link'=>'/pessoa/info/'. $valor->id,
+							'style_action'=>'',
+							'class_action'=>'btn btn-lg btn-outline-primary',
+							'onClick'=>null,
+							'title_assistente'=>'PESSOA - DELETAR',
+							'width_assistente'=>'xs',
+							'height_assistente'=>'300px;'
+						]
+                    ];
+				
+				$dados[] = ['row'=>$row];
+			}
+
+			$calback = "{{$consulta["callBack"]}}";
+
+			$id = $consulta['idTable'] ?? null;
+			$selectorsLine = $consulta['selectorsLine'] ?? false;
+			
+		@endphp
+		<x-table
+			:tituloColunas="$tituloColunas"
+			:dados="$dados"
+			:calback="$calback"
+			:idTable="$id"
+			:selectorsLine="$selectorsLine"
+		/>
+		
 	</div>
 </div>
 
-<script type="text/javascript">
-	Utilitarios.useDataTable($('#lista-pessoas{{$randId}}'))
-</script>
+<!-- -------------------------------------------------------- -->

@@ -22,6 +22,7 @@ use \App\Venda;
 use \App\ServicoItem;
 use \App\Servico;
 use \App\Plano;
+use App\Exceptions\PessoaException;
 
 class PessoaController extends Controller
 {
@@ -42,32 +43,73 @@ class PessoaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {	
-    	
+    
+    public function index(Request $request)
+    {
+
     	try {
-
-    		$registro = null;
-    		\DB::transaction(function() use (&$registro){
-
-    			$registro = Pessoa::where('active', '=', 'yes')->get();
-
-    		});
-
-            //dd($registro[0]->name);
-
-            return view('admin.pessoa.index', compact('registro'));
+            \DB::beginTransaction();
     		
-    	} catch (\Exception $e) {
-    		 
+            $consulta = $request->all();
+
+            $campos =  null;
+
+            $registro = Pessoa::where('active', '=', 'yes');
+
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('id', $val);
+                            }
+                            break;
+                        case 'name':
+                            if($val[0] == ','){
+                                $val = substr($val, 1);
+                            } 
+                            if($val[strlen($val) - 1] == ','){
+                                $val = substr($val, 0, -1);
+                            }
+                            
+                            $registro->where('name', 'like' , '%'.$val.'%');
+                            break;
+                    }
+                }
+            }
+
+    		$registro = $registro->get();
+
+            return view('admin.pessoa.index', compact('registro', 'consulta'));
+    		
+            \DB::commit();
+
+    	}catch(PessoaException $e){
+            \DB::rollback();
+
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
-            
-    		//\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
 
-            //return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
-    	}
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
 
     }
 
@@ -76,11 +118,38 @@ class PessoaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    
+    public function create(Request $request, $idAssistente)
     {
-    	$grupos = Grupo::where('active', '=', 'yes')->get();        
-        return view('admin.pessoa.create', compact('grupos'));
+        try{
+
+            $dadosRequest = $request->all();
+
+            $callBack = $dadosRequest['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+
+            $grupos = Grupo::where('active', '=', 'yes')->get();
+
+            return view('admin.pessoa.create', compact('grupos', 'callBack','idAssistente'));
+
+        }catch(PessoaException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+        // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -88,7 +157,7 @@ class PessoaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PessoaRequest $request)
+    public function store(Request $request)
     {
 
         try{
@@ -96,101 +165,92 @@ class PessoaController extends Controller
 
             $validator = $request->validated();
 
-            $registro   = null;
-            $erros      = [];
-            \DB::transaction(function() use (&$request, &$registro, &$erros){
+            $registro = null;
+            \DB::beginTransaction();
 
-                $dados = $request->all();
-                $user_id = \Auth::User()->id;
+            $dados = $request->all();
+            $user_id = \Auth::User()->id;
 
-                $dadosPessoa     = $request->only(
-                    'name','name_opcional','documento',
-                    'documento_complementar','nascimento_fundacao',
-                    'sexo', 'email');
+            $dadosPessoa     = $request->only(
+                'name','name_opcional','documento',
+                'documento_complementar','nascimento_fundacao',
+                'sexo', 'email');
 
-                $cpf = preg_replace("/[^0-9]/", '', trim($dadosPessoa['documento']));
-                $dadosPessoa['documento'] = $cpf;
-                if(Pessoa::where('documento', '=', $cpf)->first()){
-                    $erros[] = 'Pessoa já se encontra cadastrada.';
-                    return false;
-                }else{
-
-                    $dadosPessoa['user_id']     = \Auth::User()->id;
-                    $dadosPessoa['tipo']        = 'fisica';
-                    $dadosPessoa['active']      = 'yes';
-
-                    $grupo = Grupo::where('id', '=', $dados['groupo_id'])
-                    ->where('active', '=', 'yes')->first();
-
-
-                    $dadosLogradoruo = $request->only(
-                        'cep','logradouro',
-                        'numero','tipo',
-                        'complemento','bairro',
-                        'cidade','estado', 'bloco');
-                    $dadosLogradoruo['user_id']  = $user_id;
-                    $dadosLogradoruo['active']   = 'yes';
-                    $dadosLogradoruo['importancia']   = 'principal';
-
-
-                    $dadosContato       = $request->only('celular_1','celular_2','telefone');
-                   
-                    $pessoa             = Pessoa::create($dadosPessoa);
-                    $logradouro         = Logradouro::create($dadosLogradoruo);
-                    $resultLogradouro   = $pessoa->adicionarLogradouro($logradouro,['active'=>'yes','user_id'=>$user_id]);
-                    $resultGrupoPessoa  = $pessoa->adicionarGrupo($grupo,['active'=>'yes', 'user_id'=>$user_id, 'created_at' => date('Y-m-d H:i:s'), 'updated_at'=>date('Y-m-d H:i:s')]);
-
-                    foreach ($dadosContato as $key => $value) {
-                        $tipo = $key == 'telefone' ? 'fixo' : 'celular';
-                        $contato        = Telefone::create([
-                            'numero'=>$value ?? '00000000000', 'tipo'=>$tipo, 'user_id'=> $user_id,
-                            'active' => 'yes', 'pessoa_id' => $pessoa->id
-                        ]);
-                    }
-
-                    if( 
-                        $pessoa
-                        && $logradouro 
-                        && $contato
-                    ){
-                        $registro = $pessoa;
-                    }
-
-                }
-                
-                
-
-            });
-
-            if($registro){
-
-                //\Session::flash('mensagem', ['msg'=>'Registro salvo com sucesso', 'class'=>'alert alert-success']);
-                //return redirect()->route('pessoa.head');
-
-                return response()->json(['mensagem'=>$registro, 'class' => 'success'], 200);
-
-            }else if($erros) {
-
-                //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
-
-                //return redirect()->back();
-                return response()->json(['mensagem'=>$erros, 'class'=>'warning'], 400);
-
+            $cpf = preg_replace("/[^0-9]/", '', trim($dadosPessoa['documento']));
+            $dadosPessoa['documento'] = $cpf;
+            if(Pessoa::where('documento', '=', $cpf)->first()){
+                $erros[] = 'Pessoa já se encontra cadastrada.';
+                return false;
             }else{
 
-                //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
+                $dadosPessoa['user_id']     = \Auth::User()->id;
+                $dadosPessoa['tipo']        = 'fisica';
+                $dadosPessoa['active']      = 'yes';
 
-                //return redirect()->back();
-                return response()->json(['mensagem'=>'Erro ao salvar o registro', 'class'=>'warning'], 400);
+                $grupo = Grupo::where('id', '=', $dados['groupo_id'])
+                ->where('active', '=', 'yes')->first();
+
+
+                $dadosLogradoruo = $request->only(
+                    'cep','logradouro',
+                    'numero','tipo',
+                    'complemento','bairro',
+                    'cidade','estado', 'bloco');
+                $dadosLogradoruo['user_id']  = $user_id;
+                $dadosLogradoruo['active']   = 'yes';
+                $dadosLogradoruo['importancia']   = 'principal';
+
+
+                $dadosContato       = $request->only('celular_1','celular_2','telefone');
+                
+                $pessoa             = Pessoa::create($dadosPessoa);
+                $logradouro         = Logradouro::create($dadosLogradoruo);
+                $resultLogradouro   = $pessoa->adicionarLogradouro($logradouro,['active'=>'yes','user_id'=>$user_id]);
+                $resultGrupoPessoa  = $pessoa->adicionarGrupo($grupo,['active'=>'yes', 'user_id'=>$user_id, 'created_at' => date('Y-m-d H:i:s'), 'updated_at'=>date('Y-m-d H:i:s')]);
+
+                foreach ($dadosContato as $key => $value) {
+                    $tipo = $key == 'telefone' ? 'fixo' : 'celular';
+                    $contato        = Telefone::create([
+                        'numero'=>$value ?? '00000000000', 'tipo'=>$tipo, 'user_id'=> $user_id,
+                        'active' => 'yes', 'pessoa_id' => $pessoa->id
+                    ]);
+                }
+
+                if( 
+                    $pessoa
+                    && $logradouro 
+                    && $contato
+                ){
+                    $registro = $pessoa;
+                }
+
+            }
+            if(! $registro){
+
+                //\Session::flash('mensagem', ['msg'=>'Registro salvo com sucesso', 'class'=>'alert alert-success']);
+                //return redirect()->route('marca.head');
+
+                throw new PessoaException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o supote.');
+
             }
 
-        }catch(\Exception $e){
+            \DB::commit();
 
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
 
+        }catch (PessoaException $th) {
+
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor: '.$th->getMessage(), 'class'=>'warning'], 500);
+            //throw $th;
         }
     }
 
@@ -207,91 +267,92 @@ class PessoaController extends Controller
             
             if($id <= 0){
 
-                 \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
-
-                //return redirect()->route('pessoa.index');
-
-                 return  response()->json(['mensagem'=>'Erro, parâmetro inválido', 'class'=>'warning'], 400);
-
+                throw new PessoaException('Parâmetro inválido. Entre em contato com o supote.');
             }
 
-            $registro = null;
+            \DB::beginTransaction();
 
-            \DB::transaction(function() use (&$id, &$registro){
-
-                $registro = Pessoa::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
-        
-            } );
+            $registro = Pessoa::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
 
             //dd($registro);
 
-            if($registro == null){
+            if(! $registro){
 
-                //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
-                //return redirect()->back();
-
-                return response()->json(['mensagem'=>'Erro, registro não encontrado', 'class'=>'warning'], 400);
+                throw new PessoaException('Registro não encontrado.');
             }
 
+            \DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
             return view('admin.pessoa.show', compact('registro'));
 
+        }catch(PessoaException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
         }catch(\Exception $e){
+            \DB::rollback();
 
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
-
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
 
-    public function info($id)
+    public function info(Request $request, $id, $idAssistente)
     {
         
         try{
 
+            $dados = $request->all();
+            $id = $id ?? $dados['id'];
+            $callBack = $dados['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
+            \DB::beginTransaction();
+            
             if($id <= 0){
 
-                 \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
-
-                //return redirect()->route('pessoa.index');
-
-                 return  response()->json(['mensagem'=>'Erro, parâmetro inválido', 'class'=>'warning'], 400);
-
+                throw new PessoaException('Parâmetro inválido. Entre em contato com o supote.');
             }
 
             $registro = null;
 
-            \DB::transaction(function() use (&$id, &$registro){
-
-                $registro = Pessoa::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
-        
-            } );
+            $registro = Pessoa::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
 
             if($registro == null){
 
-                //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
-                //return redirect()->back();
-
-                return response()->json(['mensagem'=>'Erro, registro não encontrado', 'class'=>'warning'], 400);
+                throw new PessoaException('Registro não encontrado.');
             }
 
+            \DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
-            return view('admin.pessoa.info', compact('registro'));
+            return view('admin.pessoa.info', compact('registro', 'idAssistente', 'callBack'));
 
+        }catch(PessoaException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
         }catch(\Exception $e){
+            \DB::rollback();
 
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
-
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -301,53 +362,58 @@ class PessoaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    
+    public function edit(Request $request, $id, $idAssistente)
     {
 
-
-        $registro   = null;
-        $grupos     = null;
-
     	try {
+            $dadosRequest = $request->all();
 
-    		if($id <= 0){
+            $callBack = $dadosRequest['callBack'] ?? '';
+            $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
+            if(! isset($id)){
+                $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
+            }
 
-	             //\Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
+            if($id <= 0){
+                throw new PessoaException('Parâmetro ínválido');
+            }
 
-	            //return redirect()->route('pessoa.index');
+            \DB::beginTransaction();
 
-                return response()->json(['mensagem'=>'Erro, parâmetro inválido', 'class'=>'warning'], 400);
+            $registro = Pessoa::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
 
-       		 }
-    		
-       		 \DB::transaction(function() use (&$id, &$registro, &$grupos){
+            $grupos = Grupo::where('active', '=', 'yes')->get();
 
-	            $registro = Pessoa::where('active', '=', 'yes')
-	                ->where('id', '=', $id)->first();
+            if(! $registro){
+                throw new PessoaException('Registro não encontrado');
+                
+            }
 
-                $grupos = Grupo::where('active', '=', 'yes')->get();
+            \DB::commit();
 
-	        } );
-
-
-	        if(($registro == null) || ($grupos == null)){
-
-	            //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
-	            //return redirect()->back();
-                return response()->json(['mensagem'=>'Erro, registro não encontrado', 'class'=>'warning'], 400);
-	        }
-
-
-	        return view('admin.pessoa.edit', compact('registro', 'grupos'));
+	        return view('admin.pessoa.edit', compact('registro', 'grupos', 'idAssistente', 'callBack'));
 
 
-    	} catch (\Exception $e) {
+    	}catch(PessoaException $e){
 
-    		 //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
-    	}
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return view('layouts._admin._error', compact('msg'));
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //return redirect()->back();
+        }
 
     }
 
@@ -361,65 +427,62 @@ class PessoaController extends Controller
     public function update(Request $request, $id)
     {
         try{
-            $resultSatinizar = $this->requestPessoa($request);
-            if($resultSatinizar->fails()){
-                return response()->json(['errors'=>$resultSatinizar->errors()], 400);
-            }
-            
+                        
+            $this->validaRequest($request);
+
+            \DB::beginTransaction();
+
+
 
             $registro   = null;
             $user_id    = \Auth::User()->id;
             $erros      = [];
-            \DB::transaction(function() use (&$request, &$registro, &$erros, &$id, &$user_id){
+            
+            $dados = $request->all();
 
-                $dados = $request->all();
+            $dadosPessoa     = $request->only(
+                'name','name_opcional','documento',
+                'documento_complementar','nascimento_fundacao',
+                'sexo', 'email');    
 
-                $dadosPessoa     = $request->only(
-                    'name','name_opcional','documento',
-                    'documento_complementar','nascimento_fundacao',
-                    'sexo', 'email');    
+            $dadosPessoa['user_update_id']      = $user_id;
+            $dadosPessoa['tipo']                = 'fisica';
+            $dadosPessoa['active']              = 'yes';
+            if(! Utilitarios::validaCpf($dadosPessoa['documento'])){
+                $erros['documento'] = 'Cpf inválido';
+                return false;
+            }
 
-                $dadosPessoa['user_update_id']      = \Auth::User()->id;
-                $dadosPessoa['tipo']                = 'fisica';
-                $dadosPessoa['active']              = 'yes';
-                if(! Utilitarios::validaCpf($dadosPessoa['documento'])){
-                    $erros['documento'] = 'Cpf inválido';
-                    return false;
-                }
+            $pessoa = Pessoa::where('id', '=', $id)->where('active', '=', 'yes')->first();
+            if($pessoa){
 
-                $pessoa = Pessoa::where('id', '=', $id)->where('active', '=', 'yes')->first();
-                if($pessoa){
+                $resultPessoa = $pessoa->update($dadosPessoa);
+                if($resultPessoa){
 
-                    $resultPessoa = $pessoa->update($dadosPessoa);
-                    if($resultPessoa){
-
-                        $newGrupo = Grupo::where('id', '=', $dados['groupo_id'])->where('active', '=', 'yes')->first();
-                        if($newGrupo){
-                            $grupo = $pessoa->grupo->where('active', '=', 'yes')->first();
-                            if($grupo){
-                                $pessoa->removerGrupo($grupo);
-                            }
-                            
-                            $resultGrupoPessoa  = $pessoa->adicionarGrupo($newGrupo,['active'=>'yes', 'user_id'=>$user_id, 'created_at' => date('Y-m-d H:i:s'), 'updated_at'=>date('Y-m-d H:i:s')]);
-                            $registro = $pessoa;
-                            
-                        }else{
-                            $erros[] = 'Grupo não identificado';
+                    $newGrupo = Grupo::where('id', '=', $dados['groupo_id'])->where('active', '=', 'yes')->first();
+                    if($newGrupo){
+                        $grupo = $pessoa->grupo->where('active', '=', 'yes')->first();
+                        if($grupo){
+                            $pessoa->removerGrupo($grupo);
                         }
                         
-
+                        $resultGrupoPessoa  = $pessoa->adicionarGrupo($newGrupo,['active'=>'yes', 'user_id'=>$user_id, 'created_at' => date('Y-m-d H:i:s'), 'updated_at'=>date('Y-m-d H:i:s')]);
+                        $registro = $pessoa;
+                        
                     }else{
-                        $erros[] = 'Erro ao atualizar registo';
+                        $erros[] = 'Grupo não identificado';
                     }
+                    
 
                 }else{
-
-                    $erros[] = 'Pessoa não identificada';
-
+                    $erros[] = 'Erro ao atualizar registo';
                 }
-                
 
-            });
+            }else{
+
+                $erros[] = 'Pessoa não identificada';
+
+            }
 
             if($registro){
 
@@ -430,10 +493,7 @@ class PessoaController extends Controller
 
             }else if($erros) {
 
-                //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
-
-                //return redirect()->back();
-                return response()->json(['errors'=>$erros, 'class'=>'warning'], 400);
+                throw new PessoaException(implode("<br/><br/>",$erros));
 
             }else{
 
@@ -443,13 +503,19 @@ class PessoaController extends Controller
                 return response()->json(['errors'=>['erro'=>'Erro ao atualizar o registro'], 'class'=>'warning'], 400);
             }
 
+        }catch(PessoaException $e){
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
         }catch(\Exception $e){
+            \DB::rollback();
 
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
 
-            return response()->json(['errors'=>['erro'=>$e->getMessage()], 'class'=>'warning'], 500);
-
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -472,37 +538,33 @@ class PessoaController extends Controller
 
             }
 
-            $registro = null;
+            \DB::beginTransaction();
 
-            \DB::transaction(function() use (&$id, &$registro){
-
-                $pessoa = Pessoa::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
-                if($pessoa){
-
-                    $registro = $pessoa->update(['active'=>'no']);                    
-
-                }
-        
-            } );
-
-            if($registro == null){
-
-                //\Session::flash('mensagem', ['msg'=>'Registro não encontrado', 'class'=>'alert alert-danger']);
-                //return redirect()->back();
-                return response()->json(['mensagem'=>'Erro ao deletar registro', 'class'=>'warning'], 400);
+            $pessoa = Pessoa::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+            if(! $pessoa){
+                throw new PessoaException('Registro não encontrado');
             }
 
+            $pessoa->update(['active'=>'no']);
+            $pessoa->delete();
 
+            \DB::commit();
             return response()->json(['mensagem'=>'Registro atulizado com sucesso', 'class'=>'success']);
 
+        }catch(PessoaException $e){
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
         }catch(\Exception $e){
+            \DB::rollback();
 
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
-
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -563,6 +625,30 @@ class PessoaController extends Controller
         }catch(\Exception $e){
             return response()->json(['mensagem'=>'Algo errado aconteceu no servidor '.$e->getMessage().' > '.$e->getFile().' > '.$e->getLine(), 'class'=>'warning'], 500);
         }
+    }
+
+
+    protected function validaRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'name'=> 'required|max:255|min:2',
+        ], [
+            'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
+            'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
+            'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
+        ]);
+        
+        if($validator->fails()) {
+            $errors = $validator->errors();
+            $msg = '';
+            foreach($errors->all() as $mensagem){
+                $msg .= $mensagem.'<br/>';
+            }
+            
+            throw new PessoaException($msg);
+        }
+
+        return true;
     }
 
 }

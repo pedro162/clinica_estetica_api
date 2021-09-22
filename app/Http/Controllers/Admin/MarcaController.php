@@ -337,6 +337,8 @@ class MarcaController extends Controller
     {
         try{
 
+            \DB::beginTransaction();
+
             if($id <= 0){
 
                 // \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
@@ -346,30 +348,25 @@ class MarcaController extends Controller
 
             }
 
-            $registro = null;
+            $marca = Marca::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+            if(! $marca){
 
-            \DB::transaction(function() use (&$id, &$registro){
+                throw new MarcaException('Registro não encontrado');                   
 
-                $marca = Marca::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
-                if($marca){
-
-                    $registro = $marca->update(['active'=>'no']);                    
-
-                }
-        
-            } );
-
-            if($registro == null){
-
-                //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
-                //return redirect()->back();
-                return response()->json(['mensagem'=>'Erro ao deletar registro', 'class'=>'warning'], 400);
             }
-
+            $marca->update(['active'=>'no']);
+            $marca->delete();
 
             return response()->json(['mensagem'=>'Registro atulizado com sucesso', 'class'=>'success']);
 
+        }catch (MarcaException $th) {
+
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //throw $th;
         }catch(\Exception $e){
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
@@ -411,7 +408,7 @@ class MarcaController extends Controller
                 $msg .= $mensagem.'<br/>';
             }
             
-            throw new EstadoException($msg);
+            throw new MarcaException($msg);
         }
 
         return true;

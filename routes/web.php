@@ -73,12 +73,17 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 	Route::get('/categoria/destroy/{id}', ['as'=>'categoria.destroy', 'uses'=>'Admin\CategoriaController@destroy']);
 
 	Route::get('/pessoa/index/{id_assistente?}', ['as'=>'pessoa.index', 'uses'=>'Admin\PessoaController@index']);
+	Route::post('/pessoa/index/{id_assistente?}', ['as'=>'pessoa.index', 'uses'=>'Admin\PessoaController@index']);
 	Route::get('/pessoa/create/{id_assistente?}', ['as'=>'pessoa.create', 'uses'=>'Admin\PessoaController@create']);
+	Route::post('/pessoa/create/{id_assistente?}', ['as'=>'pessoa.create', 'uses'=>'Admin\PessoaController@create']);
 	Route::post('/pessoa/store/{id_assistente?}', ['as'=>'pessoa.store', 'uses'=>'Admin\PessoaController@store']);
 	Route::get('/pessoa/edit/{id}/{id_assistente?}', ['as'=>'pessoa.edit', 'uses'=>'Admin\PessoaController@edit']);
+	Route::post('/pessoa/edit/{id}/{id_assistente?}', ['as'=>'pessoa.edit', 'uses'=>'Admin\PessoaController@edit']);
 	Route::put('/pessoa/update/{id}/{id_assistente?}', ['as'=>'pessoa.update', 'uses'=>'Admin\PessoaController@update']);
 	Route::get('/pessoa/show/{id}/{id_assistente?}', ['as'=>'pessoa.show', 'uses'=>'Admin\PessoaController@show']);
+	Route::post('/pessoa/show/{id}/{id_assistente?}', ['as'=>'pessoa.show', 'uses'=>'Admin\PessoaController@show']);
 	Route::get('/pessoa/info/{id}/{id_assistente?}', ['as'=>'pessoa.info', 'uses'=>'Admin\PessoaController@info']);
+	Route::post('/pessoa/info/{id}/{id_assistente?}', ['as'=>'pessoa.info', 'uses'=>'Admin\PessoaController@info']);
 	Route::get('/pessoa/head/{id_assistente?}', ['as'=>'pessoa.head', 'uses'=>'Admin\PessoaController@head']);
 	Route::get('/pessoa/destroy/{id}/{id_assistente?}', ['as'=>'pessoa.destroy', 'uses'=>'Admin\PessoaController@destroy']);
 	Route::get('/pessoa/valida/cpf/{cpf}/{id_assistente?}', ['as'=>'pessoa.valida.cpf', 'uses'=>'Admin\PessoaController@validarCpf']);
