@@ -1,143 +1,140 @@
 
 @php $randId = rand(11111, 99999); @endphp
 
-<div class="container-fluid">
-	<div class="row mb-5">
-		<div class="col">
-			<form action="{{route('pessoa.store')}}" method="post" class="form row p-2" id="form_pessoa_cadastrar{{$randId}}">
-				@csrf
-				<div class="row">
-					<div class="col-md-5 col-sm-12">
-						<h4>Dados Pessoais</h4>
-						<div class="row"><legend></legend>
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="name{{$randId}}">Nome</label>
-								<input type="text" id="name{{$randId}}" name="name" class="form-control form-control-sm" required="required"  minlength="3" maxlength="255">
-							</div>
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="name_opcional{{$randId}}">Sobrenome</label>
-								<input type="text" id="name_opcional{{$randId}}" name="name_opcional" class="form-control form-control-sm"  minlength="3" maxlength="255">
-							</div>
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="documento{{$randId}}">CPF</label>
-								<input type="text" id="documento{{$randId}}" name="documento" class="form-control form-control-sm" required="required" maxlength="14">
-							</div>
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="documento_complementar{{$randId}}">RG</label>
-								<input type="text" id="documento_complementar{{$randId}}" name="documento_complementar" class="form-control form-control-sm">
-							</div>
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="nascimento_fundacao{{$randId}}">Nascimento</label>
-								<input type="date" id="nascimento_fundacao{{$randId}}" name="nascimento_fundacao" class="form-control form-control-sm">
-							</div>
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="sexo{{$randId}}">Sexo</label>
-								<select id="sexo{{$randId}}"  name="sexo" class="form-control form-control-sm" required="required">
-									<option value="m">Masculino</option>
-									<option value="f">Feminino</option>						
-								</select>
-							</div>
-
-							<div class="form-group col-md-12 col-sm-12">
-								<label class="label" for="groupo_id{{$randId}}">Grupo</label>
-								<select id="groupo_id{{$randId}}"  name="groupo_id" class="form-control form-control-sm" required="required">
-									@foreach($grupos as $grupo)
-									<option value="{{$grupo->id}}">{{$grupo->name}}
-									</option>
-									@endforeach
-								</select>
-							</div>
+ 
+<div class="row p-3">
+	<div class="col-md-12 col-sm-12">
+		<form action="{{route('pessoa.store')}}" method="post" class="form" id="form_pessoa_cadastrar{{$randId}}">
+			@csrf
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
+					<hr/>
+					<div class="row">
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="name{{$randId}}">Nome</label>
+							<input type="text" id="name{{$randId}}" name="name" class="form-control form-control-sm" required="required"  minlength="3" maxlength="255">
 						</div>
-					</div>
 
-					<div class="col-md-5 col-sm-12">
-						<h4>Endereço</h4>
-						<div class="row"><legend></legend>
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="cep{{$randId}}">Cep</label>
-								<input type="text" id="cep{{$randId}}" name="cep" class="form-control form-control-sm" required="required">
-							</div>
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="logradouro">Logradouro</label>
-								<input type="text" id="logradouro{{$randId}}" name="logradouro" class="form-control form-control-sm" required="required"  minlength="3" maxlength="255">
-							</div>
-
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="numero">Número</label>
-								<input type="number" id="numero{{$randId}}" name="numero" class="form-control form-control-sm"  min="1" max="100000">
-							</div>
-
-							<!--<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="tipo">Tipo</label>
-								<select id="tipo{{$randId}}"  name="tipo" class="form-control form-control-sm" required="required">
-									<option value="casa">Casa</option>
-									<option value="apartamento">Apartamento</option>
-									<option value="outros">Otros</option>
-								</select>
-							</div>-->
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="complemento">Complemento</label>
-								<input id="complemento{{$randId}}" type="text" name="complemento" class="form-control form-control-sm"  minlength="3" maxlength="255">
-								</select>
-							</div>
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="bairro">Bairro</label>
-								<input type="text" id="bairro{{$randId}}" name="bairro" class="form-control form-control-sm" required="required"  minlength="3" maxlength="255">
-							</div>
-
-							<div class="form-group col-md-6 col-sm-12">
-								<label class="label" for="cidade">Cidade</label>
-								<input type="text" id="cidade{{$randId}}" name="cidade" class="form-control form-control-sm" required="required" minlength="3" maxlength="255">
-							</div>
-
-							<div class="form-group col-md-12 col-sm-12">
-								<label class="label" for="estado">Estado</label>
-								<input type="text" id="estado{{$randId}}" name="estado" class="form-control form-control-sm" required="required" minlength="2" maxlength="2">
-							</div>
-
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="name_opcional{{$randId}}">Sobrenome</label>
+							<input type="text" id="name_opcional{{$randId}}" name="name_opcional" class="form-control form-control-sm"  minlength="3" maxlength="255">
 						</div>
-					</div>
 
-					<div class="col-md-2 col-sm-12">
-						<h4>Contato</h4>
-						<div class="row"><legend></legend>
-							<div class="form-group col-md-12 col-sm-12">
-								<label class="label" for="celular_1{{$randId}}">Celular 1</label>
-								<input type="text" id="celular_1{{$randId}}" name="celular_1" class="form-control form-control-sm" required="required" maxlength="15">
-							</div>
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="documento{{$randId}}">CPF</label>
+							<input type="text" id="documento{{$randId}}" name="documento" class="form-control form-control-sm" required="required" maxlength="14">
+						</div>
 
-							<div class="form-group col-md-12 col-sm-12">
-								<label class="label" for="celular_2{{$randId}}">Celular 2</label>
-								<input type="text" id="celular_2{{$randId}}" name="celular_2" class="form-control form-control-sm" maxlength="15">
-							</div>
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="documento_complementar{{$randId}}">RG</label>
+							<input type="text" id="documento_complementar{{$randId}}" name="documento_complementar" class="form-control form-control-sm">
+						</div>
 
-							<div class="form-group col-md-12 col-sm-12">
-								<label class="label" for="telefone{{$randId}}">Telefone</label>
-								<input type="text" id="telefone{{$randId}}" name="telefone" class="form-control form-control-sm" minlength="14" maxlength="14">
-							</div>						
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="nascimento_fundacao{{$randId}}">Nascimento</label>
+							<input type="date" id="nascimento_fundacao{{$randId}}" name="nascimento_fundacao" class="form-control form-control-sm">
+						</div>
 
-							<div class="form-group col-md-12 col-sm-12">
-								<label class="label" for="email{{$randId}}">Email</label>
-								<input type="text" id="email{{$randId}}" name="email" class="form-control form-control-sm" minlength="4" maxlength="255">
-							</div>
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="sexo{{$randId}}">Sexo</label>
+							<select id="sexo{{$randId}}"  name="sexo" class="form-control form-control-sm" required="required">
+								<option value="m">Masculino</option>
+								<option value="f">Feminino</option>						
+							</select>
+						</div>
+
+						<div class="form-group col-md-12 col-sm-12">
+							<label class="label" for="groupo_id{{$randId}}">Grupo</label>
+							<select id="groupo_id{{$randId}}"  name="groupo_id" class="form-control form-control-sm" required="required">
+								@foreach($grupos as $grupo)
+								<option value="{{$grupo->id}}">{{$grupo->name}}
+								</option>
+								@endforeach
+							</select>
 						</div>
 					</div>
 				</div>
-				
-				<div class="col mt-4" align="center">
-					<button style="width: 50%;" type="submit" class=" btn btn-sm btn-outline-primary">Salvar</button>
+
+				<div class="col-md-12 col-sm-12">
+					<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Endereço</h5>
+					<hr/>
+					<div class="row">
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="cep{{$randId}}">Cep</label>
+							<input type="text" id="cep{{$randId}}" name="cep" class="form-control form-control-sm" required="required">
+						</div>
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="logradouro">Logradouro</label>
+							<input type="text" id="logradouro{{$randId}}" name="logradouro" class="form-control form-control-sm" required="required"  minlength="3" maxlength="255">
+						</div>
+
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="numero">Número</label>
+							<input type="number" id="numero{{$randId}}" name="numero" class="form-control form-control-sm"  min="1" max="100000">
+						</div>
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="complemento">Complemento</label>
+							<input id="complemento{{$randId}}" type="text" name="complemento" class="form-control form-control-sm"  minlength="3" maxlength="255">
+							</select>
+						</div>
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="bairro">Bairro</label>
+							<input type="text" id="bairro{{$randId}}" name="bairro" class="form-control form-control-sm" required="required"  minlength="3" maxlength="255">
+						</div>
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="cidade">Cidade</label>
+							<input type="text" id="cidade{{$randId}}" name="cidade" class="form-control form-control-sm" required="required" minlength="3" maxlength="255">
+						</div>
+
+						<div class="form-group col-md-12 col-sm-12">
+							<label class="label" for="estado">Estado</label>
+							<input type="text" id="estado{{$randId}}" name="estado" class="form-control form-control-sm" required="required" minlength="2" maxlength="2">
+						</div>
+
+					</div>
 				</div>
-			</form>
-		</div>
+
+				<div class="col-md-12 col-sm-12">
+					<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Contato</h5>
+					<hr/>
+					<div class="row"><legend></legend>
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="celular_1{{$randId}}">Celular 1</label>
+							<input type="text" id="celular_1{{$randId}}" name="celular_1" class="form-control form-control-sm" required="required" maxlength="15">
+						</div>
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="celular_2{{$randId}}">Celular 2</label>
+							<input type="text" id="celular_2{{$randId}}" name="celular_2" class="form-control form-control-sm" maxlength="15">
+						</div>
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="telefone{{$randId}}">Telefone</label>
+							<input type="text" id="telefone{{$randId}}" name="telefone" class="form-control form-control-sm" minlength="14" maxlength="14">
+						</div>						
+
+						<div class="form-group col-md-6 col-sm-12">
+							<label class="label" for="email{{$randId}}">Email</label>
+							<input type="text" id="email{{$randId}}" name="email" class="form-control form-control-sm" minlength="4" maxlength="255">
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-md-8 col-sm-12">
+				</div>
+				<div class="col-md-4 col-sm-12" style="text-align: right;">
+					<button type="submit" class=" btn btn-md btn-primary"><b>Salvar</b></button>
+				</div>
+			</div>
+		</form>
 	</div>	
 </div>
 
