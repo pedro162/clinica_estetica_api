@@ -3,7 +3,7 @@
 <div class="row p-3">
 	<div class="col-md-12 col-sm-12">
 
-		<form action="{{route('estado.update', $registro->id)}}" method="post" class="form" id="form_{{$randId}}" enctype="multipart/form-data">
+		<form action="{{route('cidade.update', $registro->id)}}" method="post" class="form" id="form{{$randId}}" enctype="multipart/form-data">
 			@csrf
 			@method('PUT')
 			
@@ -11,40 +11,56 @@
 			<hr/>
 			<div  class="row" >
 				<div class="form-group col-md-12 col-sm-12">
-					<label class="label" for="nmEStado{{$randId}}" >Descrição</label>
-					<input type="text" value="{{$registro->nmEStado}}" name="nmEStado" id="nmEStado{{$randId}}" class="form-control form-control-sm ">
+					<label class="label" for="nmCidade{{$randId}}" >Descrição</label>
+					<input type="text" value="{{$registro->nmCidade}}" name="nmCidade" id="nmCidade{{$randId}}" class="form-control form-control-sm ">
 				</div>
+				
 			</div>
 
 			<div  class="row" >
-				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="pais_id{{$randId}}">País</label>
-					<select type="text"  name="pais_id" title="Define o país do estado" id="pais_id{{$randId}}" class="form-control form-control-sm">
-						@foreach($paises as $pais)
-							<option {{isset($registro->pais_id) && $registro->pais_id == $pais->id ? 'selected' : ''}} value="{{$pais->id}}">{{$pais->nmPais}}</option>
-						@endforeach
-					</select>
-				</div>
+
 
 				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="padrao{{$randId}}" >Definir como padrão</label>
-					<select type="text" name="padrao" title="Define o estado como padrão" id="padrao{{$randId}}" class="form-control form-control-sm">
-						<option {{isset($registro->padrao) && trim($registro->padrao) == 'yes' ? 'selected' : ''}} value="yes">Sim</option>
-						<option {{isset($registro->padrao) && trim($registro->padrao) == 'no' ? 'selected' : ''}} value="no" >Não</option>
-					</select>
+					<label class="label" for="cdCidade{{$randId}}" >Código</label>
+					<input type="text" value="{{$registro->cdCidade}}"  name="cdCidade" id="cdCidade{{$randId}}" class="form-control form-control-sm ">
 				</div>
-			</div>	
+				<div class="form-group col-md-6 col-sm-12">	
+					@php
+						
+						$idEstado 					= 'estado_id';
+						$typeEstado 				= 'number';
+						$nameEstado 				= 'estado_id';
+						$labelEstado 				= 'Cód';
+						$idDescriptionEstado 		= 'nmEStado';
+						$typeDescrptionEstado 		= 'text';
+						$nameDescriptionEstado 		= 'nmEStado';
+						$labelDescriptionEstado 	= 'Descrição';
+						$valueDescriptionEstado 	= $registro->estado->nmEStado;
+						$valueEstado 				= $registro->estado->id;
+						$colEstado 					= "3";
+						$colDescriptionEstado 		= "8";
+						$searshEstado 				= "searshEstado".$randId."();";
 
-			<div  class="row" >
-				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="codEstado{{$randId}}" >Código do estado</label>
-					<input type="text" value="{{$registro->codEstado}}" name="codEstado" title="Classe de enquadramento" id="codEstado{{$randId}}" class="form-control form-control-sm ">
+						//dd($valueDescriptionEstado);
+					@endphp
+					<x-controll-filter
+						:idCod="$idEstado"
+						:typeCod="$typeEstado"
+						:nameCod="$nameEstado"
+						:labelCod="$labelEstado"
+						:idDescription="$idDescriptionEstado"
+						:typeDescrption="$typeDescrptionEstado"
+						:nameDescription="$nameDescriptionEstado"
+						:labelDescription="$labelDescriptionEstado"
+						:valueDescription="$valueDescriptionEstado"
+						:valueCod="$valueEstado"
+						:colCod="$colEstado"
+						:colDescription="$colDescriptionEstado"
+						:searsh="$searshEstado"
+					/>
 				</div>
 
-				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="sigla{{$randId}}" >Sigla</label>
-					<input type="text" value="{{$registro->sigla}}"  name="sigla" title="Classe de enquadramento" id="sigla{{$randId}}" class="form-control form-control-sm ">
-				</div>
+				
 			</div>
 			
 			
@@ -63,7 +79,7 @@
 	const assistente = '{{$idAssistente}}';
 	$("#tabs{{$randId}}").tabs()
 	//edita ou salva um produto
-	$('html body').find('#form_{{$randId}}').on('submit', function(ev){
+	$('html body').find('#form{{$randId}}').on('submit', function(ev){
 		ev.preventDefault();
 		try{
 
@@ -116,4 +132,32 @@
 
 		
 	});
+
+	function searshEstado{{$randId}}(){
+
+		try{
+			
+			let url = '/estado/head';
+			let data =  preparaBasicRequestPost{{$randId}}();
+			
+
+			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','ESTADOS', 'sm', '700px', null, data)
+
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
+	function preparaBasicRequestPost{{$randId}}(){
+		let token = $('html').find('#form{{$randId}}').find('input[name="_token"]').val()
+
+		let data = new FormData();
+		data.append('idAssistente', '')
+		data.append('callBack', ''+callBack{{$randId}}+'')
+		data.append('_token', token)
+
+		return data;
+
+	}
 </script>

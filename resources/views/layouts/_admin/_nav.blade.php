@@ -15,6 +15,7 @@
           <a class="dropdown-item" href="#">Usuários</a>
           <a class="dropdown-item rotina" href="{{route('pais.head')}}">País</a>
           <a class="dropdown-item rotina" href="{{route('estado.head')}}">Estados</a>
+          <a class="dropdown-item rotina" href="{{route('cidade.head')}}">Cidades</a>
           <a class="dropdown-item" href="{{route('site.home')}}">Site</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#">Sair</a>

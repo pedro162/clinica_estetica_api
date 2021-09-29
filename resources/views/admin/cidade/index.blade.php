@@ -23,28 +23,12 @@
 						'style_cel'=>'width: 600px;',
 					],
 					[
-						'nmColuna'=>'Sigla',
-						'class_cel'=>'',
-						'style_cel'=>'',
-					],
-					[
-						'nmColuna'=>'Código do estado',
-						'class_cel'=>'',
-						'style_cel'=>'',
-					],
-					[
-						'nmColuna'=>'Definido como padrão',
-						'class_cel'=>'',
-						'style_cel'=>'',
-					],
-					[
-						'nmColuna'=>'País',
+						'nmColuna'=>'Cód. cidade IBGE',
 						'class_cel'=>'',
 						'style_cel'=>'width: 600px;',
-					]
-					,
+					],
 					[
-						'nmColuna'=>'Código do país',
+						'nmColuna'=>'Estado',
 						'class_cel'=>'',
 						'style_cel'=>'',
 					]
@@ -68,40 +52,22 @@
                             
                     ],
 					[
-						'val'=>$valor->nmEStado,
+						'val'=>$valor->nmCidade,
 						'class'=>'',
 						'style_cel'=>'width: 600px;',
 						
                     ],
 					[
-						'val'=>$valor->sigla,
-						'class'=>'',
-						'style_cel'=>'',
-                            
-                    ],
-					[
-						'val'=>$valor->codEstado,
-						'class'=>'',
-						'style_cel'=>'',
-                            
-                    ],
-					[
-						'val'=>$valor->padrao,
-						'class'=>'',
-						'style_cel'=>'',
-                            
-                    ],
-					[
-						'val'=>$valor->nmPais,
+						'val'=>$valor->cdCidade,
 						'class'=>'',
 						'style_cel'=>'width: 600px;',
-                            
+						
                     ],
 					[
-						'val'=>$valor->pais_id,
+						'val'=>$valor->nmEStado,
 						'class'=>'',
-						'style_cel'=>'',
-                            
+						'style_cel'=>'width: 600px;',
+						
                     ]
 
 				];
@@ -110,22 +76,22 @@
 
                        	[ 
 							'label'=>'Editar',
-							'link'=>'/estado/edit/'. $valor->id,
+							'link'=>'/cidade/edit/'. $valor->id,
 							'style_action'=>'',
 							'class_action'=>'btn btn-lg btn-outline-primary',
 							'onClick'=>null,
-							'title_assistente'=>'ESTADO - EDITAR',
+							'title_assistente'=>'CIDADE - EDITAR',
 							'width_assistente'=>'sm',
 							'height_assistente'=>'300px;'
 
 						],
 						[ 
 							'label'=>'Excluir',
-							'link'=>'/estado/info/'. $valor->id,
+							'link'=>'/cidade/info/'. $valor->id,
 							'style_action'=>'',
 							'class_action'=>'btn btn-lg btn-outline-primary',
 							'onClick'=>null,
-							'title_assistente'=>'ESTADO - DELETAR',
+							'title_assistente'=>'CIDADE - DELETAR',
 							'width_assistente'=>'xs',
 							'height_assistente'=>'300px;'
 						]

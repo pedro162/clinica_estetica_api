@@ -8,8 +8,8 @@
 			<div class="col-md-12">	
 				<nav aria-label="breadcrumb" class="my-2">
 					<ol class="breadcrumb">
-						<li class="breadcrumb-item active"><a href="{{route('estado.index')}}">Inicio</a></li>
-						<li class="breadcrumb-item desable" aria-current="page"><a >Lista de estados</a></li>
+						<li class="breadcrumb-item active"><a href="{{route('cidade.index')}}">Inicio</a></li>
+						<li class="breadcrumb-item desable" aria-current="page"><a >Lista de cidades</a></li>
 					</ol>
 				</nav>
 			</div>
@@ -34,7 +34,7 @@
 						[
 							'label'     =>'Descrição',
 							'value'     =>'',
-							'name'      =>'nmEStado',
+							'name'      =>'nmCidade',
 							'class'     =>'',
 							'onChange'  =>'',
 							'onClick'   =>'',
@@ -44,9 +44,9 @@
 
 						],
 						[
-							'label'     =>'Sigla',
+							'label'     =>'Estado',
 							'value'     =>'',
-							'name'      =>'sigla',
+							'name'      =>'nmEStado',
 							'class'     =>'',
 							'onChange'  =>'',
 							'onClick'   =>'',
@@ -66,8 +66,8 @@
 							'options'   =>[
 								'id-ASC'=>'Cód',
 								'id-DESC'=>'Cód',
-								'nmEStado-ASC'=>'Descrição',
-								'nmEStado-DESC'=>'Descrição',
+								'nmCidade-ASC'=>'Descrição',
+								'nmCidade-DESC'=>'Descrição',
 							],
 							'classContainer' =>'my-1 col-md-6 col-sm-12'
 
@@ -104,7 +104,7 @@
 						[
 							'type'      =>'link',
 							'onClick'   =>'cadastrar'.$randId.'(this);',
-							'href'      =>''.route('estado.create').'',
+							'href'      =>''.route('cidade.create').'',
 							'class'     =>'btn btn-md btn-outline-primary mr-2 mb-sm-1',
 							'style'     =>'',
 							'id'        =>'form_cadastrar'.$randId,
@@ -206,7 +206,7 @@
 		if(! isset($modifyUrlTitle)){
 
 			@endphp
-				Utilitarios.modifyUrlWithoutReload('/estado/head', 'Estados')
+				Utilitarios.modifyUrlWithoutReload('/cidade/head', 'Estados')
 			@php
 		}
 	@endphp
@@ -220,7 +220,7 @@
 		});	
 
 		function pesquisar{{$randId}}(){
-			let url = '/estado/index';
+			let url = '/cidade/index';
 
 			let objResponse = '#response-request{{$randId}}';
 			//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
@@ -342,37 +342,13 @@
 				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
 				data.append('_token', token)
 
-				Utilitarios.assistentAjaxModal('POST',url, 'HTML','Estado - Cadastrar', 'sm', '300px', null, data)
+				Utilitarios.assistentAjaxModal('POST',url, 'HTML','Cidade - Cadastrar', 'sm', '300px', null, data)
 				//Utilitarios.toggleFiltro();
 			}catch(ex){
 					console.log('Erro: '+ex.message);
 			}
 		}
 
-
-		function tributar{{$randId}}(element){
-			
-			try{
-				let url = $(element).attr('href');
-				let id = $(element).attr('idItem');
-				let idModal= $(element).attr('idModal');
-				// //
-				//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
-				let data = new FormData();
-				data.append('id', id)
-				data.append('idAssistente', '')
-				data.append('callBack', ''+btoa('pesquisar{{$randId}}();')+'')
-
-				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
-				data.append('_token', token)
-
-				Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
-				
-
-			}catch(ex){
-					console.log('Erro: '+ex.message);
-			}
-		}
 		
 		//--- ids da tabela
 		//let ids = Utilitarios.selecionadosTable('lista{{$randId}}');

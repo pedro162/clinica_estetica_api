@@ -1,48 +1,63 @@
 @php $randId = rand(11111, 99999);@endphp
 <div class="row p-3">
 	<div class="col-md-12 col-sm-12">
-		<form action="{{route('estado.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
+		<form action="{{route('cidade.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
 			@csrf
-
+			
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
 			<hr/>
 			<div  class="row" >
 				<div class="form-group col-md-12 col-sm-12">
-					<label class="label" for="nmEStado{{$randId}}" >Descrição</label>
-					<input type="text" name="nmEStado" id="nmEStado{{$randId}}" class="form-control form-control-sm ">
+					<label class="label" for="nmCidade{{$randId}}" >Descrição</label>
+					<input type="text" name="nmCidade" id="nmCidade{{$randId}}" class="form-control form-control-sm ">
 				</div>
+				
 			</div>
 
 			<div  class="row" >
-				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="pais_id{{$randId}}">País</label>
-					<select type="text"  name="pais_id" title="Define o país do estado" id="pais_id{{$randId}}" class="form-control form-control-sm">
-						@foreach($paises as $pais)
-							<option value="{{$pais->id}}">{{$pais->nmPais}}</option>
-						@endforeach
-					</select>
-				</div>
+
 
 				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="padrao{{$randId}}" >Definir como padrão</label>
-					<select type="text" name="padrao" title="Define o estado como padrão" id="padrao{{$randId}}" class="form-control form-control-sm">
-						<option value="yes">Sim</option>
-						<option value="no" selected>Não</option>
-					</select>
+					<label class="label" for="cdCidade{{$randId}}" >Código</label>
+					<input type="text" name="cdCidade" id="cdCidade{{$randId}}" class="form-control form-control-sm ">
 				</div>
+
+				<div class="form-group col-md-6 col-sm-12">	
+					@php
+						
+						$idEstado 					= 'estado_id';
+						$typeEstado 				= 'number';
+						$nameEstado 				= 'estado_id';
+						$labelEstado 				= 'Cód';
+						$idDescriptionEstado 		= 'nmEstado';
+						$typeDescrptionEstado 		= 'text';
+						$nameDescriptionEstado 		= 'nmEstado';
+						$labelDescriptionEstado 	= 'Descrição';
+						$valueDescriptionEstado 	= "";
+						$valueEstado 				= "";
+						$colEstado 					= "3";
+						$colDescriptionEstado 		= "8";
+						$searshEstado 				= "searshEstado".$randId."();";
+					@endphp
+					<x-controll-filter
+						:idCod="$idEstado"
+						:typeCod="$typeEstado"
+						:nameCod="$nameEstado"
+						:labelCod="$labelEstado"
+						:idDescription="$idDescriptionEstado"
+						:typeDescrption="$typeDescrptionEstado"
+						:nameDescription="$nameDescriptionEstado"
+						:labelDescription="$labelDescriptionEstado"
+						:valueDescription="$valueDescriptionEstado"
+						:valueCod="$valueEstado"
+						:colCod="$colEstado"
+						:colDescription="$colDescriptionEstado"
+						:searsh="$searshEstado"
+					/>
+				</div>
+
+				
 			</div>	
-
-			<div  class="row" >
-				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="codEstado{{$randId}}" >Código do estado</label>
-					<input type="text" name="codEstado" title="Classe de enquadramento" id="codEstado{{$randId}}" class="form-control form-control-sm ">
-				</div>
-
-				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="sigla{{$randId}}" >Sigla</label>
-					<input type="text" name="sigla" title="Classe de enquadramento" id="sigla{{$randId}}" class="form-control form-control-sm ">
-				</div>
-			</div>
 
 			<div class="row">
 				<div class="col-md-8 col-sm-12">
@@ -112,5 +127,33 @@
 		}
 
 		ev.preventDefault();
-});
+	});
+
+	function searshEstado{{$randId}}(){
+
+		try{
+			
+			let url = '/estado/head';
+			let data =  preparaBasicRequestPost{{$randId}}();
+			
+
+			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','ESTADOS', 'sm', '700px', null, data)
+
+		}catch(ex){
+				console.log('Erro: '+ex.message);
+		}
+	}
+
+	function preparaBasicRequestPost{{$randId}}(){
+		let token = $('html').find('#form{{$randId}}').find('input[name="_token"]').val()
+
+		let data = new FormData();
+		data.append('idAssistente', '')
+		data.append('callBack', ''+callBack{{$randId}}+'')
+		data.append('_token', token)
+
+		return data;
+
+	}
 </script>

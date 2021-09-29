@@ -285,6 +285,24 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/estado/destroy/{id}/{id_assistente?}', ['as'=>'estado.destroy', 'uses'=>'Admin\EstadoController@destroy']);
 	Route::post('/estado/destroy/{id}/{id_assistente?}', ['as'=>'estado.destroy', 'uses'=>'Admin\EstadoController@destroy']);
 
+	Route::get('/cidade/index/{id_assistente?}', ['as'=>'cidade.index', 'uses'=>'Admin\CidadeController@index']);
+	Route::post('/cidade/index/{id_assistente?}', ['as'=>'cidade.index', 'uses'=>'Admin\CidadeController@index']);
+	Route::get('/cidade/create/{id_assistente?}', ['as'=>'cidade.create', 'uses'=>'Admin\CidadeController@create']);
+	Route::post('/cidade/create/{id_assistente?}', ['as'=>'cidade.create', 'uses'=>'Admin\CidadeController@create']);
+	Route::post('/cidade/store/{id_assistente?}', ['as'=>'cidade.store', 'uses'=>'Admin\CidadeController@store']);
+	Route::get('/cidade/edit/{id}/{id_assistente?}', ['as'=>'cidade.edit', 'uses'=>'Admin\CidadeController@edit']);
+	Route::post('/cidade/edit/{id}/{id_assistente?}', ['as'=>'cidade.edit', 'uses'=>'Admin\CidadeController@edit']);
+	Route::put('/cidade/update/{id}/{id_assistente?}', ['as'=>'cidade.update', 'uses'=>'Admin\CidadeController@update']);
+	Route::get('/cidade/show/{id}/{id_assistente?}', ['as'=>'cidade.show', 'uses'=>'Admin\CidadeController@show']);
+	Route::post('/cidade/show/{id}/{id_assistente?}', ['as'=>'cidade.show', 'uses'=>'Admin\CidadeController@show']);
+	Route::get('/cidade/info/{id}/{id_assistente?}', ['as'=>'cidade.info', 'uses'=>'Admin\CidadeController@info']);
+	Route::post('/cidade/info/{id}/{id_assistente?}', ['as'=>'cidade.info', 'uses'=>'Admin\CidadeController@info']);
+	Route::get('/cidade/head/{id_assistente?}', ['as'=>'cidade.head', 'uses'=>'Admin\CidadeController@head']);
+	Route::post('/cidade/head/{id_assistente?}', ['as'=>'cidade.head', 'uses'=>'Admin\CidadeController@head']);
+	Route::get('/cidade/destroy/{id}/{id_assistente?}', ['as'=>'cidade.destroy', 'uses'=>'Admin\CidadeController@destroy']);
+	Route::post('/cidade/destroy/{id}/{id_assistente?}', ['as'=>'cidade.destroy', 'uses'=>'Admin\CidadeController@destroy']);
+
+
 	Route::get('/venda/index/{id_assistente?}', ['as'=>'contrato.index', 'uses'=>'Admin\VendaController@index']);//VendaController
 	Route::get('/venda/create/{id}/{id_assistente?}', ['as'=>'venda.create', 'uses'=>'Admin\VendaController@create']);
 	Route::post('/venda/store/{idPessoa}/{id_assistente?}', ['as'=>'venda.store', 'uses'=>'Admin\VendaController@store']);

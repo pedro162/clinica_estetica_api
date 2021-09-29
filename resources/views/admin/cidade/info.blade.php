@@ -41,7 +41,7 @@
 
 		<div class="row">
 			<div class="col-md-12 col-sm-12" align="right">
-				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('estado.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
+				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('cidade.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
 			</div>
 		</div>
 	</div>
