@@ -86,7 +86,7 @@ class NfeController extends Controller
 
             $dados              = [];
             $dados['versao']    = '4.00';
-            $dados['Id']        = 'NFe52210903810070000101550010000000101000000011';
+            $dados['Id']        = 'NFe52211003810070000101550010000000101000000011';
             $dados['pk_nItem']  = null;
 
             $apenas = ['versao', 'Id', 'pk_nItem'];
@@ -399,6 +399,42 @@ class NfeController extends Controller
                 }
                 $nfe->recopi($dadosRecopi);
                 //------------------------------------
+                
+                //----  Node com dados de para importação-------------------------------------
+                $dadosDi = [];
+                $dadosDi['item']             = $prod->item;
+                $dadosDi['nDI']               = '001';  
+                $dadosDi['dDI']               = date('y-m-d');
+                $dadosDi['xLocDesemb']        = 'Curitiba';
+                $dadosDi['UFDesemb']          = 'SC';
+                $dadosDi['dDesemb']           = date('Y-m-d');
+                $dadosDi['tpViaTransp']       = '7';
+                $dadosDi['vAFRMM']            = 0;
+                $dadosDi['tpIntermedio']      = 1;
+                $dadosDi['CNPJ']              = '03810070000101';
+                $dadosDi['UFTerceiro']        = 'MA';
+                $dadosDi['cExportador']       = '022020';
+
+                $apenasDi = [];
+                $apenasDi[] = 'item';
+                $apenasDi[] = 'nDI';
+                $apenasDi[] = 'dDI';
+                $apenasDi[] = 'xLocDesemb';
+                $apenasDi[] = 'UFDesemb';
+                $apenasDi[] = 'dDesemb';
+                $apenasDi[] = 'tpViaTransp';
+                $apenasDi[] = 'vAFRMM';
+                $apenasDi[] = 'vAFRMM';
+                $apenasDi[] = 'CNPJ';
+                $apenasDi[] = 'UFTerceiro';
+                $apenasDi[] = 'cExportador';
+
+                $errors = $validadorXml->declaracaoImportacao($dadosDi, $apenasDi);
+                if(is_array($errors) && (count($errors)> 0)){
+                    //
+                }
+                $nfe->declaracaoImportacao($dadosDi);
+                //------------------------------------
 
                 $dadosImposto = [];
                 $dadosImposto['item']     = $prod->item;
@@ -606,7 +642,7 @@ class NfeController extends Controller
             //dd($objFacade->getErrors());
         }catch(\Exception $ex){
             //dd($ex);
-            dd($ex->getMessage());
+            //dd($ex->getMessage());
             dd($objFacade->getErrors()); // Erros no xml
         }
 

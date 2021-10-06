@@ -1260,7 +1260,7 @@ class VaidateNfe
 
         if(in_array('item', $apenas)){
             if(! (strlen(trim( $dados['item'])) > 0)){
-                $this->errors[] = 'O item para o CEST é obrigatório';
+                $this->errors[] = 'O item para o RECOPI é obrigatório';
             }
         }
 
@@ -1270,6 +1270,99 @@ class VaidateNfe
             }
         }
 
+        return $this->errors;
+    }
+    
+     public function declaracaoImportacao(Array $dados, Array $apenas)
+    {
+
+        if(! (count($dados) > 0)){
+            $this->errors[] = 'Dados inválidos';
+        }
+
+        if(in_array('item', $apenas)){
+            if(! (strlen(trim( $dados['item'])) > 0)){
+                $this->errors[] = 'O item para a declaração de importação é obrigatório';
+            }
+        }
+
+        if(in_array('nDI', $apenas)){
+            if(! (strlen(trim( $dados['nDI'])) > 0)){
+                $this->errors[] = 'O número da declaração de importação é obrigatório';
+            }
+        }
+        
+        if(in_array('dDI', $apenas)){
+            if(! (strlen(trim( $dados['dDI'])) > 0)){
+                $this->errors[] = 'A data de registro da DI/DSI/DA da importação é obrigatório';
+            }
+        }
+        
+        if(in_array('xLocDesemb', $apenas)){
+            if(! (strlen(trim( $dados['xLocDesemb'])) > 0)){
+                $this->errors[] = 'O local de desembaraço da importação é obrigatório';
+            }
+        }
+        
+        if(in_array('UFDesemb', $apenas)){
+            if(! (strlen(trim( $dados['UFDesemb'])) > 0)){
+                $this->errors[] = 'A sigla da UF onde ocorreu o desembaraço aduaneiro da importação é obrigatória';
+            }
+        }
+        
+        if(in_array('dDesemb', $apenas)){
+            if(! (strlen(trim( $dados['dDesemb'])) > 0)){
+                $this->errors[] = 'A data do desembaraço aduaneiro da importação é obrigatória';
+            }
+        }
+        
+        if(in_array('tpViaTransp', $apenas)){
+            if(! (strlen(trim( $dados['tpViaTransp'])) > 0)){
+                $this->errors[] = 'O meio de transporte internacional da importação é obrigatória';
+            }else{
+                $codigos = [1, 2, 3, 4, 5, 6, 7 , 8, 9, 10];
+                if(! in_array($dados['tpViaTransp'], $codigos)) {
+                    $this->errors[] = 'O meio de transporte internacional da importação deve ser 1: Marítima<br/>2:Fluvial<br/>3: Lacustre<br/>4: Aérea<br/>5: Postal<br/>6: Ferroviária<br/>7: Rodoviárea<br/>8: Conduto / Rede Trasmissão<br/>9:Meios próprios<br/>10:Entrada / Saída ficta';
+                }
+            }
+        }
+        
+        if(in_array('vAFRMM', $apenas)){
+            if(! (strlen(trim( $dados['vAFRMM'])) > 0)){
+                $this->errors[] = 'O adicional ao frete para renovação da Marinha Mercante da importação é obrigatória';
+            }
+        }
+
+         if(in_array('tpIntermedio', $apenas)){
+            if(! (strlen(trim( $dados['tpIntermedio'])) > 0)){
+                $this->errors[] = 'A forma de importação quanto a intermediação da importação é obrigatória';
+            }else{
+                $cod = (Int) $dados['tpIntermedio'];
+                if(($cod != 1) && ($cod != 2) && ($cod != 3) ) {
+                    $this->errors[] = 'A forma de importação quanto a intermediação da importação deve ser 1: Importação por conta própria<br/>2: Importação por conta e ordem<br/>1: Importação por encomenda';
+                }
+            }
+        }
+        
+        if(in_array('CNPJ', $apenas)){
+            if(! (strlen(trim( $dados['CNPJ'])) > 0)){
+                $this->errors[] = 'O CNPJ para importação é obrigatório';
+            }
+        }
+        
+        if(in_array('UFTerceiro', $apenas)){
+            if(! (strlen(trim( $dados['UFTerceiro'])) > 0)){
+                $this->errors[] = 'O Unidade Federativa do adquirente ou encomendante para importação é obrigatório';
+            }
+        }
+        
+        if(in_array('cExportador', $apenas)){
+            if(! (strlen(trim( $dados['cExportador'])) > 0)){
+                $this->errors[] = 'O Código do exportador usado nos sistemas internos de informação do emitente da NF-e para importação é obrigatório';
+            }
+        }
+
+        
         return $this->errors;
     }
 }

@@ -293,6 +293,28 @@ class Nfe
         $std->nRECOPI   = $dados['nRECOPI'];
         $this->objFacadeNfe->tagRECOPI($std);
     }
+    
+     /**
+     * Node com informações da Declaração de Importação do item da NFe
+     */
+    public function declaracaoImportacao(Array $dados)
+    {
+        $std = new \stdClass();
+
+        $std->item              = $dados['item']; //item da NFe
+        $std->nDI               = $dados['nDI'];  
+        $std->dDI               = $dados['dDI'];
+        $std->xLocDesemb        = $dados['xLocDesemb'];
+        $std->UFDesemb          = $dados['UFDesemb'];
+        $std->dDesemb           = $dados['dDesemb'];
+        $std->tpViaTransp       = $dados['tpViaTransp'];
+        $std->vAFRMM            = $dados['vAFRMM'];
+        $std->tpIntermedio      = $dados['tpIntermedio'];
+        $std->CNPJ              = $dados['CNPJ'];
+        $std->UFTerceiro        = $dados['UFTerceiro'];
+        $std->cExportador       = $dados['cExportador'];
+        $this->objFacadeNfe->tagDI($std);
+    }
 
 
     /** 

@@ -20,9 +20,18 @@
 					[
 						'nmColuna'=>'Descrição',
 						'class_cel'=>'',
-						'style_cel'=>'width: 1200px;',
+						'style_cel'=>'width: 600px;',
 					],
-					
+					[
+						'nmColuna'=>'Cód. cidade IBGE',
+						'class_cel'=>'',
+						'style_cel'=>'width: 600px;',
+					],
+					[
+						'nmColuna'=>'Estado',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					]
 
 				],
 			];
@@ -43,12 +52,23 @@
                             
                     ],
 					[
-						'val'=>$valor->name,
+						'val'=>$valor->nmCidade,
 						'class'=>'',
-						'style_cel'=>'width: 1200px;',
+						'style_cel'=>'width: 600px;',
 						
                     ],
-					
+					[
+						'val'=>$valor->cdCidade,
+						'class'=>'',
+						'style_cel'=>'width: 600px;',
+						
+                    ],
+					[
+						'val'=>$valor->nmEStado,
+						'class'=>'',
+						'style_cel'=>'width: 600px;',
+						
+                    ]
 
 				];
 				
@@ -56,22 +76,22 @@
 
                        	[ 
 							'label'=>'Editar',
-							'link'=>'/marca/edit/'. $valor->id,
+							'link'=>'/cidade/edit/'. $valor->id,
 							'style_action'=>'',
 							'class_action'=>'btn btn-lg btn-outline-primary',
 							'onClick'=>null,
-							'title_assistente'=>'MARCA - EDITAR',
+							'title_assistente'=>'CIDADE - EDITAR',
 							'width_assistente'=>'sm',
 							'height_assistente'=>'300px;'
 
 						],
 						[ 
 							'label'=>'Excluir',
-							'link'=>'/marca/info/'. $valor->id,
+							'link'=>'/cidade/info/'. $valor->id,
 							'style_action'=>'',
 							'class_action'=>'btn btn-lg btn-outline-primary',
 							'onClick'=>null,
-							'title_assistente'=>'MARCA - DELETAR',
+							'title_assistente'=>'CIDADE - DELETAR',
 							'width_assistente'=>'xs',
 							'height_assistente'=>'300px;'
 						]
@@ -98,56 +118,3 @@
 		
 	</div>
 </div>
-<!--
-			Movimentações,
-			Entradas, 
-			Saídas,
-			Conciliação,
-			Importar ofx
-
-			*Relatorios{
-				Balancete,
-				DRE,
-				Fluxo de caixa:{
-					Plano de contas:{
-						Contábel:{
-							receitas e despesas
-						},
-						Financeiro / Orçamentário{
-							receitas (créditos):{
-								Vendas loja,
-								Emprestimos,
-								Vendas loja virtual,
-
-							},
-							despesas (débitos):{
-								Alugel,
-								Energia,
-								Contador,
-								Fornecedores,
-								Impostos e táxas,
-								Salários,
-								Equipamentos,
-								Manutenção,
-								Seguros,
-								Alimentação,
-
-							},
-							indicadores:{
-								A porcentagem de cada grupo de despesas em relação à receita/ faturamento,
-								EX: Recita de 100 -> 100%
-								Espesa de 50-> 50% da receita
-							}
-						}
-					}
-				},
-				Resumo de entradas e saídas por categoria,
-				Gráfico ce gastos
-				OBS:{
-					Pesquisaar diferença entre DRE e Fluxo de caixa
-				}
-
-
-			}
-
- -->
