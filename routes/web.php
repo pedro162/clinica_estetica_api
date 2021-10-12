@@ -302,6 +302,22 @@ documento', 'uses'=>'Admin\CobrancaReceberController@anexarDocumento']);
 	Route::get('/cidade/destroy/{id}/{id_assistente?}', ['as'=>'cidade.destroy', 'uses'=>'Admin\CidadeController@destroy']);
 	Route::post('/cidade/destroy/{id}/{id_assistente?}', ['as'=>'cidade.destroy', 'uses'=>'Admin\CidadeController@destroy']);
 
+	Route::get('/bairro/index/{id_assistente?}', ['as'=>'bairro.index', 'uses'=>'Admin\BairroController@index']);
+	Route::post('/bairro/index/{id_assistente?}', ['as'=>'bairro.index', 'uses'=>'Admin\BairroController@index']);
+	Route::get('/bairro/create/{id_assistente?}', ['as'=>'bairro.create', 'uses'=>'Admin\BairroController@create']);
+	Route::post('/bairro/create/{id_assistente?}', ['as'=>'bairro.create', 'uses'=>'Admin\BairroController@create']);
+	Route::post('/bairro/store/{id_assistente?}', ['as'=>'bairro.store', 'uses'=>'Admin\BairroController@store']);
+	Route::get('/bairro/edit/{id}/{id_assistente?}', ['as'=>'bairro.edit', 'uses'=>'Admin\BairroController@edit']);
+	Route::post('/bairro/edit/{id}/{id_assistente?}', ['as'=>'bairro.edit', 'uses'=>'Admin\BairroController@edit']);
+	Route::put('/bairro/update/{id}/{id_assistente?}', ['as'=>'bairro.update', 'uses'=>'Admin\BairroController@update']);
+	Route::get('/bairro/show/{id}/{id_assistente?}', ['as'=>'bairro.show', 'uses'=>'Admin\BairroController@show']);
+	Route::post('/bairro/show/{id}/{id_assistente?}', ['as'=>'bairro.show', 'uses'=>'Admin\BairroController@show']);
+	Route::get('/bairro/info/{id}/{id_assistente?}', ['as'=>'bairro.info', 'uses'=>'Admin\BairroController@info']);
+	Route::post('/bairro/info/{id}/{id_assistente?}', ['as'=>'bairro.info', 'uses'=>'Admin\BairroController@info']);
+	Route::get('/bairro/head/{id_assistente?}', ['as'=>'bairro.head', 'uses'=>'Admin\BairroController@head']);
+	Route::post('/bairro/head/{id_assistente?}', ['as'=>'bairro.head', 'uses'=>'Admin\BairroController@head']);
+	Route::get('/bairro/destroy/{id}/{id_assistente?}', ['as'=>'bairro.destroy', 'uses'=>'Admin\BairroController@destroy']);
+	Route::post('/bairro/destroy/{id}/{id_assistente?}', ['as'=>'bairro.destroy', 'uses'=>'Admin\BairroController@destroy']);
 
 	Route::get('/venda/index/{id_assistente?}', ['as'=>'contrato.index', 'uses'=>'Admin\VendaController@index']);//VendaController
 	Route::get('/venda/create/{id}/{id_assistente?}', ['as'=>'venda.create', 'uses'=>'Admin\VendaController@create']);

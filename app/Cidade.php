@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Estado;
+use App\Bairro;
 
 class Cidade extends Model
 {
@@ -23,5 +24,10 @@ class Cidade extends Model
     public function estado()
     {
         return $this->belongsTo(Estado::class, 'estado_id', 'id');
+    }
+
+    public function bairro()
+    {
+        return $this->hasMany(Bairro::class, 'cidade_id', 'id');
     }
 }

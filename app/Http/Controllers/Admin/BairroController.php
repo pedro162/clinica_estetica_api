@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Bairro;
 use App\Exceptions\BairroException;
 use App\Cidade;
+use Illuminate\Support\Facades\Validator;
 
 class BairroController extends Controller
 {
@@ -28,7 +29,7 @@ class BairroController extends Controller
             ];
 
             $registro = \DB::table('bairros');
-            $registro->join('estadoss', function($join){
+            $registro->join('cidades', function($join){
                 
                 $join->on('cidades.id', '=', 'bairros.cidade_id');
 
@@ -137,7 +138,7 @@ class BairroController extends Controller
 
             //dd( $registro);
 
-            return view('admin.bairros.index', compact('registro', 'consulta'));
+            return view('admin.bairro.index', compact('registro', 'consulta'));
 
         }catch(BairroException $e){
             \DB::rollback();
@@ -168,7 +169,7 @@ class BairroController extends Controller
 
         $callBack = $dadosRequest['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-        return view('admin.bairros.create', compact('callBack','idAssistente'));
+        return view('admin.bairro.create', compact('callBack','idAssistente'));
     }
 
     /**
@@ -196,9 +197,9 @@ class BairroController extends Controller
              
             $dadosRequest['user_id']            = \Auth::User()->id;
             $dadosRequest['user_update_id']     = \Auth::User()->id;
-            $dadosRequest['nmCidade']           = $dados['nmCidade'];
-            $dadosRequest['cdCidade']           = $dados['cdCidade'];
-            $dadosRequest['sigla']              = $dados['sigla'] ?? null;
+            $dadosRequest['name']               = $dados['name'];
+            $dadosRequest['codIbge']            = $dados['codIbge'];
+            $dadosRequest['cep']                = $dados['cep'];
             $dadosRequest['cidade_id']          = $cidade->id;
             $dadosRequest['active']             = 'yes';
              
@@ -309,11 +310,9 @@ class BairroController extends Controller
                 
             }
 
-            $estados = Estado::where('active', '=', 'yes')->get();
-
             \DB::commit();
 
-            return view('admin.cidade.edit', compact('registro', 'idAssistente', 'callBack', 'estados'));
+            return view('admin.bairro.edit', compact('registro', 'idAssistente', 'callBack'));
 
          }catch(BairroException $e){
 
@@ -356,15 +355,15 @@ class BairroController extends Controller
 
             $cidade = Cidade::where('active', '=' ,'yes')->where('id', '=', $dados['cidade_id'])->first();
             
-            if(! $estado){
+            if(! $cidade){
                 throw new BairroException('Cidade não identificada. Tente novamente ou entre em contato com o suporte.');
             }
             $dadosRequest = [];         
              
             $dadosRequest['user_update_id']     = \Auth::User()->id;
-            $dadosRequest['nmCidade']           = $dados['nmCidade'];
-            $dadosRequest['cdCidade']           = $dados['cdCidade'];
-            $dadosRequest['sigla']              = $dados['sigla'] ?? null ;
+            $dadosRequest['name']               = $dados['name'];
+            $dadosRequest['codIbge']            = $dados['codIbge'];
+            $dadosRequest['cep']                = $dados['cep'];
             $dadosRequest['cidade_id']          = $cidade->id;
             $dadosRequest['active']             = 'yes';
            

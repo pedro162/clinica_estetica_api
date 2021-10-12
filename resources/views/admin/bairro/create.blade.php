@@ -1,58 +1,62 @@
 @php $randId = rand(11111, 99999);@endphp
 <div class="row p-3">
 	<div class="col-md-12 col-sm-12">
-		<form action="{{route('cidade.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
+		<form action="{{route('bairro.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
 			@csrf
 			
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
 			<hr/>
 			<div  class="row" >
-				<div class="form-group col-md-12 col-sm-12">
-					<label class="label" for="nmCidade{{$randId}}" >Descrição</label>
-					<input type="text" name="nmCidade" id="nmCidade{{$randId}}" class="form-control form-control-sm ">
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="name{{$randId}}" >Descrição</label>
+					<input type="text" name="name" id="name{{$randId}}" class="form-control form-control-sm ">
 				</div>
-				
-			</div>
-
-			<div  class="row" >
 
 
 				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="cdCidade{{$randId}}" >Código</label>
-					<input type="text" name="cdCidade" id="cdCidade{{$randId}}" class="form-control form-control-sm ">
+					<label class="label" for="cep{{$randId}}" >Cep</label>
+					<input type="text" name="cep" id="cep{{$randId}}" class="form-control form-control-sm ">
+				</div>
+				
+			</div>
+			<div  class="row" >
+
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="codIbge{{$randId}}" >Cód IBGE</label>
+					<input type="text" name="codIbge" id="codIbge{{$randId}}" class="form-control form-control-sm ">
 				</div>
 
 				<div class="form-group col-md-6 col-sm-12">	
 					@php
 						
-						$idEstado 					= 'estado_id';
-						$typeEstado 				= 'number';
-						$nameEstado 				= 'estado_id';
-						$labelEstado 				= 'Cód';
-						$idDescriptionEstado 		= 'nmEstado';
-						$typeDescrptionEstado 		= 'text';
-						$nameDescriptionEstado 		= 'nmEstado';
-						$labelDescriptionEstado 	= 'Descrição';
-						$valueDescriptionEstado 	= "";
-						$valueEstado 				= "";
-						$colEstado 					= "3";
-						$colDescriptionEstado 		= "8";
-						$searshEstado 				= "searshEstado".$randId."();";
+						$idCidade 					= 'cidade_id';
+						$typeCidade 				= 'number';
+						$nameCidade 				= 'cidade_id';
+						$labelCidade 				= 'Cód';
+						$idDescriptionCidade 		= 'nmCidade';
+						$typeDescrptionCidade 		= 'text';
+						$nameDescriptionCidade 		= 'nmCidade';
+						$labelDescriptionCidade 	= 'Descrição';
+						$valueDescriptionCidade 	= "";
+						$valueCidade 				= "";
+						$colCidade 					= "3";
+						$colDescriptionCidade 		= "8";
+						$searshCidade 				= "searshCidade".$randId."();";
 					@endphp
 					<x-controll-filter
-						:idCod="$idEstado"
-						:typeCod="$typeEstado"
-						:nameCod="$nameEstado"
-						:labelCod="$labelEstado"
-						:idDescription="$idDescriptionEstado"
-						:typeDescrption="$typeDescrptionEstado"
-						:nameDescription="$nameDescriptionEstado"
-						:labelDescription="$labelDescriptionEstado"
-						:valueDescription="$valueDescriptionEstado"
-						:valueCod="$valueEstado"
-						:colCod="$colEstado"
-						:colDescription="$colDescriptionEstado"
-						:searsh="$searshEstado"
+						:idCod="$idCidade"
+						:typeCod="$typeCidade"
+						:nameCod="$nameCidade"
+						:labelCod="$labelCidade"
+						:idDescription="$idDescriptionCidade"
+						:typeDescrption="$typeDescrptionCidade"
+						:nameDescription="$nameDescriptionCidade"
+						:labelDescription="$labelDescriptionCidade"
+						:valueDescription="$valueDescriptionCidade"
+						:valueCod="$valueCidade"
+						:colCod="$colCidade"
+						:colDescription="$colDescriptionCidade"
+						:searsh="$searshCidade"
 					/>
 				</div>
 
@@ -74,6 +78,7 @@
 
 
 	const assistente{{$randId}} = '{{$idAssistente}}';
+	let callBack{{$randId}} = '{{$callBack}}'
 	//edita ou salva um produto
 	$('html body').find('#form{{$randId}}').on('submit', function(ev){
 
@@ -129,16 +134,16 @@
 		ev.preventDefault();
 	});
 
-	function searshEstado{{$randId}}(){
+	function searshCidade{{$randId}}(){
 
 		try{
 			
-			let url = '/estado/head';
+			let url = '/cidade/head';
 			let data =  preparaBasicRequestPost{{$randId}}();
 			
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
-			Utilitarios.assistentAjaxModal('POST',url, 'HTML','ESTADOS', 'sm', '700px', null, data)
+			Utilitarios.assistentAjaxModal('POST',url, 'HTML','CIDADES', 'lg', '700px', null, data)
 
 		}catch(ex){
 				console.log('Erro: '+ex.message);

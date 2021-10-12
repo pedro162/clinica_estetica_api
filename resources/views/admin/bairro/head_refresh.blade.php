@@ -8,8 +8,8 @@
 			<div class="col-md-12">	
 				<nav aria-label="breadcrumb" class="my-2">
 					<ol class="breadcrumb">
-						<li class="breadcrumb-item active"><a href="{{route('cidade.index')}}">Inicio</a></li>
-						<li class="breadcrumb-item desable" aria-current="page"><a >Lista de cidades</a></li>
+						<li class="breadcrumb-item active"><a href="{{route('bairro.index')}}">Inicio</a></li>
+						<li class="breadcrumb-item desable" aria-current="page"><a >Lista de bairros</a></li>
 					</ol>
 				</nav>
 			</div>
@@ -34,7 +34,7 @@
 						[
 							'label'     =>'Descrição',
 							'value'     =>'',
-							'name'      =>'nmCidade',
+							'name'      =>'name',
 							'class'     =>'',
 							'onChange'  =>'',
 							'onClick'   =>'',
@@ -44,9 +44,9 @@
 
 						],
 						[
-							'label'     =>'Estado',
+							'label'     =>'Cidade',
 							'value'     =>'',
-							'name'      =>'nmEStado',
+							'name'      =>'nmCidade',
 							'class'     =>'',
 							'onChange'  =>'',
 							'onClick'   =>'',
@@ -66,8 +66,8 @@
 							'options'   =>[
 								'id-ASC'=>'Cód',
 								'id-DESC'=>'Cód',
-								'nmCidade-ASC'=>'Descrição',
-								'nmCidade-DESC'=>'Descrição',
+								'name-ASC'=>'Descrição',
+								'name-DESC'=>'Descrição',
 							],
 							'classContainer' =>'my-1 col-md-6 col-sm-12'
 
@@ -104,7 +104,7 @@
 						[
 							'type'      =>'link',
 							'onClick'   =>'cadastrar'.$randId.'(this);',
-							'href'      =>''.route('cidade.create').'',
+							'href'      =>''.route('bairro.create').'',
 							'class'     =>'btn btn-md btn-outline-primary mr-2 mb-sm-1',
 							'style'     =>'',
 							'id'        =>'form_cadastrar'.$randId,
@@ -206,7 +206,7 @@
 		if(! isset($modifyUrlTitle)){
 
 			@endphp
-				Utilitarios.modifyUrlWithoutReload('/cidade/head', 'Estados')
+				Utilitarios.modifyUrlWithoutReload('/bairro/head', 'Bairros')
 			@php
 		}
 	@endphp
@@ -220,7 +220,7 @@
 		});	
 
 		function pesquisar{{$randId}}(){
-			let url = '/cidade/index';
+			let url = '/bairro/index';
 
 			let objResponse = '#response-request{{$randId}}';
 			//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
@@ -342,7 +342,7 @@
 				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
 				data.append('_token', token)
 
-				Utilitarios.assistentAjaxModal('POST',url, 'HTML','Cidade - Cadastrar', 'sm', '300px', null, data)
+				Utilitarios.assistentAjaxModal('POST',url, 'HTML','Bairro - Cadastrar', 'sm', '300px', null, data)
 				//Utilitarios.toggleFiltro();
 			}catch(ex){
 					console.log('Erro: '+ex.message);

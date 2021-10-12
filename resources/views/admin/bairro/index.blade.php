@@ -23,12 +23,17 @@
 						'style_cel'=>'width: 600px;',
 					],
 					[
-						'nmColuna'=>'Cód. cidade IBGE',
+						'nmColuna'=>'Cep',
 						'class_cel'=>'',
 						'style_cel'=>'width: 600px;',
 					],
 					[
-						'nmColuna'=>'Estado',
+						'nmColuna'=>'Cód. IBGE',
+						'class_cel'=>'',
+						'style_cel'=>'width: 600px;',
+					],
+					[
+						'nmColuna'=>'Cidade',
 						'class_cel'=>'',
 						'style_cel'=>'',
 					]
@@ -52,19 +57,25 @@
                             
                     ],
 					[
+						'val'=>$valor->name,
+						'class'=>'',
+						'style_cel'=>'width: 600px;',
+						
+                    ],
+					[
+						'val'=>$valor->cep,
+						'class'=>'',
+						'style_cel'=>'width: 600px;',
+						
+                    ],
+					[
+						'val'=>$valor->codIbge,
+						'class'=>'',
+						'style_cel'=>'width: 600px;',
+						
+                    ],
+					[
 						'val'=>$valor->nmCidade,
-						'class'=>'',
-						'style_cel'=>'width: 600px;',
-						
-                    ],
-					[
-						'val'=>$valor->cdCidade,
-						'class'=>'',
-						'style_cel'=>'width: 600px;',
-						
-                    ],
-					[
-						'val'=>$valor->nmEStado,
 						'class'=>'',
 						'style_cel'=>'width: 600px;',
 						
@@ -76,22 +87,22 @@
 
                        	[ 
 							'label'=>'Editar',
-							'link'=>'/cidade/edit/'. $valor->id,
+							'link'=>'/bairro/edit/'. $valor->id,
 							'style_action'=>'',
 							'class_action'=>'btn btn-lg btn-outline-primary',
 							'onClick'=>null,
-							'title_assistente'=>'CIDADE - EDITAR',
+							'title_assistente'=>'BAIRRO - EDITAR',
 							'width_assistente'=>'sm',
 							'height_assistente'=>'300px;'
 
 						],
 						[ 
 							'label'=>'Excluir',
-							'link'=>'/cidade/info/'. $valor->id,
+							'link'=>'/bairro/info/'. $valor->id,
 							'style_action'=>'',
 							'class_action'=>'btn btn-lg btn-outline-primary',
 							'onClick'=>null,
-							'title_assistente'=>'CIDADE - DELETAR',
+							'title_assistente'=>'BAIRRO - DELETAR',
 							'width_assistente'=>'xs',
 							'height_assistente'=>'300px;'
 						]

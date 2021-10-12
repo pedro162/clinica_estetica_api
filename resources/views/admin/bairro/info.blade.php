@@ -14,26 +14,21 @@
 							<td>{{$registro->id ?? ''}}</td>
 						</tr>
 						<tr>
-							<td>País:</td>
-							<td>{{$registro->pais->nmPais ?? ''}}</td>
-						</tr>
-						<tr>
 							<td>Descrição:</td>
-							<td>{{$registro->nmEStado ?? ''}}</td>
+							<td>{{$registro->pais->name ?? ''}}</td>
 						</tr>
 						<tr>
-							<td>Sigla:</td>
-							<td>{{$registro->sigla ?? ''}}</td>
+							<td>Cep:</td>
+							<td>{{$registro->cep ?? ''}}</td>
 						</tr>
 						<tr>
-						<td>Cód. do estado:</td>
-							<td>{{$registro->codEstado ?? ''}}</td>
+							<td>Código IBGE:</td>
+							<td>{{$registro->codIbge ?? ''}}</td>
 						</tr>
 						<tr>
-							<td>Definido como padrão:</td>
-							<td>{{$registro->padrao == 'ys' ? 'Sim' : 'Não'}}</td>
+						<td>Cidade:</td>
+							<td>{{$registro->cidade->name ?? ''}}</td>
 						</tr>
-						
 					</tbody>							
 				</table>
 			</div>
@@ -41,7 +36,7 @@
 
 		<div class="row">
 			<div class="col-md-12 col-sm-12" align="right">
-				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('cidade.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
+				<a id="id_produto_destroy" onClick="destroy(this);" href="{{route('bairro.destroy', $registro->id)}}" class="btn btn-sm btn-danger">Deletar</a>
 			</div>
 		</div>
 	</div>
