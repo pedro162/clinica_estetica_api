@@ -29,6 +29,15 @@ class CreateContaReceberItemsTable extends Migration
             $table->decimal('vrDesconto', 10, 3)->default(0);
             $table->decimal('vrJuros', 10, 3)->default(0);
             $table->enum('status', ['pago', 'devolvido', 'estornado']);
+            $table->bigInteger('conta_receber_id')->unsigned();
+            $table->foreign('conta_receber_id')->references('id')->on('conta_recebers')->onUpdate('cascade')->onDelete('cascade');
+
+            /*$table->bigInteger('conta_receber_id')->unsigned();
+            $table->foreign('conta_receber_id')->references('id')->on('conta_recebers')->onUpdate('cascade')->onDelete('cascade');*/
+            $table->bigInteger('pessoa_baixa_id')->unsigned()->nullable()->default(null);
+            $table->bigInteger('pessoa_estorno_id')->unsigned()->nullable()->default(null);
+            $table->bigInteger('pessoa_devolucao_id')->unsigned()->nullable()->default(null);  
+
             $table->bigInteger('forma_pagamentos_id')->unsigned();
             $table->foreign('forma_pagamentos_id')->references('id')->on('forma_pagamentos')->onUpdate('cascade')->onDelete('cascade');
             
