@@ -1,102 +1,131 @@
-
 @php $randId = rand(11111, 99999); @endphp
 <div class="row">
-	<div class="col-md-12 col-sm-12" style="">
-		<buttom type="buttom" class="btn btn-sm btn-outline-primary mr-2 mb-sm-1" id="acertar-receber{{$randId}}">Acertar / Desdobrar Selecionados</buttom>
+	<div class="col">
+		
 
-		<table id="contas-recebeer{{$randId}}" class="table table-sm table-responsive table-hover" style="width: 100%; height: 300px; overflow: scroll;">
-			<thead style="width: 100%;">
-				<tr>
-					<th><input class="custom-control" type="checkbox" name="" onchange="+Utilitarios.selecionarMultiplosTable('contas-recebeer{{$randId}}')"></th>
-					<th>Cod</th>
-					<th>Duplicata</th>
-					<th>Parcela</th>
-					<th>Cliente</th>
-					<th>Histórico</th>
-					<th>Valor</th>
-					<th>Juros</th>
-					<th>Multa</th>
-					<th>Vencimento</th>
-					<th>Pagamento</th>
-					<th>Status</th>
-					<th>Posse</th>
-					<th>Desdobrado</th>
-				</tr>
-			</thead>
-			<tbody  style="width: 100%;" id="tbody-cob-receber{{$randId}}">
-				@foreach($registro as $cobranca)
-					<tr class="{{$cobranca->statusCobranca == 'baixado' ? 'text-success': ''}}">
-						<td index="0"><input type="checkbox" name="" ></td>
-						<td>{{ $cobranca->id ?? '0' }}</td>
-						<td>{{ $cobranca->nrDuplicata ?? '0' }}</td>
-						<td>{{ $cobranca->nrParcela ?? '0'}}</td>
-						<td>{{ $cobranca->pessoa->name ?? '0' }}</td>
-						<td>{{ $cobranca->dsHistorico ?? '-' }}</td>
-						<td>{{ number_format($cobranca->vrCobrancaReceber, 2, ',', '.') ?? '0' }}</td>
-						<td>{{ number_format($cobranca->vrJuros, 2, ',', '.') ?? '0' }}</td>
-						<td>{{ number_format($cobranca->vrMulta, 2, ',', '.') ?? '0' }}</td>
-						<td>{{ $cobranca->dtVencimentoCobrancaReceber ?? '-' }}</td>
-						<td>{{ $cobranca->dtCobrancaReceberRecebimento ?? '-' }}</td>
-						<td>{{ $cobranca->statusCobranca ?? '-'}}</td>
-						<td>{{'-'}}</td>
-						<td>{{ $cobranca->isDuplicataOriginal == 'yes' ? 'Não' : 'Sim' }}</td>
-						<input type="hidden" class="id-referencia" value="{{$cobranca->idReferencia}}">
-						<input type="hidden" class="tp-referencia" value="{{$cobranca->tpReferencia}}">
-						<input type="hidden" class="id" value="{{$cobranca->id}}">
-					</tr>
-				@endforeach
-			</tbody>
-		</table>
-	</div>
-</div>
+		@php
+		
+			$tituloColunas = [
 
-<script>
-	
-	Utilitarios.useDataTable($('#contas-recebeer{{$randId}}'))
-	$('html body').find('table tbody#tbody-cob-receber{{$randId}}').delegate('tr td', 'click', function(){
+				'style_row'=>'',
+				'class_row'=>'',
+				'onClick'=>null,
+				'dados'=>[
 
-		if($(this).attr('index')){
-			
-		}else{
-			let idReferencia = $(this).parent().find('input:hidden.id-referencia').val();
-			let tpReferencia = $(this).parent().find('input:hidden.tp-referencia').val();
-			let arrLinks = [
-				['Baixar', '/cobranca/receber/baixar/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Baixar com Credito de Cliente', '/cobranca/receber/baixar/credito/cliente/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Extornar', '/cobranca/receber/extornar/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Editar', '/cobranca/receber/edit//'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Acertar', '/cobranca/receber/acertar/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Desdobrar', '/cobranca/receber/desdobrar/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Negativar', '/cobranca/receber/negativar/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Conciliar CNI', '/cobranca/receber/conciliar/cni/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Recibo', '/cobranca/receber/recibo/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Anexar Documento', '/cobranca/receber/anexar/documento/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Visualizar Documento', '/cobranca/receber/show//'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Ver Desdobramento', '/cobranca/receber/ver/desdobramento/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
-				['Ficha de Débitos', '/cobranca/receber/ficha/debitos/'+idReferencia+'/'+tpReferencia,'btn btn-lg btn-outline-primary', 'id_baixar_cobranca_receber{{$randId}}'],
+					[
+						'nmColuna'=>'Cód',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					],
+					[
+						'nmColuna'=>'Descrição',
+						'class_cel'=>'',
+						'style_cel'=>'width: 600px;',
+					],
+					[
+						'nmColuna'=>'Cep',
+						'class_cel'=>'',
+						'style_cel'=>'width: 600px;',
+					],
+					[
+						'nmColuna'=>'Cód. IBGE',
+						'class_cel'=>'',
+						'style_cel'=>'width: 600px;',
+					],
+					[
+						'nmColuna'=>'Cidade',
+						'class_cel'=>'',
+						'style_cel'=>'',
+					]
+
+				],
 			];
 
-			Utilitarios.assitentOpcoes(arrLinks, '100%', 'xs');
-		}
+			$dados = [];
 
-	})
+			foreach($registro as $valor){
+				$row = [];
+				$row['id'] = $valor->id;
+				$row['style_row'] = '';
+				$row['class_row'] = '';
 
-	
-	$('html body').delegate('#acertar-receber{{$randId}}', 'click', function(ev){
-		ev.preventDefault();
+				$row['dados'] = [
+					[
+						'val'=>$valor->id,
+						'class'=>'',
+						'style_cel'=>'',
+                            
+                    ],
+					[
+						'val'=>$valor->name,
+						'class'=>'',
+						'style_cel'=>'width: 600px;',
+						
+                    ],
+					[
+						'val'=>$valor->cep,
+						'class'=>'',
+						'style_cel'=>'width: 600px;',
+						
+                    ],
+					[
+						'val'=>$valor->codIbge,
+						'class'=>'',
+						'style_cel'=>'width: 600px;',
+						
+                    ],
+					[
+						'val'=>$valor->nmCidade,
+						'class'=>'',
+						'style_cel'=>'width: 600px;',
+						
+                    ]
 
-		let ids = Utilitarios.selecionadosTable('contas-recebeer{{$randId}}');
-		console.log(ids);
+				];
+				
+				$row['acoes']=[
 
-		let url = '/cobranca/receber/acertar/'+ids
-		let typeResponse = 'HTML';
-		let title = 'Desdobramento - Cobrança Receber';
-		let width = 'lg';
-		let heigh = '900px';
-		Utilitarios.assistentAjaxModal('GET',url, typeResponse, title, width, heigh)
+                       	[ 
+							'label'=>'Editar',
+							'link'=>'/bairro/edit/'. $valor->id,
+							'style_action'=>'',
+							'class_action'=>'btn btn-lg btn-outline-primary',
+							'onClick'=>null,
+							'title_assistente'=>'BAIRRO - EDITAR',
+							'width_assistente'=>'sm',
+							'height_assistente'=>'300px;'
 
-	})
+						],
+						[ 
+							'label'=>'Excluir',
+							'link'=>'/bairro/info/'. $valor->id,
+							'style_action'=>'',
+							'class_action'=>'btn btn-lg btn-outline-primary',
+							'onClick'=>null,
+							'title_assistente'=>'BAIRRO - DELETAR',
+							'width_assistente'=>'xs',
+							'height_assistente'=>'300px;'
+						]
+                    ];
 
-	
-	
-</script>
+				
+				
+				$dados[] = ['row'=>$row];
+			}
+
+			$calback = "{{$consulta["callBack"]}}";
+
+			$id = $consulta['idTable'] ?? null;
+			$selectorsLine = $consulta['selectorsLine'] ?? false;
+			
+		@endphp
+		<x-table
+			:tituloColunas="$tituloColunas"
+			:dados="$dados"
+			:calback="$calback"
+			:idTable="$id"
+			:selectorsLine="$selectorsLine"
+		/>
+		
+	</div>
+</div>

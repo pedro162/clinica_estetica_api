@@ -379,12 +379,22 @@ class CobrancaReceberController extends Controller
 
             $dadosRequest = [];         
              
-            $dadosRequest['user_update_id']     = \Auth::User()->id;
-            $dadosRequest['nmCidade']           = $dados['nmCidade'];
-            $dadosRequest['cdCidade']           = $dados['cdCidade'];
-            $dadosRequest['sigla']              = $dados['sigla'] ?? null ;
-            $dadosRequest['estado_id']          = $estado->id;
-            $dadosRequest['active']             = 'yes';
+            $dadosRequest['referencia_id']              = $dados['referencia_id']           ?? null;
+            $dadosRequest['referencia']                 = $dados['referencia']              ?? null;
+            $dadosRequest['pessoa_id']                  = $pessoa->id;
+            $dadosRequest['descricao']                  = $dados['descricao'];
+            $dadosRequest['documento']                  = $dados['documento']               ?? null;
+            $dadosRequest['dtVencimentoOriginal']       = $dados['dtVencimentoOriginal'];
+            $dadosRequest['dtVencimento']               = $dados['dtVencimento']            ?? null;
+            $dadosRequest['vrBruto']                    = $dados['vrBruto'];
+            $dadosRequest['vrLiquido']                  = $dados['vrLiquido'];
+            $dadosRequest['vrDevolvido']                = $dados['vrDevolvido']             ?? 0;
+            $dadosRequest['vrPago']                     = $dados['vrPago']                  ?? 0;
+            $dadosRequest['vrTaxa']                     = $dados['vrTaxa']                  ?? 0;
+            $dadosRequest['vrDesconto']                 = $dados['vrDesconto']              ?? 0;
+            $dadosRequest['vrJuros']                    = $dados['vrJuros']                 ?? 0;
+            $dadosRequest['user_update_id']             = \Auth::User()->id;
+            $dadosRequest['active']                     =  'yes';
            
             $registro = CobrancaReceber::where('active', '=', 'yes')->where('id', '=', $id)->first();
             if(! $registro){

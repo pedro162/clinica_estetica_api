@@ -40,7 +40,7 @@
           Financeiro
         </a>
         <div class="dropdown-menu" aria-labelledby="financeiro">
-          <a class="dropdown-item" href="#">Contas a Receber</a>
+          <a class="dropdown-item rotina"  href="{{route('receber.head')}}">Contas a Receber</a>
           <a class="dropdown-item" href="#">Contas a Pagar</a>
           <a class="dropdown-item" href="#">Lançar Despesa</a>
           <div class="dropdown-divider"></div>
