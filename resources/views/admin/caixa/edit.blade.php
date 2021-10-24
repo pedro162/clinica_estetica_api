@@ -3,15 +3,58 @@
  @endphp
  <div class="row p-3">
 	<div class="col-md-12 col-sm-12">
-		<form action="{{route('marca.update', $registro->id)}}" method="post" class="form" id="form_{{$randId}}">
+		<form action="{{route('caixa.update', $registro->id)}}" method="post" class="form" id="form_{{$randId}}">
 			@csrf
 			@method('PUT')
-			<div class="form-group col-md-12 col-sm-12">
-				<label class="label">Nome</label>
-				<input type="text" name="name" class="form-control form-control-sm" value="{{$registro->name}}">
+			<div class="row  mt-5">
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="name">Nome</label>
+					<input type="text" value="{{$registro->name}}" name="name" id="name" class="form-control form-control-sm">
+				</div>
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="type">Aceita tranferência</label>
+					<select name="type" id="type" class="form-control form-control-sm">
+						<option value="" selected="selected" disabled="">Selecionde</option>
+						<option {{isset($registro->type) &&  trim($registro->type) == 'convencional'? 'selected': ''}} value="convencional">Convencional</option>
+						<option {{isset($registro->type) &&  trim($registro->type) == 'banco'? 'selected': ''}} value="banco">Banco</option>
+					</select>
+				</div>
 			</div>
-			<div class="col">
-				<button type="submit" class=" btn btn-sm btn-primary">Salvar</button>
+			<div class="row ">
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="vrMin">Valor mínimo</label>
+					<input type="text" value="{{$registro->vrMin}}" name="vrMin" id="vrMin" class="form-control form-control-sm">
+				</div>
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="vrMax">Valor máximo</label>
+					<input type="text" value="{{$registro->vrMax}}" name="vrMax" id="vrMax" class="form-control form-control-sm">
+				</div>
+			</div>
+			<div class="row ">
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="status_bloqueio">Bloquear</label>
+					<select name="status_bloqueio" id="status_bloqueio" class="form-control form-control-sm">
+						<option value="" selected="selected" disabled="">Selecionde</option>
+						<option {{isset($registro->status_bloqueio) &&  trim($registro->status_bloqueio) == 'bloqueado'? 'selected': ''}} value="bloqueado">Sim</option>
+						<option {{isset($registro->status_bloqueio) &&  trim($registro->status_bloqueio) == 'liberado'? 'selected': ''}} value="liberado">Não</option>
+					</select>
+				</div>
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="aceita_transferencia">Aceita tranferência</label>
+					<select name="aceita_transferencia" id="aceita_transferencia" class="form-control form-control-sm">
+						<option value="" selected="selected" disabled="">Selecionde</option>
+						<option {{isset($registro->aceita_transferencia) &&  trim($registro->aceita_transferencia) == 'yes'? 'selected': ''}} value="yes">Sim</option>
+						<option {{isset($registro->aceita_transferencia) &&  trim($registro->aceita_transferencia) == 'no'? 'selected': '' }} value="no">Não</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-8 col-sm-12">
+				</div>
+				<div class="col-md-4 col-sm-12" style="text-align: right;">
+					<button id="btn-salvar{{$randId}}" type="submit" class=" btn btn-sm btn-primary">Salvar</button>
+				</div>
 			</div>
 		</form>
 	</div>	

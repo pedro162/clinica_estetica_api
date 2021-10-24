@@ -347,7 +347,7 @@ class CaixaController extends Controller
             $dadosRequest['type']                   = $dados['type'];
             $dadosRequest['vrMin']                  = $dados['vrMin'];
             $dadosRequest['vrMax']                  = $dados['vrMax'];
-            $dadosRequest['status_abertura']        = $dados['status_abertura'];
+           // $dadosRequest['status_abertura']        = $dados['status_abertura'];
             $dadosRequest['status_bloqueio']        = $dados['status_bloqueio'];
             $dadosRequest['aceita_transferencia']   = $dados['aceita_transferencia'];
            

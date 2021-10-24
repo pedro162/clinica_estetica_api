@@ -22,6 +22,36 @@
 						'class_cel'=>'',
 						'style_cel'=>'width: 1200px;',
 					],
+					[
+						'nmColuna'=>'Tipo',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'Aceita transferência',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'Valor mínimo',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'Valor máximo',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'Status de bloqueio',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'Status de abertura',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
 					
 
 				],
@@ -48,7 +78,47 @@
 						'style_cel'=>'width: 1200px;',
 						
                     ],
+                    [
+						'val'=>$valor->type,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+                    [
+						'val'=>$valor->aceita_transferencia,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+                    [
+						'val'=>$valor->vrMin,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+                    [
+						'val'=>$valor->vrMax,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+                    [
+						'val'=>$valor->status_bloqueio,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+                    [
+						'val'=>$valor->status_abertura,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
 					
+
+
+
+
 
 				];
 				
@@ -56,22 +126,22 @@
 
                        	[ 
 							'label'=>'Editar',
-							'link'=>'/marca/edit/'. $valor->id,
+							'link'=>'/caixa/edit/'. $valor->id,
 							'style_action'=>'',
 							'class_action'=>'btn btn-lg btn-outline-primary',
 							'onClick'=>null,
-							'title_assistente'=>'MARCA - EDITAR',
+							'title_assistente'=>'CAIXA - EDITAR',
 							'width_assistente'=>'sm',
 							'height_assistente'=>'300px;'
 
 						],
 						[ 
 							'label'=>'Excluir',
-							'link'=>'/marca/info/'. $valor->id,
+							'link'=>'/caixa/info/'. $valor->id,
 							'style_action'=>'',
 							'class_action'=>'btn btn-lg btn-outline-primary',
 							'onClick'=>null,
-							'title_assistente'=>'MARCA - DELETAR',
+							'title_assistente'=>'CAIXA - DELETAR',
 							'width_assistente'=>'xs',
 							'height_assistente'=>'300px;'
 						]
