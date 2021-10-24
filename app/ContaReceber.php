@@ -31,6 +31,8 @@ class ContaReceber extends Model
 		'user_id',
 		'user_update_id',
 		'active',
+		'responsavel_id',
+		'importacao_dados',
     ];
 
     public function contaReceberItem()

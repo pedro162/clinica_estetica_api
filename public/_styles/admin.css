@@ -125,3 +125,58 @@ form * label{
     cursor: pointer;
     display: inline-block;
 }
+@media(max-width: 700px){
+   .modal-lg,
+    .modal-sm,
+    .modal-md,
+    .modal-xs{
+        max-width: 90% !important;
+    } 
+}
+
+@media(max-width: 600px){
+   .modal-lg,
+    .modal-sm,
+    .modal-md,
+    .modal-xs{
+        max-width: 90% !important;
+    } 
+}
+
+
+@media(max-width: 1000px){
+   .modal-lg,
+    .modal-sm,
+    .modal-md,
+    .modal-xs{
+        max-width: 90% !important;
+    } 
+}
+
+
+@media(max-width: 1100px){
+   .modal-lg,
+    .modal-sm,
+    .modal-md,
+    .modal-xs{
+        max-width: 90% !important;
+    } 
+}
+@media(max-width: 1200px){
+   .modal-lg,
+    .modal-sm,
+    .modal-md,
+    .modal-xs{
+        max-width: 90% !important;
+    } 
+}
+
+@media(max-width: 1300px){
+   .modal-lg,
+    .modal-sm,
+    .modal-md,
+    .modal-xs{
+        max-width: 90% !important;
+    } 
+}
+

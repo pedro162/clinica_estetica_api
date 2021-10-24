@@ -34,6 +34,8 @@ class ContaReceberItem extends Model
 		'pessoa_baixa_id',
 		'pessoa_devolucao_id',
 		'active',
+		'caixa_id',
+		'tpBaixa',
     ];
 
     public function contaReceber()

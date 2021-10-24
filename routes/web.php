@@ -317,6 +317,23 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 	Route::post('/receber/head/{id_assistente?}', ['as'=>'receber.head', 'uses'=>'Admin\CobrancaReceberController@head']);
 	Route::get('/receber/destroy/{id}/{id_assistente?}', ['as'=>'receber.destroy', 'uses'=>'Admin\CobrancaReceberController@destroy']);
 	Route::post('/receber/destroy/{id}/{id_assistente?}', ['as'=>'receber.destroy', 'uses'=>'Admin\CobrancaReceberController@destroy']);
+
+	Route::get('/caixa/index/{id_assistente?}', ['as'=>'caixa.index', 'uses'=>'Admin\CaixaController@index']);
+	Route::post('/caixa/index/{id_assistente?}', ['as'=>'caixa.index', 'uses'=>'Admin\CaixaController@index']);
+	Route::get('/caixa/create/{id_assistente?}', ['as'=>'caixa.create', 'uses'=>'Admin\CaixaController@create']);
+	Route::post('/caixa/create/{id_assistente?}', ['as'=>'caixa.create', 'uses'=>'Admin\CaixaController@create']);
+	Route::post('/caixa/store/{id_assistente?}', ['as'=>'caixa.store', 'uses'=>'Admin\CaixaController@store']);
+	Route::get('/caixa/edit/{id}/{id_assistente?}', ['as'=>'caixa.edit', 'uses'=>'Admin\CaixaController@edit']);
+	Route::post('/caixa/edit/{id}/{id_assistente?}', ['as'=>'caixa.edit', 'uses'=>'Admin\CaixaController@edit']);
+	Route::put('/caixa/update/{id}/{id_assistente?}', ['as'=>'caixa.update', 'uses'=>'Admin\CaixaController@update']);
+	Route::get('/caixa/show/{id}/{id_assistente?}', ['as'=>'caixa.show', 'uses'=>'Admin\CaixaController@show']);
+	Route::post('/caixa/show/{id}/{id_assistente?}', ['as'=>'caixa.show', 'uses'=>'Admin\CaixaController@show']);
+	Route::get('/caixa/info/{id}/{id_assistente?}', ['as'=>'caixa.info', 'uses'=>'Admin\CaixaController@info']);
+	Route::post('/caixa/info/{id}/{id_assistente?}', ['as'=>'caixa.info', 'uses'=>'Admin\CaixaController@info']);
+	Route::get('/caixa/head/{id_assistente?}', ['as'=>'caixa.head', 'uses'=>'Admin\CaixaController@head']);
+	Route::post('/caixa/head/{id_assistente?}', ['as'=>'caixa.head', 'uses'=>'Admin\CaixaController@head']);
+	Route::get('/caixa/destroy/{id}/{id_assistente?}', ['as'=>'caixa.destroy', 'uses'=>'Admin\CaixaController@destroy']);
+	Route::post('/caixa/destroy/{id}/{id_assistente?}', ['as'=>'caixa.destroy', 'uses'=>'Admin\CaixaController@destroy']);
 	
 });
 

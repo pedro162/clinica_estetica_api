@@ -357,7 +357,8 @@ class MarcaController extends Controller
             }
             $marca->update(['active'=>'no']);
             $marca->delete();
-
+            
+            \DB::commit();
             return response()->json(['mensagem'=>'Registro atulizado com sucesso', 'class'=>'success']);
 
         }catch (MarcaException $th) {

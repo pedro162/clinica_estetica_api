@@ -220,6 +220,10 @@
 			</div>	
 			
 			<div  class="row" >
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="dtPrimeiraParcela{{$randId}}" >DT. primeira parcela</label>
+					<input type="text" name="dtPrimeiraParcela" id="dtPrimeiraParcela{{$randId}}" class="form-control form-control-sm ">
+				</div>
 
 				<div class="form-group col-md-6 col-sm-12">	
 					@php
@@ -254,8 +258,9 @@
 						:searsh="$searshCaixa"
 					/>
 				</div>
-
-				<div class="form-group col-md-6 col-sm-12">	
+			</div>
+			<div  class="row" >
+				<div class="form-group col-md-12 col-sm-12">	
 					@php
 						
 						//ex: Banco brasil, Caixa principal

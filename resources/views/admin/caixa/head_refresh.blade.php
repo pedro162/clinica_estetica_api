@@ -7,8 +7,8 @@
 		<div class="col-md-12">	
 			<nav aria-label="breadcrumb" class="my-2">
 				<ol class="breadcrumb">
-					<li class="breadcrumb-item active"><a href="{{route('marca.index')}}">Inicio</a></li>
-					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de marcas</a></li>
+					<li class="breadcrumb-item active"><a href="{{route('caixa.index')}}">Inicio</a></li>
+					<li class="breadcrumb-item desable" aria-current="page"><a >Lista de caixas</a></li>
 				</ol>
 			</nav>
 		</div>
@@ -21,7 +21,7 @@
 					[
 						'label'     =>'Cód',
 						'value'     =>'',
-						'name'      =>'codigo_marca',
+						'name'      =>'id',
 						'class'     =>'',
 						'onChange'  =>'',
 						'onClick'   =>'',
@@ -33,7 +33,7 @@
 					[
 						'label'     =>'Descrição',
 						'value'     =>'',
-						'name'      =>'nome_marca',
+						'name'      =>'name',
 						'class'     =>'',
 						'onChange'  =>'',
 						'onClick'   =>'',
@@ -53,8 +53,8 @@
 						'options'   =>[
 							'id-ASC'=>'Cód',
 							'id-DESC'=>'Cód',
-							'nmEStado-ASC'=>'Descrição',
-							'nmEStado-DESC'=>'Descrição',
+							'name-ASC'=>'Descrição',
+							'name-DESC'=>'Descrição',
 						],
 						'classContainer' =>'my-1 col-md-6 col-sm-12'
 
@@ -91,7 +91,7 @@
 					[
 						'type'      =>'link',
 						'onClick'   =>'cadastrar'.$randId.'(this);',
-						'href'      =>''.route('marca.create').'',
+						'href'      =>''.route('caixa.create').'',
 						'class'     =>'btn btn-md btn-outline-primary mr-2 mb-sm-1',
 						'style'     =>'',
 						'id'        =>'form_cadastrar'.$randId,
@@ -194,7 +194,7 @@
 			if(! isset($modifyUrlTitle)){
 
 				@endphp
-					Utilitarios.modifyUrlWithoutReload('/marca/head', 'Marcas')
+					Utilitarios.modifyUrlWithoutReload('/caixa/head', 'caixas')
 				@php
 			}
 		@endphp
@@ -208,7 +208,7 @@
 		});	
 
 		function pesquisar{{$randId}}(){
-			let url = '/marca/index';
+			let url = '/caixa/index';
 
 			let objResponse = '#response-request{{$randId}}';
 			//Utilitarios.assistentAjax('GET',url, 'HTML', objResponse)
@@ -330,38 +330,14 @@
 				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
 				data.append('_token', token)
 
-				Utilitarios.assistentAjaxModal('POST',url, 'HTML','Marca - Cadastrar', 'sm', '300px', null, data)
+				Utilitarios.assistentAjaxModal('POST',url, 'HTML','Caixa - Cadastrar', 'sm', '300px', null, data)
 				//Utilitarios.toggleFiltro();
 			}catch(ex){
 					console.log('Erro: '+ex.message);
 			}
 		}
 
-
-		function tributar{{$randId}}(element){
-			
-			try{
-				let url = $(element).attr('href');
-				let id = $(element).attr('idItem');
-				let idModal= $(element).attr('idModal');
-				// //
-				//Utilitarios.fecharAssistente(idModalOptions{{$randId}});
-				let data = new FormData();
-				data.append('id', id)
-				data.append('idAssistente', '')
-				data.append('callBack', ''+btoa('pesquisar{{$randId}}();')+'')
-
-				let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
-				data.append('_token', token)
-
-				Utilitarios.assistentAjaxModal('POST',url, 'HTML','NCM-Editar', 'sm', '300px', null, data)
-				
-
-			}catch(ex){
-					console.log('Erro: '+ex.message);
-			}
-		}
-		
+	
 		//--- ids da tabela
 		//let ids = Utilitarios.selecionadosTable('lista{{$randId}}');
 		//console.log(ids);
