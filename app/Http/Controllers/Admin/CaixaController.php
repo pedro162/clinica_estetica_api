@@ -43,7 +43,7 @@ class CaixaController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('cidades.id', $val);
+                                $registro->whereIn('caixas.id', $val);
                             }
                             break;
                         case 'name':
@@ -59,7 +59,7 @@ class CaixaController extends Controller
                                 $registro->where('caixas.name', 'like' , '%'.$val.'%');
                             }
                             break;
-                        case 'cidade_id':
+                        case 'caixa_id':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -69,7 +69,7 @@ class CaixaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
                                 
-                                $registro->where('caixas.cidade_id', '=' , ''.$val.'');
+                                $registro->where('caixas.id', '=' , ''.$val.'');
                             }
                             break;
                         case 'limite':
