@@ -12,7 +12,7 @@
 					<input type="text" value="{{$registro->name}}" name="name" id="name" class="form-control form-control-sm">
 				</div>
 				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="type">Aceita tranferência</label>
+					<label class="label" for="type">Tipo</label>
 					<select name="type" id="type" class="form-control form-control-sm">
 						<option value="" selected="selected" disabled="">Selecionde</option>
 						<option {{isset($registro->type) &&  trim($registro->type) == 'convencional'? 'selected': ''}} value="convencional">Convencional</option>

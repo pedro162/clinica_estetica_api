@@ -11,6 +11,9 @@ class Table extends Component
     protected $callback;
     protected $idTable;
     protected $selectorsLine;
+    protected $pesquisar;
+    protected $callbackPesquisa;
+    protected $urlPesquisa;
 
       /*
       Ex de formado do array de dados passado
@@ -63,13 +66,16 @@ class Table extends Component
      *
      * @return void
      */
-    public function __construct($tituloColunas,$dados, $calback = null, $idTable = null, $selectorsLine=false)
+    public function __construct($tituloColunas,$dados, $calback = null, $idTable = null, $selectorsLine=false, $pesquisar=0, $callbackPesquisa=null, $urlPesquisa = null)
     {
         $this->setColunas($tituloColunas);
         $this->setDados($dados);
         $this->setCallback($calback);
         $this->setIdTable($idTable);
         $this->setSelectorsLine($selectorsLine);
+        $this->setPesquisar($pesquisar);
+        $this->setCallbackPesquisa($callbackPesquisa);
+        $this->setUrlPesquisa($urlPesquisa);
         
     }
 
@@ -152,5 +158,54 @@ class Table extends Component
     {
         return $this->selectorsLine ?? false;
     }
+
+    /**
+     *  Retorna um boleano indicando se deve ser apenas captura o clicado
+     */
+     public function setPesquisar($pesquisar)
+    {
+        $this->pesquisar = $pesquisar;
+        return true;
+    }
+    /**
+     * Retorna um boleano indicando se deve ser apenas captura o clicado
+     */
+    public function getPesquisar()
+    {
+        return $this->pesquisar ?? false;
+    }
+
+    /**
+     *  Aramzena o callback para o item clicado na pesquisa
+     */
+     public function setCallbackPesquisa($callbackPesquisa)
+    {
+        $this->callbackPesquisa = $callbackPesquisa;
+        return true;
+    }
+    /**
+     * Retorna o callback para o item clicado
+     */
+    public function getCallbackPesquisa()
+    {
+        return $this->callbackPesquisa ?? false;
+    }
+
+    /**
+     *  Aramzena a url para pesquisar o item clicado na pesquisa
+     */
+     public function setUrlPesquisa($urlPesquisa)
+    {
+        $this->urlPesquisa = $urlPesquisa;
+        return true;
+    }
+    /**
+     * Retorna a url para pesquisar o item clicado
+     */
+    public function getUrlPesquisa()
+    {
+        return $this->urlPesquisa ?? false;
+    }
+
 
 }

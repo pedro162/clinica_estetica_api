@@ -85,6 +85,7 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 	Route::get('/pessoa/info/{id}/{id_assistente?}', ['as'=>'pessoa.info', 'uses'=>'Admin\PessoaController@info']);
 	Route::post('/pessoa/info/{id}/{id_assistente?}', ['as'=>'pessoa.info', 'uses'=>'Admin\PessoaController@info']);
 	Route::get('/pessoa/head/{id_assistente?}', ['as'=>'pessoa.head', 'uses'=>'Admin\PessoaController@head']);
+	Route::post('/pessoa/head/{id_assistente?}', ['as'=>'pessoa.head', 'uses'=>'Admin\PessoaController@head']);
 	Route::get('/pessoa/destroy/{id}/{id_assistente?}', ['as'=>'pessoa.destroy', 'uses'=>'Admin\PessoaController@destroy']);
 	Route::get('/pessoa/valida/cpf/{cpf}/{id_assistente?}', ['as'=>'pessoa.valida.cpf', 'uses'=>'Admin\PessoaController@validarCpf']);
 	Route::get('/pessoa/plano/adicionar/{id}/{id_assistente?}', ['as'=>'pessoa.plano.adicionar', 'uses'=>'Admin\PessoaController@adicionarPlano']);
@@ -320,6 +321,8 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 
 	Route::get('/caixa/index/{id_assistente?}', ['as'=>'caixa.index', 'uses'=>'Admin\CaixaController@index']);
 	Route::post('/caixa/index/{id_assistente?}', ['as'=>'caixa.index', 'uses'=>'Admin\CaixaController@index']);
+	Route::get('/caixa/json/{id_assistente?}', ['as'=>'caixa.json', 'uses'=>'Admin\CaixaController@json']);
+	Route::post('/caixa/json/{id_assistente?}', ['as'=>'caixa.json', 'uses'=>'Admin\CaixaController@json']);
 	Route::get('/caixa/create/{id_assistente?}', ['as'=>'caixa.create', 'uses'=>'Admin\CaixaController@create']);
 	Route::post('/caixa/create/{id_assistente?}', ['as'=>'caixa.create', 'uses'=>'Admin\CaixaController@create']);
 	Route::post('/caixa/store/{id_assistente?}', ['as'=>'caixa.store', 'uses'=>'Admin\CaixaController@store']);

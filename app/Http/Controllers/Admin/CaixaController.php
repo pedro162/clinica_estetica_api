@@ -150,6 +150,137 @@ class CaixaController extends Controller
         }
     }
 
+    public function json(Request $request)
+    {
+        try{
+            \DB::beginTransaction();
+
+            $consulta = $request->all();
+            $campos =  null;
+            $parse = [
+                'caixa_name'=>'caixas.name'
+
+            ];
+
+            $registro = \DB::table('caixas');
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('caixas.id', $val);
+                            }
+                            break;
+                        case 'name':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                
+                                $registro->where('caixas.name', 'like' , '%'.$val.'%');
+                            }
+                            break;
+                        case 'caixa_id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                
+                                $registro->where('caixas.id', '=' , ''.$val.'');
+                            }
+                            break;
+                        case 'limite':
+                                $val = (int) $val;
+                                if(is_integer($val) && $val > 0){
+                                        
+                                   $registro->limit($val);
+                                }
+                            break;
+                        case 'ordem':
+
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $val = explode(',', $val);
+                                for($i= 0; !($i == count($val)); $i++) {
+                                    $atual = explode('-', $val[$i]);
+                                    if(array_key_exists(trim($atual[0]), $parse)){
+
+                                        $parsed = $parse[trim($atual[0])];
+                                        
+                                        if($parsed){
+                                           
+                                            $registro->orderBy($parsed,$atual[1]);
+                                        }
+                                    }
+                                    
+                                    
+                                }
+
+                                break;
+
+                        case'campos':
+                                if(is_array($val) && count($val) > 0){
+                                    //$campos = $this->montaCamposConsulta($registro, $val);
+                                    
+                                }
+                            break;
+
+                    }
+                }
+            }
+            if($campos){
+                $registro->select($campos);
+            }else{
+                $registro->select('caixas.*');
+
+            }
+           
+            $registro = $registro->where('caixas.active', '=', 'yes')->get();
+
+            \DB::commit();
+
+            //dd( $registro);
+
+            return response()->json(['registro'=>$registro, 'class'=>'sucess'], 201);
+
+        }catch(CaixaException $e){
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -391,6 +522,9 @@ class CaixaController extends Controller
             $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']             = 'no';
             $bairro = Caixa::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            if($bairro->vrSaldo == 0){
+                 throw new CaixaException('Este caixa ainda possui saldo.');
+            }
             $bairro->update($dadosRequest);
             $bairro->delete();
 
@@ -417,12 +551,16 @@ class CaixaController extends Controller
     {
         $dados = $request->all();
         
-        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        $isReload           = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        $pesquisar          = $dados['pesquisar'] ?? null;
+        $calback_selected   = $dados['calback_selected'] ?? null;
+        $url_pesquisa       = $dados['url_pesquisa'] ?? null;
+
         if($isReload){
            
-            return view('admin.caixa.head_refresh', compact('isReload'));
+            return view('admin.caixa.head_refresh', compact('isReload', 'pesquisar', 'calback_selected', 'url_pesquisa'));
         }else{
-            return view('admin.caixa.head', compact('isReload'));
+            return view('admin.caixa.head', compact('isReload', 'calback_selected', 'pesquisar', 'url_pesquisa'));
         }
         
     }

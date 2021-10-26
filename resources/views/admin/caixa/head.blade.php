@@ -267,6 +267,11 @@
 		let token = $('html').find('#filtros{{$randId}}').find('input[name="_token"]').val()
 		formData.append('_token', token)
 		formData.append('callBack', btoa('carregarItens{{$randId}}("'+type+'", "'+url+'", "'+dataType+'", "'+objResponse+'");'))
+		formData.append('pesquisar', "@php echo $pesquisar ? $pesquisar : ''; @endphp" )
+		formData.append('calback_selected', "@php echo $calback_selected ? $calback_selected : ''; @endphp" )
+		formData.append('url_pesquisa', "@php echo $url_pesquisa ? $url_pesquisa : ''; @endphp" )
+		
+
 
 		formData.append('idTable', 'lista{{$randId}}') // id para a tabela
 		formData.append('selectorsLine', true) // para exibir os checkbox

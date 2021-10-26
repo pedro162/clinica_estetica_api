@@ -9,6 +9,8 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
 
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+
         <link rel="stylesheet" href="{{asset('bootstrap-4/css/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{asset('bootstrap-4/css/bootstrap-grid.min.css')}}">
         <link rel="stylesheet" href="{{asset('_styles/admin.css')}}">

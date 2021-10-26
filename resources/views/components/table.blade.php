@@ -5,6 +5,9 @@
     $bodyDados      = $getDados();
     $id             = $getIdTable() ?? 'lista'.$randId;
     $selectorsLine  = $getSelectorsLine() ?? false;
+    $isPesquisa     = $getPesquisar() ?? false;
+    $callbackSelecionaod = $getCallbackPesquisa() ?? false;
+    $urlPesquisa         = $getUrlPesquisa() ?? null;
 
  @endphp
 <div class="row">
@@ -130,6 +133,23 @@
 		    }
 
 			let id = $(element).parent('tr').find('input:hidden').val();
+             @php
+                //dd($isPesquisa);
+                if($isPesquisa > 0){
+                   
+                    @endphp
+
+                        let formData = new FormData();
+                        let tokenData = $('html').find('#{{$id}}').find('input[name="_token"]').val()
+                        formData.append('_token', tokenData)
+                        formData.append('id',id)
+                    
+                        dadosToJson{{$randId}}("{{$urlPesquisa}}",formData);
+
+                        return false;
+                    @php
+                }
+            @endphp
 
             let arrLinksActions = [];
 
@@ -188,6 +208,39 @@
 		}catch(ex){
 				console.log('Erro: '+ex.message);
 		}
+
+    }
+
+    function dadosToJson{{$randId}}(url, data){
+
+       
+
+        @php 
+            if($callbackSelecionaod){
+
+                @endphp
+                    $.ajax({
+                        url:url,
+                        type:'POST',
+                        dataType:'JSON',
+                        data:data,
+                        processData:false,
+                        contentType:false,
+                        success:function(response){
+
+                            @php  echo base64_decode($callbackSelecionaod)."(response)"; @endphp
+                        },
+                        error:function(response, status, error){
+                             console.log(response)
+                        }
+
+
+                    })
+                @php
+                
+            }
+        @endphp
+        
 
     }
 

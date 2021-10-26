@@ -19,6 +19,8 @@ class CreateCaixasTable extends Migration
             $table->enum('type',['convencional', 'banco'])->default('convencional');
             $table->decimal('vrMin', 60, 3)->default(0);
             $table->decimal('vrMax', 60, 3)->default(0);
+            $table->decimal('vrSaldo', 60, 3)->default(0);
+            $table->enum('tpSaldo',['positivo', 'negativo'])->default('positivo');
             $table->enum('status_abertura',['open', 'close'])->default('close');
             $table->enum('status_bloqueio',['bloqueado', 'liberado'])->default('liberado');
             $table->bigInteger('user_id')->unsigned();

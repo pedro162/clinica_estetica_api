@@ -19,7 +19,9 @@ class Caixa extends Model
         'aceita_transferencia',
         'user_id',
         'user_update_id',
-        'active'
+        'active',
+        'vrSaldo',
+        'tpSaldo',
     ];
     
 }

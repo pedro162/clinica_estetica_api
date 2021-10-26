@@ -16,6 +16,7 @@ class CreateContaReceberItemsCaixaTable extends Migration
         Schema::table('conta_receber_items', function (Blueprint $table) {
             $table->bigInteger('caixa_id')->unsigned()->nullable()->default(null);  
             $table->enum('tpBaixa',['system', 'user'])->default('user');
+            $table->string('rashBaixa')->nullable()->default(null);
             //$table->id();
             //$table->timestamps();
         });

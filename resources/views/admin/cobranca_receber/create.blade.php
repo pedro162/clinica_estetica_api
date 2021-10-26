@@ -1,11 +1,13 @@
 @php $randId = rand(11111, 99999);@endphp
+
 <div class="row p-3">
 	<div class="col-md-12 col-sm-12">
-		<form action="{{route('bairro.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
+		<form action="{{route('receber.store')}}" method="post" class="form " id="form{{$randId}}" enctype="multipart/form-data">
 			@csrf
 			
 			<h5 class="mt-3 text-primary" style="text-transform:uppercase;font-weight: bolder;">Dados Básicos</h5>
 			<hr/>
+		
 			<div  class="row" >
 				<div class="form-group col-md-6 col-sm-12">	
 					@php
@@ -70,8 +72,11 @@
 				</div>
 
 				<div class="form-group col-md-6 col-sm-12">
-					<label class="label" for="dtVencimento{{$randId}}" >DT. faturamento</label>
-					<input type="text" name="dtVencimento" id="dtVencimento{{$randId}}" class="form-control form-control-sm ">
+					<label class="label" for="isPersonalisado{{$randId}}" >Personalizado</label>
+					<select name="isPersonalisado" id="isPersonalisado{{$randId}}" class="form-control form-control-sm">
+						<option value="yes">Sim</option>
+						<option value="no" selected="selected" >Não</option>
+					</select>
 				</div>
 			</div>
 			<div  class="row" >
@@ -110,44 +115,47 @@
 					/>
 				</div>
 
-				<div class="form-group col-md-6 col-sm-12">	
-					@php
-						//ex: Boleto, Cartao
-						$idFomaRecebimento 					= 'forma_pagamento_id';
-						$typeFomaRecebimento 				= 'number';
-						$nameFomaRecebimento 				= 'forma_pagamento_id';
-						$labelFomaRecebimento 				= 'Cód';
-						$idDescriptionFomaRecebimento 		= 'forma_pagamento_name';
-						$typeDescrptionFomaRecebimento 		= 'text';
-						$nameDescriptionFomaRecebimento 	= 'forma_pagamento_name';
-						$labelDescriptionFomaRecebimento 	= 'Forma de recebimento';
-						$valueDescriptionFomaRecebimento 	= "";
-						$valueFomaRecebimento 				= "";
-						$colFomaRecebimento 				= "3";
-						$colDescriptionFomaRecebimento 		= "8";
-						$searshFomaRecebimento 				= "searshFomaRecebimento".$randId."();";
-					@endphp
-					<x-controll-filter
-						:idCod="$idFomaRecebimento"
-						:typeCod="$typeFomaRecebimento"
-						:nameCod="$nameFomaRecebimento"
-						:labelCod="$labelFomaRecebimento"
-						:idDescription="$idDescriptionFomaRecebimento"
-						:typeDescrption="$typeDescrptionFomaRecebimento"
-						:nameDescription="$nameDescriptionFomaRecebimento"
-						:labelDescription="$labelDescriptionFomaRecebimento"
-						:valueDescription="$valueDescriptionFomaRecebimento"
-						:valueCod="$valueFomaRecebimento"
-						:colCod="$colFomaRecebimento"
-						:colDescription="$colDescriptionFomaRecebimento"
-						:searsh="$searshFomaRecebimento"
-					/>
-				</div>
 
 				
+				<div class="form-group col-md-6 col-sm-12">	
+					@php
+						
+						//ex: Banco brasil, Caixa principal
+
+						$idConta 					= 'conta_id';
+						$typeConta 					= 'number';
+						$nameConta 					= 'conta_id';
+						$labelConta 				= 'Cód';
+						$idDescriptionConta 		= 'conta_name';
+						$typeDescrptionConta 		= 'text';
+						$nameDescriptionConta 		= 'conta_name';
+						$labelDescriptionConta 		= 'Conta';
+						$valueDescriptionConta 		= "";
+						$valueConta 				= "";
+						$colConta 					= "3";
+						$colDescriptionConta 		= "8";
+						$searshConta 				= "searshConta".$randId."();";
+					@endphp
+					<x-controll-filter
+						:idCod="$idConta"
+						:typeCod="$typeConta"
+						:nameCod="$nameConta"
+						:labelCod="$labelConta"
+						:idDescription="$idDescriptionConta"
+						:typeDescrption="$typeDescrptionConta"
+						:nameDescription="$nameDescriptionConta"
+						:labelDescription="$labelDescriptionConta"
+						:valueDescription="$valueDescriptionConta"
+						:valueCod="$valueConta"
+						:colCod="$colConta"
+						:colDescription="$colDescriptionConta"
+						:searsh="$searshConta"
+					/>
+				</div>
+								
 			</div>	
 			
-			<div  class="row" >
+			<div  class="row" id="intervalo-pagamento{{$randId}}" >
 
 				<div class="form-group col-md-6 col-sm-12">	
 					@php
@@ -218,12 +226,61 @@
 				</div>
 				
 			</div>	
+			<div  class="row" >
+
+
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="intervaloPgtoPersonalizado{{$randId}}" >Intervalo personalizado</label>
+					<input type="number" readonly="readonly" min="1" name="intervaloPgtoPersonalizado" id="intervaloPgtoPersonalizado{{$randId}}" class="form-control form-control-sm ">
+				</div>
+
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="nrParcelasPersonalizado{{$randId}}" >Nº parcelas personalizados</label>
+					<input type="number" readonly="readonly" min="1" name="nrParcelasPersonalizado" id="nrParcelasPersonalizado{{$randId}}" class="form-control form-control-sm ">
+				</div>
+			</div>
 			
 			<div  class="row" >
 				<div class="form-group col-md-6 col-sm-12">
 					<label class="label" for="dtPrimeiraParcela{{$randId}}" >DT. primeira parcela</label>
 					<input type="text" name="dtPrimeiraParcela" id="dtPrimeiraParcela{{$randId}}" class="form-control form-control-sm ">
 				</div>
+				<div class="form-group col-md-6 col-sm-12">	
+					@php
+						//ex: Boleto, Cartao
+						$idFomaRecebimento 					= 'forma_pagamento_id';
+						$typeFomaRecebimento 				= 'number';
+						$nameFomaRecebimento 				= 'forma_pagamento_id';
+						$labelFomaRecebimento 				= 'Cód';
+						$idDescriptionFomaRecebimento 		= 'forma_pagamento_name';
+						$typeDescrptionFomaRecebimento 		= 'text';
+						$nameDescriptionFomaRecebimento 	= 'forma_pagamento_name';
+						$labelDescriptionFomaRecebimento 	= 'Forma de recebimento';
+						$valueDescriptionFomaRecebimento 	= "";
+						$valueFomaRecebimento 				= "";
+						$colFomaRecebimento 				= "3";
+						$colDescriptionFomaRecebimento 		= "8";
+						$searshFomaRecebimento 				= "searshFomaRecebimento".$randId."();";
+					@endphp
+					<x-controll-filter
+						:idCod="$idFomaRecebimento"
+						:typeCod="$typeFomaRecebimento"
+						:nameCod="$nameFomaRecebimento"
+						:labelCod="$labelFomaRecebimento"
+						:idDescription="$idDescriptionFomaRecebimento"
+						:typeDescrption="$typeDescrptionFomaRecebimento"
+						:nameDescription="$nameDescriptionFomaRecebimento"
+						:labelDescription="$labelDescriptionFomaRecebimento"
+						:valueDescription="$valueDescriptionFomaRecebimento"
+						:valueCod="$valueFomaRecebimento"
+						:colCod="$colFomaRecebimento"
+						:colDescription="$colDescriptionFomaRecebimento"
+						:searsh="$searshFomaRecebimento"
+					/>
+				</div>
+			</div>
+			<div  class="row" >
+
 
 				<div class="form-group col-md-6 col-sm-12">	
 					@php
@@ -258,42 +315,9 @@
 						:searsh="$searshCaixa"
 					/>
 				</div>
-			</div>
-			<div  class="row" >
-				<div class="form-group col-md-12 col-sm-12">	
-					@php
-						
-						//ex: Banco brasil, Caixa principal
-
-						$idConta 					= 'conta_id';
-						$typeConta 					= 'number';
-						$nameConta 					= 'conta_id';
-						$labelConta 				= 'Cód';
-						$idDescriptionConta 		= 'conta_name';
-						$typeDescrptionConta 		= 'text';
-						$nameDescriptionConta 		= 'conta_name';
-						$labelDescriptionConta 		= 'Conta';
-						$valueDescriptionConta 		= "";
-						$valueConta 				= "";
-						$colConta 					= "3";
-						$colDescriptionConta 		= "8";
-						$searshConta 				= "searshConta".$randId."();";
-					@endphp
-					<x-controll-filter
-						:idCod="$idConta"
-						:typeCod="$typeConta"
-						:nameCod="$nameConta"
-						:labelCod="$labelConta"
-						:idDescription="$idDescriptionConta"
-						:typeDescrption="$typeDescrptionConta"
-						:nameDescription="$nameDescriptionConta"
-						:labelDescription="$labelDescriptionConta"
-						:valueDescription="$valueDescriptionConta"
-						:valueCod="$valueConta"
-						:colCod="$colConta"
-						:colDescription="$colDescriptionConta"
-						:searsh="$searshConta"
-					/>
+				<div class="form-group col-md-6 col-sm-12">
+					<label class="label" for="documento{{$randId}}" >Documento</label>
+					<input type="text" name="documento" id="documento{{$randId}}" class="form-control form-control-sm ">
 				</div>
 				
 			</div>	
@@ -311,6 +335,43 @@
 
 <script>
 
+	$( "#dtPrimeiraParcela{{$randId}}" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+    })
+
+    $('#isPersonalisado{{$randId}}').on('change',function(){
+
+    	let val = $(this).val();
+    	
+    	if(val == 'yes'){
+    		$('#intervaloPgtoPersonalizado{{$randId}}').removeAttr('readonly')
+    		$('#nrParcelasPersonalizado{{$randId}}').removeAttr('readonly')
+
+    		$('html').find('#intervalo-pagamento{{$randId}}').find('#plano_pagamento_id').attr('readonly', 'readonly')
+    		$('html').find('#intervalo-pagamento{{$randId}}').find('#plano_pagamento_name').attr('readonly', 'readonly')
+
+    		$('html').find('#intervalo-pagamento{{$randId}}').find('#name_IntervaloPagamento').attr('readonly', 'readonly')
+    		$('html').find('#intervalo-pagamento{{$randId}}').find('#IntervaloPagamento_id').attr('readonly', 'readonly')
+
+    	}else{
+    		$('#intervaloPgtoPersonalizado{{$randId}}').attr('readonly', 'readonly')
+    		$('#nrParcelasPersonalizado{{$randId}}').attr('readonly', 'readonly')
+
+    		$('html').find('#intervalo-pagamento{{$randId}}').find('#plano_pagamento_id').removeAttr('readonly')
+    		$('html').find('#intervalo-pagamento{{$randId}}').find('#plano_pagamento_name').removeAttr('readonly')
+
+    		$('html').find('#intervalo-pagamento{{$randId}}').find('#name_IntervaloPagamento').removeAttr('readonly')
+    		$('html').find('#intervalo-pagamento{{$randId}}').find('#IntervaloPagamento_id').removeAttr('readonly')
+
+
+    		
+
+    	}
+    	
+    	
+		
+    })
 
 	const assistente{{$randId}} = '{{$idAssistente}}';
 	let callBack{{$randId}} = '{{$callBack}}'
@@ -424,6 +485,9 @@
 			
 			let url = '/caixa/head';
 			let data =  preparaBasicRequestPost{{$randId}}();
+			data.append('pesquisar',1)
+			data.append('calback_selected',btoa('acaoCaixaSelecionando'));
+			data.append('url_pesquisa','/caixa/json');
 			
 
 			//Utilitarios.assistentAjaxModal('GET',url, 'HTML','Produto-Deletar', 'md', '500px')
@@ -493,5 +557,10 @@
 
 		return data;
 
+	}
+
+	function acaoCaixaSelecionando(dados){
+		console.log('-------------- dados aqui -----------------')
+		console.log(dados)
 	}
 </script>

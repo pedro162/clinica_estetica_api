@@ -28,6 +28,16 @@
 						'style_cel'=>'width: 1200px;',
 					],
 					[
+						'nmColuna'=>'Saldo',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
+						'nmColuna'=>'Tipo de saldo',
+						'class_cel'=>'',
+						'style_cel'=>'width: 1200px;',
+					],
+					[
 						'nmColuna'=>'Aceita transferência',
 						'class_cel'=>'',
 						'style_cel'=>'width: 1200px;',
@@ -65,6 +75,9 @@
 				$row['style_row'] = '';
 				$row['class_row'] = '';
 
+			
+
+
 				$row['dados'] = [
 					[
 						'val'=>$valor->id,
@@ -80,6 +93,18 @@
                     ],
                     [
 						'val'=>$valor->type,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+                    [
+						'val'=>$valor->vrSaldo,
+						'class'=>'',
+						'style_cel'=>'width: 1200px;',
+						
+                    ],
+                    [
+						'val'=>$valor->tpSaldo,
 						'class'=>'',
 						'style_cel'=>'width: 1200px;',
 						
@@ -157,6 +182,10 @@
 			$id = $consulta['idTable'] ?? null;
 			$selectorsLine = $consulta['selectorsLine'] ?? false;
 			
+			$pesquisar = $consulta['pesquisar'] ?? null;
+			$callbackPesquisa = $consulta['calback_selected'] ?? null;
+			$urlPesquisa = $consulta['url_pesquisa'] ?? null;
+						
 		@endphp
 		<x-table
 			:tituloColunas="$tituloColunas"
@@ -164,6 +193,9 @@
 			:calback="$calback"
 			:idTable="$id"
 			:selectorsLine="$selectorsLine"
+			:pesquisar="$pesquisar"
+			:callbackPesquisa="$callbackPesquisa"
+			:urlPesquisa="$urlPesquisa"
 		/>
 		
 	</div>
