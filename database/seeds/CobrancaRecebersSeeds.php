@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use \App\CobrancaReceber;
+use \App\ContaReceber as CobrancaReceber;
 use \App\Venda;
 use \App\User;
 use \App\Pessoa;

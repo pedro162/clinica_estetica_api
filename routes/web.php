@@ -73,7 +73,9 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 	Route::get('/categoria/destroy/{id}', ['as'=>'categoria.destroy', 'uses'=>'Admin\CategoriaController@destroy']);
 
 	Route::get('/pessoa/index/{id_assistente?}', ['as'=>'pessoa.index', 'uses'=>'Admin\PessoaController@index']);
-	Route::post('/pessoa/index/{id_assistente?}', ['as'=>'pessoa.index', 'uses'=>'Admin\PessoaController@index']);
+	Route::post('/pessoa/index/{id_assistente?}', ['as'=>'pessoa.index', 'uses'=>'Admin\PessoaController@index']);	
+	Route::get('/pessoa/json/{id_assistente?}', ['as'=>'pessoa.json', 'uses'=>'Admin\PessoaController@json']);
+	Route::post('/pessoa/json/{id_assistente?}', ['as'=>'pessoa.json', 'uses'=>'Admin\PessoaController@json']);
 	Route::get('/pessoa/create/{id_assistente?}', ['as'=>'pessoa.create', 'uses'=>'Admin\PessoaController@create']);
 	Route::post('/pessoa/create/{id_assistente?}', ['as'=>'pessoa.create', 'uses'=>'Admin\PessoaController@create']);
 	Route::post('/pessoa/store/{id_assistente?}', ['as'=>'pessoa.store', 'uses'=>'Admin\PessoaController@store']);
@@ -337,6 +339,45 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 	Route::post('/caixa/head/{id_assistente?}', ['as'=>'caixa.head', 'uses'=>'Admin\CaixaController@head']);
 	Route::get('/caixa/destroy/{id}/{id_assistente?}', ['as'=>'caixa.destroy', 'uses'=>'Admin\CaixaController@destroy']);
 	Route::post('/caixa/destroy/{id}/{id_assistente?}', ['as'=>'caixa.destroy', 'uses'=>'Admin\CaixaController@destroy']);
+
+	Route::get('/categoria_conta/index/{id_assistente?}', ['as'=>'categoria_conta.index', 'uses'=>'Admin\CategoriaContaController@index']);
+	Route::post('/categoria_conta/index/{id_assistente?}', ['as'=>'categoria_conta.index', 'uses'=>'Admin\CategoriaContaController@index']);
+	Route::get('/categoria_conta/json/{id_assistente?}', ['as'=>'categoria_conta.json', 'uses'=>'Admin\CategoriaContaController@json']);
+	Route::post('/categoria_conta/json/{id_assistente?}', ['as'=>'categoria_conta.json', 'uses'=>'Admin\CategoriaContaController@json']);
+	Route::get('/categoria_conta/create/{id_assistente?}', ['as'=>'categoria_conta.create', 'uses'=>'Admin\CategoriaContaController@create']);
+	Route::post('/categoria_conta/create/{id_assistente?}', ['as'=>'categoria_conta.create', 'uses'=>'Admin\CategoriaContaController@create']);
+	Route::post('/categoria_conta/store/{id_assistente?}', ['as'=>'categoria_conta.store', 'uses'=>'Admin\CategoriaContaController@store']);
+	Route::get('/categoria_conta/edit/{id}/{id_assistente?}', ['as'=>'categoria_conta.edit', 'uses'=>'Admin\CategoriaContaController@edit']);
+	Route::post('/categoria_conta/edit/{id}/{id_assistente?}', ['as'=>'categoria_conta.edit', 'uses'=>'Admin\CategoriaContaController@edit']);
+	Route::put('/categoria_conta/update/{id}/{id_assistente?}', ['as'=>'categoria_conta.update', 'uses'=>'Admin\CategoriaContaController@update']);
+	Route::get('/categoria_conta/show/{id}/{id_assistente?}', ['as'=>'categoria_conta.show', 'uses'=>'Admin\CategoriaContaController@show']);
+	Route::post('/categoria_conta/show/{id}/{id_assistente?}', ['as'=>'categoria_conta.show', 'uses'=>'Admin\CategoriaContaController@show']);
+	Route::get('/categoria_conta/info/{id}/{id_assistente?}', ['as'=>'categoria_conta.info', 'uses'=>'Admin\CategoriaContaController@info']);
+	Route::post('/categoria_conta/info/{id}/{id_assistente?}', ['as'=>'categoria_conta.info', 'uses'=>'Admin\CategoriaContaController@info']);
+	Route::get('/categoria_conta/head/{id_assistente?}', ['as'=>'categoria_conta.head', 'uses'=>'Admin\CategoriaContaController@head']);
+	Route::post('/categoria_conta/head/{id_assistente?}', ['as'=>'categoria_conta.head', 'uses'=>'Admin\CategoriaContaController@head']);
+	Route::get('/categoria_conta/destroy/{id}/{id_assistente?}', ['as'=>'categoria_conta.destroy', 'uses'=>'Admin\CategoriaContaController@destroy']);
+	Route::post('/categoria_conta/destroy/{id}/{id_assistente?}', ['as'=>'categoria_conta.destroy', 'uses'=>'Admin\CategoriaContaController@destroy']);
+
+	Route::get('/conta/index/{id_assistente?}', ['as'=>'conta.index', 'uses'=>'Admin\ContaController@index']);
+	Route::post('/conta/index/{id_assistente?}', ['as'=>'conta.index', 'uses'=>'Admin\ContaController@index']);
+	Route::get('/conta/json/{id_assistente?}', ['as'=>'conta.json', 'uses'=>'Admin\ContaController@json']);
+	Route::post('/conta/json/{id_assistente?}', ['as'=>'conta.json', 'uses'=>'Admin\ContaController@json']);
+	Route::get('/conta/create/{id_assistente?}', ['as'=>'conta.create', 'uses'=>'Admin\ContaController@create']);
+	Route::post('/conta/create/{id_assistente?}', ['as'=>'conta.create', 'uses'=>'Admin\ContaController@create']);
+	Route::post('/conta/store/{id_assistente?}', ['as'=>'conta.store', 'uses'=>'Admin\ContaController@store']);
+	Route::get('/conta/edit/{id}/{id_assistente?}', ['as'=>'conta.edit', 'uses'=>'Admin\ContaController@edit']);
+	Route::post('/conta/edit/{id}/{id_assistente?}', ['as'=>'conta.edit', 'uses'=>'Admin\ContaController@edit']);
+	Route::put('/conta/update/{id}/{id_assistente?}', ['as'=>'conta.update', 'uses'=>'Admin\ContaController@update']);
+	Route::get('/conta/show/{id}/{id_assistente?}', ['as'=>'conta.show', 'uses'=>'Admin\ContaController@show']);
+	Route::post('/conta/show/{id}/{id_assistente?}', ['as'=>'conta.show', 'uses'=>'Admin\ContaController@show']);
+	Route::get('/conta/info/{id}/{id_assistente?}', ['as'=>'conta.info', 'uses'=>'Admin\ContaController@info']);
+	Route::post('/conta/info/{id}/{id_assistente?}', ['as'=>'conta.info', 'uses'=>'Admin\ContaController@info']);
+	Route::get('/conta/head/{id_assistente?}', ['as'=>'conta.head', 'uses'=>'Admin\ContaController@head']);
+	Route::post('/conta/head/{id_assistente?}', ['as'=>'conta.head', 'uses'=>'Admin\ContaController@head']);
+	Route::get('/conta/destroy/{id}/{id_assistente?}', ['as'=>'conta.destroy', 'uses'=>'Admin\ContaController@destroy']);
+	Route::post('/conta/destroy/{id}/{id_assistente?}', ['as'=>'conta.destroy', 'uses'=>'Admin\ContaController@destroy']);
+
 	
 });
 

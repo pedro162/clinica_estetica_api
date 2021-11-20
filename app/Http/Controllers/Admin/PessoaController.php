@@ -113,6 +113,67 @@ class PessoaController extends Controller
 
     }
 
+    public function json(Request $request)
+    {
+
+        try {
+            \DB::beginTransaction();
+            
+            $consulta = $request->all();
+
+            $campos =  null;
+
+            $registro = Pessoa::where('active', '=', 'yes');
+
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('id', $val);
+                            }
+                            break;
+                        case 'name':
+                            if($val[0] == ','){
+                                $val = substr($val, 1);
+                            } 
+                            if($val[strlen($val) - 1] == ','){
+                                $val = substr($val, 0, -1);
+                            }
+                            
+                            $registro->where('name', 'like' , '%'.$val.'%');
+                            break;
+                    }
+                }
+            }
+
+            $registro = $registro->get();
+            
+            \DB::commit();
+            
+            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
+
+        }catch(PessoaException $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
+
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -163,7 +224,7 @@ class PessoaController extends Controller
         try{
 
 
-            $validator = $request->validated();
+            $validator = $this->validaRequest($request);
 
             $registro = null;
             \DB::beginTransaction();
@@ -179,8 +240,8 @@ class PessoaController extends Controller
             $cpf = preg_replace("/[^0-9]/", '', trim($dadosPessoa['documento']));
             $dadosPessoa['documento'] = $cpf;
             if(Pessoa::where('documento', '=', $cpf)->first()){
-                $erros[] = 'Pessoa já se encontra cadastrada.';
-                return false;
+                
+                throw new PessoaException('Pessoa já se encontra cadastrada.'); 
             }else{
 
                 $dadosPessoa['user_id']     = \Auth::User()->id;

@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Pais;
-use App\Exceptions\PaisException;
+use App\Conta;
 use Illuminate\Support\Facades\Validator;
+use App\Exception\ContaException;
 
-class PaisController extends Controller
+class ContaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,14 +23,11 @@ class PaisController extends Controller
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'name_Pais'=>'pais.dsIpi',
-                'nmPais'=>'pais.nmPais',
-                'id'=>'pais.id',
+                'conta_name'=>'contas.name'
 
             ];
 
-            $registro = \DB::table('pais');
-            
+            $registro = \DB::table('contas');
             if(is_array($consulta) && count($consulta) > 0){
                 foreach($consulta as $key=>$val){
                     
@@ -46,24 +43,23 @@ class PaisController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('pais.id', $val);
+                                $registro->whereIn('contas.id', $val);
                             }
                             break;
-                        case 'tipo':
+                        case 'name':
                             if(is_string($val)){
-                                    
+                                
                                 if($val[0] == ','){
                                     $val = substr($val, 1);
                                 } 
                                 if($val[strlen($val) - 1] == ','){
                                     $val = substr($val, 0, -1);
                                 }
-                                $val = explode(',', $val);
-                                    
-                                $registro->whereIn('pais.tpCalculo', $val);
+                                
+                                $registro->where('contas.name', 'like' , '%'.$val.'%');
                             }
-                        break;
-                        case 'nmPais':
+                            break;
+                        case 'conta_id':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -73,7 +69,7 @@ class PaisController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
                                 
-                                $registro->where('pais.nmPais', 'like' , '%'.$val.'%');
+                                $registro->where('contas.id', '=' , ''.$val.'');
                             }
                             break;
                         case 'limite':
@@ -124,17 +120,19 @@ class PaisController extends Controller
             if($campos){
                 $registro->select($campos);
             }else{
-                $registro->select('pais.*');
+                $registro->select('contas.*');
 
             }
            
-            $registro = $registro->where('pais.active', '=', 'yes')->get();
+            $registro = $registro->where('contas.active', '=', 'yes')->get();
 
             \DB::commit();
 
-            return view('admin.pais.index', compact('registro', 'consulta'));
+            //dd( $registro);
 
-        }catch(PaisException $e){
+            return view('admin.conta.index', compact('registro', 'consulta'));
+
+        }catch(ContaException $e){
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -160,14 +158,11 @@ class PaisController extends Controller
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'name_Pais'=>'pais.dsIpi',
-                'nmPais'=>'pais.nmPais',
-                'id'=>'pais.id',
+                'conta_name'=>'contas.name'
 
             ];
 
-            $registro = \DB::table('pais');
-            
+            $registro = \DB::table('contas');
             if(is_array($consulta) && count($consulta) > 0){
                 foreach($consulta as $key=>$val){
                     
@@ -183,24 +178,23 @@ class PaisController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('pais.id', $val);
+                                $registro->whereIn('contas.id', $val);
                             }
                             break;
-                        case 'tipo':
+                        case 'name':
                             if(is_string($val)){
-                                    
+                                
                                 if($val[0] == ','){
                                     $val = substr($val, 1);
                                 } 
                                 if($val[strlen($val) - 1] == ','){
                                     $val = substr($val, 0, -1);
                                 }
-                                $val = explode(',', $val);
-                                    
-                                $registro->whereIn('pais.tpCalculo', $val);
+                                
+                                $registro->where('contas.name', 'like' , '%'.$val.'%');
                             }
-                        break;
-                        case 'nmPais':
+                            break;
+                        case 'caixa_id':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -210,7 +204,7 @@ class PaisController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
                                 
-                                $registro->where('pais.nmPais', 'like' , '%'.$val.'%');
+                                $registro->where('contas.id', '=' , ''.$val.'');
                             }
                             break;
                         case 'limite':
@@ -261,23 +255,29 @@ class PaisController extends Controller
             if($campos){
                 $registro->select($campos);
             }else{
-                $registro->select('pais.*');
+                $registro->select('contas.*');
 
             }
            
-            $registro = $registro->where('pais.active', '=', 'yes')->get();
+            $registro = $registro->where('contas.active', '=', 'yes')->get();
 
             \DB::commit();
-             return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
-        }catch(PaisException $e){
+            //dd( $registro);
+
+            return response()->json(['registro'=>$registro, 'class'=>'sucess'], 201);
+
+        }catch(ContaException $e){
             \DB::rollback();
-            
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage() ]], 404);
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
     
         }catch(\Exception $e){
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -292,9 +292,7 @@ class PaisController extends Controller
 
         $callBack = $dadosRequest['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-        $csosn = false;
-
-        return view('admin.pais.create', compact('callBack','idAssistente', 'csosn'));
+        return view('admin.conta.create', compact('callBack','idAssistente'));
     }
 
     /**
@@ -309,28 +307,31 @@ class PaisController extends Controller
 
             $this->validaRequest($request);
              
-             \DB::beginTransaction();
-             $dados = $request->all();
- 
-             $dadosRequest = [];
- 
-             $dadosRequest['user_id']            = \Auth::User()->id;
-             $dadosRequest['user_update_id']     = \Auth::User()->id;
-             $dadosRequest['nmPais']             = $dados['nmPais'];
-             $dadosRequest['cdPais']             = $dados['cdPais'];
-             $dadosRequest['padrao']             = $dados['padrao'];
-             $dadosRequest['active']             = 'yes';
+            \DB::beginTransaction();
+
+            $dados = $request->all();
+
+            $dadosRequest = [];
              
-             $registro = Pais::create($dadosRequest);
-             \DB::commit();
+            $dadosRequest['name']                   = $dados['name'];
+            $dadosRequest['type']                   = $dados['type'];
+            $dadosRequest['vrMin']                  = $dados['vrMin'];
+            $dadosRequest['vrMax']                  = $dados['vrMax'];
+            $dadosRequest['status_abertura']        = $dados['status_abertura'] ?? 'close';
+            $dadosRequest['status_bloqueio']        = $dados['status_bloqueio'];
+            $dadosRequest['aceita_transferencia']   = $dados['aceita_transferencia'];
+            $dadosRequest['user_id']                = \Auth::User()->id;
+            $dadosRequest['active']                 = 'yes';             
+            $registro = Conta::create($dadosRequest);
+            \DB::commit();
  
-             if($registro){
-                 return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-             }else{
-                 throw new PaisException('Erro ao cadastrar');
-             }
+            if($registro){
+                return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
+            }else{
+                throw new ContaException('Erro ao cadastrar');
+            }
  
-         }catch(PaisException $e){
+         }catch(ContaException $e){
              \DB::rollback();
              return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
  
@@ -362,24 +363,24 @@ class PaisController extends Controller
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
             if($id <= 0){
-                throw new PaisException('Parâmetro ínválido');
+                throw new ContaException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
-            $registro = Pais::where('active', '=', 'yes')
+            $registro = Conta::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
             if($registro == null){
-                throw new PaisException('Registro não encontrado');
+                throw new ContaException('Registro não encontrado');
             }
 
             \DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
-            return view('admin.pais.info', compact('registro', 'idAssistente', 'callBack'));
+            return view('admin.conta.info', compact('registro', 'idAssistente', 'callBack'));
 
-        }catch(PaisException $e){
+        }catch(ContaException $e){
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -415,34 +416,24 @@ class PaisController extends Controller
             }
 
             if($id <= 0){
-                throw new PaisException('Parâmetro ínválido');
+                throw new ContaException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
-            $registro = Pais::where('active', '=', 'yes')
+            $registro = Conta::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
 
             if($registro == null){
-                throw new PaisException('Registro não encontrado');
+                throw new ContaException('Registro não encontrado');
                 
-            }
-
-            $formCofins = false;
-            if(trim($registro->tpRegistro == 'cofins') || trim($registro->tpRegistro) == 'cofinsst'){
-                $formCofins = false;
-            }
-            
-            $sufixo = '';
-            if(trim($registro->tpRegistro == 'pis') || trim($registro->tpRegistro) == 'cofinsst'){
-                $sufixo = 'st';
             }
 
             \DB::commit();
 
-            return view('admin.pais.edit', compact('registro', 'idAssistente', 'callBack', 'formCofins', 'sufixo'));
+            return view('admin.conta.edit', compact('registro', 'idAssistente', 'callBack'));
 
-         }catch(PaisException $e){
+         }catch(ContaException $e){
 
             \DB::rollback();
 
@@ -481,23 +472,25 @@ class PaisController extends Controller
 
             $dados = $request->all();
 
-            $dadosRequest = [];
-            
-
-            $dadosRequest['user_update_id']     = \Auth::User()->id;
-            $dadosRequest['nmPais']             = $dados['nmPais'];
-            $dadosRequest['cdPais']             = $dados['cdPais'];
-            $dadosRequest['padrao']             = $dados['padrao'];
-            
-            $pisCofins = Pais::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            $pisCofins->update($dadosRequest);
+            $dadosRequest = [];            
+            $dadosRequest['user_update_id']         = \Auth::User()->id;
+            $dadosRequest['name']                   = $dados['name'];
+            $dadosRequest['type']                   = $dados['type'];
+            $dadosRequest['vrMin']                  = $dados['vrMin'];
+            $dadosRequest['vrMax']                  = $dados['vrMax'];
+           // $dadosRequest['status_abertura']        = $dados['status_abertura'];
+            $dadosRequest['status_bloqueio']        = $dados['status_bloqueio'];
+            $dadosRequest['aceita_transferencia']   = $dados['aceita_transferencia'];
+           
+            $caixa = Conta::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $caixa->update($dadosRequest);
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$pisCofins, 'class'=>'sucess'], 200);
+            return response()->json(['mensagem'=>$caixa, 'class'=>'sucess'], 200);
 
 
-        }catch (PaisException $th) {
+        }catch (ContaException $th) {
 
             \DB::rollback();
 
@@ -528,15 +521,18 @@ class PaisController extends Controller
 
             $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']             = 'no';
-            $piscofins = Pais::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            $piscofins->update($dadosRequest);
-            $piscofins->delete();
+            $bairro = Conta::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            if($bairro->vrSaldo == 0){
+                 throw new ContaException('Este caixa ainda possui saldo.');
+            }
+            $bairro->update($dadosRequest);
+            $bairro->delete();
 
             \DB::commit();
 
             return response()->json(['mensagem'=>[], 'class'=>'sucess'], 200);
 
-        }catch (PaisException $th) {
+        }catch (ContaException $th) {
 
             \DB::rollback();
 
@@ -555,12 +551,16 @@ class PaisController extends Controller
     {
         $dados = $request->all();
         
-        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        $isReload           = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        $pesquisar          = $dados['pesquisar'] ?? null;
+        $calback_selected   = $dados['calback_selected'] ?? null;
+        $url_pesquisa       = $dados['url_pesquisa'] ?? null;
+
         if($isReload){
            
-            return view('admin.pais.head_refresh', compact('isReload'));
+            return view('admin.conta.head_refresh', compact('isReload', 'pesquisar', 'calback_selected', 'url_pesquisa'));
         }else{
-            return view('admin.pais.head', compact('isReload'));
+            return view('admin.conta.head', compact('isReload', 'calback_selected', 'pesquisar', 'url_pesquisa'));
         }
         
     }
@@ -568,15 +568,17 @@ class PaisController extends Controller
     protected function validaRequest(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'nmPais'=> 'required|max:255|min:2',
-            'cdPais'=> 'required',
-            'padrao'=> 'required',
+            'name'=> 'required|max:255|min:2',
+            'type'=> 'required',
+            'vrMin'=>'required|min:0',
+            'vrMax'=>'required|min:0',
         ], [
-            'nmPais.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
-            'nmPais.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
-            'nmPais.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
-            'cdPais.required' => 'O campo "CÓDIGO DO PAÍS" é obrigatório.',
-            'padrao.required' => 'O campo "PADRÃO" é obrigatório.',
+            'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
+            'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
+            'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
+            'type.required' => 'O campo "TIPO" é obrigatório.',
+            'vrMin.min' => 'O "VALOR MÍNIMO" deve conter pelo meno :min caracteres.',
+            'vrMax.min' => 'O "VALOR MÁXIMO" deve conter pelo meno :min caracteres.',
         ]);
         
         if($validator->fails()) {
@@ -586,7 +588,7 @@ class PaisController extends Controller
                 $msg .= $mensagem.'<br/>';
             }
             
-            throw new PaisException($msg);
+            throw new ContaException($msg);
         }
 
         return true;

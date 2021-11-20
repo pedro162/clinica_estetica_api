@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Pais;
-use App\Exceptions\PaisException;
+use App\ContaCategoria;
+use App\Exception\CategoriaContaException;
 use Illuminate\Support\Facades\Validator;
 
-class PaisController extends Controller
+class CategoriaContaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,14 +23,11 @@ class PaisController extends Controller
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'name_Pais'=>'pais.dsIpi',
-                'nmPais'=>'pais.nmPais',
-                'id'=>'pais.id',
+                'categoria_conta'=>'conta_categorias.name'
 
             ];
 
-            $registro = \DB::table('pais');
-            
+            $registro = \DB::table('conta_categorias');
             if(is_array($consulta) && count($consulta) > 0){
                 foreach($consulta as $key=>$val){
                     
@@ -46,24 +43,23 @@ class PaisController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('pais.id', $val);
+                                $registro->whereIn('conta_categorias.id', $val);
                             }
                             break;
-                        case 'tipo':
+                        case 'name':
                             if(is_string($val)){
-                                    
+                                
                                 if($val[0] == ','){
                                     $val = substr($val, 1);
                                 } 
                                 if($val[strlen($val) - 1] == ','){
                                     $val = substr($val, 0, -1);
                                 }
-                                $val = explode(',', $val);
-                                    
-                                $registro->whereIn('pais.tpCalculo', $val);
+                                
+                                $registro->where('conta_categorias.name', 'like' , '%'.$val.'%');
                             }
-                        break;
-                        case 'nmPais':
+                            break;
+                        case 'categoria_conta_id':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -73,7 +69,7 @@ class PaisController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
                                 
-                                $registro->where('pais.nmPais', 'like' , '%'.$val.'%');
+                                $registro->where('conta_categorias.id', '=' , ''.$val.'');
                             }
                             break;
                         case 'limite':
@@ -124,17 +120,19 @@ class PaisController extends Controller
             if($campos){
                 $registro->select($campos);
             }else{
-                $registro->select('pais.*');
+                $registro->select('conta_categorias.*');
 
             }
            
-            $registro = $registro->where('pais.active', '=', 'yes')->get();
+            $registro = $registro->where('conta_categorias.active', '=', 'yes')->get();
 
             \DB::commit();
 
-            return view('admin.pais.index', compact('registro', 'consulta'));
+            //dd( $registro);
 
-        }catch(PaisException $e){
+            return view('admin.categoria_conta.index', compact('registro', 'consulta'));
+
+        }catch(CategoriaContaException $e){
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -160,14 +158,11 @@ class PaisController extends Controller
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'name_Pais'=>'pais.dsIpi',
-                'nmPais'=>'pais.nmPais',
-                'id'=>'pais.id',
+                'categoria_conta'=>'conta_categorias.name'
 
             ];
 
-            $registro = \DB::table('pais');
-            
+            $registro = \DB::table('conta_categorias');
             if(is_array($consulta) && count($consulta) > 0){
                 foreach($consulta as $key=>$val){
                     
@@ -183,24 +178,23 @@ class PaisController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('pais.id', $val);
+                                $registro->whereIn('conta_categorias.id', $val);
                             }
                             break;
-                        case 'tipo':
+                        case 'name':
                             if(is_string($val)){
-                                    
+                                
                                 if($val[0] == ','){
                                     $val = substr($val, 1);
                                 } 
                                 if($val[strlen($val) - 1] == ','){
                                     $val = substr($val, 0, -1);
                                 }
-                                $val = explode(',', $val);
-                                    
-                                $registro->whereIn('pais.tpCalculo', $val);
+                                
+                                $registro->where('conta_categorias.name', 'like' , '%'.$val.'%');
                             }
-                        break;
-                        case 'nmPais':
+                            break;
+                        case 'categoria_conta_id':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -210,7 +204,7 @@ class PaisController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
                                 
-                                $registro->where('pais.nmPais', 'like' , '%'.$val.'%');
+                                $registro->where('conta_categorias.id', '=' , ''.$val.'');
                             }
                             break;
                         case 'limite':
@@ -261,23 +255,29 @@ class PaisController extends Controller
             if($campos){
                 $registro->select($campos);
             }else{
-                $registro->select('pais.*');
+                $registro->select('conta_categorias.*');
 
             }
            
-            $registro = $registro->where('pais.active', '=', 'yes')->get();
+            $registro = $registro->where('conta_categorias.active', '=', 'yes')->get();
 
             \DB::commit();
-             return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
-        }catch(PaisException $e){
+            //dd( $registro);
+
+            return response()->json(['registro'=>$registro, 'class'=>'sucess'], 201);
+
+        }catch(CategoriaContaException $e){
             \DB::rollback();
-            
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage() ]], 404);
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
     
         }catch(\Exception $e){
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -292,9 +292,7 @@ class PaisController extends Controller
 
         $callBack = $dadosRequest['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-        $csosn = false;
-
-        return view('admin.pais.create', compact('callBack','idAssistente', 'csosn'));
+        return view('admin.categoria_conta.create', compact('callBack','idAssistente'));
     }
 
     /**
@@ -309,28 +307,25 @@ class PaisController extends Controller
 
             $this->validaRequest($request);
              
-             \DB::beginTransaction();
-             $dados = $request->all();
- 
-             $dadosRequest = [];
- 
-             $dadosRequest['user_id']            = \Auth::User()->id;
-             $dadosRequest['user_update_id']     = \Auth::User()->id;
-             $dadosRequest['nmPais']             = $dados['nmPais'];
-             $dadosRequest['cdPais']             = $dados['cdPais'];
-             $dadosRequest['padrao']             = $dados['padrao'];
-             $dadosRequest['active']             = 'yes';
+            \DB::beginTransaction();
+
+            $dados = $request->all();
+
+            $dadosRequest = [];
              
-             $registro = Pais::create($dadosRequest);
-             \DB::commit();
+            $dadosRequest['name']                   = $dados['name'];
+            $dadosRequest['user_id']                = \Auth::User()->id;
+            $dadosRequest['active']                 = 'yes';             
+            $registro = ContaCategoria::create($dadosRequest);
+            \DB::commit();
  
-             if($registro){
-                 return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-             }else{
-                 throw new PaisException('Erro ao cadastrar');
-             }
+            if($registro){
+                return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
+            }else{
+                throw new CategoriaContaException('Erro ao cadastrar');
+            }
  
-         }catch(PaisException $e){
+         }catch(CategoriaContaException $e){
              \DB::rollback();
              return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
  
@@ -362,24 +357,24 @@ class PaisController extends Controller
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
             if($id <= 0){
-                throw new PaisException('Parâmetro ínválido');
+                throw new CategoriaContaException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
-            $registro = Pais::where('active', '=', 'yes')
+            $registro = ContaCategoria::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
             if($registro == null){
-                throw new PaisException('Registro não encontrado');
+                throw new CategoriaContaException('Registro não encontrado');
             }
 
             \DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
-            return view('admin.pais.info', compact('registro', 'idAssistente', 'callBack'));
+            return view('admin.categoria_conta.info', compact('registro', 'idAssistente', 'callBack'));
 
-        }catch(PaisException $e){
+        }catch(CategoriaContaException $e){
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -415,34 +410,24 @@ class PaisController extends Controller
             }
 
             if($id <= 0){
-                throw new PaisException('Parâmetro ínválido');
+                throw new CategoriaContaException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
-            $registro = Pais::where('active', '=', 'yes')
+            $registro = ContaCategoria::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
 
             if($registro == null){
-                throw new PaisException('Registro não encontrado');
+                throw new CategoriaContaException('Registro não encontrado');
                 
-            }
-
-            $formCofins = false;
-            if(trim($registro->tpRegistro == 'cofins') || trim($registro->tpRegistro) == 'cofinsst'){
-                $formCofins = false;
-            }
-            
-            $sufixo = '';
-            if(trim($registro->tpRegistro == 'pis') || trim($registro->tpRegistro) == 'cofinsst'){
-                $sufixo = 'st';
             }
 
             \DB::commit();
 
-            return view('admin.pais.edit', compact('registro', 'idAssistente', 'callBack', 'formCofins', 'sufixo'));
+            return view('admin.categoria_conta.edit', compact('registro', 'idAssistente', 'callBack'));
 
-         }catch(PaisException $e){
+         }catch(CategoriaContaException $e){
 
             \DB::rollback();
 
@@ -481,23 +466,22 @@ class PaisController extends Controller
 
             $dados = $request->all();
 
-            $dadosRequest = [];
-            
-
-            $dadosRequest['user_update_id']     = \Auth::User()->id;
-            $dadosRequest['nmPais']             = $dados['nmPais'];
-            $dadosRequest['cdPais']             = $dados['cdPais'];
-            $dadosRequest['padrao']             = $dados['padrao'];
-            
-            $pisCofins = Pais::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            $pisCofins->update($dadosRequest);
+            $dadosRequest = [];            
+            $dadosRequest['user_update_id']         = \Auth::User()->id;
+            $dadosRequest['name']                   = $dados['name'];
+           
+            $categoria_conta = ContaCategoria::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            if(! $categoria_conta){
+                throw new CategoriaContaException('Registro não encontrado');
+            }
+            $categoria_conta->update($dadosRequest);
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$pisCofins, 'class'=>'sucess'], 200);
+            return response()->json(['mensagem'=>$categoria_conta, 'class'=>'sucess'], 200);
 
 
-        }catch (PaisException $th) {
+        }catch (CategoriaContaException $th) {
 
             \DB::rollback();
 
@@ -528,15 +512,16 @@ class PaisController extends Controller
 
             $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']             = 'no';
-            $piscofins = Pais::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            $piscofins->update($dadosRequest);
-            $piscofins->delete();
+            $categoriaConta = ContaCategoria::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            
+            $categoriaConta->update($dadosRequest);
+            $categoriaConta->delete();
 
             \DB::commit();
 
             return response()->json(['mensagem'=>[], 'class'=>'sucess'], 200);
 
-        }catch (PaisException $th) {
+        }catch (CategoriaContaException $th) {
 
             \DB::rollback();
 
@@ -555,12 +540,16 @@ class PaisController extends Controller
     {
         $dados = $request->all();
         
-        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        $isReload           = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
+        $pesquisar          = $dados['pesquisar'] ?? null;
+        $calback_selected   = $dados['calback_selected'] ?? null;
+        $url_pesquisa       = $dados['url_pesquisa'] ?? null;
+
         if($isReload){
            
-            return view('admin.pais.head_refresh', compact('isReload'));
+            return view('admin.categoria_conta.head_refresh', compact('isReload', 'pesquisar', 'calback_selected', 'url_pesquisa'));
         }else{
-            return view('admin.pais.head', compact('isReload'));
+            return view('admin.categoria_conta.head', compact('isReload', 'calback_selected', 'pesquisar', 'url_pesquisa'));
         }
         
     }
@@ -568,15 +557,11 @@ class PaisController extends Controller
     protected function validaRequest(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'nmPais'=> 'required|max:255|min:2',
-            'cdPais'=> 'required',
-            'padrao'=> 'required',
+            'name'=> 'required|max:255|min:2',
         ], [
-            'nmPais.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
-            'nmPais.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
-            'nmPais.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
-            'cdPais.required' => 'O campo "CÓDIGO DO PAÍS" é obrigatório.',
-            'padrao.required' => 'O campo "PADRÃO" é obrigatório.',
+            'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
+            'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
+            'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
         ]);
         
         if($validator->fails()) {
@@ -586,7 +571,7 @@ class PaisController extends Controller
                 $msg .= $mensagem.'<br/>';
             }
             
-            throw new PaisException($msg);
+            throw new CategoriaContaException($msg);
         }
 
         return true;

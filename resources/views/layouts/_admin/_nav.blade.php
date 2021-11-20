@@ -44,6 +44,8 @@
           <a class="dropdown-item" href="#">Contas a Pagar</a>
           <a class="dropdown-item" href="#">Lançar Despesa</a>          
           <a class="dropdown-item rotina"  href="{{route('caixa.head')}}">Caixas</a>
+          <a class="dropdown-item rotina"  href="{{route('categoria_conta.head')}}">Categoria de contas</a>          
+          <a class="dropdown-item rotina"  href="{{route('conta.head')}}">Contas</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#">Outros</a>
         </div>

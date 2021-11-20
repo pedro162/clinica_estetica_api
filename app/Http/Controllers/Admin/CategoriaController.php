@@ -35,7 +35,7 @@ class CategoriaController extends Controller
                 foreach($consulta as $key=>$val){
                     
                     switch(trim($key)){
-                        case 'codigo_marca':
+                        case 'codigo_conta':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -49,7 +49,7 @@ class CategoriaController extends Controller
                                 $registro->whereIn('id', $val);
                             }
                             break;
-                        case 'nome_marca':
+                        case 'nome_conta':
                             if($val[0] == ','){
                                 $val = substr($val, 1);
                             } 
@@ -65,7 +65,7 @@ class CategoriaController extends Controller
 
     		$registro = $registro->get();
 
-            return view('admin.categoria.index', compact('registro', 'consulta'));
+            return view('admin.conta.index', compact('registro', 'consulta'));
     		
             \DB::commit();
 
@@ -100,7 +100,7 @@ class CategoriaController extends Controller
         $callBack = $dadosRequest['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
 
-        return view('admin.categoria.create', compact('callBack','idAssistente'));
+        return view('admin.conta.create', compact('callBack','idAssistente'));
     }
 
     /**
@@ -193,7 +193,7 @@ class CategoriaController extends Controller
             \DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
-            return view('admin.categoria.info', compact('registro', 'idAssistente', 'callBack'));
+            return view('admin.conta.info', compact('registro', 'idAssistente', 'callBack'));
 
         }catch(CategoriaException $e){
             \DB::rollback();
@@ -246,7 +246,7 @@ class CategoriaController extends Controller
 
             \DB::commit();
 
-            return view('admin.categoria.edit', compact('registro', 'idAssistente', 'callBack'));
+            return view('admin.conta.edit', compact('registro', 'idAssistente', 'callBack'));
 
          }catch(CategoriaException $e){
 
@@ -363,9 +363,9 @@ class CategoriaController extends Controller
         $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
         if($isReload){
            
-            return view('admin.categoria.head_refresh', compact('isReload'));
+            return view('admin.conta.head_refresh', compact('isReload'));
         }else{
-            return view('admin.categoria.head', compact('isReload'));
+            return view('admin.conta.head', compact('isReload'));
         }
         
     }

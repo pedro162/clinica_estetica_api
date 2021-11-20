@@ -187,6 +187,174 @@ class EstadoController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function json(Request $request)
+    {
+        try{
+            \DB::beginTransaction();
+
+            $consulta = $request->all();
+            $campos =  null;
+            $parse = [
+                'name_estado'=>'estadoss.dsIpi'
+
+            ];
+            /*
+
+                
+                    <!--
+                        'nmEStado',
+                        'codEstado',
+                        'sigla',
+                        'padrao',
+                        'pais_id',
+                        'user_id',
+                        'user_update_id',
+                        'active',
+
+                     
+            */
+
+            $registro = \DB::table('estadoss');
+            $registro->join('pais', function($join){
+                
+                $join->on('pais.id', '=', 'estadoss.pais_id');
+
+            });
+            
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('estadoss.id', $val);
+                            }
+                            break;
+                        case 'nmEStado':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                
+                                $registro->where('estadoss.nmEStado', 'like' , '%'.$val.'%');
+                            }
+                            break;
+                        case 'codEstado':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                
+                                $registro->where('estadoss.codEstado', '=' , ''.$val.'');
+                            }
+                            break;
+                            case 'sigla':
+                                if(is_string($val)){
+                                    
+                                    if($val[0] == ','){
+                                        $val = substr($val, 1);
+                                    } 
+                                    if($val[strlen($val) - 1] == ','){
+                                        $val = substr($val, 0, -1);
+                                    }
+                                    
+                                    $registro->where('estadoss.sigla', '=' , ''.$val.'');
+                                }
+                            break;
+                        case 'limite':
+                                $val = (int) $val;
+                                if(is_integer($val) && $val > 0){
+                                        
+                                   $registro->limit($val);
+                                }
+                            break;
+                        case 'ordem':
+
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $val = explode(',', $val);
+                                for($i= 0; !($i == count($val)); $i++) {
+                                    $atual = explode('-', $val[$i]);
+                                    if(array_key_exists(trim($atual[0]), $parse)){
+
+                                        $parsed = $parse[trim($atual[0])];
+                                        
+                                        if($parsed){
+                                           
+                                            $registro->orderBy($parsed,$atual[1]);
+                                        }
+                                    }
+                                    
+                                    
+                                }
+
+                                break;
+
+                        case'campos':
+                                if(is_array($val) && count($val) > 0){
+                                    //$campos = $this->montaCamposConsulta($registro, $val);
+                                    
+                                }
+                            break;
+
+                    }
+                }
+            }
+            if($campos){
+                $registro->select($campos);
+            }else{
+                $registro->select('estadoss.*', 'pais.nmPais', 'pais.cdPais');
+
+            }
+           
+            $registro = $registro->where('estadoss.active', '=', 'yes')
+            ->where('pais.active', '=', 'yes')->get();
+
+            \DB::commit();
+
+            //dd( $registro);
+
+            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
+
+        }catch(EstadoException $e){
+            \DB::rollback();
+             return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage()]], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
