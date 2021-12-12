@@ -367,16 +367,13 @@ class PessoaController extends Controller
     }
 
 
-    public function info(Request $request, $id, $idAssistente)
+    public function info(Request $request, $id)
     {
         
         try{
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
-            $callBack = $dados['callBack'] ?? '';
-            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
-
             \DB::beginTransaction();
             
             if($id <= 0){
@@ -394,26 +391,26 @@ class PessoaController extends Controller
                 throw new PessoaException('Registro não encontrado.');
             }
 
+            $registro->logradouro;
+            $registro->grupo;
+            $registro->telefone;
+
             \DB::commit();
 
-            //return view('admin.produto.info', compact('registro'));
-            return view('admin.pessoa.info', compact('registro', 'idAssistente', 'callBack'));
+            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
         }catch(PessoaException $e){
             \DB::rollback();
 
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
+            //$msg = $e->getMessage();
+            //return view('layouts._admin._error', compact('msg'));
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
     
         }catch(\Exception $e){
             \DB::rollback();
 
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -430,12 +427,6 @@ class PessoaController extends Controller
     	try {
             $dadosRequest = $request->all();
 
-            $callBack = $dadosRequest['callBack'] ?? '';
-            $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-            if(! isset($id)){
-                $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
-            }
-
             if($id <= 0){
                 throw new PessoaException('Parâmetro ínválido');
             }
@@ -445,8 +436,6 @@ class PessoaController extends Controller
             $registro = Pessoa::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
-            $grupos = Grupo::where('active', '=', 'yes')->get();
-
             if(! $registro){
                 throw new PessoaException('Registro não encontrado');
                 
@@ -454,7 +443,7 @@ class PessoaController extends Controller
 
             \DB::commit();
 
-	        return view('admin.pessoa.edit', compact('registro', 'grupos', 'idAssistente', 'callBack'));
+	        return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
 
     	}catch(PessoaException $e){
@@ -463,17 +452,13 @@ class PessoaController extends Controller
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
-            
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
 
         }catch(\Exception $e){
             \DB::rollback();
 
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
 
     }
@@ -520,7 +505,7 @@ class PessoaController extends Controller
                 $resultPessoa = $pessoa->update($dadosPessoa);
                 if($resultPessoa){
 
-                    $newGrupo = Grupo::where('id', '=', $dados['groupo_id'])->where('active', '=', 'yes')->first();
+                    $newGrupo = Grupo::where('id', '=', $dados['groupo_id'] )->where('active', '=', 'yes')->first();
                     if($newGrupo){
                         $grupo = $pessoa->grupo->where('active', '=', 'yes')->first();
                         if($grupo){
@@ -545,24 +530,14 @@ class PessoaController extends Controller
 
             }
 
-            if($registro){
-
-                //\Session::flash('mensagem', ['msg'=>'Registro salvo com sucesso', 'class'=>'alert alert-success']);
-                //return redirect()->route('pessoa.head');
-
-                return response()->json(['mensagem'=>$registro, 'class' => 'success'], 200);
-
-            }else if($erros) {
+            if($erros) {
 
                 throw new PessoaException(implode("<br/><br/>",$erros));
 
-            }else{
-
-                //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
-
-                //return redirect()->back();
-                return response()->json(['errors'=>['erro'=>'Erro ao atualizar o registro'], 'class'=>'warning'], 400);
             }
+
+            \DB::commit();
+            return response()->json(['mensagem'=>$registro, 'class' => 'success'], 200);
 
         }catch(PessoaException $e){
             \DB::rollback();

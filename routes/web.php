@@ -91,6 +91,25 @@ Route::group(['middleware' => ['tenant','auth']], function(){
 	Route::get('/pessoa/destroy/{id}/{id_assistente?}', ['as'=>'pessoa.destroy', 'uses'=>'Admin\PessoaController@destroy']);
 	Route::get('/pessoa/valida/cpf/{cpf}/{id_assistente?}', ['as'=>'pessoa.valida.cpf', 'uses'=>'Admin\PessoaController@validarCpf']);
 	Route::get('/pessoa/plano/adicionar/{id}/{id_assistente?}', ['as'=>'pessoa.plano.adicionar', 'uses'=>'Admin\PessoaController@adicionarPlano']);
+
+	Route::get('/grupo/index/{id_assistente?}', ['as'=>'grupo.index', 'uses'=>'Admin\GrupoController@index']);
+	Route::post('/grupo/index/{id_assistente?}', ['as'=>'grupo.index', 'uses'=>'Admin\GrupoController@index']);
+	Route::get('/grupo/json/{id_assistente?}', ['as'=>'grupo.json', 'uses'=>'Admin\GrupoController@json']);
+	Route::post('/grupo/json/{id_assistente?}', ['as'=>'grupo.json', 'uses'=>'Admin\GrupoController@json']);
+	Route::get('/grupo/create/{id_assistente?}', ['as'=>'grupo.create', 'uses'=>'Admin\GrupoController@create']);
+	Route::post('/grupo/create/{id_assistente?}', ['as'=>'grupo.create', 'uses'=>'Admin\GrupoController@create']);
+	Route::post('/grupo/store/{id_assistente?}', ['as'=>'grupo.store', 'uses'=>'Admin\GrupoController@store']);
+	Route::get('/grupo/edit/{id}/{id_assistente?}', ['as'=>'grupo.edit', 'uses'=>'Admin\GrupoController@edit']);
+	Route::post('/grupo/edit/{id}/{id_assistente?}', ['as'=>'grupo.edit', 'uses'=>'Admin\GrupoController@edit']);
+	Route::put('/grupo/update/{id}/{id_assistente?}', ['as'=>'grupo.update', 'uses'=>'Admin\GrupoController@update']);
+	Route::get('/grupo/show/{id}/{id_assistente?}', ['as'=>'grupo.show', 'uses'=>'Admin\GrupoController@show']);
+	Route::post('/grupo/show/{id}/{id_assistente?}', ['as'=>'grupo.show', 'uses'=>'Admin\GrupoController@show']);
+	Route::get('/grupo/info/{id}/{id_assistente?}', ['as'=>'grupo.info', 'uses'=>'Admin\GrupoController@info']);
+	Route::post('/grupo/info/{id}/{id_assistente?}', ['as'=>'grupo.info', 'uses'=>'Admin\GrupoController@info']);
+	Route::get('/grupo/head/{id_assistente?}', ['as'=>'grupo.head', 'uses'=>'Admin\GrupoController@head']);
+	Route::post('/grupo/head/{id_assistente?}', ['as'=>'grupo.head', 'uses'=>'Admin\GrupoController@head']);
+	Route::get('/grupo/destroy/{id}/{id_assistente?}', ['as'=>'grupo.destroy', 'uses'=>'Admin\GrupoController@destroy']);
+	Route::post('/grupo/destroy/{id}/{id_assistente?}', ['as'=>'grupo.destroy', 'uses'=>'Admin\GrupoController@destroy']);
 	
 	Route::get('/logradouro/index/{id_assistente?}', ['as'=>'logradouro.index', 'uses'=>'Admin\LogradouroController@index']);
 	Route::get('/logradouro/create/{id}/{id_assistente?}', ['as'=>'logradouro.create', 'uses'=>'Admin\LogradouroController@create']);
