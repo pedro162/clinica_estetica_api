@@ -107,6 +107,17 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/pessoa/valida/cpf/{cpf}/{id_assistente?}', ['as'=>'pessoa.valida.cpf', 'uses'=>'Admin\PessoaController@validarCpf']);
 	Route::get('/pessoa/plano/adicionar/{id}/{id_assistente?}', ['as'=>'pessoa.plano.adicionar', 'uses'=>'Admin\PessoaController@adicionarPlano']);
 
+	Route::get('/agenda/evento/json', ['as'=>'agenda.evento.json', 'uses'=>'Admin\EventoAgendaController@json']);
+	Route::post('/agenda/evento/json', ['as'=>'agenda.evento.json', 'uses'=>'Admin\EventoAgendaController@json']);
+	Route::post('/agenda/evento/store', ['as'=>'agenda.evento.store', 'uses'=>'Admin\EventoAgendaController@store']);
+	Route::get('/agenda/evento/edit/{id}', ['as'=>'agenda.evento.edit', 'uses'=>'Admin\EventoAgendaController@edit']);
+	Route::post('/agenda/evento/edit/{id}', ['as'=>'agenda.evento.edit', 'uses'=>'Admin\EventoAgendaController@edit']);
+	Route::put('/agenda/evento/update/{id}', ['as'=>'agenda.evento.update', 'uses'=>'Admin\EventoAgendaController@update']);
+	Route::get('/agenda/evento/info/{id}', ['as'=>'agenda.evento.info', 'uses'=>'Admin\EventoAgendaController@info']);
+	Route::post('/agenda/evento/info/{id}', ['as'=>'agenda.evento.info', 'uses'=>'Admin\EventoAgendaController@info']);
+	Route::get('/agenda/evento/destroy/{id}', ['as'=>'agenda/evento.destroy', 'uses'=>'Admin\EventoAgendaController@destroy']);
+	
+
 	Route::get('/grupo/index/{id_assistente?}', ['as'=>'grupo.index', 'uses'=>'Admin\GrupoController@index']);
 	Route::post('/grupo/index/{id_assistente?}', ['as'=>'grupo.index', 'uses'=>'Admin\GrupoController@index']);
 	Route::get('/grupo/json/{id_assistente?}', ['as'=>'grupo.json', 'uses'=>'Admin\GrupoController@json']);
@@ -299,6 +310,8 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 	Route::get('/cidade/index/{id_assistente?}', ['as'=>'cidade.index', 'uses'=>'Admin\CidadeController@index']);
 	Route::post('/cidade/index/{id_assistente?}', ['as'=>'cidade.index', 'uses'=>'Admin\CidadeController@index']);
+	Route::get('/cidade/json/{id_assistente?}', ['as'=>'cidade.json', 'uses'=>'Admin\CidadeController@json']);
+	Route::post('/cidade/json/{id_assistente?}', ['as'=>'cidade.json', 'uses'=>'Admin\CidadeController@json']);
 	Route::get('/cidade/create/{id_assistente?}', ['as'=>'cidade.create', 'uses'=>'Admin\CidadeController@create']);
 	Route::post('/cidade/create/{id_assistente?}', ['as'=>'cidade.create', 'uses'=>'Admin\CidadeController@create']);
 	Route::post('/cidade/store/{id_assistente?}', ['as'=>'cidade.store', 'uses'=>'Admin\CidadeController@store']);

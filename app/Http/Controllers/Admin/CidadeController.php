@@ -172,6 +172,164 @@ class CidadeController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function json(Request $request)
+    {
+        try{
+            \DB::beginTransaction();
+
+            $consulta = $request->all();
+            $campos =  null;
+            $parse = [
+                'name_cidade'=>'cidades.dsIpi'
+
+            ];
+
+            $registro = \DB::table('cidades');
+            $registro->join('estadoss', function($join){
+                
+                $join->on('estadoss.id', '=', 'cidades.estado_id');
+
+            });
+            
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('cidades.id', $val);
+                            }
+                            break;
+                        case 'nmCidade':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                
+                                $registro->where('cidades.nmCidade', 'like' , '%'.$val.'%');
+                            }
+                            break;
+                        case 'cdCidade':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                
+                                $registro->where('cidades.cdCidade', '=' , ''.$val.'');
+                            }
+                            break;
+                            case 'sigla':
+                                if(is_string($val)){
+                                    
+                                    if($val[0] == ','){
+                                        $val = substr($val, 1);
+                                    } 
+                                    if($val[strlen($val) - 1] == ','){
+                                        $val = substr($val, 0, -1);
+                                    }
+                                    
+                                    $registro->where('cidades.sigla', '=' , ''.$val.'');
+                                }
+                            break;
+                        case 'limite':
+                                $val = (int) $val;
+                                if(is_integer($val) && $val > 0){
+                                        
+                                   $registro->limit($val);
+                                }
+                            break;
+                        case 'ordem':
+
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $val = explode(',', $val);
+                                for($i= 0; !($i == count($val)); $i++) {
+                                    $atual = explode('-', $val[$i]);
+                                    if(array_key_exists(trim($atual[0]), $parse)){
+
+                                        $parsed = $parse[trim($atual[0])];
+                                        
+                                        if($parsed){
+                                           
+                                            $registro->orderBy($parsed,$atual[1]);
+                                        }
+                                    }
+                                    
+                                    
+                                }
+
+                                break;
+
+                        case'campos':
+                                if(is_array($val) && count($val) > 0){
+                                    //$campos = $this->montaCamposConsulta($registro, $val);
+                                    
+                                }
+                            break;
+
+                    }
+                }
+            }
+            if($campos){
+                $registro->select($campos);
+            }else{
+                $registro->select('cidades.*', 'estadoss.nmEStado');
+
+            }
+           
+            $registro = $registro->where('cidades.active', '=', 'yes')
+            ->where('estadoss.active', '=', 'yes')->get();
+
+            \DB::commit();
+
+            //dd( $registro);
+
+            return response()->json(['registro'=>$registro, 'class'=>'sucess'], 201);
+
+        }catch(CidadeException $e){
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 500);
+
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -246,7 +404,7 @@ class CidadeController extends Controller
         //
     }
 
-    public function info(Request $request, $id, $idAssistente)
+    public function info(Request $request, $id, $idAssistente=0)
     {
         
         try{
@@ -272,22 +430,21 @@ class CidadeController extends Controller
             \DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
-            return view('admin.cidade.info', compact('registro', 'idAssistente', 'callBack'));
+            return response()->json(['registro'=>$registro, 'class'=>'sucess'], 201);
 
         }catch(CidadeException $e){
             \DB::rollback();
 
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
     
         }catch(\Exception $e){
+            \DB::rollback();
 
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 500);
 
+            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
