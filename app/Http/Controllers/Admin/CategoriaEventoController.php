@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Exceptions\EventoAgendaExcepton;
-use App\EventoAgenda;
+use App\Exceptions\CategoriaEventoException;
+use App\CategoriaEvento;
 
-class EventoAgendaController extends Controller
+class CategoriaEventoController extends Controller
 {
-    /**
+   /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -26,7 +26,7 @@ class EventoAgendaController extends Controller
 
             $campos =  null;
 
-            $registro = EventoAgenda::where('active', '=', 'yes');
+            $registro = CategoriaEvento::where('active', '=', 'yes');
 
             if(is_array($consulta) && count($consulta) > 0){
                 foreach($consulta as $key=>$val){
@@ -66,7 +66,7 @@ class EventoAgendaController extends Controller
             
             return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
-        }catch(EventoAgendaExcepton $e){
+        }catch(CategoriaEventoException $e){
             \DB::rollback();
             return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
     
@@ -97,25 +97,14 @@ class EventoAgendaController extends Controller
             $dados = $request->all();
             $user_id = \Auth::User()->id;
 
-            $dadosEvento                        = [];            
-            $dadosEvento['name']                = $dados['name'];
-            $dadosEvento['descricao']           = $dados['descricao']   ?? null;            
-            $dadosEvento['periodo']             = $dados['periodo']     ?? null;
-            $dadosEvento['dt_inicio']           = $dados['dt_inicio'];
-            $dadosEvento['dt_fim']              = $dados['dt_fim'];
-            $dadosEvento['hr_inicio']           = $dados['hr_inicio'];
-            $dadosEvento['hr_fim']              = $dados['hr_fim'];
-            $dadosEvento['profissional_id']     = $dados['profissional_id'];
-            $dadosEvento['categoria_evento_id'] = $dados['categoria_evento_id'];
-            $dadosEvento['recorrente']          = $dados['recorrente'] ?? 'no';
-            $dadosEvento['nivel']               = $dados['nivel'] ?? 'baixo';
-            $dadosEvento['user_id']             = $user_id;
-            $dadosEvento['active']              = 'yes';
-            $result = EventoAgenda::create($dadosEvento);
+            $dadosEvento                = $request->only('name');
+            $dadosEvento['user_id']     = $user_id;
+            $dadosEvento['active']      = 'yes';
+            $result = CategoriaEvento::create($dadosEvento);
 
             if(! $result){
 
-                throw new EventoAgendaExcepton('Não foi possível concluir a operação. Tente novamente ou entre em contato com o supote.');
+                throw new CategoriaEventoException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o supote.');
 
             }
 
@@ -124,7 +113,7 @@ class EventoAgendaController extends Controller
             return response()->json(['mensagem'=>$result, 'class'=>'sucess'], 200);
 
 
-        }catch (EventoAgendaExcepton $th) {
+        }catch (CategoriaEventoException $th) {
 
             \DB::rollback();
 
@@ -152,24 +141,24 @@ class EventoAgendaController extends Controller
             
             if($id <= 0){
 
-                throw new EventoAgendaExcepton('Parâmetro inválido. Entre em contato com o supote.');
+                throw new CategoriaEventoException('Parâmetro inválido. Entre em contato com o supote.');
             }
 
             $registro = null;
 
-            $registro = EventoAgenda::where('active', '=', 'yes')
+            $registro = CategoriaEvento::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
             if($registro == null){
 
-                throw new EventoAgendaExcepton('Registro não encontrado.');
+                throw new CategoriaEventoException('Registro não encontrado.');
             }
 
             \DB::commit();
 
             return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
-        }catch(EventoAgendaExcepton $e){
+        }catch(CategoriaEventoException $e){
             \DB::rollback();
 
             //$msg = $e->getMessage();
@@ -198,16 +187,16 @@ class EventoAgendaController extends Controller
             $dadosRequest = $request->all();
 
             if($id <= 0){
-                throw new EventoAgendaExcepton('Parâmetro ínválido');
+                throw new CategoriaEventoException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
-            $registro = EventoAgenda::where('active', '=', 'yes')
+            $registro = CategoriaEvento::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
             if(! $registro){
-                throw new EventoAgendaExcepton('Registro não encontrado');
+                throw new CategoriaEventoException('Registro não encontrado');
                 
             }
 
@@ -216,7 +205,7 @@ class EventoAgendaController extends Controller
             return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
 
-        }catch(EventoAgendaExcepton $e){
+        }catch(CategoriaEventoException $e){
 
             \DB::rollback();
             
@@ -252,24 +241,12 @@ class EventoAgendaController extends Controller
             
             $dados = $request->all();
 
-            $dadosEvento                        = [];   
-
-            $dadosEvento['name']                = $dados['name'];
-            $dadosEvento['descricao']           = $dados['descricao']   ?? null;            
-            $dadosEvento['periodo']             = $dados['periodo']     ?? null;
-            $dadosEvento['dt_inicio']           = $dados['dt_inicio'];
-            $dadosEvento['dt_fim']              = $dados['dt_fim'];
-            $dadosEvento['hr_inicio']           = $dados['hr_inicio'];
-            $dadosEvento['hr_fim']              = $dados['hr_fim'];
-            $dadosEvento['profissional_id']     = $dados['profissional_id'];
-            $dadosEvento['categoria_evento_id'] = $dados['categoria_evento_id'];
-            $dadosEvento['recorrente']          = $dados['recorrente']      ?? 'no';
-            $dadosEvento['nivel']               = $dados['nivel']           ?? 'baixo';
-            $dadosEvento['user_update_id']      = $user_id;
+            $dadosEvento                        = $request->only('name');   
+            //$dadosEvento['user_update_id']      = $user_id;
             
-            $eventoAgenda = EventoAgenda::where('id', '=', $id)->where('active', '=', 'yes')->first();
+            $eventoAgenda = CategoriaEvento::where('id', '=', $id)->where('active', '=', 'yes')->first();
             if(! $eventoAgenda){
-                throw new EventoAgendaExcepton('Evento não identificado');
+                throw new CategoriaEventoException('Evento não identificado');
             }
 
             $eventoAgenda->update($dadosEvento);
@@ -277,7 +254,7 @@ class EventoAgendaController extends Controller
             \DB::commit();
             return response()->json(['mensagem'=>$eventoAgenda, 'class' => 'success'], 200);
 
-        }catch(EventoAgendaExcepton $e){
+        }catch(CategoriaEventoException $e){
             \DB::rollback();
 
             return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 400);
@@ -314,10 +291,10 @@ class EventoAgendaController extends Controller
 
             \DB::beginTransaction();
 
-            $eventoAgenda = EventoAgenda::where('active', '=', 'yes')
+            $eventoAgenda = CategoriaEvento::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
             if(! $eventoAgenda){
-                throw new EventoAgendaExcepton('Registro não encontrado');
+                throw new CategoriaEventoException('Registro não encontrado');
             }
 
             $eventoAgenda->update(['active'=>'no']);
@@ -326,7 +303,7 @@ class EventoAgendaController extends Controller
             \DB::commit();
             return response()->json(['mensagem'=>'Registro atulizado com sucesso', 'class'=>'success']);
 
-        }catch(EventoAgendaExcepton $e){
+        }catch(CategoriaEventoException $e){
             \DB::rollback();
 
             return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 400);
@@ -359,9 +336,10 @@ class EventoAgendaController extends Controller
                 $msg .= $mensagem.'<br/>';
             }
             
-            throw new EventoAgendaExcepton($msg);
+            throw new CategoriaEventoException($msg);
         }
 
         return true;
     }
+
 }
