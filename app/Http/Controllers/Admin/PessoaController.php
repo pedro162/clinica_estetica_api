@@ -153,11 +153,30 @@ class PessoaController extends Controller
                             
                             $registro->where('name', 'like' , '%'.$val.'%');
                             break;
+                        
+                        case 'description_to_search':
+                            if($val[0] == ','){
+                                $val = substr($val, 1);
+                            } 
+                            if($val[strlen($val) - 1] == ','){
+                                $val = substr($val, 0, -1);
+                            }
+                            
+                            $registro->where('name', 'like' , '%'.$val.'%');
+                            break;
                     }
                 }
-            }
+            }//
 
             $registro = $registro->get();
+            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
+                $dataToRequest = [];
+                foreach($registro as $reg){
+                    $dataToRequest[] = ['label'=>$reg->name, 'value'=>$reg->id];
+                }
+
+                $registro = $dataToRequest;
+            }
             
             \DB::commit();
             
