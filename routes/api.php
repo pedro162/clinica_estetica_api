@@ -459,6 +459,15 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/conta/destroy/{id}/{id_assistente?}', ['as'=>'conta.destroy', 'uses'=>'Admin\ContaController@destroy']);
 	Route::post('/conta/destroy/{id}/{id_assistente?}', ['as'=>'conta.destroy', 'uses'=>'Admin\ContaController@destroy']);
 
+	Route::get('/atendimento/json', ['as'=>'atendimento.json', 'uses'=>'Admin\AtendimentoController@json']);
+	Route::post('/atendimento/json', ['as'=>'atendimento.json', 'uses'=>'Admin\AtendimentoController@json']);
+	Route::post('/atendimento/store', ['as'=>'atendimento.store', 'uses'=>'Admin\AtendimentoController@store']);
+	Route::get('/atendimento/edit/{id}', ['as'=>'atendimento.edit', 'uses'=>'Admin\AtendimentoController@edit']);
+	Route::post('/atendimento/edit/{id}', ['as'=>'atendimento.edit', 'uses'=>'Admin\AtendimentoController@edit']);
+	Route::put('/atendimento/update/{id}', ['as'=>'atendimento.update', 'uses'=>'Admin\AtendimentoController@update']);
+	Route::get('/atendimento/info/{id}', ['as'=>'atendimento.info', 'uses'=>'Admin\AtendimentoController@info']);
+	Route::post('/atendimento/info/{id}', ['as'=>'atendimento.info', 'uses'=>'Admin\AtendimentoController@info']);
+	Route::get('/atendimento/destroy/{id}', ['as'=>'atendimento/destroy', 'uses'=>'Admin\AtendimentoController@destroy']);
 });
 
 

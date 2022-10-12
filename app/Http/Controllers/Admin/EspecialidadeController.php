@@ -61,6 +61,14 @@ class EspecialidadeController extends Controller
             }
 
             $registro = $registro->get();
+            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
+                $dataToRequest = [];
+                foreach($registro as $reg){
+                    $dataToRequest[] = ['label'=>$reg->name, 'value'=>$reg->id];
+                }
+
+                $registro = $dataToRequest;
+            }
             
             \DB::commit();
             

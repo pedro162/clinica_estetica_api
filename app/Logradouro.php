@@ -3,11 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Estado;
 
 class Logradouro extends Model
 {
     protected $fillable = 
     [
+		'id',
     	'cep',
 		'cidade',
 		'logradouro',
@@ -22,4 +24,9 @@ class Logradouro extends Model
 		'bairro',
 		'estado'
     ];
+
+	public function estado_logradouro()
+    {
+        return $this->belongsTo(Estado::class, 'estado', 'id');
+    }
 }

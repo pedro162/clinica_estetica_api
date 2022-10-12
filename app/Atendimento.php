@@ -5,19 +5,25 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\EventoAgenda;
 use App\Pessoa;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Atendimento extends Model
 {
+    use SoftDeletes;
     protected $table="atendimentos";
     protected $primaryKey="id";
     protected $fillable =[
         'name',
         'historico',
         'pessoa_id',
-        'evento_agenda_id',
         'user_id',
         'user_update_id',
         'active',
+        'dt_marcado',
+        'hr_marcado',
+        'profissional_id',
+        'prioridade',
+        'status'
     ];
 
     public function eventoAgenda()

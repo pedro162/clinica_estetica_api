@@ -410,9 +410,10 @@ class PessoaController extends Controller
                 throw new PessoaException('Registro não encontrado.');
             }
 
-            $registro->logradouro;
+            $registro->logradouro = $registro->logradouro->where('importancia', '=', 'principal')->first()->estado_logradouro->pais;
             $registro->grupo;
             $registro->telefone;
+            //dd($registro);
 
             \DB::commit();
 
@@ -432,7 +433,9 @@ class PessoaController extends Controller
             return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
-
+    /*
+        {"mensagem":{"id":1,"name":"Jos\u00e9 Pedro","name_opcional":"Ferreira","documento":"61224450370","documento_complementar":"123456","email":"phedroclooney@gmail.com","nascimento_fundacao":null,"sexo":"m","tipo":"fisica","user_id":1,"user_update_id":1,"active":"yes","created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-10-08T23:46:26.000000Z","logradouro":[{"id":1,"cep":"65061-220","cidade":"S\u00e3o luis","logradouro":"Rua S\u00e3o Sebasti\u00e3o","bairro":"Ipase","estado":"1","complemento":"teste","numero":"123","bloco":null,"tipo":"casa","importancia":"principal","user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-07-19T02:12:31.000000Z","pivot":{"pessoa_id":1,"logradouro_id":1},"estado_logradouro":{"id":1,"nmEStado":"Maranh\u00e3o","codEstado":"98","sigla":"MA","padrao":"yes","pais_id":1,"user_id":1,"user_update_id":1,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:08:36.000000Z","updated_at":"2022-07-19T02:08:36.000000Z","pais":{"id":1,"nmPais":"BRASIL","cdPais":"55","padrao":"yes","user_id":1,"user_update_id":1,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:07:34.000000Z","updated_at":"2022-07-19T02:07:34.000000Z"}}}],"grupo":[{"id":1,"name":"Cliente","descricao":"Cliente","user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:11:11.000000Z","updated_at":"2022-07-19T02:11:11.000000Z","pivot":{"pessoa_id":1,"groupo_id":1}}],"telefone":[{"id":1,"numero":"(98) 98425-7623","tipo":"celular","whatsapp":"nao","importancia":"principal","pessoa_id":1,"user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-07-19T02:12:31.000000Z"},{"id":2,"numero":"(98) 98425-7623","tipo":"celular","whatsapp":"nao","importancia":"principal","pessoa_id":1,"user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-07-19T02:12:31.000000Z"},{"id":3,"numero":"9894239891","tipo":"fixo","whatsapp":"nao","importancia":"principal","pessoa_id":1,"user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-07-19T02:12:31.000000Z"}]},"class":"sucess"}
+    */
     /**
      * Show the form for editing the specified resource.
      *
@@ -515,7 +518,7 @@ class PessoaController extends Controller
             $dadosPessoa['active']              = 'yes';
             if(! Utilitarios::validaCpf($dadosPessoa['documento'])){
                 $erros['documento'] = 'Cpf inválido';
-                return false;
+                //return false;
             }
 
             $pessoa = Pessoa::where('id', '=', $id)->where('active', '=', 'yes')->first();

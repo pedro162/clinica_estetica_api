@@ -42,14 +42,6 @@ class ProfissionalController extends Controller
                 
                 $join->on('profissionals.pessoa_id', '=', 'pessoas.id');
 
-            })->join('espec_prof', function($join){
-                
-                $join->on('profissionals.id', '=', 'espec_prof.profissional_id');
-
-            })->join('especialidades', function($join){
-
-                $join->on('especialidades.id', '=' ,'espec_prof.especialidade_id');
-
             });
 
             $campos =  null;
@@ -84,19 +76,6 @@ class ProfissionalController extends Controller
                                 $registro->where('profissionals.name', 'like' , '%'.$val.'%');
                             }
                             break;
-                            case 'especialidade_name':
-                                if(is_string($val)){
-                                    
-                                    if($val[0] == ','){
-                                        $val = substr($val, 1);
-                                    } 
-                                    if($val[strlen($val) - 1] == ','){
-                                        $val = substr($val, 0, -1);
-                                    }
-                                    
-                                    $registro->where('especialidades.name', 'like' , '%'.$val.'%');
-                                }
-                                break;
                             case 'limite':
                                 $val = (int) $val;
                                 if(is_integer($val) && $val > 0){
@@ -146,49 +125,14 @@ class ProfissionalController extends Controller
                 $registro->select($campos);
 
             }else{
-                $registro->select('profissionals.id', 'especialidades.name as name_especialidade', 'especialidades.id as especialidade_id', 'espec_prof.dt_emiss_doc', 'espec_prof.dt_vencimento_doc', 'espec_prof.nr_doc', 'espec_prof.org_expedidor', 'pessoas.name as name_pessoa', 'pessoas.id as pessoa_id', 'pessoas.name_opcional', 'pessoas.documento', 'pessoas.documento_complementar', 'pessoas.nascimento_fundacao', 'pessoas.sexo', 'pessoas.email');
+                $registro->select('profissionals.id', 'pessoas.name as name_pessoa', 'pessoas.id as pessoa_id', 'pessoas.name_opcional', 'pessoas.documento', 'pessoas.documento_complementar', 'pessoas.nascimento_fundacao', 'pessoas.sexo', 'pessoas.email');
 
             }
 
             //$registro = \App\Produto::where('active', '=', 'yes')->get();
             $registro = $registro->where('profissionals.active', '=', 'yes')
-                ->where('especialidades.active', '=', 'yes')
                 ->where('pessoas.active', '=', 'yes')->get();
 
-            /*if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
-                        case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('id', $val);
-                            }
-                            break;
-                        case 'name':
-                            if($val[0] == ','){
-                                $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
-                                $val = substr($val, 0, -1);
-                            }
-                            
-                            $registro->where('name', 'like' , '%'.$val.'%');
-                            break;
-                    }
-                }
-            }
-
-            $registro = $registro->get();*/
-            
             \DB::commit();
             
             return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
@@ -228,6 +172,7 @@ class ProfissionalController extends Controller
             $dadosEvento['pessoa_id']           = $dados['pessoa_id'];
             $dadosEvento['user_id']             = $user_id;
             $dadosEvento['active']              = 'yes';
+            $dadosEvento['filial_id']           = $dados['filial_id'];
             $result = Profissional::create($dadosEvento);
 
             if(! $result){
