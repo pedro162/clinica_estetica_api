@@ -184,12 +184,12 @@ class AtendimentoController extends Controller
 
             $dados = $request->all();
 
-            $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoas_id'])->first();
+            $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
             if(! $pessoas){
                 throw new AtendimentoException('País não identificado. Tente novamente ou entre em contato com o suporte.');
             }
 
-            $profissional = Profissional::where('id', '=', $dados['pessoas_id'])->where('active', '=', 'yes')->first();
+            $profissional = Profissional::where('id', '=', $dados['profissional_id'])->where('active', '=', 'yes')->first();
             if(! $profissional){
                 throw new AtendimentoException('Evento não identificado');
             }
@@ -203,7 +203,7 @@ class AtendimentoController extends Controller
             $dadosRequest['dt_marcado']         = $dados['dt_marcado'];
             $dadosRequest['hr_marcado']         = $dados['hr_marcado'];
             $dadosRequest['prioridade']         = $dados['prioridade'];
-            $dadosRequest['status']             = $dados['status'];
+            $dadosRequest['status']             = $dados['status'] ?? 'pendente';
             $dadosRequest['profissional_id']    = $profissional->id;
             $dadosRequest['active']             = 'yes';
             
@@ -237,7 +237,7 @@ class AtendimentoController extends Controller
         //
     }
 
-    public function info(Request $request, $id, $idAssistente)
+    public function info(Request $request, $id)
     {
         
         try{
@@ -260,22 +260,21 @@ class AtendimentoController extends Controller
                 throw new AtendimentoException('Registro não encontrado');
             }
 
-            \DB::commit();
+            $registro->profissional;
+            $registro->pessoa;
 
-            //return view('admin.produto.info', compact('registro'));
-            return view('admin.estado.info', compact('registro', 'idAssistente', 'callBack'));
+            \DB::commit();
+            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
         }catch(AtendimentoException $e){
             \DB::rollback();
 
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
+            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 400);
             //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
     
         }catch(\Exception $e){
 
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
@@ -365,12 +364,12 @@ class AtendimentoController extends Controller
                 throw new AtendimentoException('Atendimento não identificado');
             }
 
-            $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoas_id'])->first();
+            $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
             if(! $pessoas){
                 throw new AtendimentoException('País não identificado. Tente novamente ou entre em contato com o suporte.');
             }
 
-            $profissional = Profissional::where('id', '=', $dados['pessoas_id'])->where('active', '=', 'yes')->first();
+            $profissional = Profissional::where('id', '=', $dados['profissional_id'])->where('active', '=', 'yes')->first();
             if(! $profissional){
                 throw new AtendimentoException('Evento não identificado');
             }
@@ -466,16 +465,16 @@ class AtendimentoController extends Controller
     {
        
         $validator = Validator::make($request->all(),[
-            'name'=> 'required|max:255|min:2',
+            'historico'=> 'required|max:255|min:2',
             'profissional_id'=> 'required|min:1',
             'pessoa_id'=> 'required|min:1',
             'prioridade'=> 'required',
-            'dt_marcado'=> 'requided',
-            'hr_marcado'=> 'requided',
+            'dt_marcado'=> 'required',
+            'hr_marcado'=> 'required',
         ], [
-            'name.required' => 'O campo "Descrição" é obrigatório.',
-            'name.max' => 'O "Descrição" suporta até :max caracteres.',
-            'name.min' => 'O "Descrição" deve conter pelo menos :min caracteres.',
+            'historico.required' => 'O campo "Descrição" é obrigatório.',
+            'historico.max' => 'O "Descrição" suporta até :max caracteres.',
+            'historico.min' => 'O "Descrição" deve conter pelo menos :min caracteres.',
             'profissional_id.required' => 'O campo "Profissional" é obrigatório.',
             'profissional_id.min' => 'O campo "Profissional" deve ter um valor maior ou igual a :min.',
             'pessoa_id.required' => 'O campo "Pessoa" é obrigatório.',

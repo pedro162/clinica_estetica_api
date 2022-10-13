@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\EventoAgenda;
 use App\Pessoa;
+use App\Profissional;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Atendimento extends Model
@@ -34,6 +35,11 @@ class Atendimento extends Model
     public function pessoa()
     {
     	return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
+    }
+
+    public function profissional()
+    {
+    	return $this->belongsTo(Profissional::class, 'profissional_id', 'id');
     }
 
 }
