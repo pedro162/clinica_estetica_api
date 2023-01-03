@@ -24,7 +24,11 @@ class Atendimento extends Model
         'hr_marcado',
         'profissional_id',
         'prioridade',
-        'status'
+        'status',
+        'dt_fim',
+        'hr_fim',
+        'name_atendido',
+        'tipo'
     ];
 
     public function eventoAgenda()

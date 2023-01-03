@@ -1,0 +1,29 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+use \App\Formulario;
+
+class FormularioGrupo extends Model
+{
+    protected $table="formulario_grupos";
+    protected $primaryKey="id";
+    protected $fillable = [
+        "id",
+        "name",
+        "nr_ordem",
+        "props_grupo",
+        "user_id",
+        "user_update_id",
+        "active",
+        'formulario_id',
+        "deleted_at",
+        "created_at",
+        "updated_at"
+    ];
+
+    public function grupo(){
+        return $this->belongsTo(Formulario::class, 'formulario_id', 'id');
+    }
+}

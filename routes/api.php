@@ -468,6 +468,36 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/atendimento/info/{id}', ['as'=>'atendimento.info', 'uses'=>'Admin\AtendimentoController@info']);
 	Route::post('/atendimento/info/{id}', ['as'=>'atendimento.info', 'uses'=>'Admin\AtendimentoController@info']);
 	Route::get('/atendimento/destroy/{id}', ['as'=>'atendimento/destroy', 'uses'=>'Admin\AtendimentoController@destroy']);
+
+	Route::get('/formulario/json', ['as'=>'formulario.json', 'uses'=>'Admin\FormularioController@json']);
+	Route::post('/formulario/json', ['as'=>'formulario.json', 'uses'=>'Admin\FormularioController@json']);
+	Route::post('/formulario/store', ['as'=>'formulario.store', 'uses'=>'Admin\FormularioController@store']);
+	Route::get('/formulario/edit/{id}', ['as'=>'formulario.edit', 'uses'=>'Admin\FormularioController@edit']);
+	Route::post('/formulario/edit/{id}', ['as'=>'formulario.edit', 'uses'=>'Admin\FormularioController@edit']);
+	Route::put('/formulario/update/{id}', ['as'=>'formulario.update', 'uses'=>'Admin\FormularioController@update']);
+	Route::get('/formulario/info/{id}', ['as'=>'formulario.info', 'uses'=>'Admin\FormularioController@info']);
+	Route::post('/formulario/info/{id}', ['as'=>'formulario.info', 'uses'=>'Admin\FormularioController@info']);
+	Route::get('/formulario/destroy/{id}', ['as'=>'formulario/destroy', 'uses'=>'Admin\FormularioController@destroy']);
+
+	Route::get('/formulario/grupo/json', ['as'=>'formulario.grupo.json', 'uses'=>'Admin\FormularioGrupoController@json']);
+	Route::post('/formulario/grupo/json', ['as'=>'formulario.grupo.json', 'uses'=>'Admin\FormularioGrupoController@json']);
+	Route::post('/formulario/grupo/store', ['as'=>'formulario.grupo.store', 'uses'=>'Admin\FormularioGrupoController@store']);
+	Route::get('/formulario/grupo/edit/{id}', ['as'=>'formulario.grupo.edit', 'uses'=>'Admin\FormularioGrupoController@edit']);
+	Route::post('/formulario/grupo/edit/{id}', ['as'=>'formulario.grupo.edit', 'uses'=>'Admin\FormularioGrupoController@edit']);
+	Route::put('/formulario/grupo/update/{id}', ['as'=>'formulario.grupo.update', 'uses'=>'Admin\FormularioGrupoController@update']);
+	Route::get('/formulario/grupo/info/{id}', ['as'=>'formulario.grupo.info', 'uses'=>'Admin\FormularioGrupoController@info']);
+	Route::post('/formulario/grupo/info/{id}', ['as'=>'formulario.grupo.info', 'uses'=>'Admin\FormularioGrupoController@info']);
+	Route::get('/formulario/grupo/destroy/{id}', ['as'=>'formulario.grupo.destroy', 'uses'=>'Admin\FormularioGrupoController@destroy']);
+
+	Route::get('/formulario/item/json', ['as'=>'formulario.item.json', 'uses'=>'Admin\FormularioItenController@json']);
+	Route::post('/formulario/item/json', ['as'=>'formulario.item.json', 'uses'=>'Admin\FormularioItenController@json']);
+	Route::post('/formulario/item/store', ['as'=>'formulario.item.store', 'uses'=>'Admin\FormularioItenController@store']);
+	Route::get('/formulario/item/edit/{id}', ['as'=>'formulario.item.edit', 'uses'=>'Admin\FormularioItenController@edit']);
+	Route::post('/formulario/item/edit/{id}', ['as'=>'formulario.item.edit', 'uses'=>'Admin\FormularioItenController@edit']);
+	Route::put('/formulario/item/update/{id}', ['as'=>'formulario.item.update', 'uses'=>'Admin\FormularioItenController@update']);
+	Route::get('/formulario/item/info/{id}', ['as'=>'formulario.item.info', 'uses'=>'Admin\FormularioItenController@info']);
+	Route::post('/formulario/item/info/{id}', ['as'=>'formulario.item.info', 'uses'=>'Admin\FormularioItenController@info']);
+	Route::get('/formulario/item/destroy/{id}', ['as'=>'formulario.item.destroy', 'uses'=>'Admin\FormularioItenController@destroy']);
 });
 
 

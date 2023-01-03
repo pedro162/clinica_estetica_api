@@ -28,7 +28,8 @@ class AtendimentoController extends Controller
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'name_atendimento'=>'atendimentos.name'
+                'name_atendimento'=>'atendimentos.name',
+                'name_pessoa'=>'pessoas.name'
 
             ];
 
@@ -69,6 +70,18 @@ class AtendimentoController extends Controller
                                 
                                 $registro->where('atendimentos.name', 'like' , '%'.$val.'%');
                             }
+                        case 'name_pessoa':
+                                if(is_string($val)){
+                                    
+                                    if($val[0] == ','){
+                                        $val = substr($val, 1);
+                                    } 
+                                    if($val[strlen($val) - 1] == ','){
+                                        $val = substr($val, 0, -1);
+                                    }
+                                    
+                                    $registro->where('pessoas.name', 'like' , '%'.$val.'%');
+                                }
                             break;
                         case 'atendimento_id':
                             if(is_string($val)){
@@ -149,6 +162,7 @@ class AtendimentoController extends Controller
             }
            
             $registro = $registro->where('atendimentos.active', '=', 'yes')
+            ->whereNull('atendimentos.deleted_at')
             ->where('pessoas.active', '=', 'yes')->get();
 
             \DB::commit();
@@ -191,7 +205,7 @@ class AtendimentoController extends Controller
 
             $profissional = Profissional::where('id', '=', $dados['profissional_id'])->where('active', '=', 'yes')->first();
             if(! $profissional){
-                throw new AtendimentoException('Evento não identificado');
+                throw new AtendimentoException('Profissional não identificado');
             }
  
             $dadosRequest = [];
@@ -204,6 +218,11 @@ class AtendimentoController extends Controller
             $dadosRequest['hr_marcado']         = $dados['hr_marcado'];
             $dadosRequest['prioridade']         = $dados['prioridade'];
             $dadosRequest['status']             = $dados['status'] ?? 'pendente';
+            $dadosRequest['dt_fim']             = $dados['dt_fim'];
+            $dadosRequest['hr_fim']             = $dados['hr_fim'];
+            $dadosRequest['name_atendido']      = $dados['name_atendido'];
+            $dadosRequest['tipo']               = $dados['tipo'] ?? 'consulta';
+
             $dadosRequest['profissional_id']    = $profissional->id;
             $dadosRequest['active']             = 'yes';
             
@@ -218,11 +237,11 @@ class AtendimentoController extends Controller
  
          }catch(AtendimentoException $e){
              \DB::rollback();
-             return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
+             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile()], 400);
  
          }catch(\Exception $e){
              \DB::rollback();
-             return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile()], 500);
          }
     }
 
@@ -384,6 +403,10 @@ class AtendimentoController extends Controller
             $dadosRequest['hr_marcado']         = $dados['hr_marcado'];
             $dadosRequest['prioridade']         = $dados['prioridade'];
             $dadosRequest['status']             = $dados['status'];
+            $dadosRequest['dt_fim']             = $dados['dt_fim'];
+            $dadosRequest['hr_fim']             = $dados['hr_fim'];
+            $dadosRequest['name_atendido']      = $dados['name_atendido'];
+            $dadosRequest['tipo']               = $dados['tipo'];
             $dadosRequest['profissional_id']    = $profissional->id;
             
             $atendimento->update($dadosRequest);
@@ -403,7 +426,7 @@ class AtendimentoController extends Controller
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor: '.$th->getMessage(), 'class'=>'warning'], 500);
             //throw $th;
         }
     }
