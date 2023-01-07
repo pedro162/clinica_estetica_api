@@ -22,6 +22,6 @@ class Formulario extends Model
     ];
 
     public function grupo(){
-        return $this->hasMany(FormularioGrupo::class, 'formulario_id', 'id');
+        return $this->hasMany(FormularioGrupo::class, 'formulario_id', 'id')->where('formulario_grupos.active', '=', 'yes');;
     }
 }

@@ -291,18 +291,15 @@ class FormularioController extends Controller
     }
 
 
-    public function info(Request $request, $id, $idAssistente)
+    public function info(Request $request, $id)
     {
         
         try{
 
-            $this->validaRequest($request);
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
-            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
-
             if($id <= 0){
                 throw new FormularioException('Parâmetro ínválido');
             }
@@ -315,26 +312,23 @@ class FormularioController extends Controller
             if($registro == null){
                 throw new FormularioException(' não encontrado');
             }
+            $registro->grupo;
 
             \DB::commit();
 
-            //return view('admin.formulario.info', compact('registro'));
-            return view('admin.formulario.info', compact('registro', 'idAssistente', 'callBack'));
+            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
 
         }catch(FormularioException $e){
             \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Error $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
         }catch(\Exception $e){
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
-
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
@@ -392,9 +386,10 @@ class FormularioController extends Controller
 
             $dados = $request->all();
 
-            $id = $id ?? $dados['id'];
-            $callBack = $dados['callBack'] ?? '';
-            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
+            $id             = $id ?? $dados['id'];
+            $callBack       = $dados['callBack'] ?? '';
+            $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
+            $dataGrupos     = $dados['grupos'] ?? [];
 
             if( (!isset($id)) || ($id <= 0)){
                 return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
@@ -403,12 +398,56 @@ class FormularioController extends Controller
             $registro = Formulario::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
             $dadosRequest = [];
+            $dadosRequest['name']               = $dados['name'];
+            $dadosRequest['user_update_id']     = \Auth::User()->id;
             $registro->update($dadosRequest);
 
 
             if(! $registro){
                 throw new FormularioException('Registro não encontrado');
             }
+            $gruposForm = $registro->grupo;
+            
+            $idGruposUpdated = [];
+            foreach($dataGrupos as $key=>$val){
+                if(isset($val['id']) && $val['id'] > 0){
+                    $grupo = FormularioGrupo::where('active', '=', 'yes')->where('id', '=', $val['id'])->first();
+                    if($grupo){
+                        $idGruposUpdated[$val['id']] = $val['id'];
+                        $dadosRequest = [];
+                        $dadosRequest['name']               = $val['name'];
+                        $dadosRequest['nr_ordem']           = $val['nr_ordem'];
+                        $dadosRequest['props_grupo']        = $val['props_grupo'] ?? null;
+                        $dadosRequest['user_update_id']     = \Auth::User()->id;
+                        $grupo->update($dadosRequest);
+                    }
+                }else{
+                    
+                    $dadosRequest = [];            
+                    $dadosRequest['name']               = $val['name'];
+                    $dadosRequest['nr_ordem']           = $val['nr_ordem'];
+                    $dadosRequest['formulario_id']      = $registro->id;
+                    $dadosRequest['props_grupo']        = $val['props_grupo'] ?? null;
+                    $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
+                    $dadosRequest['active']             = 'yes';
+                    
+                    $formGroup                          = FormularioGrupo::create($dadosRequest);
+                    if(! $formGroup){
+                        throw new FormularioException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
+                    }
+
+                }
+            
+            }
+
+            if($gruposForm){
+                foreach($gruposForm as $grupo){
+                    if(isset($grupo->id) && $grupo->id > 0 && !in_array($grupo->id, $idGruposUpdated)){
+                        $grupo->update(['active'=>'no']);
+                    }
+                }
+            }
+            
             \DB::commit();
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
         
