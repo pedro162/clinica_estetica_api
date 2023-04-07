@@ -100,7 +100,7 @@ class ProfissionalController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('id', $val);
+                                $registro->whereIn('profissionals.id', $val);
                             }
                             break;
 

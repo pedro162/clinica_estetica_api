@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Agenda extends Model
 {
     use SoftDeletes;
-    protected $table = "agenda";
+    protected $table = "agendas";
     protected $primaryKey = 'id';
     protected $fillable = [
         'descricao',

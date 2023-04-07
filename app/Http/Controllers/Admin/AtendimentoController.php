@@ -225,8 +225,8 @@ class AtendimentoController extends Controller
             $dadosRequest['name']               = $dados['name'];
             $dadosRequest['historico']          = $dados['historico'];
             $dadosRequest['pessoa_id']          = $pessoas->id;
-            $dadosRequest['dt_inicio']          = $dados['dt_inicio'] ?? $dados['dt_marcado'];
-            $dadosRequest['hr_inicio']          = $dados['hr_inicio'] ?? $dados['hr_marcado'];
+            $dadosRequest['dt_inicio']          = $dados['dt_inicio'] ?? $dados['dt_inicio'];
+            $dadosRequest['hr_inicio']          = $dados['hr_inicio'] ?? $dados['hr_inicio'];
             $dadosRequest['prioridade']         = $dados['prioridade'];
             $dadosRequest['status']             = $dados['status'] ?? 'pendente';
             $dadosRequest['dt_fim']             = $dados['dt_fim'];
@@ -240,7 +240,7 @@ class AtendimentoController extends Controller
             $dadosRequest['active']             = 'yes';
             
             $registro = Atendimento::create($dadosRequest);
-            if(!$registroAgenda){
+            if(!$registro){
                 throw new AtendimentoException('Erro ao registrar atendimento');
             }
 
@@ -434,8 +434,8 @@ class AtendimentoController extends Controller
             $dadosRequest['name']               = $dados['name'];
             $dadosRequest['historico']          = $dados['historico'];
             $dadosRequest['pessoa_id']          = $pessoas->id;
-            $dadosRequest['dt_inicio']          = $dados['dt_inicio'] ?? $dados['dt_marcado'];
-            $dadosRequest['hr_inicio']          = $dados['hr_inicio'] ?? $dados['hr_marcado'];
+            $dadosRequest['dt_inicio']          = $dados['dt_inicio'] ?? $dados['dt_inicio'];
+            $dadosRequest['hr_inicio']          = $dados['hr_inicio'] ?? $dados['hr_inicio'];
             $dadosRequest['prioridade']         = $dados['prioridade'];
             $dadosRequest['status']             = $dados['status'];
             $dadosRequest['dt_fim']             = $dados['dt_fim'];
@@ -528,8 +528,8 @@ class AtendimentoController extends Controller
             'profissional_id'=> 'required|min:1',
             'pessoa_id'=> 'required|min:1',
             'prioridade'=> 'required',
-            'dt_marcado'=> 'required',
-            'hr_marcado'=> 'required',
+            'dt_inicio'=> 'required',
+            'hr_inicio'=> 'required',
         ], [
             'historico.required' => 'O campo "Descrição" é obrigatório.',
             'historico.max' => 'O "Descrição" suporta até :max caracteres.',
@@ -539,8 +539,8 @@ class AtendimentoController extends Controller
             'pessoa_id.required' => 'O campo "Pessoa" é obrigatório.',
             'pessoa_id.min' => 'O campo "Pessoa" deve ter um valor maior ou igual a :min.',
             'prioridade.required' => 'O campo "Prioridade" é obrigatório.',
-            'dt_marcado.required' => 'O campo "Data" é obrigatório.',
-            'hr_marcado.required' => 'O campo "Horário" é obrigatório.',
+            'dt_inicio.required' => 'O campo "Data" é obrigatório.',
+            'hr_inicio.required' => 'O campo "Horário" é obrigatório.',
         ]);
         
         if($validator->fails()) {
