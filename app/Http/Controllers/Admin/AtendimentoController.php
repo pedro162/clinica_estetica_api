@@ -8,6 +8,7 @@ use App\Atendimento;
 use App\Pessoa;
 use App\Profissional;
 use App\Filial;
+use App\Agenda;
 use App\Exceptions\AtendimentoException;
 use Illuminate\Support\Facades\Validator;
 
@@ -39,6 +40,10 @@ class AtendimentoController extends Controller
                 
                 $join->on('pessoas.id', '=', 'atendimentos.pessoa_id');
 
+            })->join("profissionals as p", function($join){
+                $join->on('p.id', '=', 'atendimentos.profissional_id');
+            })->join("pessoas as ppf", function($join){
+                $join->on("ppf.id", '=', 'p.pessoa_id');
             });
             
             if(is_array($consulta) && count($consulta) > 0){
@@ -158,14 +163,14 @@ class AtendimentoController extends Controller
             if($campos){
                 $registro->select($campos);
             }else{
-                $registro->select('atendimentos.*', 'pessoas.name as name_pessoa');
+                $registro->select('atendimentos.*', 'pessoas.name as name_pessoa', 'ppf.name as name_profissional');
 
             }
            
             $registro = $registro->where('atendimentos.active', '=', 'yes')
             ->whereNull('atendimentos.deleted_at')
             ->where('pessoas.active', '=', 'yes')->get();
-
+            
             \DB::commit();
 
             //dd( $registro);
@@ -235,13 +240,30 @@ class AtendimentoController extends Controller
             $dadosRequest['active']             = 'yes';
             
             $registro = Atendimento::create($dadosRequest);
+            if(!$registroAgenda){
+                throw new AtendimentoException('Erro ao registrar atendimento');
+            }
+
+            $dadosRequest = [];
+             
+            $dadosRequest['user_id']            = \Auth::User()->id;
+            $dadosRequest['descricao']          = ucfirst($dados['tipo'] ?? 'consulta');
+            $dadosRequest['data']               = $dados['dt_inicio'];
+            $dadosRequest['hora']               = $dados['hr_inicio'];
+            $dadosRequest['name_atendido']      = $dados['name_atendido'];
+            $dadosRequest['status']             = 'pendente';
+            $dadosRequest['pessoa_id']          = $profissional->pessoa_id;            
+            $dadosRequest['referencia']         = 'atendimentos';
+            $dadosRequest['referencia_id']      = $registro->id;            
+            $dadosRequest['active']             = 'yes';
+
+            $registroAgenda = Agenda::create($dadosRequest);
+            if(!$registroAgenda){
+                throw new AtendimentoException('Erro ao registrar agenda');
+            }
             \DB::commit();
  
-            if($registro){
-                return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-            }else{
-                throw new AtendimentoException('Erro ao cadastrar');
-            }
+            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
  
          }catch(AtendimentoException $e){
              \DB::rollback();

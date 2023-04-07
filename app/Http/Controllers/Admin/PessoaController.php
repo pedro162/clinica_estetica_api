@@ -164,6 +164,20 @@ class PessoaController extends Controller
                             
                             $registro->where('name', 'like' , '%'.$val.'%');
                             break;
+                        case 'codigo_to_search':
+                                if(is_string($val)){
+                                    
+                                    if($val[0] == ','){
+                                        $val = substr($val, 1);
+                                    } 
+                                    if($val[strlen($val) - 1] == ','){
+                                        $val = substr($val, 0, -1);
+                                    }
+                                    $val = explode(',', $val);
+                                    
+                                    $registro->whereIn('id', $val);
+                                }
+                             break;
                     }
                 }
             }//

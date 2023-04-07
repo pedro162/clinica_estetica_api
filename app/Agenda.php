@@ -1,0 +1,27 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Agenda extends Model
+{
+    use SoftDeletes;
+    protected $table = "agenda";
+    protected $primaryKey = 'id';
+    protected $fillable = [
+        'descricao',
+        'data',
+        'hora',
+        'referencia_id',
+        'referencia',
+        'status',
+        'dt_cancelamento',
+        'pessoa_id',
+        'pess_cancel_id',
+        'user_id',
+        'user_update_id',
+        'active',
+    ];
+}

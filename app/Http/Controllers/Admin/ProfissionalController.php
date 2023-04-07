@@ -76,14 +76,42 @@ class ProfissionalController extends Controller
                                 $registro->where('profissionals.name', 'like' , '%'.$val.'%');
                             }
                             break;
-                            case 'limite':
+                        
+                        
+                        case 'description_to_search':
+                            if($val[0] == ','){
+                                $val = substr($val, 1);
+                            } 
+                            if($val[strlen($val) - 1] == ','){
+                                $val = substr($val, 0, -1);
+                            }
+                            
+                            $registro->where('name', 'like' , '%'.$val.'%');
+                           
+                            break;
+                        case 'codigo_to_search':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('id', $val);
+                            }
+                            break;
+
+                        case 'limite':
                                 $val = (int) $val;
                                 if(is_integer($val) && $val > 0){
                                         
                                     $registro->limit($val);
                                 }
                                 break;
-                            case 'ordem':
+                        case 'ordem':
 
                                 
                                 if($val[0] == ','){
@@ -132,6 +160,16 @@ class ProfissionalController extends Controller
             //$registro = \App\Produto::where('active', '=', 'yes')->get();
             $registro = $registro->where('profissionals.active', '=', 'yes')
                 ->where('pessoas.active', '=', 'yes')->get();
+
+            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
+                $dataToRequest = [];
+                foreach($registro as $reg){
+                    $dataToRequest[] = ['label'=>$reg->name_pessoa, 'value'=>$reg->id];
+                }
+
+                $registro = $dataToRequest;
+            }
+                
 
             \DB::commit();
             
