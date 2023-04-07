@@ -20,15 +20,16 @@ class Atendimento extends Model
         'user_id',
         'user_update_id',
         'active',
-        'dt_marcado',
-        'hr_marcado',
         'profissional_id',
         'prioridade',
         'status',
         'dt_fim',
         'hr_fim',
         'name_atendido',
-        'tipo'
+        'tipo',
+        'dt_inicio',
+        'hr_inicio',
+        'filial_id',
     ];
 
     public function eventoAgenda()

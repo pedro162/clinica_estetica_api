@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Atendimento;
 use App\Pessoa;
 use App\Profissional;
+use App\Filial;
 use App\Exceptions\AtendimentoException;
 use Illuminate\Support\Facades\Validator;
 
@@ -207,6 +208,11 @@ class AtendimentoController extends Controller
             if(! $profissional){
                 throw new AtendimentoException('Profissional não identificado');
             }
+
+            $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
+            if(! $filial){
+                throw new AtendimentoException('Filial não identificada');
+            }
  
             $dadosRequest = [];
              
@@ -214,8 +220,8 @@ class AtendimentoController extends Controller
             $dadosRequest['name']               = $dados['name'];
             $dadosRequest['historico']          = $dados['historico'];
             $dadosRequest['pessoa_id']          = $pessoas->id;
-            $dadosRequest['dt_marcado']         = $dados['dt_marcado'];
-            $dadosRequest['hr_marcado']         = $dados['hr_marcado'];
+            $dadosRequest['dt_inicio']          = $dados['dt_inicio'] ?? $dados['dt_marcado'];
+            $dadosRequest['hr_inicio']          = $dados['hr_inicio'] ?? $dados['hr_marcado'];
             $dadosRequest['prioridade']         = $dados['prioridade'];
             $dadosRequest['status']             = $dados['status'] ?? 'pendente';
             $dadosRequest['dt_fim']             = $dados['dt_fim'];
@@ -224,6 +230,8 @@ class AtendimentoController extends Controller
             $dadosRequest['tipo']               = $dados['tipo'] ?? 'consulta';
 
             $dadosRequest['profissional_id']    = $profissional->id;
+            $dadosRequest['filial_id']          = $filial->id;
+            
             $dadosRequest['active']             = 'yes';
             
             $registro = Atendimento::create($dadosRequest);
@@ -392,22 +400,28 @@ class AtendimentoController extends Controller
             if(! $profissional){
                 throw new AtendimentoException('Evento não identificado');
             }
- 
+
+            $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
+            if(! $filial){
+                throw new AtendimentoException('Filial não identificada');
+            }
+            //filial_id
             $dadosRequest = [];
              
             $dadosRequest['user_update_id']     = \Auth::User()->id;
             $dadosRequest['name']               = $dados['name'];
             $dadosRequest['historico']          = $dados['historico'];
             $dadosRequest['pessoa_id']          = $pessoas->id;
-            $dadosRequest['dt_marcado']         = $dados['dt_marcado'];
-            $dadosRequest['hr_marcado']         = $dados['hr_marcado'];
+            $dadosRequest['dt_inicio']          = $dados['dt_inicio'] ?? $dados['dt_marcado'];
+            $dadosRequest['hr_inicio']          = $dados['hr_inicio'] ?? $dados['hr_marcado'];
             $dadosRequest['prioridade']         = $dados['prioridade'];
             $dadosRequest['status']             = $dados['status'];
             $dadosRequest['dt_fim']             = $dados['dt_fim'];
             $dadosRequest['hr_fim']             = $dados['hr_fim'];
             $dadosRequest['name_atendido']      = $dados['name_atendido'];
-            $dadosRequest['tipo']               = $dados['tipo'];
+            $dadosRequest['tipo']               = $dados['tipo'] ?? 'consulta';
             $dadosRequest['profissional_id']    = $profissional->id;
+            $dadosRequest['filial_id']          = $filial->id;
             
             $atendimento->update($dadosRequest);
 

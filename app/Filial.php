@@ -4,9 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \App\Pessoa;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Filial extends Model
 {
+	use SoftDeletes;
+
+	protected $table = 'filials';
+	protected $primaryKey="id";
     protected $fillable = [
     	'pessoa_id',
 		'dsAtividade',
