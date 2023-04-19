@@ -11,6 +11,7 @@ use App\Filial;
 use App\Agenda;
 use App\Exceptions\AtendimentoException;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class AtendimentoController extends Controller
 {
@@ -310,6 +311,7 @@ class AtendimentoController extends Controller
             }
 
             $registro->profissional;
+            $registro->profissional->pessoa;
             $registro->pessoa;
 
             \DB::commit();
@@ -467,6 +469,59 @@ class AtendimentoController extends Controller
         }
     }
 
+
+     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function cancelar(Request $request, $id)
+    {
+        try {
+           
+            
+            //$this->validaStatusAtendimentoRequest($request);
+
+            \DB::beginTransaction();
+
+            $dados = $request->all();
+
+            $atendimento = Atendimento::where('active', '=', 'yes')->where('id', '=', $id)->first();
+
+            if(! $atendimento){
+                throw new AtendimentoException('Atendimento não identificado');
+            }
+
+            //filial_id
+            $dadosRequest = [];
+             
+            $dadosRequest['user_update_id']     = \Auth::User()->id;
+            $dadosRequest['status']             = 'cancelado';
+            
+            $atendimento->update($dadosRequest);
+
+            \DB::commit();
+
+            return response()->json(['mensagem'=>$atendimento, 'class'=>'sucess'], 200);
+
+
+        }catch (AtendimentoException $th) {
+
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
+
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor: '.$th->getMessage(), 'class'=>'warning'], 500);
+            //throw $th;
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -541,6 +596,29 @@ class AtendimentoController extends Controller
             'prioridade.required' => 'O campo "Prioridade" é obrigatório.',
             'dt_inicio.required' => 'O campo "Data" é obrigatório.',
             'hr_inicio.required' => 'O campo "Horário" é obrigatório.',
+        ]);
+        
+        if($validator->fails()) {
+            $errors = $validator->errors();
+            $msg = '';
+            foreach($errors->all() as $mensagem){
+                $msg .= $mensagem.'<br/>';
+            }
+            
+            throw new AtendimentoException($msg);
+        }
+
+        return true;
+    }
+
+    protected function validaStatusAtendimentoRequest(Request $request)
+    {
+       
+        $validator = Validator::make($request->all(),[
+            'status'=> 'required',
+            Rule::in(['remarcado','finalizado','cancelado','pendente'])
+        ], [
+            'status.required' => "Informe um status válido: 'remarcado','finalizado','cancelado','pendente'.",
         ]);
         
         if($validator->fails()) {

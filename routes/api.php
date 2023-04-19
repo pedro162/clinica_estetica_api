@@ -468,7 +468,8 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/atendimento/info/{id}', ['as'=>'atendimento.info', 'uses'=>'Admin\AtendimentoController@info']);
 	Route::post('/atendimento/info/{id}', ['as'=>'atendimento.info', 'uses'=>'Admin\AtendimentoController@info']);
 	Route::get('/atendimento/destroy/{id}', ['as'=>'atendimento/destroy', 'uses'=>'Admin\AtendimentoController@destroy']);
-
+	Route::put('/atendimento/cancelar/{id}', ['as'=>'atendimento.cancelar', 'uses'=>'Admin\AtendimentoController@cancelar']);
+	
 	Route::get('/formulario/json', ['as'=>'formulario.json', 'uses'=>'Admin\FormularioController@json']);
 	Route::post('/formulario/json', ['as'=>'formulario.json', 'uses'=>'Admin\FormularioController@json']);
 	Route::post('/formulario/store', ['as'=>'formulario.store', 'uses'=>'Admin\FormularioController@store']);
@@ -498,6 +499,19 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/formulario/item/info/{id}', ['as'=>'formulario.item.info', 'uses'=>'Admin\FormularioItenController@info']);
 	Route::post('/formulario/item/info/{id}', ['as'=>'formulario.item.info', 'uses'=>'Admin\FormularioItenController@info']);
 	Route::get('/formulario/item/destroy/{id}', ['as'=>'formulario.item.destroy', 'uses'=>'Admin\FormularioItenController@destroy']);
+
+	Route::get('/agenda/json', ['as'=>'agenda.json', 'uses'=>'Admin\AgendaController@json']);
+	Route::post('/agenda/json', ['as'=>'agenda.json', 'uses'=>'Admin\AgendaController@json']);
+	Route::post('/agenda/store', ['as'=>'agenda.store', 'uses'=>'Admin\AgendaController@store']);
+	Route::get('/agenda/edit/{id}', ['as'=>'agenda.edit', 'uses'=>'Admin\AgendaController@edit']);
+	Route::post('/agenda/edit/{id}', ['as'=>'agenda.edit', 'uses'=>'Admin\AgendaController@edit']);
+	Route::put('/agenda/update/{id}', ['as'=>'agenda.update', 'uses'=>'Admin\AgendaController@update']);
+	Route::get('/agenda/info/{id}', ['as'=>'agenda.info', 'uses'=>'Admin\AgendaController@info']);
+	Route::post('/agenda/info/{id}', ['as'=>'agenda.info', 'uses'=>'Admin\AgendaController@info']);
+	Route::get('/agenda/destroy/{id}', ['as'=>'agenda.destroy', 'uses'=>'Admin\AgendaController@destroy']);
+
+	
+	
 });
 
 

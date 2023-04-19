@@ -43,7 +43,7 @@ class ProfissionalController extends Controller
                 $join->on('profissionals.pessoa_id', '=', 'pessoas.id');
 
             });
-
+            //name_especialidade
             $campos =  null;
             if(is_array($consulta) && count($consulta) > 0){
                 foreach($consulta as $key=>$val){

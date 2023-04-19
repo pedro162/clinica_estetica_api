@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Especialidade;
 use App\EventoAgenda;
+use App\Pessoa;
 use App\DiasProfExpediente;
 
 class Profissional extends Model
@@ -40,6 +41,10 @@ class Profissional extends Model
     	->withPivot('nr_doc', 'dt_emiss_doc', 'dt_vencimento_doc','org_expedidor','especialidade_id','profissional_id',
     		'user_id','user_update_id','active');
     }
+
+	public function pessoa(){
+		return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
+	}
 
     public function adicionarEspecialidade($especialidade, $dados)
 	{
