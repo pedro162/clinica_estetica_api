@@ -415,37 +415,21 @@ class AtendimentoController extends Controller
                 throw new AtendimentoException('Atendimento não identificado');
             }
 
-            $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
-            if(! $pessoas){
-                throw new AtendimentoException('País não identificado. Tente novamente ou entre em contato com o suporte.');
-            }
-
             $profissional = Profissional::where('id', '=', $dados['profissional_id'])->where('active', '=', 'yes')->first();
             if(! $profissional){
                 throw new AtendimentoException('Evento não identificado');
             }
 
-            $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
-            if(! $filial){
-                throw new AtendimentoException('Filial não identificada');
-            }
             //filial_id
             $dadosRequest = [];
              
             $dadosRequest['user_update_id']     = \Auth::User()->id;
-            $dadosRequest['name']               = $dados['name'];
             $dadosRequest['historico']          = $dados['historico'];
-            $dadosRequest['pessoa_id']          = $pessoas->id;
             $dadosRequest['dt_inicio']          = $dados['dt_inicio'] ?? $dados['dt_inicio'];
             $dadosRequest['hr_inicio']          = $dados['hr_inicio'] ?? $dados['hr_inicio'];
             $dadosRequest['prioridade']         = $dados['prioridade'];
-            $dadosRequest['status']             = $dados['status'];
-            $dadosRequest['dt_fim']             = $dados['dt_fim'];
-            $dadosRequest['hr_fim']             = $dados['hr_fim'];
-            $dadosRequest['name_atendido']      = $dados['name_atendido'];
             $dadosRequest['tipo']               = $dados['tipo'] ?? 'consulta';
             $dadosRequest['profissional_id']    = $profissional->id;
-            $dadosRequest['filial_id']          = $filial->id;
             
             $atendimento->update($dadosRequest);
 
@@ -499,6 +483,10 @@ class AtendimentoController extends Controller
              
             $dadosRequest['user_update_id']     = \Auth::User()->id;
             $dadosRequest['status']             = 'cancelado';
+            $dadosRequest['dt_cancelamento']    = date('Y-m-d H:i:s');
+            $dadosRequest['pess_cancel_id']     = \Auth::User()->pessoa->id;
+            $dadosRequest['ds_cancelamento']    = $dados['ds_cancelamento'] ?? null;
+
             
             $atendimento->update($dadosRequest);
 

@@ -30,6 +30,13 @@ class Atendimento extends Model
         'dt_inicio',
         'hr_inicio',
         'filial_id',
+        'dt_cancelamento',
+        'ds_cancelamento',
+        'pess_cancel_id',
+        'vr_atendimento',
+        'vr_desconto',
+        'vr_acrescimo',
+        'convenio_id'
     ];
 
     public function eventoAgenda()
