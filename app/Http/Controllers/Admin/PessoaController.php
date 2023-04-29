@@ -423,8 +423,17 @@ class PessoaController extends Controller
 
                 throw new PessoaException('Registro não encontrado.');
             }
-
-            $registro->logradouro = $registro->logradouro->where('importancia', '=', 'principal')->first()->estado_logradouro->pais;
+            /*
+            if($logr = $registro->logradouro->where('importancia', '=', 'principal')->first()){
+                $registro->logradouro = $logr->estado_logradouro->pais;
+            }
+            
+            $registro->grupo;
+            $registro->telefone;*/
+            if($logr = $registro->logradouro->where('importancia', '=', 'principal')->first()){
+               $registro->logradouro = $logr->estado_logradouro->pais;
+            }
+          
             $registro->grupo;
             $registro->telefone;
             //dd($registro);

@@ -36,9 +36,10 @@ class Atendimento extends Model
         'vr_atendimento',
         'vr_desconto',
         'vr_acrescimo',
-        'convenio_id'
     ];
-
+    
+    //'convenio_id'
+    
     public function eventoAgenda()
     {
     	return $this->belongsTo(EventoAgenda::class, 'evento_agenda_id', 'id');
