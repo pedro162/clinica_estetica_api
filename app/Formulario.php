@@ -4,9 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \App\FormularioGrupo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Formulario extends Model
 {
+    use SoftDeletes;
     protected $table="formularios";
     protected $primaryKey="id";
     protected $fillable = [
