@@ -154,7 +154,8 @@ class FormularioGrupoController extends Controller
             if($registro == null){
                 throw new FormularioGrupoException(' não encontrado');
             }
-            $registro->item;
+            $itens = $registro->item()->where('active', '=', 'yes')->get();
+            $registro->item = $itens;
 
             \DB::commit();
 
