@@ -510,6 +510,16 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::post('/agenda/info/{id}', ['as'=>'agenda.info', 'uses'=>'Admin\AgendaController@info']);
 	Route::get('/agenda/destroy/{id}', ['as'=>'agenda.destroy', 'uses'=>'Admin\AgendaController@destroy']);
 
+	Route::get('/servico/json', ['as'=>'servico.json', 'uses'=>'Admin\ServicoController@json']);
+	Route::post('/servico/json', ['as'=>'servico.json', 'uses'=>'Admin\ServicoController@json']);
+	Route::post('/servico/store', ['as'=>'servico.store', 'uses'=>'Admin\ServicoController@store']);
+	Route::get('/servico/edit/{id}', ['as'=>'servico.edit', 'uses'=>'Admin\ServicoController@edit']);
+	Route::post('/servico/edit/{id}', ['as'=>'servico.edit', 'uses'=>'Admin\ServicoController@edit']);
+	Route::put('/servico/update/{id}', ['as'=>'servico.update', 'uses'=>'Admin\ServicoController@update']);
+	Route::get('/servico/info/{id}', ['as'=>'servico.info', 'uses'=>'Admin\ServicoController@info']);
+	Route::post('/servico/info/{id}', ['as'=>'servico.info', 'uses'=>'Admin\ServicoController@info']);
+	Route::get('/servico/destroy/{id}', ['as'=>'servico.destroy', 'uses'=>'Admin\ServicoController@destroy']);
+
 	
 	
 });
