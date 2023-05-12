@@ -3,9 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use \App\Servico;
+use \App\OrdemServico;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ServicoItem extends Model
 {
+    use SoftDeletes;
+    protected $table="servico_items";
+    protected $primaryKey="id";
     protected $fillable = [
         'qtd',
         'servico_id',
@@ -15,6 +21,14 @@ class ServicoItem extends Model
         'user_update_id',
         'active',
         'ordem_servico_id',
-
+        'vr_final',
+        'vr_desconto',
+        'pct_acrescimo',
+        'vr_acrescimo',
+        'pct_desconto'
     ];
+
+    public function ordem(){
+        return $this->belongsTo(OrdemServico::class, 'ordem_servico_id', 'id');
+    }
 }
