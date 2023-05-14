@@ -520,6 +520,26 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::post('/servico/info/{id}', ['as'=>'servico.info', 'uses'=>'Admin\ServicoController@info']);
 	Route::get('/servico/destroy/{id}', ['as'=>'servico.destroy', 'uses'=>'Admin\ServicoController@destroy']);
 
+	Route::get('/ordem/servico/json', ['as'=>'ordem.servico.json', 'uses'=>'Admin\OrdemServicoController@json']);
+	Route::post('/ordem/servico/json', ['as'=>'ordem.servico.json', 'uses'=>'Admin\OrdemServicoController@json']);
+	Route::post('/ordem/servico/store', ['as'=>'ordem.servico.store', 'uses'=>'Admin\OrdemServicoController@store']);
+	Route::get('/ordem/servico/edit/{id}', ['as'=>'ordem.servico.edit', 'uses'=>'Admin\OrdemServicoController@edit']);
+	Route::post('/ordem/servico/edit/{id}', ['as'=>'ordem.servico.edit', 'uses'=>'Admin\OrdemServicoController@edit']);
+	Route::put('/ordem/servico/update/{id}', ['as'=>'ordem.servico.update', 'uses'=>'Admin\OrdemServicoController@update']);
+	Route::get('/ordem/servico/info/{id}', ['as'=>'ordem.servico.info', 'uses'=>'Admin\OrdemServicoController@info']);
+	Route::post('/ordem/servico/info/{id}', ['as'=>'ordem.servico.info', 'uses'=>'Admin\OrdemServicoController@info']);
+	Route::get('/ordem/servico/destroy/{id}', ['as'=>'ordem.servico.destroy', 'uses'=>'Admin\OrdemServicoController@destroy']);
+
+	Route::get('/rca/json', ['as'=>'rca.json', 'uses'=>'Admin\RcaController@json']);
+	Route::post('/rca/json', ['as'=>'rca.json', 'uses'=>'Admin\RcaController@json']);
+	Route::post('/rca/store', ['as'=>'rca.store', 'uses'=>'Admin\RcaController@store']);
+	Route::get('/rca/edit/{id}', ['as'=>'rca.edit', 'uses'=>'Admin\RcaController@edit']);
+	Route::post('/rca/edit/{id}', ['as'=>'rca.edit', 'uses'=>'Admin\RcaController@edit']);
+	Route::put('/rca/update/{id}', ['as'=>'rca.update', 'uses'=>'Admin\RcaController@update']);
+	Route::get('/rca/info/{id}', ['as'=>'rca.info', 'uses'=>'Admin\RcaController@info']);
+	Route::post('/rca/info/{id}', ['as'=>'rca.info', 'uses'=>'Admin\RcaController@info']);
+	Route::get('/rca/destroy/{id}', ['as'=>'rca.destroy', 'uses'=>'Admin\RcaController@destroy']);
+
 	
 	
 });

@@ -5,20 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Formulario;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\OrdemServicoException;
-use \App\FormularioGrupo;
-use \App\Servico;
-use \App\OrdemServico;
+use \App\Exceptions\RcaException;
 use \App\Pessoa;
 use \App\Filial;
-use \App\Profissional;
 use \App\Rca;
-use Illuminate\Support\Facades\Auth;
 
-class OrdemServicoController extends Controller
+class RcaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -62,49 +54,39 @@ class OrdemServicoController extends Controller
 
             $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
             if(! $pessoas){
-                throw new OrdemServicoException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
-            }
-
-            $profissional = Profissional::where('id', '=', $dados['profissional_id'])->where('active', '=', 'yes')->first();
-            if(! $profissional){
-                throw new OrdemServicoException('Profissional não identificado');
+                throw new RcaException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
             $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
             if(! $filial){
-                throw new OrdemServicoException('Filial não identificada');
-            }
-
-            $pessoaRca = Rca::where('active', '=' ,'yes')->where('id', '=', $dados['rca_id'])->first();
-            if(! $pessoaRca){
-                throw new OrdemServicoException('Vendedor não identificado. Tente novamente ou entre em contato com o suporte.');
+                throw new RcaException('Filial não identificada');
             }
             
             $dadosRequest = [];
-
-            $dadosRequest['status']           = $dados['status'] ?? 'aberto';
+            
+            $dadosRequest                     = [];
             $dadosRequest['pessoa_id']        = $pessoas->id;
             $dadosRequest['pessoa_rca_id']    = $pessoaRca->pessoa_id;
             $dadosRequest['filial_id']        = $filial->id;
-            $dadosRequest['vrTotal']          = 0;
-            $dadosRequest['vr_final']         = 0;
-            $dadosRequest['vr_desconto']      = 0;
-            $dadosRequest['pct_acrescimo']    = 0;
-            $dadosRequest['vr_acrescimo']     = 0;        
+            $dadosRequest['situacao']         = $dados['situacao']          ?? 'ativo';
+            $dadosRequest['acessaTodosRcas']  = $dados['acessaTodosRcas']   ?? 'no';
+            $dadosRequest['metaFaturamento']  = $dados['metaFaturamento']   ?? 0;
+            $dadosRequest['metaMargem']       = $dados['metaMargem']        ?? 0;
+            $dadosRequest['metaPositivacao']  = $dados['metaPositivacao']   ?? 0;
             $dadosRequest['user_id']          = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']           = 'yes';
             
-            $form = OrdemServico::create($dadosRequest);
+            $form = Rca::create($dadosRequest);
 
             \DB::commit();
             
             if(! $form){
-                throw new OrdemServicoException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
+                throw new RcaException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
             }
 
             return response()->json(['mensagem'=>$form, 'class'=>'success'], 200);
 
-        }catch(OrdemServicoException $e){
+        }catch(RcaException $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -118,87 +100,7 @@ class OrdemServicoController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function concluir(Request $request, $id)
-    {
-
-        try{
-
-
-            $this->validaRequest($request);
-
-            \DB::beginTransaction();
-
-            $dados = $request->all();
-
-            $id             = $id ?? $dados['id'];
-            $callBack       = $dados['callBack'] ?? '';
-            $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
-
-            if( (!isset($id)) || ($id <= 0)){
-                throw new OrdemServicoException('Parâmetro inválido');
-            }
-
-            $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if(! $registro){
-                throw new OrdemServicoException('Ordem de serviço não identificada. Tente novamente ou entre em contato com o suporte.');
-            }
-
-            $servicosArr = $registro->servico()->where('active', '=', 'yes')->get();
-            if(! $servicosArr){
-                throw new OrdemServicoException('Servições não identificados. Tente novamente ou entre em contato com o suporte.');
-            }
-            $vrTotSevicos       = 0;
-            $vrTotDesconto      = 0;
-            $vrTotServicoFinal  = 0;
-
-            foreach($servicosArr as $item){
-                
-                $vrTotSevicos       += $item->vrTotal;
-                $vrTotDesconto      += $item->vr_desconto;
-                $vrTotServicoFinal  += $item->vr_final;
-            }
-            
-
-            $dadosRequest = [];
-            $dadosRequest['vrTotal']          = $vrTotSevicos;
-            $dadosRequest['vr_final']         = $vrTotServicoFinal;
-            $dadosRequest['vr_desconto']      = $vrTotDesconto;
-            $dadosRequest['pct_desconto']     = ($vrTotDesconto / $vrTotSevicos ) * 100;
-            $dadosRequest['status']           = 'aberto';
-            $dadosRequest['pct_acrescimo']    = 0;
-            $dadosRequest['vr_acrescimo']     = 0;
-            $dadosRequest['user_update_id']         = \Auth::User()->id;
-            $registro->update($dadosRequest);
-
-
-            if(! $registro){
-                throw new OrdemServicoException('Registro não encontrado');
-            }
-            
-            
-            \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(OrdemServicoException $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
-        }catch(\Error $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
-        }
-    }
-
     /**
      * Display the specified resource.
      *
@@ -221,7 +123,7 @@ class OrdemServicoController extends Controller
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
             if($id <= 0){
-                throw new OrdemServicoException('Parâmetro ínválido');
+                throw new RcaException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
@@ -230,14 +132,14 @@ class OrdemServicoController extends Controller
             ->where('id', '=', $id)->first();
 
             if($registro == null){
-                throw new OrdemServicoException(' não encontrado');
+                throw new RcaException(' não encontrado');
             }
            
             \DB::commit();
 
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
 
-        }catch(OrdemServicoException $e){
+        }catch(RcaException $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -281,7 +183,7 @@ class OrdemServicoController extends Controller
 
          }catch(\Exception $e){
 
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no rcidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
 
@@ -310,28 +212,36 @@ class OrdemServicoController extends Controller
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
             if( (!isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+                throw new RcaException('Parâmetro inválido');
             }
 
-            $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
+            if(! $filial){
+                throw new RcaException('Filial não identificada');
+            }
+
+            $registro = Rca::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
             $dadosRequest = [];
-            $dadosRequest['name']                   = $dados['name'];
-            $dadosRequest['descricao']              = $dados['descricao']       ?? null;
-            $dadosRequest['vrServico']              = $dados['vrServico']       ?? null;
+            $dadosRequest['filial_id']        = $filial->id;
+            $dadosRequest['situacao']         = $dados['situacao']          ?? 'ativo';
+            $dadosRequest['acessaTodosRcas']  = $dados['acessaTodosRcas']   ?? 'no';
+            $dadosRequest['metaFaturamento']  = $dados['metaFaturamento']   ?? 0;
+            $dadosRequest['metaMargem']       = $dados['metaMargem']        ?? 0;
+            $dadosRequest['metaPositivacao']  = $dados['metaPositivacao']   ?? 0;
             $dadosRequest['user_update_id']         = \Auth::User()->id;
+            
             $registro->update($dadosRequest);
 
-
             if(! $registro){
-                throw new OrdemServicoException('Registro não encontrado');
+                throw new RcaException('Registro não encontrado');
             }
             
             
             \DB::commit();
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
         
-        }catch(OrdemServicoException $e){
+        }catch(RcaException $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -359,14 +269,14 @@ class OrdemServicoController extends Controller
             \DB::beginTransaction();
 
             if($id <= 0){
-                 return response()->json([['mensagem'=>'Parâmetro inválido', 'class'=>'warning'], 400]);
+                throw new RcaException('Parâmetro inválido');
 
             }
 
-            $registro = OrdemServico::where('active', '=', 'yes')
+            $registro = Rca::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
             if(! $registro){
-                return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
+                throw new RcaException('Registro não identificado. Tente novamente ou entre em contato com o supote.');
             }else{
 
                 $registro = $registro->update(['active'=>'no']);
@@ -383,7 +293,7 @@ class OrdemServicoController extends Controller
             \DB::commit();
             return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
         
-        }catch(OrdemServicoException $e){
+        }catch(RcaException $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -425,29 +335,9 @@ class OrdemServicoController extends Controller
 
             ];
 
-            $registro = \DB::table('ordem_servicos as os')->join('pessoas as pes', function($join){
+            $registro = \DB::table('rcas as rc')->join('pessoas as pes', function($join){
                 
-                $join->on('os.pessoa_id', '=', 'pes.id');
-
-            })->join('pessoas as pesrc', function($join){
-                
-                $join->on('os.pessoa_rca_id', '=', 'pesrc.id');
-
-            })->join('filials as fl', function($join){
-                
-                $join->on('os.filial_id', '=', 'fl.id');
-
-            })->join('pessoas as pesfl', function($join){
-                
-                $join->on('fl.pessoa_id', '=', 'pesfl.id');
-
-            })->join('profissionals as pf', function($join){
-                
-                $join->on('os.profissional_id', '=', 'pf.id');
-
-            })->join('pessoas as pesprf', function($join){
-                
-                $join->on('pf.pessoa_id', '=', 'pesprf.id');
+                $join->on('rc.pessoa_id', '=', 'pes.id');
 
             });
 
@@ -467,10 +357,10 @@ class OrdemServicoController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('os.id', $val);
+                                $registro->whereIn('rc.id', $val);
                             }
                             break;
-                        case 'nome_pssoa':
+                        case 'nome_rca':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -532,24 +422,24 @@ class OrdemServicoController extends Controller
                 $registro->select($campos);
 
             }else{
-                $registro->select('os.*', 'pes.name', 'pesrc.name as name_rca', 'pesfl.name as name_filial', 'pesprf.name as name_profissional');
+                $registro->select('rc.*', 'pes.name');
 
             }
             //$registro = \App\::where('active', '=', 'yes')->get();
-            $registro = $registro->where('os.active', '=', 'yes')->get();
+            $registro = $registro->where('rc.active', '=', 'yes')->get();
 
 
             \DB::commit();
 
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
 
-        }catch(OrdemServicoException $e){
+        }catch(RcaException $e){
             \DB::rollback();
             return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
     
         }catch(\Exception $e){
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no rcidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -560,14 +450,11 @@ class OrdemServicoController extends Controller
         $validator = Validator::make($request->all(),[
             'filial_id'=> 'required|min:1',
             'pessoa_id'=> 'required|min:1',
-            'rca_id'=> 'required|min:1',
         ], [
             'filial_id.required' => 'O campo "Filial" é obrigatório.',
             'filial_id.min' => 'O "Filial" deve conter pelo menos :min caracteres.',
             'pessoa_id.required' => 'O campo "Pessoa" é obrigatório.',
             'pessoa_id.min' => 'O "Pessoa" deve conter pelo menos :min caracteres.',
-            'rca_id.required' => 'O campo "Vendedor" é obrigatório.',
-            'rca_id.min' => 'O "Vendedor" deve conter pelo menos :min caracteres.',
         ]);
         
         if($validator->fails()) {
@@ -577,7 +464,7 @@ class OrdemServicoController extends Controller
                 $msg .= $mensagem.'<br/>';
             }
             
-            throw new OrdemServicoException($msg);
+            throw new RcaException($msg);
         }
 
         return true;
