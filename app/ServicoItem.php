@@ -31,4 +31,7 @@ class ServicoItem extends Model
     public function ordem(){
         return $this->belongsTo(OrdemServico::class, 'ordem_servico_id', 'id');
     }
+    public function servico(){
+        return $this->belongsTo(Servico::class, 'servico_id', 'id');
+    }
 }

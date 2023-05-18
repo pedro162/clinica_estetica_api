@@ -226,8 +226,23 @@ class OrdemServicoController extends Controller
 
             \DB::beginTransaction();
 
-            $registro = Servico::where('active', '=', 'yes')
+            $registro = OrdemServico::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
+            $registro->pessoa;
+            $dataItens = [];
+            if( $registro->item){
+                foreach( $registro->item as $key=>$item){
+                    $dataItens[] = $item->servico;
+                }
+            }
+            $registro->item = $dataItens;
+            //$registro->item;
+            $registro->rca;
+            $registro->filial;
+            
+
+
+
 
             if($registro == null){
                 throw new OrdemServicoException(' não encontrado');

@@ -4,7 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \App\CobrancaReceber;
-use \App\Servico;
+use \App\ServicoItem;
+use \App\Pessoa;
+use \App\Rca;
+use \App\Filial;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrdemServico extends Model
@@ -35,8 +38,20 @@ class OrdemServico extends Model
 		return $this->belongsToMany(CobrancaReceber::class);
 	}
 
-	public function servico()
+	public function item()
 	{
-		return $this->hasMany(Servico::class, 'ordem_servico_id', 'id');
+		return $this->hasMany(ServicoItem::class, 'ordem_servico_id', 'id');
+	}
+
+	public function pessoa(){
+		return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
+	}
+
+	public function rca(){
+		return $this->belongsTo(Rca::class, 'pessoa_rca_id', 'id');
+	}
+
+	public function filial(){
+		return $this->belongsTo(Filial::class, 'filial_id', 'id');
 	}
 }
