@@ -30,7 +30,14 @@ class OrdemServico extends Model
 		'vr_desconto',
 		'pct_acrescimo',
 		'vr_acrescimo',
-        'pct_desconto'
+        'pct_desconto',
+		'is_faturado',
+		'td_faturamento',
+		'td_cancelamento',
+		'td_conclusao',
+		'pess_fat_id',
+		'pess_cancel_id',
+		'pess_concl_id',
 	];
 	
 	public function cobrancaReceber()

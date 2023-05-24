@@ -15,6 +15,7 @@ class ServicoItem extends Model
     protected $fillable = [
         'qtd',
         'servico_id',
+        'vrItemBruto',
         'vrTotal',
         'vrItem',
         'user_id',

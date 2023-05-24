@@ -526,10 +526,12 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/ordem/servico/edit/{id}', ['as'=>'ordem.servico.edit', 'uses'=>'Admin\OrdemServicoController@edit']);
 	Route::post('/ordem/servico/edit/{id}', ['as'=>'ordem.servico.edit', 'uses'=>'Admin\OrdemServicoController@edit']);
 	Route::put('/ordem/servico/update/{id}', ['as'=>'ordem.servico.update', 'uses'=>'Admin\OrdemServicoController@update']);
+	Route::put('/ordem/servico/adicionar/item/{id}', ['as'=>'ordem.servico.adicionar.item', 'uses'=>'Admin\OrdemServicoController@adicionarItem']);
+	Route::put('/ordem/servico/remover/item/{id}', ['as'=>'ordem.servico.remover.item', 'uses'=>'Admin\OrdemServicoController@removerItem']);
 	Route::get('/ordem/servico/info/{id}', ['as'=>'ordem.servico.info', 'uses'=>'Admin\OrdemServicoController@info']);
 	Route::post('/ordem/servico/info/{id}', ['as'=>'ordem.servico.info', 'uses'=>'Admin\OrdemServicoController@info']);
 	Route::get('/ordem/servico/destroy/{id}', ['as'=>'ordem.servico.destroy', 'uses'=>'Admin\OrdemServicoController@destroy']);
-
+	
 	Route::get('/rca/json', ['as'=>'rca.json', 'uses'=>'Admin\RcaController@json']);
 	Route::post('/rca/json', ['as'=>'rca.json', 'uses'=>'Admin\RcaController@json']);
 	Route::post('/rca/store', ['as'=>'rca.store', 'uses'=>'Admin\RcaController@store']);

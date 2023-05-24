@@ -12,6 +12,7 @@ use \App\Exceptions\OrdemServicoException;
 use \App\FormularioGrupo;
 use \App\Servico;
 use \App\OrdemServico;
+use \App\ServicoItem;
 use \App\Pessoa;
 use \App\Filial;
 use \App\Profissional;
@@ -362,6 +363,237 @@ class OrdemServicoController extends Controller
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function adicionarItem(Request $request, $id)
+    {
+        try{
+
+            $this->validaAddItemRequest($request);
+
+            \DB::beginTransaction();
+
+            $dados = $request->all();
+
+            $id             = $id ?? $dados['id'];
+            $callBack       = $dados['callBack'] ?? '';
+            $idAssistente   = $idAssistente ?? $dados['idAssistente'] ?? '';
+            $idServico      = $dados['servico_id'] ?? 0;
+            $erros          = [];
+            $vrItem         = $dados['vrItem']          ?? 0;
+            $qtd            = $dados['qtd']             ?? 0;
+            $pct_desconto   = $dados['pct_desconto']    ?? 0;
+            $vrDesconto     = 0;
+            $vrAcrecimos    = 0;
+            $pctAcrecimos   = 0;
+
+            if( (!isset($id)) || ($id <= 0)){
+                throw new OrdemServicoException('Parâmetro para ordem de serviço inválido. Tente novamente ou entre em contato com o suporte');
+            }
+
+            $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
+
+            /* $dadosRequest = [];
+            $dadosRequest['name']                   = $dados['name'];
+            $dadosRequest['descricao']              = $dados['descricao']       ?? null;
+            $dadosRequest['vrServico']              = $dados['vrServico']       ?? null;
+            $dadosRequest['user_update_id']         = \Auth::User()->id;
+            $registro->update($dadosRequest); */
+
+
+            if(! $registro){
+                throw new OrdemServicoException('Registro não encontrado');
+            }
+
+            $servico = Servico::where('active', '=', 'yes')->where('id', '=', $idServico)->first();
+            if(! $servico){
+                throw new OrdemServicoException('Serviço não encontrado');
+            }
+
+            if(! ($servico->vrServico > 0) ){
+                throw new OrdemServicoException('O serviço de código nº '.$servico->id.' está sem preço de venda válido. Entre em contato com o gerente ou administrador.');
+            }
+
+            if($vrItem  < $servico->vrServico){
+                $vrDesconto = $servico->vrServico - $vrItem;
+                if(! ($vrDesconto > 0.01)){
+                    $vrDesconto     = 0;
+                    $pct_desconto   = 0;
+                    $vrItem         = $servico->vrServico;
+                }
+            }
+
+            if($servico->vrServico < $vrItem){
+
+                $vrAcres        = $vrItem - $servico->vrServico;
+                if(! ($vrAcres > 0.01)){
+                    $pctAcrecimos   = ($vrAcres / $servico->vrServico);
+
+                    $vrAcrecimos    = $servico->vrServico * $pctAcrecimos;                
+                    $pctAcrecimos   = $pctAcrecimos * 100;
+                }
+                
+            }
+            
+            $dadosRequest = [];
+
+            $dadosRequest['qtd']                = $qtd;
+            $dadosRequest['servico_id']         = $servico->id;
+            $dadosRequest['vrItemBruto']        = $servico->vrServico;
+            $dadosRequest['vrItem']             = $vrItem;
+            $dadosRequest['vrTotal']            = $vrItem * $qtd;
+            $dadosRequest['ordem_servico_id']   = $registro->id;
+            $dadosRequest['vr_desconto']        = $vrDesconto;//--- Valor de desconto unitário
+            $dadosRequest['pct_acrescimo']      = $pctAcrecimos;
+            $dadosRequest['vr_acrescimo']       = $vrAcrecimos;
+            $dadosRequest['pct_desconto']       = $pct_desconto;    
+            $dadosRequest['vr_final']           = $dadosRequest['vrTotal'] - $dadosRequest['vr_desconto'];   
+            $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['active']             = 'yes';
+
+            $servicoItem = ServicoItem::create($dadosRequest);
+
+            //---Recalcula a ordem de serviço
+            $registro = $this->recalcularOrdemServico($registro->id);
+            
+            
+            \DB::commit();
+            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
+        
+        }catch(OrdemServicoException $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Error $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+        }
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function removerItem($id)
+    {
+        try{
+
+            \DB::beginTransaction();
+
+            if($id <= 0){
+                throw new OrdemServicoException("Parâmetro inválido.");
+            }
+
+            $registro = ServicoItem::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+
+            if(! $registro){
+                throw new OrdemServicoException("Item não identificado.");
+            }
+            
+            $ordem = $registro->ordem;
+            if(! $ordem){
+                throw new OrdemServicoException("Ordem d serviço não identificada.");
+            }
+
+            if(trim($ordem->is_faturado) == 'yes'){
+                throw new OrdemServicoException("A ordem de serviço de código nº {$ordem->id} encontra-se faturada e não poderá ser modificada.");
+            }
+
+            if(! in_array($ordem->status, ['aberto'])){
+                throw new OrdemServicoException("A ordem de serviço de código nº {$ordem->id} encontra-se \"{$ordem->status}\" e não poderá ser modificada.");
+            }
+
+            $response = $registro->update(['active'=>'no']);
+
+            if(! $response){
+                throw new OrdemServicoException("Erro ao exclir registro.");
+            }
+            $registro = $registro->delete();
+            $this->recalcularOrdemServico($ordem->id);
+
+            \DB::commit();
+            return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
+        
+        }catch(OrdemServicoException $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Error $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function recalcularOrdemServico($id)
+    {
+
+
+        if( (!isset($id)) || ($id <= 0)){
+            throw new OrdemServicoException('Parâmetro inválido');
+        }
+
+        $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
+        if(! $registro){
+            throw new OrdemServicoException('Ordem de serviço não identificada. Tente novamente ou entre em contato com o suporte.');
+        }
+
+        $servicosArr = $registro->item()->where('active', '=', 'yes')->get();
+        if(! $servicosArr){
+            throw new OrdemServicoException('Servições não identificados. Tente novamente ou entre em contato com o suporte.');
+        }
+        $vrTotSevicos       = 0;
+        $vrTotDesconto      = 0;
+        $vrTotServicoFinal  = 0;
+
+        foreach($servicosArr as $item){
+            
+            $vrTotSevicos       += $item->vrTotal;
+            $vrTotDesconto      += $item->vr_desconto;
+            $vrTotServicoFinal  += $item->vr_final;
+        }
+        
+
+        $dadosRequest = [];
+        $dadosRequest['vrTotal']          = $vrTotSevicos;
+        $dadosRequest['vr_final']         = $vrTotServicoFinal;
+        $dadosRequest['vr_desconto']      = $vrTotDesconto;
+        $dadosRequest['pct_desconto']     = ($vrTotDesconto / $vrTotSevicos ) * 100;
+        $dadosRequest['pct_acrescimo']    = 0;
+        $dadosRequest['vr_acrescimo']     = 0;
+        $dadosRequest['user_update_id']         = \Auth::User()->id;
+        $registro->update($dadosRequest);
+
+
+        if(! $registro){
+            throw new OrdemServicoException('Registro não encontrado');
+        }
+
+        return $registro;
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -583,6 +815,36 @@ class OrdemServicoController extends Controller
             'pessoa_id.min' => 'O "Pessoa" deve conter pelo menos :min caracteres.',
             'rca_id.required' => 'O campo "Vendedor" é obrigatório.',
             'rca_id.min' => 'O "Vendedor" deve conter pelo menos :min caracteres.',
+        ]);
+        
+        if($validator->fails()) {
+            $errors = $validator->errors();
+            $msg = '';
+            foreach($errors->all() as $mensagem){
+                $msg .= $mensagem.'<br/>';
+            }
+            
+            throw new OrdemServicoException($msg);
+        }
+
+        return true;
+    }
+
+    protected function validaAddItemRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'servico_id'=> 'required|min:1',
+            'qtd'=> 'required|min:1',
+            'vrItem'=> 'required|min:0.01',
+            'pct_desconto'=> 'max:100',
+        ], [
+            'servico_id.required' => 'O campo "Serviço" é obrigatório.',
+            'servico_id.min' => 'O "Serviço" deve conter pelo menos :min caracteres.',
+            'qtd.required' => 'O campo "Quantidade" é obrigatório.',
+            'qtd.min' => 'O "Quantidade" deve conter pelo menos :min caracteres.',            
+            'vrItem.required' => 'O campo "Valor" é obrigatório.',
+            'vrItem.min' => 'O "Valor" deve conter pelo menos :min caracteres.',
+            'pct_desconto.max' => 'O campo "Desconto" permite até :max %.',
         ]);
         
         if($validator->fails()) {
