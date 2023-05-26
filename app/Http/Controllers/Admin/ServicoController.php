@@ -407,6 +407,16 @@ class ServicoController extends Controller
 
             \DB::commit();
 
+            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
+                $dataToRequest = [];
+                foreach($registro as $reg){
+                    $dataToRequest[] = ['label'=>$reg->name, 'value'=>$reg->id];
+                }
+
+                $registro = $dataToRequest;
+            }
+            
+
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
 
         }catch(ServicoException $e){

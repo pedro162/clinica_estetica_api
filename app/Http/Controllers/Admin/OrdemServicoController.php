@@ -17,6 +17,7 @@ use \App\Pessoa;
 use \App\Filial;
 use \App\Profissional;
 use \App\Rca;
+use \App\Utilitarios;
 use Illuminate\Support\Facades\Auth;
 
 class OrdemServicoController extends Controller
@@ -418,7 +419,11 @@ class OrdemServicoController extends Controller
                 throw new OrdemServicoException('O serviço de código nº '.$servico->id.' está sem preço de venda válido. Entre em contato com o gerente ou administrador.');
             }
 
-            if($vrItem  < $servico->vrServico){
+            //---pegar todas as configurações da tela do usuário
+            //--- O valor do item e odesconto devem vir da tela do vendedor
+            //--- Se o valor do item for maior que o valor de tabela, fazer o valor do item como valor de tabela
+
+           /*  if($vrItem  < $servico->vrServico){
                 $vrDesconto = $servico->vrServico - $vrItem;
                 if(! ($vrDesconto > 0.01)){
                     $vrDesconto     = 0;
@@ -431,15 +436,22 @@ class OrdemServicoController extends Controller
 
                 $vrAcres        = $vrItem - $servico->vrServico;
                 if(! ($vrAcres > 0.01)){
-                    $pctAcrecimos   = ($vrAcres / $servico->vrServico);
+                    $vrAcrecimos    = 0;                
+                    $pctAcrecimos   = 0;
+                }else{
 
+                    $pctAcrecimos   = ($vrAcres / $servico->vrServico);
                     $vrAcrecimos    = $servico->vrServico * $pctAcrecimos;                
                     $pctAcrecimos   = $pctAcrecimos * 100;
                 }
                 
             }
-            
-            $dadosRequest = [];
+             */
+
+            $pct_desconto   = Utilitarios::removeMaskMoney($pct_desconto);
+            $vrItem         = Utilitarios::removeMaskMoney($vrItem);
+            $vrDesconto     = $vrItem * $pct_desconto;
+            $dadosRequest   = [];
 
             $dadosRequest['qtd']                = $qtd;
             $dadosRequest['servico_id']         = $servico->id;
