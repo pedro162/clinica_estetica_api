@@ -386,6 +386,7 @@ class OrdemServicoController extends Controller
             $idServico      = $dados['servico_id'] ?? 0;
             $erros          = [];
             $vrItem         = $dados['vrItem']          ?? 0;
+            $vrItemBruto    = $dados['vrItemBruto']     ?? 0;
             $qtd            = $dados['qtd']             ?? 0;
             $pct_desconto   = $dados['pct_desconto']    ?? 0;
             $vrDesconto     = 0;
@@ -447,23 +448,32 @@ class OrdemServicoController extends Controller
                 
             }
              */
-
-            $pct_desconto   = Utilitarios::removeMaskMoney($pct_desconto);
+            
             $vrItem         = Utilitarios::removeMaskMoney($vrItem);
-            $vrDesconto     = $vrItem * $pct_desconto;
+            $vrItemBruto    = Utilitarios::removeMaskMoney($vrItemBruto);
+            $pct_desconto   = Utilitarios::removeMaskMoney($pct_desconto);
+            if($pct_desconto > 100){
+                $pct_desconto = 100;
+
+            }elseif($pct_desconto < 0){
+                $pct_desconto = 0;
+
+            }
+            
+            $vrDesconto     = $vrItemBruto * ($pct_desconto / 100);
             $dadosRequest   = [];
 
             $dadosRequest['qtd']                = $qtd;
             $dadosRequest['servico_id']         = $servico->id;
-            $dadosRequest['vrItemBruto']        = $servico->vrServico;
+            $dadosRequest['vrItemBruto']        = $vrItemBruto;
             $dadosRequest['vrItem']             = $vrItem;
-            $dadosRequest['vrTotal']            = $vrItem * $qtd;
+            $dadosRequest['vrTotal']            = $vrItemBruto * $qtd;
             $dadosRequest['ordem_servico_id']   = $registro->id;
-            $dadosRequest['vr_desconto']        = $vrDesconto;//--- Valor de desconto unitário
             $dadosRequest['pct_acrescimo']      = $pctAcrecimos;
             $dadosRequest['vr_acrescimo']       = $vrAcrecimos;
             $dadosRequest['pct_desconto']       = $pct_desconto;    
-            $dadosRequest['vr_final']           = $dadosRequest['vrTotal'] - $dadosRequest['vr_desconto'];   
+            $dadosRequest['vr_desconto']        = $vrDesconto;//--- Valor de desconto unitário
+            $dadosRequest['vr_final']           = $dadosRequest['vrItem'] * $dadosRequest['qtd'];   
             $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']             = 'yes';
 
