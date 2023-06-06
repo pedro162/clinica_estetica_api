@@ -531,6 +531,16 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/ordem/servico/info/{id}', ['as'=>'ordem.servico.info', 'uses'=>'Admin\OrdemServicoController@info']);
 	Route::post('/ordem/servico/info/{id}', ['as'=>'ordem.servico.info', 'uses'=>'Admin\OrdemServicoController@info']);
 	Route::get('/ordem/servico/destroy/{id}', ['as'=>'ordem.servico.destroy', 'uses'=>'Admin\OrdemServicoController@destroy']);
+
+	Route::get('/ordem/servico/item/json', ['as'=>'ordem.servico.item.json', 'uses'=>'Admin\ServicoItemController@json']);
+	Route::post('/ordem/servico/item/json', ['as'=>'ordem.servico.item.json', 'uses'=>'Admin\ServicoItemController@json']);
+	Route::post('/ordem/servico/item/store', ['as'=>'ordem.servico.item.store', 'uses'=>'Admin\ServicoItemController@store']);
+	Route::get('/ordem/servico/item/edit/{id}', ['as'=>'ordem.servico.item.edit', 'uses'=>'Admin\ServicoItemController@edit']);
+	Route::post('/ordem/servico/item/edit/{id}', ['as'=>'ordem.servico.item.edit', 'uses'=>'Admin\ServicoItemController@edit']);
+	Route::put('/ordem/servico/item/update/{id}', ['as'=>'ordem.servico.item.update', 'uses'=>'Admin\ServicoItemController@update']);
+	Route::get('/ordem/servico/item/info/{id}', ['as'=>'ordem.servico.item.info', 'uses'=>'Admin\ServicoItemController@info']);
+	Route::post('/ordem/servico/item/info/{id}', ['as'=>'ordem.servico.item.info', 'uses'=>'Admin\ServicoItemController@info']);
+	Route::get('/ordem/servico/item/destroy/{id}', ['as'=>'ordem.servico.item.destroy', 'uses'=>'Admin\ServicoItemController@destroy']);
 	
 	Route::get('/rca/json', ['as'=>'rca.json', 'uses'=>'Admin\RcaController@json']);
 	Route::post('/rca/json', ['as'=>'rca.json', 'uses'=>'Admin\RcaController@json']);
