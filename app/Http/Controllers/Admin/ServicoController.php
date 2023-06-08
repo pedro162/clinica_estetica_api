@@ -323,6 +323,7 @@ class ServicoController extends Controller
                     
                     switch(trim($key)){
                         case 'id':
+                        case 'codigo_to_search':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
