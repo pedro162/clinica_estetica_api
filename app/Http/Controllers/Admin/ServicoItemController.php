@@ -210,7 +210,12 @@ class ServicoItemController extends Controller
 
             $registro = ServicoItem::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
-           
+
+            $registro->servico;
+            //$servico = $registro->servico;
+            
+            //$registro->servico = $servico;
+            
             if($registro == null){
                 throw new ServicoItemException(' não encontrado');
             }
