@@ -260,12 +260,22 @@ class FormaPagamentoController extends Controller
             }
            
             $registro = $registro->where('forma_pagamentos.active', '=', 'yes')->get();
-
+            
             \DB::commit();
 
-            //dd( $registro);
+            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
+                $dataToRequest = [];
+                foreach($registro as $reg){
+                    $dataToRequest[] = ['label'=>$reg->name, 'value'=>$reg->id];
+                }
 
-            return response()->json(['registro'=>$registro, 'class'=>'sucess'], 201);
+                $registro = $dataToRequest;
+            }
+            
+            //dd( $registro);
+            
+
+            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
         }catch(FormaPagamentoException $e){
             \DB::rollback();

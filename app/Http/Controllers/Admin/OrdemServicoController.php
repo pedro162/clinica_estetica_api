@@ -419,6 +419,14 @@ class OrdemServicoController extends Controller
             if(! ($servico->vrServico > 0) ){
                 throw new OrdemServicoException('O serviço de código nº '.$servico->id.' está sem preço de venda válido. Entre em contato com o gerente ou administrador.');
             }
+            $servicoItem = null;
+            if(isset($dados['os_item_id']) && $dados['os_item_id'] > 0){ 
+                
+                $servicoItem = ServicoItem::where('id', '=', $dados['os_item_id'])->first();
+                if(! $servicoItem){
+                    throw new OrdemServicoException('Registro não encontrado para atualizar.');
+                }
+            }
 
             //---pegar todas as configurações da tela do usuário
             //--- O valor do item e odesconto devem vir da tela do vendedor
@@ -477,7 +485,13 @@ class OrdemServicoController extends Controller
             $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']             = 'yes';
 
-            $servicoItem = ServicoItem::create($dadosRequest);
+            if($servicoItem){
+                $dadosRequest['user_update_id']   = \Auth::User()->id;
+                $servicoItem->update($dadosRequest);
+
+            }else{
+                $servicoItem = ServicoItem::create($dadosRequest);
+            }
 
             //---Recalcula a ordem de serviço
             $registro = $this->recalcularOrdemServico($registro->id);

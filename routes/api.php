@@ -192,6 +192,9 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 
 	Route::get('/plano_pagamento/index/{id_assistente?}', ['as'=>'plano_pagamento.index', 'uses'=>'Admin\PlanoPagamentoController@index']);
+	Route::post('/plano_pagamento/index/{id_assistente?}', ['as'=>'plano_pagamento.index', 'uses'=>'Admin\PlanoPagamentoController@index']);
+	Route::get('/plano_pagamento/json/{id_assistente?}', ['as'=>'plano_pagamento.json', 'uses'=>'Admin\PlanoPagamentoController@json']);
+	Route::post('/plano_pagamento/json/{id_assistente?}', ['as'=>'plano_pagamento.json', 'uses'=>'Admin\PlanoPagamentoController@json']);
 	Route::get('/plano_pagamento/create/{id_assistente?}', ['as'=>'plano_pagamento.create', 'uses'=>'Admin\PlanoPagamentoController@create']);
 	Route::post('/plano_pagamento/store/{id_assistente?}', ['as'=>'plano_pagamento.store', 'uses'=>'Admin\PlanoPagamentoController@store']);
 	Route::get('/plano_pagamento/edit/{id}/{id_assistente?}', ['as'=>'plano_pagamento.edit', 'uses'=>'Admin\PlanoPagamentoController@edit']);
@@ -203,6 +206,9 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 
 	Route::get('/forma_pagamento/index/{id_assistente?}', ['as'=>'forma_pagamento.index', 'uses'=>'Admin\FormaPagamentoController@index']);
+	Route::post('/forma_pagamento/index/{id_assistente?}', ['as'=>'forma_pagamento.index', 'uses'=>'Admin\FormaPagamentoController@index']);
+	Route::get('/forma_pagamento/json/{id_assistente?}', ['as'=>'forma_pagamento.json', 'uses'=>'Admin\FormaPagamentoController@json']);
+	Route::post('/forma_pagamento/json/{id_assistente?}', ['as'=>'forma_pagamento.json', 'uses'=>'Admin\FormaPagamentoController@json']);
 	Route::get('/forma_pagamento/create/{id_assistente?}', ['as'=>'forma_pagamento.create', 'uses'=>'Admin\FormaPagamentoController@create']);
 	Route::post('/forma_pagamento/store/{id_assistente?}', ['as'=>'forma_pagamento.store', 'uses'=>'Admin\FormaPagamentoController@store']);
 	Route::get('/forma_pagamento/edit/{id}/{id_assistente?}', ['as'=>'forma_pagamento.edit', 'uses'=>'Admin\FormaPagamentoController@edit']);
