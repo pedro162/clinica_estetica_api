@@ -221,6 +221,20 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::post('/forma_pagamento/plano/pagamento/json/{id_assistente?}', ['as'=>'forma_pagamento.plano.pagamento.json', 'uses'=>'Admin\FormaPagamentoController@planoPagamentoJson']);
 	Route::post('/forma_pagamento/operador/financeiro/json/{id_assistente?}', ['as'=>'forma_pagamento.operador.financeiro.json', 'uses'=>'Admin\FormaPagamentoController@operadorJson']);
 
+
+	Route::get('/operador_financeiro/index/{id_assistente?}', ['as'=>'operador_financeiro.index', 'uses'=>'Admin\OperadorFinanceiroController@index']);
+	Route::post('/operador_financeiro/index/{id_assistente?}', ['as'=>'operador_financeiro.index', 'uses'=>'Admin\OperadorFinanceiroController@index']);
+	Route::get('/operador_financeiro/json/{id_assistente?}', ['as'=>'operador_financeiro.json', 'uses'=>'Admin\OperadorFinanceiroController@json']);
+	Route::post('/operador_financeiro/json/{id_assistente?}', ['as'=>'operador_financeiro.json', 'uses'=>'Admin\OperadorFinanceiroController@json']);
+	Route::get('/operador_financeiro/create/{id_assistente?}', ['as'=>'operador_financeiro.create', 'uses'=>'Admin\OperadorFinanceiroController@create']);
+	Route::post('/operador_financeiro/store/{id_assistente?}', ['as'=>'operador_financeiro.store', 'uses'=>'Admin\OperadorFinanceiroController@store']);
+	Route::get('/operador_financeiro/edit/{id}/{id_assistente?}', ['as'=>'operador_financeiro.edit', 'uses'=>'Admin\OperadorFinanceiroController@edit']);
+	Route::put('/operador_financeiro/update/{id}/{id_assistente?}', ['as'=>'operador_financeiro.update', 'uses'=>'Admin\OperadorFinanceiroController@update']);
+	Route::get('/operador_financeiro/show/{id}/{id_assistente?}', ['as'=>'operador_financeiro.show', 'uses'=>'Admin\OperadorFinanceiroController@show']);
+	Route::get('/operador_financeiro/info/{id}/{id_assistente?}', ['as'=>'operador_financeiro.info', 'uses'=>'Admin\OperadorFinanceiroController@info']);
+	Route::post('/operador_financeiro/info/{id}/{id_assistente?}', ['as'=>'operador_financeiro.info', 'uses'=>'Admin\OperadorFinanceiroController@info']);
+	Route::get('/operador_financeiro/head/{id_assistente?}', ['as'=>'operador_financeiro.head', 'uses'=>'Admin\OperadorFinanceiroController@head']);
+	Route::get('/operador_financeiro/destroy/{id}/{id_assistente?}', ['as'=>'operador_financeiro.destroy', 'uses'=>'Admin\OperadorFinanceiroController@destroy']);
 	
 	Route::get('/nfe/index/{id_assistente?}', ['as'=>'nfe.index', 'uses'=>'Admin\NfeController@index']);
 	Route::get('/nfe/create/{id_assistente?}', ['as'=>'nfe.create', 'uses'=>'Admin\NfeController@create']);

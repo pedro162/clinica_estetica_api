@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use \App\Exceptions\OperadorFinanceiroException;
+use \App\Exceptions\OrdemServicoCobrancaException;
 use \App\PlanoPagamento;
 use \App\OperadorFinanceiro;
+use \App\OrdemServicoCobranca;
 use \App\Filial;
 use \App\Pessoa;
 
-class OperadorFinanceiroController extends Controller
+class OrdemServicoCobrancaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -54,12 +55,12 @@ class OperadorFinanceiroController extends Controller
 
             $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
             if(! $pessoas){
-                throw new OperadorFinanceiroException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
+                throw new OrdemServicoCobrancaException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
             $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
             if(! $filial){
-                throw new OperadorFinanceiroException('Filial não identificada');
+                throw new OrdemServicoCobrancaException('Filial não identificada');
             }
 
             
@@ -68,17 +69,17 @@ class OperadorFinanceiroController extends Controller
             $dadosRequest['user_id']          = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']           = 'yes';
             
-            $form = OperadorFinanceiro::create($dadosRequest);
+            $form = OrdemServicoCobranca::create($dadosRequest);
 
             \DB::commit();
             
             if(! $form){
-                throw new OperadorFinanceiroException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
+                throw new OrdemServicoCobrancaException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
             }
 
             return response()->json(['mensagem'=>$form, 'class'=>'success'], 200);
 
-        }catch(OperadorFinanceiroException $e){
+        }catch(OrdemServicoCobrancaException $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -115,12 +116,12 @@ class OperadorFinanceiroController extends Controller
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
             if($id <= 0){
-                throw new OperadorFinanceiroException('Parâmetro ínválido');
+                throw new OrdemServicoCobrancaException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
-            $registro = OperadorFinanceiro::where('active', '=', 'yes')
+            $registro = OrdemServicoCobranca::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
             $registro->pessoa;
             //$dataItens = [];
@@ -138,14 +139,14 @@ class OperadorFinanceiroController extends Controller
 
 
             if($registro == null){
-                throw new OperadorFinanceiroException(' não encontrado');
+                throw new OrdemServicoCobrancaException(' não encontrado');
             }
            
             \DB::commit();
 
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
 
-        }catch(OperadorFinanceiroException $e){
+        }catch(OrdemServicoCobrancaException $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -221,7 +222,7 @@ class OperadorFinanceiroController extends Controller
                 return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
             }
 
-            $registro = OperadorFinanceiro::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $registro = OrdemServicoCobranca::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
             $dadosRequest = [];
             $dadosRequest['name']                   = $dados['name'];
@@ -230,14 +231,14 @@ class OperadorFinanceiroController extends Controller
 
 
             if(! $registro){
-                throw new OperadorFinanceiroException('Registro não encontrado');
+                throw new OrdemServicoCobrancaException('Registro não encontrado');
             }
             
             
             \DB::commit();
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
         
-        }catch(OperadorFinanceiroException $e){
+        }catch(OrdemServicoCobrancaException $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -270,7 +271,7 @@ class OperadorFinanceiroController extends Controller
 
             }
 
-            $registro = OperadorFinanceiro::where('active', '=', 'yes')
+            $registro = OrdemServicoCobranca::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
             if(! $registro){
                 return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
@@ -290,7 +291,7 @@ class OperadorFinanceiroController extends Controller
             \DB::commit();
             return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
         
-        }catch(OperadorFinanceiroException $e){
+        }catch(OrdemServicoCobrancaException $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -462,7 +463,7 @@ class OperadorFinanceiroController extends Controller
 
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
 
-        }catch(OperadorFinanceiroException $e){
+        }catch(OrdemServicoCobrancaException $e){
             \DB::rollback();
             return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
     
@@ -496,7 +497,7 @@ class OperadorFinanceiroController extends Controller
                 $msg .= $mensagem.'<br/>';
             }
             
-            throw new OperadorFinanceiroException($msg);
+            throw new OrdemServicoCobrancaException($msg);
         }
 
         return true;
