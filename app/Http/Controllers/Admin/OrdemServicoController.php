@@ -237,6 +237,14 @@ class OrdemServicoController extends Controller
                     $dataItens[] = $item->servico;
                 }
             }
+            /* $dataCobrancas = [];
+            if( $registro->cobranca){
+                foreach( $registro->cobranca as $key=>$cobranca){
+                    $dataCobrancas[] = $cobranca;//->servico;
+                }
+            } */
+
+            $registro->cobranca;// = $dataCobrancas;
             $registro->item = $dataItens;
             //$registro->item;
             $registro->rca;

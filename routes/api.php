@@ -572,6 +572,16 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::post('/rca/info/{id}', ['as'=>'rca.info', 'uses'=>'Admin\RcaController@info']);
 	Route::get('/rca/destroy/{id}', ['as'=>'rca.destroy', 'uses'=>'Admin\RcaController@destroy']);
 
+	Route::get('/ordem/servico/cobranca/json', ['as'=>'ordem.servico.cobranca.json', 'uses'=>'Admin\OrdemServicoCobrancaController@json']);
+	Route::post('/ordem/servico/cobranca/json', ['as'=>'ordem.servico.cobranca.json', 'uses'=>'Admin\OrdemServicoCobrancaController@json']);
+	Route::post('/ordem/servico/cobranca/store', ['as'=>'ordem.servico.cobranca.store', 'uses'=>'Admin\OrdemServicoCobrancaController@store']);
+	Route::get('/ordem/servico/cobranca/edit/{id}', ['as'=>'ordem.servico.cobranca.edit', 'uses'=>'Admin\OrdemServicoCobrancaController@edit']);
+	Route::post('/ordem/servico/cobranca/edit/{id}', ['as'=>'ordem.servico.cobranca.edit', 'uses'=>'Admin\OrdemServicoCobrancaController@edit']);
+	Route::put('/ordem/servico/cobranca/update/{id}', ['as'=>'ordem.servico.cobranca.update', 'uses'=>'Admin\OrdemServicoCobrancaController@update']);
+	Route::get('/ordem/servico/cobranca/info/{id}', ['as'=>'ordem.servico.cobranca.info', 'uses'=>'Admin\OrdemServicoCobrancaController@info']);
+	Route::post('/ordem/servico/cobranca/info/{id}', ['as'=>'ordem.servico.cobranca.info', 'uses'=>'Admin\OrdemServicoCobrancaController@info']);
+	Route::get('/ordem/servico/cobranca/destroy/{id}', ['as'=>'ordem.servico.cobranca.destroy', 'uses'=>'Admin\OrdemServicoCobrancaController@destroy']);
+
 	
 	
 });

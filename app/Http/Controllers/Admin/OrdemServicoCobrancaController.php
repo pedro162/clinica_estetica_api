@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use \App\Exceptions\OrdemServicoCobrancaException;
 use \App\PlanoPagamento;
 use \App\OperadorFinanceiro;
 use \App\OrdemServicoCobranca;
+use \App\OrdemServico;
 use \App\Filial;
 use \App\Pessoa;
+use \App\Utilitarios;
+use \App\FormaPagamento;
 
 class OrdemServicoCobrancaController extends Controller
 {
@@ -43,7 +47,7 @@ class OrdemServicoCobrancaController extends Controller
     {
 
         try{
-
+            //dd('aqui');
 
             set_time_limit(9000000);
 
@@ -53,21 +57,64 @@ class OrdemServicoCobrancaController extends Controller
 
             $dados = $request->all();
 
-            $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
-            if(! $pessoas){
-                throw new OrdemServicoCobrancaException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
+            $ordemServico = OrdemServico::where('active', '=' ,'yes')->where('id', '=', $dados['ordem_servico_id'])->first();
+            if(! $ordemServico){
+                throw new OrdemServicoCobrancaException('Ordem de serviço não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
-            $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
+            $filial = Filial::where('id', '=', $ordemServico->filial->id)->where('active', '=', 'yes')->first();
             if(! $filial){
                 throw new OrdemServicoCobrancaException('Filial não identificada');
             }
 
+            $formaPagamento = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $dados['forma_pagamento_id'])->first();
+            if(! $formaPagamento){
+                throw new OrdemServicoCobrancaException('Forma de pagamento não identificada');
+            }
+
+            $operadorFinanceiro = $formaPagamento->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $dados['operador_financeiro_id'])->first();
+
+            $planoPagamento = $formaPagamento->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $dados['plano_pagamento_id'])->first();
+            if(! $planoPagamento){
+                throw new OrdemServicoCobrancaException('Plano de pagamento não identificada');
+            }
+
+            if($formaPagamento->hasOperadorFinanceiro == 'yes'){
+                if(! $operadorFinanceiro){
+                    throw new OrdemServicoCobrancaException('Operador financeiro não identificado');
+                }
+            }
             
+            /*
+                'ordem_servico_id',
+                'forma_pagamento_id',
+                'operador_financeiro_id',
+                'plano_pagamento_id',
+                'filial_id',
+                'nr_doc',
+                'vencimento_manual',
+                'dt_vencimento_manual',
+                'vr_cobranca',
+                'vr_acrescimo',
+                'vr_final',
+                'user_id',
+                'user_update_id',
+                'active',
+            */
             $dadosRequest = [];
-      
-            $dadosRequest['user_id']          = \Auth::User()->id;//trocar pelo id do usuario logado
-            $dadosRequest['active']           = 'yes';
+            $dadosRequest['ordem_servico_id']           = $ordemServico->id;
+            $dadosRequest['forma_pagamento_id']         = $formaPagamento->id;
+            $dadosRequest['operador_financeiro_id']     = $operadorFinanceiro ? $operadorFinanceiro->id : null;
+            $dadosRequest['plano_pagamento_id']         = $planoPagamento->id;
+            $dadosRequest['filial_id']                  = $filial->id;
+            $dadosRequest['nr_doc']                     = $dados['nr_doc']                      ?? null;
+            $dadosRequest['vencimento_manual']          = $dados['vencimento_manual']           ?? 'no';
+            $dadosRequest['dt_vencimento_manual']       = $dados['dt_vencimento_manual']        ?? null;
+            $dadosRequest['vr_cobranca']                = Utilitarios::removeMaskMoney($dados['vr_cobranca']   ?? 0);
+            $dadosRequest['vr_acrescimo']               = Utilitarios::removeMaskMoney($dados['vr_acrescimo']  ?? 0);
+            $dadosRequest['vr_final']                   = $dadosRequest['vr_cobranca'] + $dadosRequest['vr_acrescimo'];
+            $dadosRequest['user_id']                    = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['active']                     = 'yes';
             
             $form = OrdemServicoCobranca::create($dadosRequest);
 
@@ -225,7 +272,7 @@ class OrdemServicoCobrancaController extends Controller
             $registro = OrdemServicoCobranca::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
             $dadosRequest = [];
-            $dadosRequest['name']                   = $dados['name'];
+            $dadosRequest['nr_doc']                 = $dados['nr_doc'] ?? null;
             $dadosRequest['user_update_id']         = \Auth::User()->id;
             $registro->update($dadosRequest);
 
@@ -474,20 +521,35 @@ class OrdemServicoCobrancaController extends Controller
     }
 
 
-
+    /*
+        'ordem_servico_id',
+                'forma_pagamento_id',
+                'operador_financeiro_id',
+                'plano_pagamento_id',
+                'filial_id',
+                'nr_doc',
+                'vencimento_manual',
+                'dt_vencimento_manual',
+                'vr_cobranca',
+                'vr_acrescimo',
+                'vr_final',
+    */
     protected function validaRequest(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'filial_id'=> 'required|min:1',
-            'pessoa_id'=> 'required|min:1',
-            'rca_id'=> 'required|min:1',
+            'ordem_servico_id'=> 'required|min:1',
+            'forma_pagamento_id'=> 'required|min:1',
+            'plano_pagamento_id'=> 'required|min:1',
+            'vr_cobranca'=> 'required|min:0.01',
         ], [
-            'filial_id.required' => 'O campo "Filial" é obrigatório.',
-            'filial_id.min' => 'O "Filial" deve conter pelo menos :min caracteres.',
-            'pessoa_id.required' => 'O campo "Pessoa" é obrigatório.',
-            'pessoa_id.min' => 'O "Pessoa" deve conter pelo menos :min caracteres.',
-            'rca_id.required' => 'O campo "Vendedor" é obrigatório.',
-            'rca_id.min' => 'O "Vendedor" deve conter pelo menos :min caracteres.',
+            'ordem_servico_id.required' => 'Informe uma ordem de serviço válida.',
+            'ordem_servico_id.min' => 'O código da ordem de serviço devere ser maior ou igual a :min.',
+            'forma_pagamento_id.required' => 'Informe uma forma de pagamento válida.',
+            'forma_pagamento_id.min' => 'O código da forma de pagamento deve ser maior ou igual a :min.',
+            'plano_pagamento_id.required' => 'Informe um plano de pagamento válido.',
+            'plano_pagamento_id.min' => 'O código od plano de pagamento deve ser maior ou igual a :min.',
+            'vr_cobranca.required' => 'Informe um valor de cobrança válido.',
+            'vr_cobranca.min' => 'O valor da cobrança deve ser maior ou igual a :min.',
         ]);
         
         if($validator->fails()) {

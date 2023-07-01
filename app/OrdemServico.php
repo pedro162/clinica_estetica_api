@@ -8,6 +8,7 @@ use \App\ServicoItem;
 use \App\Pessoa;
 use \App\Rca;
 use \App\Filial;
+use \App\OrdemServicoCobranca;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrdemServico extends Model
@@ -48,6 +49,11 @@ class OrdemServico extends Model
 	public function item()
 	{
 		return $this->hasMany(ServicoItem::class, 'ordem_servico_id', 'id');
+	}
+
+	public function cobranca()
+	{
+		return $this->hasMany(OrdemServicoCobranca::class, 'ordem_servico_id', 'id');
 	}
 
 	public function pessoa(){
