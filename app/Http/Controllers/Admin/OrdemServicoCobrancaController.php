@@ -85,6 +85,21 @@ class OrdemServicoCobrancaController extends Controller
                 }
             }
             
+            $vrOrdemServico             = $ordemServico->vr_final;
+            $totalCobrancasAdicionadas  = 0;
+            $vrSaldoCobrancas           = 0;
+
+            if( $ordemServico->cobranca){
+                foreach( $ordemServico->cobranca as $key=>$cobranca){
+                    $totalCobrancasAdicionadas += $cobranca->vr_final;
+                }
+            }
+            $vrSaldoCobrancas = $vrOrdemServico - $totalCobrancasAdicionadas;
+
+            if($vrSaldoCobrancas <= 0 ){
+                throw new OrdemServicoCobrancaException('Não há mais saldo para novas cobraças');   
+            }
+            
             /*
                 'ordem_servico_id',
                 'forma_pagamento_id',
@@ -116,6 +131,15 @@ class OrdemServicoCobrancaController extends Controller
             $dadosRequest['user_id']                    = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']                     = 'yes';
             
+            $vrProximoSaldo = $vrSaldoCobrancas - $dadosRequest['vr_final'];
+            
+            if($vrProximoSaldo < 0){
+                $difCob = abs($vrProximoSaldo);
+                if($difCob > 0.02){
+                    throw new OrdemServicoCobrancaException('Você tentou adicionar uma cobrança de '.number_format($dadosRequest['vr_final'], 2, ',', '.').', mas o saldo para novas cobranças é de '.number_format($vrSaldoCobrancas, 2, ',','.'));
+                }
+            }
+
             $form = OrdemServicoCobranca::create($dadosRequest);
 
             \DB::commit();
@@ -128,15 +152,16 @@ class OrdemServicoCobrancaController extends Controller
 
         }catch(OrdemServicoCobrancaException $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+            return response()->json(['mensagem'=>$e->getMessage()], 404);
+            //return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
         }catch(\Error $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+            return response()->json(['mensagem'=>$e->getMessage()], 404);
     
         }catch(\Exception $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem'=>$e->getMessage()], 500);
         }
     }
 
@@ -321,30 +346,28 @@ class OrdemServicoCobrancaController extends Controller
             $registro = OrdemServicoCobranca::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
             if(! $registro){
-                return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
-            }else{
-
-                $registro = $registro->update(['active'=>'no']);
-
+                throw new OrdemServicoCobrancaException('Registro não identificado');
+               
             }
 
-            if($registro == null){
+            $response = $registro->update(['active'=>'no']);
 
-                //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
-                //return redirect()->back();
-                 return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
+            if($response == null){
+                throw new OrdemServicoCobrancaException('Erro ao exclir cobrança. Tente novamente ou entre em contato com o suporte.');
             }
+
+            $registro->delete();
 
             \DB::commit();
             return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
         
         }catch(OrdemServicoCobrancaException $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+            return response()->json(['mensagem'=>$e->getMessage()], 404);
     
         }catch(\Error $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+            return response()->json(['mensagem'=>$e->getMessage()], 404);
     
         }catch(\Exception $e){
             \DB::rollback();
