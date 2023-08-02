@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use \App\PlanoPagamento;
 use \App\OperadorFinanceiro;
+use \App\TipoPagamento;
+use \App\PrazoPagamento;
+use \App\Conta;
 
 class FormaPagamento extends Model
 {
@@ -24,8 +27,23 @@ class FormaPagamento extends Model
 		'tipo',
 		'active'
 	];
+
+	public function tipo_pagamento()
+	{
+		return $this->belongsTo(TipoPagamento::class, 'tipo_pagamento_id', 'id');
+	}
+
+	/* public function conta()
+	{
+		return $this->belongsTo(Conta::class, 'conta_id', 'id');
+	} */
+
+	public function prazoPagamento()
+    {
+        return $this->belongsToMany(PrazoPagamento::class, 'forma_prazo','forma_pagamento_id','prazo_pagamento_id')->withPivot('pcTaxa','vrTaxa','bandeira_cartao_id','user_id', "active");
+    }
 	
-	public function planoPagamento()
+	 public function planoPagamento()
 	{
 		return $this->belongsToMany(PlanoPagamento::class, 'plano_forma_pgto', 'forma_pagamentos_id', 'plano_pagamentos_id');
 		//return $this->belongsToMany(Grupo::class, 'grupo_pessoa', 'pessoa_id', 'groupo_id');
@@ -55,6 +73,6 @@ class FormaPagamento extends Model
 	public function removeOperador($operador)
 	{
 		return $this->operadorFinanceiro()->detach($operador);
-	}
+	} 
 
 }

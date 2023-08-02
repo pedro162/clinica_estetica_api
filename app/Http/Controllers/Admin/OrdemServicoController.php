@@ -234,18 +234,24 @@ class OrdemServicoController extends Controller
             $dataItens = [];
             if( $registro->item){
                 foreach( $registro->item as $key=>$item){
-                    $dataItens[] = $item->servico;
+                    $item->servico;
+                    //$dataItens[] = $item->servico;
                 }
             }
-            /* $dataCobrancas = [];
+            $dataCobrancas = [];
             if( $registro->cobranca){
                 foreach( $registro->cobranca as $key=>$cobranca){
-                    $dataCobrancas[] = $cobranca;//->servico;
+                    $cobranca->formaPgto;
+                    $cobranca->planoPgto;
+                    
+                    //$dataCobrancas[] = $cobranca->formaPgto;
+                    
+
                 }
-            } */
+            }
 
             $registro->cobranca;// = $dataCobrancas;
-            $registro->item = $dataItens;
+            $registro->item;// = $dataItens;
             //$registro->item;
             $registro->rca;
             $registro->filial;
@@ -341,11 +347,64 @@ class OrdemServicoController extends Controller
             $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
             $dadosRequest = [];
-            $dadosRequest['name']                   = $dados['name'];
-            $dadosRequest['descricao']              = $dados['descricao']       ?? null;
-            $dadosRequest['vrServico']              = $dados['vrServico']       ?? null;
             $dadosRequest['user_update_id']         = \Auth::User()->id;
             $registro->update($dadosRequest);
+
+
+            if(! $registro){
+                throw new OrdemServicoException('Registro não encontrado');
+            }
+            
+            
+            \DB::commit();
+            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
+        
+        }catch(OrdemServicoException $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Error $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+        }
+
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function finalizar(Request $request, $id)
+    {
+        try{
+
+            $this->validaRequest($request);
+
+            \DB::beginTransaction();
+
+            $dados = $request->all();
+
+            $id             = $id ?? $dados['id'];
+            $callBack       = $dados['callBack'] ?? '';
+            $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
+            if( (!isset($id)) || ($id <= 0)){
+                throw new OrdemServicoException('Parâmetro inválido');
+            }
+
+            $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            if(! $registro){
+                throw new OrdemServicoException('Registro não encontrado');
+            }
+
+            
 
 
             if(! $registro){

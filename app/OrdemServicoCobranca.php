@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use \App\Filial;
+use \App\FormaPagamento;
+use \App\PlanoPagamento;
+use \App\OperadorFinanceiro;
 
 class OrdemServicoCobranca extends Model
 {
@@ -28,4 +31,16 @@ class OrdemServicoCobranca extends Model
 		'user_update_id',
 		'active',
 	];
+
+    public function formaPgto(){
+        return $this->belongsTo(FormaPagamento::class, 'forma_pagamento_id', 'id');
+    }
+
+    public function planoPgto(){
+        return $this->belongsTo(PlanoPagamento::class, 'plano_pagamento_id', 'id');
+    }
+
+    public function operadorFinanceiro(){
+        return $this->belongsTo(OperadorFinanceiro::class, 'operador_financeiro_id', 'id');
+    }
 }

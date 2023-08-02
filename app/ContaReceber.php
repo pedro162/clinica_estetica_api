@@ -33,6 +33,11 @@ class ContaReceber extends Model
 		'active',
 		'responsavel_id',
 		'importacao_dados',
+		'filial_id',
+		'forma_pagamento_id',
+		'plano_pagamento_id',
+		'operador_financeiro_id',
+		'status',
     ];
 
     public function contaReceberItem()

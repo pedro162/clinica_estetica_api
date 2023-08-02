@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Repositories;
+
+class GenericRepository
+{
+    public function insertOrChangeData(){
+    
+    }
+
+    public function removeData(){
+    
+    }
+
+}

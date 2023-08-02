@@ -205,6 +205,20 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/plano_pagamento/destroy/{id}/{id_assistente?}', ['as'=>'plano_pagamento.destroy', 'uses'=>'Admin\PlanoPagamentoController@destroy']);
 
 
+	Route::get('/prazo_pagamento/index/{id_assistente?}', ['as'=>'prazo_pagamento.index', 'uses'=>'Admin\PrazoPagamentoController@index']);
+	Route::post('/prazo_pagamento/index/{id_assistente?}', ['as'=>'prazo_pagamento.index', 'uses'=>'Admin\PrazoPagamentoController@index']);
+	Route::get('/prazo_pagamento/json/{id_assistente?}', ['as'=>'prazo_pagamento.json', 'uses'=>'Admin\PrazoPagamentoController@json']);
+	Route::post('/prazo_pagamento/json/{id_assistente?}', ['as'=>'prazo_pagamento.json', 'uses'=>'Admin\PrazoPagamentoController@json']);
+	Route::get('/prazo_pagamento/create/{id_assistente?}', ['as'=>'prazo_pagamento.create', 'uses'=>'Admin\PrazoPagamentoController@create']);
+	Route::post('/prazo_pagamento/store/{id_assistente?}', ['as'=>'prazo_pagamento.store', 'uses'=>'Admin\PrazoPagamentoController@store']);
+	Route::get('/prazo_pagamento/edit/{id}/{id_assistente?}', ['as'=>'prazo_pagamento.edit', 'uses'=>'Admin\PrazoPagamentoController@edit']);
+	Route::put('/prazo_pagamento/update/{id}/{id_assistente?}', ['as'=>'prazo_pagamento.update', 'uses'=>'Admin\PrazoPagamentoController@update']);
+	Route::get('/prazo_pagamento/show/{id}/{id_assistente?}', ['as'=>'prazo_pagamento.show', 'uses'=>'Admin\PrazoPagamentoController@show']);
+	Route::get('/prazo_pagamento/info/{id}/{id_assistente?}', ['as'=>'prazo_pagamento.info', 'uses'=>'Admin\PrazoPagamentoController@info']);
+	Route::get('/prazo_pagamento/head/{id_assistente?}', ['as'=>'prazo_pagamento.head', 'uses'=>'Admin\PrazoPagamentoController@head']);
+	Route::get('/prazo_pagamento/destroy/{id}/{id_assistente?}', ['as'=>'prazo_pagamento.destroy', 'uses'=>'Admin\PrazoPagamentoController@destroy']);
+
+	
 	Route::get('/forma_pagamento/index/{id_assistente?}', ['as'=>'forma_pagamento.index', 'uses'=>'Admin\FormaPagamentoController@index']);
 	Route::post('/forma_pagamento/index/{id_assistente?}', ['as'=>'forma_pagamento.index', 'uses'=>'Admin\FormaPagamentoController@index']);
 	Route::get('/forma_pagamento/json/{id_assistente?}', ['as'=>'forma_pagamento.json', 'uses'=>'Admin\FormaPagamentoController@json']);
@@ -551,7 +565,8 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/ordem/servico/info/{id}', ['as'=>'ordem.servico.info', 'uses'=>'Admin\OrdemServicoController@info']);
 	Route::post('/ordem/servico/info/{id}', ['as'=>'ordem.servico.info', 'uses'=>'Admin\OrdemServicoController@info']);
 	Route::get('/ordem/servico/destroy/{id}', ['as'=>'ordem.servico.destroy', 'uses'=>'Admin\OrdemServicoController@destroy']);
-
+	Route::put('/ordem/servico/finalizar/{id}', ['as'=>'ordem.servico.finalizar', 'uses'=>'Admin\OrdemServicoController@finalizar']);
+	
 	Route::get('/ordem/servico/item/json', ['as'=>'ordem.servico.item.json', 'uses'=>'Admin\ServicoItemController@json']);
 	Route::post('/ordem/servico/item/json', ['as'=>'ordem.servico.item.json', 'uses'=>'Admin\ServicoItemController@json']);
 	Route::post('/ordem/servico/item/store', ['as'=>'ordem.servico.item.store', 'uses'=>'Admin\ServicoItemController@store']);

@@ -19,7 +19,11 @@ class PlanoPagamento extends Model
 		'isAberto',
 		'user_id',
 		'user_update_id',
-		'active'
+		'active',
+		'qtdMinParcelas',
+		'qtd_dias_pri_parcela',
+		'qtdDiasIntervaloParcelas',
+		'exibe_balcao',
 	];
 	
 	public function planoPrazo()

@@ -4,18 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use \App\Exceptions\OrdemServicoCobrancaException;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\OrdemServicoCobranca;
-use \App\OrdemServico;
+use \App\PrazoPagamento;
 use \App\Filial;
 use \App\Pessoa;
-use \App\Utilitarios;
-use \App\FormaPagamento;
 
-class OrdemServicoCobrancaController extends Controller
+class PrazoPagamentoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -47,7 +40,7 @@ class OrdemServicoCobrancaController extends Controller
     {
 
         try{
-            //dd('aqui');
+
 
             set_time_limit(9000000);
 
@@ -57,111 +50,43 @@ class OrdemServicoCobrancaController extends Controller
 
             $dados = $request->all();
 
-            $ordemServico = OrdemServico::where('active', '=' ,'yes')->where('id', '=', $dados['ordem_servico_id'])->first();
-            if(! $ordemServico){
-                throw new OrdemServicoCobrancaException('Ordem de serviço não identificada. Tente novamente ou entre em contato com o suporte.');
+            $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
+            if(! $pessoas){
+                throw new PrazoPagamentoExcepton('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
-            $filial = Filial::where('id', '=', $ordemServico->filial->id)->where('active', '=', 'yes')->first();
+            $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
             if(! $filial){
-                throw new OrdemServicoCobrancaException('Filial não identificada');
+                throw new PrazoPagamentoExcepton('Filial não identificada');
             }
 
-            $formaPagamento = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $dados['forma_pagamento_id'])->first();
-            if(! $formaPagamento){
-                throw new OrdemServicoCobrancaException('Forma de pagamento não identificada');
-            }
-
-            $operadorFinanceiro = $formaPagamento->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $dados['operador_financeiro_id'])->first();
-
-            $planoPagamento = $formaPagamento->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $dados['plano_pagamento_id'])->first();
-            if(! $planoPagamento){
-                throw new OrdemServicoCobrancaException('Plano de pagamento não identificada');
-            }
-
-            if($formaPagamento->hasOperadorFinanceiro == 'yes'){
-                if(! $operadorFinanceiro){
-                    throw new OrdemServicoCobrancaException('Operador financeiro não identificado');
-                }
-            }
             
-            $vrOrdemServico             = $ordemServico->vr_final;
-            $totalCobrancasAdicionadas  = 0;
-            $vrSaldoCobrancas           = 0;
-
-            if( $ordemServico->cobranca){
-                foreach( $ordemServico->cobranca as $key=>$cobranca){
-                    $totalCobrancasAdicionadas += $cobranca->vr_final;
-                }
-            }
-            $vrSaldoCobrancas = $vrOrdemServico - $totalCobrancasAdicionadas;
-
-            if($vrSaldoCobrancas <= 0 ){
-                throw new OrdemServicoCobrancaException('Não há mais saldo para novas cobraças');   
-            }
-            
-            /*
-                'ordem_servico_id',
-                'forma_pagamento_id',
-                'operador_financeiro_id',
-                'plano_pagamento_id',
-                'filial_id',
-                'nr_doc',
-                'vencimento_manual',
-                'dt_vencimento_manual',
-                'vr_cobranca',
-                'vr_acrescimo',
-                'vr_final',
-                'user_id',
-                'user_update_id',
-                'active',
-            */
             $dadosRequest = [];
-            $dadosRequest['ordem_servico_id']           = $ordemServico->id;
-            $dadosRequest['forma_pagamento_id']         = $formaPagamento->id;
-            $dadosRequest['operador_financeiro_id']     = $operadorFinanceiro ? $operadorFinanceiro->id : null;
-            $dadosRequest['plano_pagamento_id']         = $planoPagamento->id;
-            $dadosRequest['filial_id']                  = $filial->id;
-            $dadosRequest['nr_doc']                     = $dados['nr_doc']                      ?? null;
-            $dadosRequest['vencimento_manual']          = $dados['vencimento_manual']           ?? 'no';
-            $dadosRequest['dt_vencimento_manual']       = $dados['dt_vencimento_manual']        ?? null;
-            $dadosRequest['vr_cobranca']                = Utilitarios::removeMaskMoney($dados['vr_cobranca']   ?? 0);
-            $dadosRequest['vr_acrescimo']               = Utilitarios::removeMaskMoney($dados['vr_acrescimo']  ?? 0);
-            $dadosRequest['vr_final']                   = $dadosRequest['vr_cobranca'] + $dadosRequest['vr_acrescimo'];
-            $dadosRequest['user_id']                    = \Auth::User()->id;//trocar pelo id do usuario logado
-            $dadosRequest['active']                     = 'yes';
+      
+            $dadosRequest['user_id']          = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['active']           = 'yes';
             
-            $vrProximoSaldo = $vrSaldoCobrancas - $dadosRequest['vr_final'];
-            
-            if($vrProximoSaldo < 0){
-                $difCob = abs($vrProximoSaldo);
-                if($difCob > 0.02){
-                    throw new OrdemServicoCobrancaException('Você tentou adicionar uma cobrança de '.number_format($dadosRequest['vr_final'], 2, ',', '.').', mas o saldo para novas cobranças é de '.number_format($vrSaldoCobrancas, 2, ',','.'));
-                }
-            }
-
-            $form = OrdemServicoCobranca::create($dadosRequest);
+            $form = PrazoPagamento::create($dadosRequest);
 
             \DB::commit();
             
             if(! $form){
-                throw new OrdemServicoCobrancaException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
+                throw new PrazoPagamentoExcepton('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
             }
 
             return response()->json(['mensagem'=>$form, 'class'=>'success'], 200);
 
-        }catch(OrdemServicoCobrancaException $e){
+        }catch(PrazoPagamentoExcepton $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage()], 404);
-            //return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
         }catch(\Error $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage()], 404);
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
         }catch(\Exception $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage()], 500);
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
@@ -188,12 +113,12 @@ class OrdemServicoCobrancaController extends Controller
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
             if($id <= 0){
-                throw new OrdemServicoCobrancaException('Parâmetro ínválido');
+                throw new PrazoPagamentoExcepton('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
-            $registro = OrdemServicoCobranca::where('active', '=', 'yes')
+            $registro = PrazoPagamento::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
             $registro->pessoa;
             //$dataItens = [];
@@ -211,14 +136,14 @@ class OrdemServicoCobrancaController extends Controller
 
 
             if($registro == null){
-                throw new OrdemServicoCobrancaException(' não encontrado');
+                throw new PrazoPagamentoExcepton(' não encontrado');
             }
            
             \DB::commit();
 
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
 
-        }catch(OrdemServicoCobrancaException $e){
+        }catch(PrazoPagamentoExcepton $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -294,23 +219,23 @@ class OrdemServicoCobrancaController extends Controller
                 return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
             }
 
-            $registro = OrdemServicoCobranca::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $registro = PrazoPagamento::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
             $dadosRequest = [];
-            $dadosRequest['nr_doc']                 = $dados['nr_doc'] ?? null;
+            $dadosRequest['name']                   = $dados['name'];
             $dadosRequest['user_update_id']         = \Auth::User()->id;
             $registro->update($dadosRequest);
 
 
             if(! $registro){
-                throw new OrdemServicoCobrancaException('Registro não encontrado');
+                throw new PrazoPagamentoExcepton('Registro não encontrado');
             }
             
             
             \DB::commit();
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
         
-        }catch(OrdemServicoCobrancaException $e){
+        }catch(PrazoPagamentoExcepton $e){
             \DB::rollback();
             return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
@@ -343,31 +268,33 @@ class OrdemServicoCobrancaController extends Controller
 
             }
 
-            $registro = OrdemServicoCobranca::where('active', '=', 'yes')
+            $registro = PrazoPagamento::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
             if(! $registro){
-                throw new OrdemServicoCobrancaException('Registro não identificado');
-               
+                return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
+            }else{
+
+                $registro = $registro->update(['active'=>'no']);
+
             }
 
-            $response = $registro->update(['active'=>'no']);
+            if($registro == null){
 
-            if($response == null){
-                throw new OrdemServicoCobrancaException('Erro ao exclir cobrança. Tente novamente ou entre em contato com o suporte.');
+                //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
+                //return redirect()->back();
+                 return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
             }
-
-            $registro->delete();
 
             \DB::commit();
             return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
         
-        }catch(OrdemServicoCobrancaException $e){
+        }catch(PrazoPagamentoExcepton $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage()], 404);
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
         }catch(\Error $e){
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage()], 404);
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
     
         }catch(\Exception $e){
             \DB::rollback();
@@ -403,17 +330,13 @@ class OrdemServicoCobrancaController extends Controller
 
             ];
 
-            $registro = \DB::table('operador_financeiros as opf')->join('pessoas as p', function($join){
+            $registro = \DB::table('prazo_pagamentos as pz')->join('forma_prazo as fpz', function($join){
                 
-                $join->on('opf.pessoa_id', '=', 'p.id');
+                $join->on('pz.id', '=', 'fpz.prazo_pagamento_id');
 
-            })->leftJoin('oper_forma_pgto as opfpgto', function($join){
+            })->join('forma_pagamentos as fpto', function($join){
                 
-                $join->on('opf.id', '=', 'opfpgto.oper_pagamentos_id');
-
-            })->leftJoin('forma_pagamentos as fpto', function($join){
-                
-                $join->on('opfpgto.forma_pagamentos_id', '=', 'fpto.id');
+                $join->on('fpz.forma_pagamento_id', '=', 'fpto.id');
 
             });
 
@@ -433,10 +356,10 @@ class OrdemServicoCobrancaController extends Controller
                                 }
                                 $val = explode(',', $val);
                                 
-                                $registro->whereIn('plgt.id', $val);
+                                $registro->whereIn('pz.id', $val);
                             }
                             break;
-                        case 'forma_pagamentos_id':
+                        case 'forma_pagamento_id':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -450,7 +373,7 @@ class OrdemServicoCobrancaController extends Controller
                                 $registro->whereIn('fpto.id', $val);
                             }
                             break;
-                        case 'nome_operador':
+                        case 'nome_plano':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -460,7 +383,7 @@ class OrdemServicoCobrancaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
                                 
-                                $registro->where('p.name', 'like' , '%'.$val.'%');
+                                $registro->where('pz.name', 'like' , '%'.$val.'%');
                             }
                             break;
                             case 'limite':
@@ -512,11 +435,11 @@ class OrdemServicoCobrancaController extends Controller
                 $registro->select($campos);
 
             }else{
-                $registro->select('opf.*', 'p.name', 'fpto.name as name_forma_pgto');
+                $registro->select('pz.*');
 
             }
             //$registro = \App\::where('active', '=', 'yes')->get();
-            $registro = $registro->where('opf.active', '=', 'yes')->get();
+            $registro = $registro->where('pz.active', '=', 'yes')->get();
 
 
             \DB::commit();
@@ -533,7 +456,7 @@ class OrdemServicoCobrancaController extends Controller
 
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
 
-        }catch(OrdemServicoCobrancaException $e){
+        }catch(PrazoPagamentoExcepton $e){
             \DB::rollback();
             return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
     
@@ -544,35 +467,14 @@ class OrdemServicoCobrancaController extends Controller
     }
 
 
-    /*
-        'ordem_servico_id',
-                'forma_pagamento_id',
-                'operador_financeiro_id',
-                'plano_pagamento_id',
-                'filial_id',
-                'nr_doc',
-                'vencimento_manual',
-                'dt_vencimento_manual',
-                'vr_cobranca',
-                'vr_acrescimo',
-                'vr_final',
-    */
+
     protected function validaRequest(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'ordem_servico_id'=> 'required|min:1',
-            'forma_pagamento_id'=> 'required|min:1',
-            'plano_pagamento_id'=> 'required|min:1',
-            'vr_cobranca'=> 'required|min:0.01',
+            'filial_id'=> 'required|min:1',
         ], [
-            'ordem_servico_id.required' => 'Informe uma ordem de serviço válida.',
-            'ordem_servico_id.min' => 'O código da ordem de serviço devere ser maior ou igual a :min.',
-            'forma_pagamento_id.required' => 'Informe uma forma de pagamento válida.',
-            'forma_pagamento_id.min' => 'O código da forma de pagamento deve ser maior ou igual a :min.',
-            'plano_pagamento_id.required' => 'Informe um plano de pagamento válido.',
-            'plano_pagamento_id.min' => 'O código od plano de pagamento deve ser maior ou igual a :min.',
-            'vr_cobranca.required' => 'Informe um valor de cobrança válido.',
-            'vr_cobranca.min' => 'O valor da cobrança deve ser maior ou igual a :min.',
+            'filial_id.required' => 'O campo "Filial" é obrigatório.',
+            'filial_id.min' => 'O "Filial" deve conter pelo menos :min caracteres.',
         ]);
         
         if($validator->fails()) {
@@ -582,7 +484,7 @@ class OrdemServicoCobrancaController extends Controller
                 $msg .= $mensagem.'<br/>';
             }
             
-            throw new OrdemServicoCobrancaException($msg);
+            throw new PrazoPagamentoExcepton($msg);
         }
 
         return true;
