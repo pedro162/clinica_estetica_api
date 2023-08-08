@@ -17,7 +17,7 @@ class CreatePlanoPagamentoPrazosTable extends Migration
             $table->id();
             $table->bigInteger('plano_pagamentos_id')->unsigned();
             $table->integer('qtdDias')->unsigned()->default(0);
-            $table->foreign('plano_pagamentos_id')->references('id')->on('plano_pagamentos')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('plano_pagamentos_id')->references('id')->on('=')->onDelete('cascade')->onUpdate('cascade');
             $table->enum('active',['yes', 'no'])->default('no');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');

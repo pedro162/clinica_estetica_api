@@ -40,7 +40,7 @@ class FormaPagamento extends Model
 
 	public function prazoPagamento()
     {
-        return $this->belongsToMany(PrazoPagamento::class, 'forma_prazo','forma_pagamento_id','prazo_pagamento_id')->withPivot('pcTaxa','vrTaxa','bandeira_cartao_id','user_id', "active");
+        return $this->belongsToMany(PrazoPagamento::class, 'forma_prazo','forma_pagamento_id','prazo_pagamento_id')->withPivot('forma_prazo.pcTaxa','forma_prazo.vrTaxa','forma_prazo.bandeira_cartao_id','forma_prazo.user_id', "forma_prazo.active");
     }
 	
 	 public function planoPagamento()

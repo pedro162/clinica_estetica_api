@@ -40,6 +40,10 @@ class OrdemServico extends Model
 		'pess_cancel_id',
 		'pess_concl_id',
 	];
+
+	public function getTable(){
+		return $this->table;
+	}
 	
 	public function cobrancaReceber()
 	{

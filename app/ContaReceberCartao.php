@@ -28,7 +28,6 @@ class ContaReceberCartao extends Model
         'conta_receber_id',
         'bandeira_cartao_id',
         'user_id',
-        'user_id',
         'user_update_id',
         'active',
     ];

@@ -12,14 +12,14 @@ use \App\Exceptions\OrdemServicoException;
 
 class OrdemServicoHelper{
 
-    public function gerarFinanceiro(int $id){
+    public function gerarFinanceiro(OrdemServico $ordemServico){
         
-        $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
-        if(! $registro){
+        if(! $ordemServico){
             throw new OrdemServicoException('Registro não encontrado');
         }
 
-        $cobrancas = $registro->cobranca;
+        $cobrancas  = $ordemServico->cobranca;
+        $pessoa     = $ordemServico->pessoa;
 
         if(! $cobrancas){
             throw new OrdemServicoException('Nenhuma cobrança foi encontrada pra a ordem de serviço informada');
@@ -30,20 +30,7 @@ class OrdemServicoHelper{
             $formaPagamento     = $obranca->formaPgto;
             $planoPagamento     = $obranca->planoPgto;
             $operadorFinanceiro = $obranca->operadorFinanceiro;
-
-            $cobRecebHelper = new ContaReceberHelper();
-            
-
-            $cobRecebHelper->gerarCobranca($formaPagamento->id,$planoPagamento->id, $operadorFinanceiro && $operadorFinanceiro->id);
-            
-
-        }
-
-        //--Second loop to data commit
-        foreach($cobrancas as $obranca){
-            $formaPagamento     = $obranca->formaPgto;
-            $planoPagamento     = $obranca->planoPgto;
-            $operadorFinanceiro = $obranca->operadorFinanceiro;
+        
             if(! $formaPagamento){
                 throw new OrdemServicoException('A forma de pagamento de código nº '.$obranca->forma_pagamento_id.' não foi identificada.');
             }
@@ -62,12 +49,49 @@ class OrdemServicoHelper{
                 }
             }
             
+            
+            $cobRecebHelper = new ContaReceberHelper();
+            $erros = $cobRecebHelper->validaGerCobranca($pessoa->id, $obranca->vr_final, $formaPagamento->id, $planoPagamento->id, $operadorFinanceiro->id ?? 0, []);
+        
+            if( (is_array($erros) && count($erros) > 0) ){
+                throw new OrdemServicoException(implode('<br/>', $erros));
+            }
+
+        }
+        
+        //--Second loop to data commit
+        foreach($cobrancas as $obranca){
+            $formaPagamento     = $obranca->formaPgto;
+            $planoPagamento     = $obranca->planoPgto;
+            $operadorFinanceiro = $obranca->operadorFinanceiro;
+
+            $cobRecebHelper = new ContaReceberHelper();
+            
+            $dados=[
+                'filial_id'=>$ordemServico->filial_id,
+                'referencia'=>$ordemServico->getTable(),
+                'referencia_id'=>$ordemServico->id,
+                'descricao'=>'Conta a receber ordem de serviço nº '.$ordemServico->id,
+                'responsavel_id'=>\Auth::User()->pessoa->id,
+        
+            ];
+            $cobRecebHelper->gerarCobranca($pessoa->id, $obranca->vr_final, $formaPagamento->id, $planoPagamento->id, $operadorFinanceiro->id ?? 0, $dados);
+            
 
         }
 
-        $dadosRequest = [];
-        $dadosRequest['user_update_id']         = \Auth::User()->id;
-        $registro->update($dadosRequest);
+        return $ordemServico;
+    }
 
+    public function marcarComoFaturada(OrdemServico $ordemServico){
+        
+        $dadosRequest = [];
+        $dadosRequest['is_faturado']        = 'yes';
+        $dadosRequest['td_faturamento']     = date('Y-m-d H:i:s');
+        $dadosRequest['pess_fat_id']        = \Auth::User()->pessoa->id;
+        $dadosRequest['user_update_id']     = \Auth::User()->id;
+        $ordemServico->update($dadosRequest);
+
+        return $ordemServico;
     }
 }

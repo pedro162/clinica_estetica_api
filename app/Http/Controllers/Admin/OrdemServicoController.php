@@ -18,6 +18,7 @@ use \App\Filial;
 use \App\Profissional;
 use \App\Rca;
 use \App\Utilitarios;
+use \App\Helpers\OrdemServicoHelper;
 use Illuminate\Support\Facades\Auth;
 
 class OrdemServicoController extends Controller
@@ -182,6 +183,15 @@ class OrdemServicoController extends Controller
             if(! $registro){
                 throw new OrdemServicoException('Registro não encontrado');
             }
+
+
+            $objOrdemHelper         = new OrdemServicoHelper();
+            $datacobReceberObjArr   = $objOrdemHelper->gerarFinanceiro($registro);
+            if( !$datacobReceberObjArr){
+                throw new OrdemServicoException('Não foi possível gerar o financeiro da ordem de serviço. Tente novamente ou entre em contato com o suporte.');
+            }
+            
+            $objOrdemHelper->marcarComoFaturada($registro);
             
             
             \DB::commit();
@@ -404,8 +414,9 @@ class OrdemServicoController extends Controller
                 throw new OrdemServicoException('Registro não encontrado');
             }
 
-            
-
+            $objOrdemHelper = new OrdemServicoHelper();
+            $objOrdemHelper->gerarFinanceiro($registro);
+            $objOrdemHelper->marcarComoFaturada($registro);
 
             if(! $registro){
                 throw new OrdemServicoException('Registro não encontrado');
@@ -820,18 +831,18 @@ class OrdemServicoController extends Controller
                                 $registro->whereIn('os.id', $val);
                             }
                             break;
-                        case 'nome_pssoa':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
+                            case 'nome_pssoa':
+                                if(is_string($val)){
+                                    
+                                    if($val[0] == ','){
+                                        $val = substr($val, 1);
+                                    } 
+                                    if($val[strlen($val) - 1] == ','){
+                                        $val = substr($val, 0, -1);
+                                    }
+                                    
+                                    $registro->where('pes.name', 'like' , '%'.$val.'%');
                                 }
-                                
-                                $registro->where('pes.name', 'like' , '%'.$val.'%');
-                            }
                             break;
                             case 'limite':
                                 $val = (int) $val;
