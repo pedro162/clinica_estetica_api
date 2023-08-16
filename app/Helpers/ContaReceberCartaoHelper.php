@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use \App\Utilitarios;
 use \App\ContaReceber;
+use \App\ContaReceberItem;
 use \App\FormaPagamento;
 use \App\PlanoPagamento;
 use \App\OperadorFinanceiro;
@@ -14,8 +15,8 @@ use \App\Exceptions\CobrancaReceberException;
 
 class ContaReceberCartaoHelper{
 
-    public function gerarCarteiraCartao(int $idCobrancaReceber, int $idBandeira, array $dados):array{
-        if(! ($idCobrancaReceber > 0)){
+    public function gerarCarteiraCartao(int $idCobrancaReceberItem, int $idBandeira, array $dados):array{
+        if(! ($idCobrancaReceberItem > 0)){
             throw new CobrancaReceberException('O parâmetro para contas a receber é inváido. Tente novamente ou entre em contato com o suporte.');
         }
 
@@ -26,11 +27,16 @@ class ContaReceberCartaoHelper{
         if(! (is_array($dados) && count($dados) > 0)){
             throw new CobrancaReceberException('O parâmetro para dados adicionais é inváido. Tente novamente ou entre em contato com o suporte.');
         }
-
-        $cobrancaReceber = ContaReceber::where('active', '=', 'yes')->where('id', '=', $idCobrancaReceber)->first();
+        
+        $cobrancaReceberItem = ContaReceberItem::where('active', '=', 'yes')->where('id', '=', $idCobrancaReceberItem)->first();
         //tipo_pagamento
+        if(! $cobrancaReceberItem){
+            throw new CobrancaReceberException('O cóntas a receber de código nº '.$idCobrancaReceberItem.' não foi identificado.');
+        }
+
+        $cobrancaReceber = $cobrancaReceberItem->contaReceber;
         if(! $cobrancaReceber){
-            throw new CobrancaReceberException('O cóntas a receber de código nº '.$idCobrancaReceber.' não foi identificado.');
+            throw new CobrancaReceberException('O cóntas a receber de código nº '.$cobrancaReceberItem->conta_receber_id.' não foi identificado.');
         }
         
         $objBandeira = BandeiraCartao::where('active', '=', 'yes')
@@ -109,6 +115,7 @@ class ContaReceberCartaoHelper{
                 'vr_outrasTaxas'=>0,
                 'status'=>$dados['status'] ?? 'pendente',
                 'conta_receber_id'=>$cobrancaReceber->id,
+                'cont_receb_item_id'=>$cobrancaReceberItem->id,
                 'user_id'=>\Auth::User()->id,
             
             ];//responsavel_id

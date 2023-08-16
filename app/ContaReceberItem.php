@@ -27,6 +27,8 @@ class ContaReceberItem extends Model
 		'vrJuros',
 		'status',
 		'forma_pagamentos_id',
+		'plano_pagamento_id',
+		'operador_financeiro_id',
 		'user_id',
 		'user_update_id',
 		'conta_receber_id',

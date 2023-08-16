@@ -26,6 +26,7 @@ class ContaReceberCartao extends Model
         'vr_outrasTaxas',
         'status',
         'conta_receber_id',
+        'cont_receb_item_id',
         'bandeira_cartao_id',
         'user_id',
         'user_update_id',
