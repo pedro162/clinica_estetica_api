@@ -40,11 +40,12 @@ class ContaReceberCartaoHelper{
         }
         
         $objBandeira = BandeiraCartao::where('active', '=', 'yes')
-        ->where('id', '=', $idBandeira);
+        ->where('id', '=', $idBandeira)->first();
         
         if(! $objBandeira){
-            throw new CobrancaReceberException('A forma de pagamento de código nº '.$idFormaPagamento.' não foi identificada.');
+            throw new CobrancaReceberException('A bandeira de cartão de código nº '.$idBandeira.' não foi identificada.');
         }
+        
 
         $objPessoa              = $cobrancaReceber->pessoa;   
         $objFormaPagamento      = $cobrancaReceber->formaPagamento;
@@ -61,7 +62,7 @@ class ContaReceberCartaoHelper{
         if(! $objFormaPagamento){
             throw new CobrancaReceberException('A forma de pagamento do contas a receber de código nº '.$cobrancaReceber->id.' não foi identificada.');
         }
-
+        
         /* if(! $objPrazo){
             throw new CobrancaReceberException('O prazo de pagamento de código nº '.$idPlanoPagamento.' não foi identificado.');
         } */
@@ -75,7 +76,7 @@ class ContaReceberCartaoHelper{
                 throw new CobrancaReceberException('O operador financeiro do contas a receber de código nº '.$cobrancaReceber->id.' não foi identificado.');
             }
         }
-
+        
         if( !$vrCobranca){
             throw new CobrancaReceberException('O valor da cobrança do contas a receber de código nº '.$cobrancaReceber->id.' é inválido.');
         }
@@ -85,7 +86,7 @@ class ContaReceberCartaoHelper{
         $dataParcelas       = [];
         $qtdDiasIntervalo   = $objPlanoPagamento->qtdDiasIntervaloParcelas ?? 0;
         $qtdDiasPriParcela  = $objPlanoPagamento->qtd_dias_pri_parcela ?? 0;
-        $vrParcelaBase      = $vrCobranca / $qtdParcelas;
+        $vrParcelaBase      = $vrCobranca / $qtdParcela;
         $vrParcelaBase      = number_format($vrParcelaBase, 2, '.', ',');
         $vrParcelaBase      = (float) $vrParcelaBase;
         
@@ -98,7 +99,7 @@ class ContaReceberCartaoHelper{
         //
         
         $vrTotalParelasGeradas = 0;
-
+        //throw new CobrancaReceberException('teste: '.$objBandeira->id.' = '.$cobrancaReceberItem->id);
         for($i=0; !($i == $qtdParcela); $i++){
             $dtVencimento = $objDtVencimento->format("Y-m-d H:i:s");
             $dataParcelas[] = [
@@ -113,13 +114,13 @@ class ContaReceberCartaoHelper{
                 'vr_taxa'=>0,
                 'pct_taxa'=>0,
                 'vr_outrasTaxas'=>0,
-                'status'=>$dados['status'] ?? 'pendente',
+                'status'=>$dados['status'] ?? 'aberto',
                 'conta_receber_id'=>$cobrancaReceber->id,
                 'cont_receb_item_id'=>$cobrancaReceberItem->id,
                 'user_id'=>\Auth::User()->id,
             
             ];//responsavel_id
-
+            
             if($qtdDiasIntervalo > 0){
 
                 $objDtVencimento->add(new \DateInterval('P'.$qtdDiasIntervalo.'D'));

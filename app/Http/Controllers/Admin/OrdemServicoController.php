@@ -88,6 +88,7 @@ class OrdemServicoController extends Controller
             $dadosRequest['status']           = $dados['status'] ?? 'aberto';
             $dadosRequest['pessoa_id']        = $pessoas->id;
             $dadosRequest['pessoa_rca_id']    = $pessoaRca->pessoa_id;
+            $dadosRequest['profissional_id']  = $profissional->id;
             $dadosRequest['filial_id']        = $filial->id;
             $dadosRequest['vrTotal']          = 0;
             $dadosRequest['vr_final']         = 0;
@@ -506,34 +507,7 @@ class OrdemServicoController extends Controller
                 }
             }
 
-            //---pegar todas as configurações da tela do usuário
-            //--- O valor do item e odesconto devem vir da tela do vendedor
-            //--- Se o valor do item for maior que o valor de tabela, fazer o valor do item como valor de tabela
-
-           /*  if($vrItem  < $servico->vrServico){
-                $vrDesconto = $servico->vrServico - $vrItem;
-                if(! ($vrDesconto > 0.01)){
-                    $vrDesconto     = 0;
-                    $pct_desconto   = 0;
-                    $vrItem         = $servico->vrServico;
-                }
-            }
-
-            if($servico->vrServico < $vrItem){
-
-                $vrAcres        = $vrItem - $servico->vrServico;
-                if(! ($vrAcres > 0.01)){
-                    $vrAcrecimos    = 0;                
-                    $pctAcrecimos   = 0;
-                }else{
-
-                    $pctAcrecimos   = ($vrAcres / $servico->vrServico);
-                    $vrAcrecimos    = $servico->vrServico * $pctAcrecimos;                
-                    $pctAcrecimos   = $pctAcrecimos * 100;
-                }
-                
-            }
-             */
+           
             
             $vrItem         = Utilitarios::removeMaskMoney($vrItem);
             $vrItemBruto    = Utilitarios::removeMaskMoney($vrItemBruto);

@@ -16,6 +16,7 @@ class ContaReceber extends Model
     protected $table = "conta_recebers";
 
     protected $fillable = [
+		'id',
     	'referencia_id',
 		'referencia',
 		'pessoa_id',

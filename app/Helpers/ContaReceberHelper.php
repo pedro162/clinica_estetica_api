@@ -9,8 +9,8 @@ use \App\FormaPagamento;
 use \App\PlanoPagamento;
 use \App\OperadorFinanceiro;
 use \App\ContaReceberCartao;
-use \App\ContaReceberCartaoHelper;
-use \App\ContaReceberItemHelper;
+use \App\Helpers\ContaReceberCartaoHelper;
+use \App\Helpers\ContaReceberItemHelper;
 use \App\Pessoa;
 use \App\Exceptions\CobrancaReceberException;
 
@@ -156,15 +156,16 @@ class ContaReceberHelper{
             $dtPagamento        = null;
             $dtBaixa            = null;
             $rashbaixa          = null;
-            $statusCobCartao    = 'aberto';
+            $statusCobCartao    = 'pago';//aberto
+            $dataCartoes        = [];
 
-            /* if(isset($dados['documento']) && strlen(trim($dados['documento'])) >= 3){
-                $statusCobCartao = 'pago';
-                $dtPagamento        = date('Y-m-d H:i:s');
-                $dtBaixa            = date('Y-m-d H:i:s');
-                $randId             = rand(111111111, 999999999);
-                $rashbaixa          = $objPessoa->id.''.$randId.''.date('ymdhis');
-            } */
+            if(isset($dados['documento']) && strlen(trim($dados['documento'])) >= 3){
+                $statusCobCartao    = 'pago';
+                //$dtPagamento        = date('Y-m-d H:i:s');
+                //$dtBaixa            = date('Y-m-d H:i:s');
+                //$randId             = rand(111111111, 999999999);
+                //$rashbaixa          = $objPessoa->id.''.$randId.''.date('ymdhis');
+            }
 
             $dataParcela = [
                 'pessoa_id'=>$objPessoa->id,
@@ -203,11 +204,20 @@ class ContaReceberHelper{
             //---- Salvo os itens da baixa----------------------------------------------
             if($statusCobCartao == 'pago'){
                 
-                $responseHelper = $objCobReceberItemHelp = new ContaReceberItemHelper(
+                $objCobReceberItemHelp = new ContaReceberItemHelper();
+                $errosEncontrados = $objCobReceberItemHelp->validaGerCobrancaItem(
                     $objCobReceber,$vrCobranca, $objFormaPagamento->id,
                     $objPlanoPagamento->id, $objOperadorFinanceiro->id ?? 0, $dataParcela
                 );
-                
+
+                if(is_array($errosEncontrados) && count($errosEncontrados) > 0){
+                    throw new CobrancaReceberException(implode('<br/>', $errosEncontrados));
+                }
+
+                $responseHelper = $objCobReceberItemHelp->gerarCobrancaItem(
+                    $objCobReceber,$vrCobranca, $objFormaPagamento->id,
+                    $objPlanoPagamento->id, $objOperadorFinanceiro->id ?? 0, $dataParcela
+                );
 
                 if(! $responseHelper){
                     throw new CobrancaReceberException('Não foi possível realizar a baixa do contas a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');

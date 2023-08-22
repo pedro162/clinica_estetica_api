@@ -11,7 +11,8 @@ class BandeiraCartao extends Model
 	protected $table="bandeira_cartaos";
 	protected $fillable = 
     [
-    	'name',
+    	'id',
+		'name',
 		'standard',
 		'user_id',
 		'user_update_id',

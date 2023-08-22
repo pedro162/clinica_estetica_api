@@ -71,6 +71,7 @@ class OrdemServicoHelper{
                 'filial_id'=>$ordemServico->filial_id,
                 'referencia'=>$ordemServico->getTable(),
                 'referencia_id'=>$ordemServico->id,
+                'documento'=>$obranca->nr_doc,
                 'descricao'=>'Conta a receber ordem de serviço nº '.$ordemServico->id,
                 'responsavel_id'=>\Auth::User()->pessoa->id,
         

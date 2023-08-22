@@ -39,6 +39,7 @@ class OrdemServico extends Model
 		'pess_fat_id',
 		'pess_cancel_id',
 		'pess_concl_id',
+		'profissional_id',
 	];
 
 	public function getTable(){

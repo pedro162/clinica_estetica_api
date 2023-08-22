@@ -8,8 +8,8 @@ use \App\ContaReceberItem;
 use \App\FormaPagamento;
 use \App\PlanoPagamento;
 use \App\OperadorFinanceiro;
-use \App\ContaReceberCartao;
-use \App\ContaReceberCartaoHelper;
+use \App\Helpers\ContaReceberCartao;
+use \App\Helpers\ContaReceberCartaoHelper;
 use \App\Pessoa;
 use \App\Exceptions\CobrancaReceberException;
 
@@ -76,7 +76,7 @@ class ContaReceberItemHelper{
 
 
         $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);        
-        $erros = $this->validaGerCobranca($idPessoa, $vrCobranca, $idFormaPagamento, $idPlanoPagamento, $idOperadorFinanceiro, $dados);
+        $erros = $this->validaGerCobrancaItem($objCobReceber, $vrCobranca, $idFormaPagamento, $idPlanoPagamento, $idOperadorFinanceiro, $dados);
         
         if( (is_array($erros) && count($erros) > 0) ){
             throw new CobrancaReceberException(implode('<br/>', $erros));
@@ -102,7 +102,7 @@ class ContaReceberItemHelper{
         $dtPagamento        = null;
         $dtBaixa            = null;
         $rashbaixa          = null;
-        $vrPago             = null;
+        $vrPago             = 0;
         $tpBaixa            = null;
         $tpStatusCobranca   = 'pago';//aberto
         $rashbaixa          = null;
@@ -133,7 +133,7 @@ class ContaReceberItemHelper{
                 'ds_estorno'=>null,
                 'vrBruto'=>$vrParcelaBase,
                 'vrLiquido'=>$vrParcelaBase,
-                'vrDevolvido'=>null,
+                'vrDevolvido'=>0,
                 'vrPago'=>$vrPago,
                 'vrTaxa'=>$dados['vrTaxa'] ?? null,
                 'vrDesconto'=>$dados['vrDesconto'] ?? null,
@@ -142,7 +142,7 @@ class ContaReceberItemHelper{
                 'forma_pagamentos_id'=>$objFormaPagamento->id,
                 'plano_pagamento_id'=>$objPlanoPagamento->id,
                 'operador_financeiro_id'=>$objOperadorFinanceiro->id ?? 0,
-                'user_id'\Auth::User()->id,
+                'user_id'=>\Auth::User()->id,
                 'conta_receber_id'=>$objCobReceber->id,
                 'pessoa_estorno_id'=>null,
                 'pessoa_baixa_id'=>null,
@@ -185,13 +185,14 @@ class ContaReceberItemHelper{
             $dtPagamento        = null;
             $dtBaixa            = null;
             $rashbaixa          = null;
-            $vrPago             = null;
+            $vrPago             = 0;
             $tpStatusCobranca    = 'aberto';
 
             if(isset($dados['documento']) && strlen(trim($dados['documento'])) >= 3){
                 $tpStatusCobranca = 'pago';
             }
-
+            //throw new CobrancaReceberException('Doc: '.$dados['documento']);
+           // $tpStatusCobranca = 'pago';
             //--- Defino alguns datos de baixa -----------------------------------
             if($tpStatusCobranca == 'pago'){
                 $dtPagamento        = date('Y-m-d H:i:s');
@@ -212,28 +213,28 @@ class ContaReceberItemHelper{
                 'ds_estorno'=>null,
                 'vrBruto'=>$vrParcelaBase,
                 'vrLiquido'=>$vrParcelaBase,
-                'vrDevolvido'=>null,
+                'vrDevolvido'=>0,
                 'vrPago'=>$vrPago,
-                'vrTaxa'=>$dataParcela['vrTaxa'] ?? null,
-                'vrDesconto'=>$dataParcela['vrDesconto'] ?? null,
-                'vrJuros'=>$dataParcela['vrJuros'] ?? null,
+                'vrTaxa'=>$dataParcela['vrTaxa'] ?? 0,
+                'vrDesconto'=>$dataParcela['vrDesconto'] ?? 0,
+                'vrJuros'=>$dataParcela['vrJuros'] ?? 0,
                 'status'=>$tpStatusCobranca,
                 'forma_pagamentos_id'=>$objFormaPagamento->id,
                 'plano_pagamento_id'=>$objPlanoPagamento->id,
                 'operador_financeiro_id'=>$objOperadorFinanceiro->id ?? 0,
-                'user_id'\Auth::User()->id,
+                'user_id'=>\Auth::User()->id,
                 'conta_receber_id'=>$objCobReceber->id,
                 'pessoa_estorno_id'=>null,
                 'pessoa_baixa_id'=>null,
                 'pessoa_devolucao_id'=>null,
                 'active'=>'yes',
                 'caixa_id'=>null,
-                'tpBaixa'=>'cartao',
+                'tpBaixa'=>'user',//cartao==Criar campo para adicionar essa informação
                 'rashBaixa'=>$rashbaixa,
             
             ];
             
-            $objCobReceberItem  = ContaReceberItem::crate($dataParcela);
+            $objCobReceberItem  = ContaReceberItem::create($dataParcela);
 
             if(! $objCobReceberItem){
                 throw new CobrancaReceberException('Não foi possível realizar a baixa do contas a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');
@@ -242,10 +243,10 @@ class ContaReceberItemHelper{
             //--- Salvo a carteira de cartões -----------------------------------
             
             $objCobCartHelper   = new ContaReceberCartaoHelper();
-            $idBandeira         = $dados['bandeira_cartao_id'] ?? null;
+            $idBandeira         = $dados['bandeira_cartao_id'] ?? 1;//Gravar a bandeira do cartão na tabela de cobranças
             $dataCartoes        = $objCobCartHelper->gerarCarteiraCartao($objCobReceberItem->id, $idBandeira,
                 [
-                    'status'=>'pendente', 'nr_doc'=>$dataParcela['nr_doc'] ?? $dataParcela['documento']
+                    'status'=>'aberto', 'nr_doc'=>$dataParcela['nr_doc'] ?? $dataParcela['documento']
                 ]
             );
 
