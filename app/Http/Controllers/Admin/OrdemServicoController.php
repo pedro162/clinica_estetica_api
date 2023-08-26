@@ -18,6 +18,7 @@ use \App\Filial;
 use \App\Profissional;
 use \App\Rca;
 use \App\Utilitarios;
+use \App\MotivoCancelamentoOrdemServico;
 use \App\Helpers\OrdemServicoHelper;
 use Illuminate\Support\Facades\Auth;
 
@@ -194,6 +195,60 @@ class OrdemServicoController extends Controller
             
             $objOrdemHelper->marcarComoFaturada($registro);
             
+            
+            \DB::commit();
+            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
+        
+        }catch(OrdemServicoException $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Error $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+        }
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function cancelar(Request $request, $id)
+    {
+
+        try{
+
+
+            $this->validaCancelarRequest($request);
+
+            \DB::beginTransaction();
+
+            $dados = $request->all();
+
+            $id             = $id ?? $dados['id'];
+            $callBack       = $dados['callBack'] ?? '';
+            $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
+            if( (!isset($id)) || ($id <= 0)){
+                throw new OrdemServicoException('Parâmetro inválido');
+            }
+
+            $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            if(! $registro){
+                throw new OrdemServicoException('Ordem de serviço não identificada. Tente novamente ou entre em contato com o suporte.');
+            }
+
+            $idMotivoCancel = $dados['motivo_cancel_id'] ?? 0;
+           
+            $objOrdemHelper         = new OrdemServicoHelper();
+            $objOrdemHelper->cancelarOrdemServico($registro, $idMotivoCancel);
             
             \DB::commit();
             return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
@@ -947,4 +1002,27 @@ class OrdemServicoController extends Controller
 
         return true;
     }
+
+    protected function validaCancelarRequest(Request $request){
+    
+            $validator = Validator::make($request->all(),[
+                'motivo_cancel_id'=> 'required|min:',
+            ], [
+                'motivo_cancel_id.required' => 'O campo "Motivo de cancelamento" é obrigatório.',
+                'motivo_cancel_id.min' => 'O "Motivo de cancelamento" deve ser maior ou igual a :min.',
+            ]);
+            
+            if($validator->fails()) {
+                $errors = $validator->errors();
+                $msg = '';
+                foreach($errors->all() as $mensagem){
+                    $msg .= $mensagem.'<br/>';
+                }
+                
+                throw new OrdemServicoException($msg);
+            }
+    
+            return true;
+
+    } 
 }

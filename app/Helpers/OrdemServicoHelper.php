@@ -8,6 +8,7 @@ use \App\Helpers\ContaReceberHelper;
 use \App\FormaPagamento;
 use \App\PlanoPagamento;
 use \App\OperadorFinanceiro;
+use \App\MotivoCancelamentoOrdemServico;
 use \App\Exceptions\OrdemServicoException;
 
 class OrdemServicoHelper{
@@ -26,6 +27,7 @@ class OrdemServicoHelper{
         }
 
         //---- Primerio loop só para validações
+        $vrTotalCobrancas = 0;
         foreach($cobrancas as $obranca){
             $formaPagamento     = $obranca->formaPgto;
             $planoPagamento     = $obranca->planoPgto;
@@ -49,6 +51,7 @@ class OrdemServicoHelper{
                 }
             }
             
+            $vrTotalCobrancas += $obranca->vr_final;
             
             $cobRecebHelper = new ContaReceberHelper();
             $erros = $cobRecebHelper->validaGerCobranca($pessoa->id, $obranca->vr_final, $formaPagamento->id, $planoPagamento->id, $operadorFinanceiro->id ?? 0, []);
@@ -57,6 +60,19 @@ class OrdemServicoHelper{
                 throw new OrdemServicoException(implode('<br/>', $erros));
             }
 
+        }
+
+        $difAbsCobOs = $ordemServico->vr_final - $vrTotalCobrancas;
+        $difAbsCobOs = abs($difAbsCobOs);
+
+        if($ordemServico->vr_final > $vrTotalCobrancas){
+            if($difAbsCobOs > 0.02){
+                throw new OrdemServicoException('Informe, por favor, o saldo restante das cobranças. O saldo restante é de : '.(number_format($difAbsCobOs, 2, ',', '.')));
+            }
+        }
+
+        if($difAbsCobOs > 0.02){
+            throw new OrdemServicoException('O total das cobraças é diferente do todal da ordem de serviço');
         }
         
         //--Second loop to data commit
@@ -95,5 +111,25 @@ class OrdemServicoHelper{
 
         return $ordemServico;
         //
+    }
+
+    public function cancelarOrdemServico(OrdemServico $ordemServico, int $idMotivo){
+        if(! $idMotivo){
+            throw new OrdemServicoException('Motivo de cancelamento não identificado. Tente novamente ou entre em contato com o suporte.');
+        }
+        $objMotivoCancel = MotivoCancelamentoOrdemServico::where('active', '=', 'yes')->where('id', '=', $idMotivo)->first();
+        if(! $objMotivoCancel){
+            throw new OrdemServicoException('Motivo de cancelamento não identificado. Tente novamente ou entre em contato com o suporte.');
+        }
+
+        $dadosRequest = [];
+        $dadosRequest['motivo']             = $objMotivoCancel->id;
+        $dadosRequest['status']             = 'cancelado';
+        $dadosRequest['td_cancelamento']    = date('Y-m-d H:i:s');
+        $dadosRequest['pess_cancel_id']     = \Auth::User()->pessoa->id;
+        $dadosRequest['user_update_id']     = \Auth::User()->id;
+        $ordemServico->update($dadosRequest);
+
+        return $ordemServico;
     }
 }

@@ -566,6 +566,8 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::post('/ordem/servico/info/{id}', ['as'=>'ordem.servico.info', 'uses'=>'Admin\OrdemServicoController@info']);
 	Route::get('/ordem/servico/destroy/{id}', ['as'=>'ordem.servico.destroy', 'uses'=>'Admin\OrdemServicoController@destroy']);
 	Route::put('/ordem/servico/finalizar/{id}', ['as'=>'ordem.servico.finalizar', 'uses'=>'Admin\OrdemServicoController@finalizar']);
+	Route::put('/ordem/servico/cancelar/{id}', ['as'=>'ordem.servico.cancelar', 'uses'=>'Admin\OrdemServicoController@cancelar']);
+	
 	
 	Route::get('/ordem/servico/item/json', ['as'=>'ordem.servico.item.json', 'uses'=>'Admin\ServicoItemController@json']);
 	Route::post('/ordem/servico/item/json', ['as'=>'ordem.servico.item.json', 'uses'=>'Admin\ServicoItemController@json']);
@@ -597,7 +599,17 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::post('/ordem/servico/cobranca/info/{id}', ['as'=>'ordem.servico.cobranca.info', 'uses'=>'Admin\OrdemServicoCobrancaController@info']);
 	Route::get('/ordem/servico/cobranca/destroy/{id}', ['as'=>'ordem.servico.cobranca.destroy', 'uses'=>'Admin\OrdemServicoCobrancaController@destroy']);
 
-	
+
+	Route::get('/motivo/cancelamento/ordem/servico/json', ['as'=>'motivo.cancelamento.ordem.servico.json', 'uses'=>'Admin\MotivoCancelamentoOrdemServicoController@json']);
+	Route::post('/motivo/cancelamento/ordem/servico/json', ['as'=>'motivo.cancelamento.ordem.servico.json', 'uses'=>'Admin\MotivoCancelamentoOrdemServicoController@json']);
+	Route::post('/motivo/cancelamento/ordem/servico/store', ['as'=>'motivo.cancelamento.ordem.servico.store', 'uses'=>'Admin\MotivoCancelamentoOrdemServicoController@store']);
+	Route::get('/motivo/cancelamento/ordem/servico/edit/{id}', ['as'=>'motivo.cancelamento.ordem.servico.edit', 'uses'=>'Admin\MotivoCancelamentoOrdemServicoController@edit']);
+	Route::post('/motivo/cancelamento/ordem/servico/edit/{id}', ['as'=>'motivo.cancelamento.ordem.servico.edit', 'uses'=>'Admin\MotivoCancelamentoOrdemServicoController@edit']);
+	Route::put('/motivo/cancelamento/ordem/servico/update/{id}', ['as'=>'motivo.cancelamento.ordem.servico.update', 'uses'=>'Admin\MotivoCancelamentoOrdemServicoController@update']);
+	Route::get('/motivo/cancelamento/ordem/servico/info/{id}', ['as'=>'motivo.cancelamento.ordem.servico.info', 'uses'=>'Admin\MotivoCancelamentoOrdemServicoController@info']);
+	Route::post('/motivo/cancelamento/ordem/servico/info/{id}', ['as'=>'motivo.cancelamento.ordem.servico.info', 'uses'=>'Admin\MotivoCancelamentoOrdemServicoController@info']);
+	Route::get('/motivo/cancelamento/ordem/servico/destroy/{id}', ['as'=>'motivo.cancelamento.ordem.servico.destroy', 'uses'=>'Admin\MotivoCancelamentoOrdemServicoController@destroy']);
+
 	
 });
 
