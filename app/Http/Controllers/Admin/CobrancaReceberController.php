@@ -174,6 +174,162 @@ class CobrancaReceberController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function json(Request $request)
+    {
+        try{
+            \DB::beginTransaction();
+
+            $consulta = $request->all();
+            $campos =  null;
+            $parse = [
+               
+            ];
+
+            $registro = \DB::table('conta_recebers as cr');
+            $registro->join('pessoas', function($join){                
+                $join->on('pessoas.id', '=', 'cr.pessoa_id');
+
+            })->join('filials as fl', function($join){
+                
+                $join->on('cr.filial_id', '=', 'fl.id');
+
+            })->join('pessoas as pesfl', function($join){
+                
+                $join->on('fl.pessoa_id', '=', 'pesfl.id');
+
+            });
+            
+            if(is_array($consulta) && count($consulta) > 0){
+                foreach($consulta as $key=>$val){
+                    
+                    switch(trim($key)){
+                        case 'id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('cr.id', $val);
+                            }
+                            break;
+                        case 'nmPessoa':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                
+                                $registro->where('pessoas.name', 'like' , '%'.$val.'%');
+                            }
+                            break;
+                        case 'pessoa_id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('pessoas.id', $val);
+                            }
+                            break;
+                        case 'limite':
+                                $val = (int) $val;
+                                if(is_integer($val) && $val > 0){
+                                        
+                                   $registro->limit($val);
+                                }
+                            break;
+                        case 'ordem':
+
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $val = explode(',', $val);
+                                for($i= 0; !($i == count($val)); $i++) {
+                                    $atual = explode('-', $val[$i]);
+                                    if(array_key_exists(trim($atual[0]), $parse)){
+
+                                        $parsed = $parse[trim($atual[0])];
+                                        
+                                        if($parsed){
+                                           
+                                            $registro->orderBy($parsed,$atual[1]);
+                                        }
+                                    }
+                                    
+                                    
+                                }
+
+                                break;
+
+                        case'campos':
+                                if(is_array($val) && count($val) > 0){
+                                    //$campos = $this->montaCamposConsulta($registro, $val);
+                                    
+                                }
+                            break;
+
+                    }
+                }
+            }
+            if($campos){
+                $registro->select($campos);
+            }else{
+                $registro->select('cr.*', 'pessoas.name', 'pesfl.name as name_filial');
+
+            }
+           
+            $registro = $registro->where('cr.active', '=', 'yes')
+            ->where('pessoas.active', '=', 'yes')->get();
+
+            \DB::commit();
+            
+            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
+                $dataToRequest = [];
+                foreach($registro as $reg){
+                    $dataToRequest[] = ['label'=>$reg->name, 'value'=>$reg->id];
+                }
+
+                $registro = $dataToRequest;
+            }
+
+            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
+
+
+        }catch(CobrancaReceberException $e){
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+        }
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
