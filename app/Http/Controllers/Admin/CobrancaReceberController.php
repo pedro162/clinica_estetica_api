@@ -47,6 +47,9 @@ class CobrancaReceberController extends Controller
             $registro->join('pessoas', function($join){                
                 $join->on('pessoas.id', '=', 'conta_recebers.pessoa_id');
 
+            })->join('forma_pagamentos as fp', function($join){                
+                $join->on('fp.id', '=', 'conta_recebers.forma_pagamento_id');
+
             });
             
             if(is_array($consulta) && count($consulta) > 0){
@@ -142,7 +145,7 @@ class CobrancaReceberController extends Controller
             if($campos){
                 $registro->select($campos);
             }else{
-                $registro->select('conta_recebers.*', 'pessoas.name');
+                $registro->select('conta_recebers.*', 'IFNUL(conta_recebers.vrLiquido, 0) - (IFNUL(conta_recebers.vrPago, 0) + IFNUL(conta_recebers.vrDevolvido, 0)) as vrAberto', 'pessoas.name', 'fp.cdCobrancaTipo', 'fp.name as name_cob_tp');
 
             }
            
@@ -200,6 +203,9 @@ class CobrancaReceberController extends Controller
             })->join('pessoas as pesfl', function($join){
                 
                 $join->on('fl.pessoa_id', '=', 'pesfl.id');
+
+            })->join('forma_pagamentos as fp', function($join){                
+                $join->on('fp.id', '=', 'cr.forma_pagamento_id');
 
             });
             
@@ -293,10 +299,18 @@ class CobrancaReceberController extends Controller
                     }
                 }
             }
+            $sqlDsReferencia ='(
+                    CASE 
+                        WHEN cr.referencia = "ordem_servicos" THEN "Ordem de serviço"
+                        ELSE "Referência não mapeada"
+                    END
+                )
+                as dsReferencia
+            ';
             if($campos){
                 $registro->select($campos);
             }else{
-                $registro->select('cr.*', 'pessoas.name', 'pesfl.name as name_filial');
+                $registro->select('cr.*',\DB::raw('(IFNULL(cr.vrLiquido, 0) - (IFNULL(cr.vrPago, 0) + IFNULL(cr.vrDevolvido, 0)))  vrAberto'), \DB::raw($sqlDsReferencia), 'fp.cdCobrancaTipo', 'fp.name as name_cob_tp', 'pessoas.name', 'pesfl.name as name_filial');
 
             }
            
