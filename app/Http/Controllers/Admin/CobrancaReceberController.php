@@ -228,6 +228,7 @@ class CobrancaReceberController extends Controller
                             }
                             break;
                         case 'nmPessoa':
+                        case 'pessoa_name':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -252,6 +253,36 @@ class CobrancaReceberController extends Controller
                                 $val = explode(',', $val);
                                 
                                 $registro->whereIn('pessoas.id', $val);
+                            }
+                            break;                        
+                        case 'referencia_id':
+                                if(is_string($val)){
+                                    
+                                    if($val[0] == ','){
+                                        $val = substr($val, 1);
+                                    } 
+                                    if($val[strlen($val) - 1] == ','){
+                                        $val = substr($val, 0, -1);
+                                    }
+                                }
+
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('cr.referencia_id', $val);
+                            break;
+                                                
+                        case 'referencia':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('cr.referencia', $val);
                             }
                             break;
                         case 'limite':

@@ -396,7 +396,7 @@ class OrdemServicoController extends Controller
     {
         try{
 
-            $this->validaRequest($request);
+            //$this->validaRequest($request);
 
             \DB::beginTransaction();
 
@@ -407,13 +407,14 @@ class OrdemServicoController extends Controller
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
             if( (!isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+                throw new OrdemServicoException('Parâmetro inválido');
             }
 
             $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
             $dadosRequest = [];
-            $dadosRequest['user_update_id']         = \Auth::User()->id;
+            $dadosRequest['observacao']         = $dados['observacao'] ?? null;
+            $dadosRequest['user_update_id']     = \Auth::User()->id;
             $registro->update($dadosRequest);
 
 
