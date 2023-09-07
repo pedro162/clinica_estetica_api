@@ -505,6 +505,62 @@ class OrdemServicoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function finalizarProcedimento(Request $request, $id)
+    {
+        try{
+
+            //$this->validaRequest($request);
+
+            \DB::beginTransaction();
+
+            $dados = $request->all();
+
+            $id             = $id ?? $dados['id'];
+            $callBack       = $dados['callBack'] ?? '';
+            $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
+            if( (!isset($id)) || ($id <= 0)){
+                throw new OrdemServicoException('Parâmetro inválido');
+            }
+
+            $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            if(! $registro){
+                throw new OrdemServicoException('Registro não encontrado');
+            }
+
+            $objOrdemHelper = new OrdemServicoHelper();
+            $objOrdemHelper->marcarFinalizada($registro);
+            //td_conclusao
+            if(! $registro){
+                throw new OrdemServicoException('Registro não encontrado');
+            }
+            
+            
+            \DB::commit();
+            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
+        
+        }catch(OrdemServicoException $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Error $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+        }
+
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function adicionarItem(Request $request, $id)
     {
         try{
@@ -811,6 +867,7 @@ class OrdemServicoController extends Controller
 
             $consulta = $request->all();
             //dd($consulta);
+            $ordem = $consulta['ordem'] ?? 'id-desc';
 
             $parse = [
 
@@ -927,7 +984,12 @@ class OrdemServicoController extends Controller
 
             }
             //$registro = \App\::where('active', '=', 'yes')->get();
-            $registro = $registro->where('os.active', '=', 'yes')->get();
+            $ordemArr   = explode('-', $ordem);
+            
+            $oremCampo  = $ordemArr[0];
+            $oremTipo  = $ordemArr[1];
+
+            $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
 
 
             \DB::commit();

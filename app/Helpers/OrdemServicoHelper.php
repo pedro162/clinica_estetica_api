@@ -113,6 +113,17 @@ class OrdemServicoHelper{
         //
     }
 
+    public function marcarFinalizada(OrdemServico $ordemServico){
+        
+        $dadosRequest = [];
+        $dadosRequest['td_conclusao']     = date('Y-m-d H:i:s');
+        $dadosRequest['user_update_id']     = \Auth::User()->id;
+        $ordemServico->update($dadosRequest);
+
+        return $ordemServico;
+        //
+    }
+
     public function cancelarOrdemServico(OrdemServico $ordemServico, int $idMotivo){
         if(! $idMotivo){
             throw new OrdemServicoException('Motivo de cancelamento não identificado. Tente novamente ou entre em contato com o suporte.');

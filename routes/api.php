@@ -569,6 +569,7 @@ Route::group(['middleware' => ['auth:api']], function(){
 	Route::get('/ordem/servico/destroy/{id}', ['as'=>'ordem.servico.destroy', 'uses'=>'Admin\OrdemServicoController@destroy']);
 	Route::put('/ordem/servico/finalizar/{id}', ['as'=>'ordem.servico.finalizar', 'uses'=>'Admin\OrdemServicoController@finalizar']);
 	Route::put('/ordem/servico/cancelar/{id}', ['as'=>'ordem.servico.cancelar', 'uses'=>'Admin\OrdemServicoController@cancelar']);
+	Route::put('/ordem/servico/finalizar/procedimento/{id}', ['as'=>'ordem.servico.finalizar.procedimento', 'uses'=>'Admin\OrdemServicoController@finalizarProcedimento']);
 	
 	
 	Route::get('/ordem/servico/item/json', ['as'=>'ordem.servico.item.json', 'uses'=>'Admin\ServicoItemController@json']);
