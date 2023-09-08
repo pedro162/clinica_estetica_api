@@ -42,9 +42,12 @@ class CreateMotivoCancelamentoOrdemServicosTable extends Migration
         Schema::table('ordem_servicos', function (Blueprint $table) {
 
             $table->dropForeign('motivo_cancelamento_ordem_servicos_mt_calcel_id_foreign');
+            $table->dropColumn([
+                'mt_calcel_id'
+            ]);
 
         });
-
+        
         Schema::dropIfExists('motivo_cancelamento_ordem_servicos');
     }
 }

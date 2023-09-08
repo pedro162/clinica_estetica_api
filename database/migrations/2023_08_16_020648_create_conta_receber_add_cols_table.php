@@ -42,13 +42,20 @@ class CreateContaReceberAddColsTable extends Migration
 
             $table->dropForeign('conta_receber_items_plano_pagamento_id_foreign');
             $table->dropForeign('conta_receber_items_operador_financeiro_id_foreign');
+            $table->dropColumn([
+                'plano_pagamento_id','operador_financeiro_id',
+            ]);
 
         });
 
         Schema::table('conta_receber_cartaos', function (Blueprint $table) {
 
             $table->dropForeign('conta_receber_cartaos_cont_receb_item_id_foreign');
+            $table->dropColumn([
+                'cont_receb_item_id'
+            ]);
 
         });
+
     }
 }

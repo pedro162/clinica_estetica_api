@@ -104,8 +104,24 @@ class OrdemServicoHelper{
         
         $dadosRequest = [];
         $dadosRequest['is_faturado']        = 'yes';
+        $dadosRequest['type']               = 'pedido';
         $dadosRequest['td_faturamento']     = date('Y-m-d H:i:s');
         $dadosRequest['pess_fat_id']        = \Auth::User()->pessoa->id;
+        $dadosRequest['user_update_id']     = \Auth::User()->id;
+        $ordemServico->update($dadosRequest);
+
+        return $ordemServico;
+        //
+    }
+
+    public function marcarComoOrcamento(OrdemServico $ordemServico){
+        
+        $dadosRequest = [];
+        $dadosRequest['is_faturado']        = 'no';
+        $dadosRequest['is_orcamento']       = 'yes';
+        $dadosRequest['type']               = 'orcamento';
+        $dadosRequest['td_faturamento']     = null;
+        $dadosRequest['pess_fat_id']        = null;
         $dadosRequest['user_update_id']     = \Auth::User()->id;
         $ordemServico->update($dadosRequest);
 
@@ -116,12 +132,14 @@ class OrdemServicoHelper{
     public function marcarFinalizada(OrdemServico $ordemServico){
         
         $dadosRequest = [];
-        $dadosRequest['td_conclusao']     = date('Y-m-d H:i:s');
+        $dadosRequest['td_conclusao']       = date('Y-m-d H:i:s');
+        $dadosRequest['status']             = 'concluido';
         $dadosRequest['user_update_id']     = \Auth::User()->id;
         $ordemServico->update($dadosRequest);
 
         return $ordemServico;
-        //
+        //'type',
+		//'is_orcamento'
     }
 
     public function cancelarOrdemServico(OrdemServico $ordemServico, int $idMotivo){

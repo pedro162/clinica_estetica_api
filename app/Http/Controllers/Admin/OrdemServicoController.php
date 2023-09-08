@@ -460,6 +460,7 @@ class OrdemServicoController extends Controller
 
             $id             = $id ?? $dados['id'];
             $callBack       = $dados['callBack'] ?? '';
+            $isOrcamento    = $dados['is_orcamento'] ?? 'no';
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
             if( (!isset($id)) || ($id <= 0)){
@@ -472,8 +473,14 @@ class OrdemServicoController extends Controller
             }
 
             $objOrdemHelper = new OrdemServicoHelper();
-            $objOrdemHelper->gerarFinanceiro($registro);
-            $objOrdemHelper->marcarComoFaturada($registro);
+
+            if($isOrcamento == 'yes' || trim($isOrcamento) == 'sim' || $isOrcamento === true){                
+                $objOrdemHelper->marcarComoOrcamento($registro);
+            }else{
+                
+                $objOrdemHelper->gerarFinanceiro($registro);
+                $objOrdemHelper->marcarComoFaturada($registro);
+            }
 
             if(! $registro){
                 throw new OrdemServicoException('Registro não encontrado');
