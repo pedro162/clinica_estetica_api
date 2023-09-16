@@ -36,7 +36,7 @@ class NfeController extends Controller
         Modelo físico
 
 
-    */ 
+    */
 
 
     /**
@@ -57,7 +57,7 @@ class NfeController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     /**
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -65,19 +65,19 @@ class NfeController extends Controller
     public function create()
     {
 
-        try{
-            
+        try {
+
 
             $objFacade = new FacadeNfe();
             $validadorXml = new VaidateNfe();
             $nfe = new Nfe($objFacade);
-            
+
             $autorizarAcessoPessoaXml = true;
 
-          //  $configJson = $nfe->config('Pedro','MA', '03810070000101','AAAAAAA', 'GPB0JBWLUR6HWFTVEAS6RJ69GPCROFPBBB8G', '000001', 'PL_009_V4', '4.00', date('Y-m-d H:i:s'), 2);
+            //  $configJson = $nfe->config('Pedro','MA', '03810070000101','AAAAAAA', 'GPB0JBWLUR6HWFTVEAS6RJ69GPCROFPBBB8G', '000001', 'PL_009_V4', '4.00', date('Y-m-d H:i:s'), 2);
             //$pfxcontent = $nfe->getCertificade(public_path('config/certificado.pfx'));
-           // $tools = new Tools($configJson, Certificate::readPfx($pfxcontent, 'associacao'));
-           // $tools->disableCertValidation(true); //tem que desabilitar
+            // $tools = new Tools($configJson, Certificate::readPfx($pfxcontent, 'associacao'));
+            // $tools->disableCertValidation(true); //tem que desabilitar
             //$tools->model('55');
 
 
@@ -91,11 +91,11 @@ class NfeController extends Controller
 
             $apenas = ['versao', 'Id', 'pk_nItem'];
             $errors = $validadorXml->Emitente($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
+            if (is_array($errors) && (count($errors) > 0)) {
                 //
             }
             $nfe->infNfe($dados);
-            
+
             //---------------------------------------------------------------------------
             $dados              = [];
             $dados['cUF']       = '52'; //codigo numerico do estado
@@ -107,7 +107,7 @@ class NfeController extends Controller
             $dados['nNF']       = '10'; // numero da NFe 
             $dados['dhEmi']     = date("Y-m-d\TH:i:sP");;
             $dados['dhSaiEnt']  = date("Y-m-d\TH:i:sP"); // Nâo informar para nfce
-            $dados['tpNF']      = '1'; 
+            $dados['tpNF']      = '1';
             $dados['idDest']    = '1'; //1=Operação interna; 2=Operação interestadual; 3=Operação com exterior.
             $dados['cMunFG']    = '5200258';
             $dados['tpImp']     = '1';
@@ -117,41 +117,41 @@ class NfeController extends Controller
             $dados['finNFe']    = '1';  //1=NF-e normal; 2=NF-e complementar; 3=NF-e de ajuste; 4=Devolução/Retorno.
             $dados['indFinal']  = '0';  //0=Normal; 1=Consumidor final;       
             $dados['indPres']   = '9';  //0=Não se aplica (por exemplo, Nota Fiscal complementar ou de ajuste);
-                                        //1=Operação presencial;
-                                        //2=Operação não presencial, pela Internet;
-                                        //3=Operação não presencial, Teleatendimento;
-                                        //4=NFC-e em operação com entrega a domicílio;
-                                        //9=Operação não presencial, outros.
-            
+            //1=Operação presencial;
+            //2=Operação não presencial, pela Internet;
+            //3=Operação não presencial, Teleatendimento;
+            //4=NFC-e em operação com entrega a domicílio;
+            //9=Operação não presencial, outros.
+
             $dados['procEmi']   = '0';  //0=Emissão de NF-e com aplicativo do contribuinte;
-                                        //1=Emissão de NF-e avulsa pelo Fisco;
-                                        //2=Emissão de NF-e avulsa, pelo contribuinte com seu certificado digital, através do site do Fisco;
-                                        //3=Emissão NF-e pelo contribuinte com aplicativo fornecido pelo Fisco.
+            //1=Emissão de NF-e avulsa pelo Fisco;
+            //2=Emissão de NF-e avulsa, pelo contribuinte com seu certificado digital, através do site do Fisco;
+            //3=Emissão NF-e pelo contribuinte com aplicativo fornecido pelo Fisco.
             $dados['dhCont']    = '';   //entrada em contingência AAAA-MM-DDThh:mm:ssTZD
             $dados['xJust']     = '';   //Justificativa da entrada em contingência
             $dados['verProc']   = '1,0'; //versão do aplicativo emissor
-            
-            $apenas =[
-                'cUF','cNF','natOp','mod', 'serie', 'nNF', 'dhEmi', 'dhSaiEnt', 'tpNF', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'procEmi', 'verProc'
+
+            $apenas = [
+                'cUF', 'cNF', 'natOp', 'mod', 'serie', 'nNF', 'dhEmi', 'dhSaiEnt', 'tpNF', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'procEmi', 'verProc'
             ];
             $errors = $validadorXml->IdentificacaoDaNota($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
+            if (is_array($errors) && (count($errors) > 0)) {
                 //
             }
 
             $nfe->IdentificacaoDaNota($dados);
 
-            
+
 
             //---------------------------------------
             //Node referente a NFe referenciada
             $dados              = [];
             $dados['refNFe']       = '35150271780456000160550010000253101000253101'; //codigo numerico do estado
-            $apenas =[
+            $apenas = [
                 'refNFe'
             ];
             $errors = $validadorXml->nfReferenciada($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
+            if (is_array($errors) && (count($errors) > 0)) {
                 //
             }
 
@@ -168,13 +168,13 @@ class NfeController extends Controller
             $dados['CRT']       = '1';
             $dados['CNPJ']      = '03810070000101'; //indicar apenas um CNPJ ou CPF
             $dados['CPF']       = null;
-            
-            $apenas =[
-                'xNome','CNPJ','CRT',
+
+            $apenas = [
+                'xNome', 'CNPJ', 'CRT',
             ];
 
             $errors = $validadorXml->Emitente($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
+            if (is_array($errors) && (count($errors) > 0)) {
                 //
             }
             $nfe->Emitente($dados);
@@ -194,18 +194,18 @@ class NfeController extends Controller
             $dados['cPais']     = '1058';
             $dados['xPais']     = 'BRAZIL';
             $dados['fone']      = '98984257623';
-            $apenas =[
-                'xLgr','nro','xBairro','cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais', 
+            $apenas = [
+                'xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais',
             ];
             $errors = $validadorXml->enderecoEmitente($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
+            if (is_array($errors) && (count($errors) > 0)) {
                 //
             }
 
             $nfe->enderecoEmitente($dados);
 
             //------------------------------------------------------------------------------
-            
+
             $dados                      = [];
             $dados['xNome']             = 'Luciana';
             $dados['indIEDest']         = 1;
@@ -217,11 +217,11 @@ class NfeController extends Controller
             $dados['CPF']               = null;
             $dados['CEP']               = null;
             $dados['idEstrangeiro']     = null;
-            $apenas =[
-                'xNome','IE','email','CNPJ'
+            $apenas = [
+                'xNome', 'IE', 'email', 'CNPJ'
             ];
             $errors = $validadorXml->Destinatario($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
+            if (is_array($errors) && (count($errors) > 0)) {
                 //
             }
             $nfe->Destinatario($dados);
@@ -240,18 +240,18 @@ class NfeController extends Controller
             $dados['cPais']     = '1058';
             $dados['xPais']     = 'BRAZIL';
             $dados['fone']      = '98984257623';
-            $apenas =[
-                'xLgr','nro','xBairro','cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais', 
+            $apenas = [
+                'xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais',
             ];
             $errors = $validadorXml->enderecoDestinatario($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
+            if (is_array($errors) && (count($errors) > 0)) {
                 //
             }
 
             $nfe->enderecoDestinatario($dados);
-            
+
             //-----------------------------------------------------------------------------------------------
-            
+
             $aP[] = array(
                 //'nItem' => 1,
                 'item' => 1,
@@ -279,10 +279,10 @@ class NfeController extends Controller
                 'nItemPed' => '1',
                 'nFCI' => '',
             );
-            $apenas =[
+            $apenas = [
                 'item',
-                'cProd', 
-                'xProd', 
+                'cProd',
+                'xProd',
                 'cEAN',
                 'CFOP',
                 'NCM',
@@ -294,9 +294,9 @@ class NfeController extends Controller
                 'uTrib',
                 'qTrib',
                 'vUnTrib',
-                'indTot',   
+                'indTot',
             ];
-               
+
             foreach ($aP as $prod) {
                 $prod               = (object) $prod;
                 $dados              = [];
@@ -325,9 +325,9 @@ class NfeController extends Controller
                 $dados['xPed']      = $prod->xPed;
                 $dados['nItemPed']  = $prod->nItemPed;
                 $dados['nFCI']      = $prod->nFCI;
-                
+
                 $errors = $validadorXml->Produto($dados, $apenas);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
 
@@ -336,18 +336,18 @@ class NfeController extends Controller
                 //--- informações adicionais para o produto
                 $dadosInfoAdd = [];
                 $dadosInfoAdd['item'] = $prod->item;
-                $dadosInfoAdd['infAdProd'] ='Informações adicionais ';
-                
+                $dadosInfoAdd['infAdProd'] = 'Informações adicionais ';
+
                 $apenasInfoAdd = [];
                 $apenasInfoAdd[] = 'item';
                 $apenasInfoAdd[] = 'infAdProd';
 
                 $errors = $validadorXml->infoAdocionaisProduto($dadosInfoAdd, $apenasInfoAdd);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
 
-                
+
                 $nfe->infoAdocionaisProduto($dadosInfoAdd);
 
                 //--- Nomeclatura adicional aduaneiro
@@ -360,11 +360,11 @@ class NfeController extends Controller
                 $apenasAdicionaAduaneiro[] = 'infAdProd';
 
                 $errors = $validadorXml->nomeclaturaAdicAtuaneiro($dadosAdicionaAduaneiro, $apenasAdicionaAduaneiro);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
                 $nfe->nomeclaturaAdicAtuaneiro($dadosAdicionaAduaneiro);
-               
+
                 //--- Node de detalhamento do Especificador da Substituição Tributária do item da NFe
                 $dadosCest = [];
                 $dadosCest['item']          = $prod->item;
@@ -379,7 +379,7 @@ class NfeController extends Controller
                 $apenasCest[] = 'CNPJFab';
 
                 $errors = $validadorXml->cest($dadosCest, $apenasCest);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
                 $nfe->cest($dadosCest);
@@ -394,16 +394,16 @@ class NfeController extends Controller
                 $apenasRecopi[] = 'nRECOPI';
 
                 $errors = $validadorXml->recopi($dadosRecopi, $apenasRecopi);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
                 $nfe->recopi($dadosRecopi);
                 //------------------------------------
-                
+
                 //----  Node com dados de para importação-------------------------------------
                 $dadosDi = [];
                 $dadosDi['item']             = $prod->item;
-                $dadosDi['nDI']               = '001';  
+                $dadosDi['nDI']               = '001';
                 $dadosDi['dDI']               = date('y-m-d');
                 $dadosDi['xLocDesemb']        = 'Curitiba';
                 $dadosDi['UFDesemb']          = 'SC';
@@ -430,7 +430,7 @@ class NfeController extends Controller
                 $apenasDi[] = 'cExportador';
 
                 $errors = $validadorXml->declaracaoImportacao($dadosDi, $apenasDi);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
                 $nfe->declaracaoImportacao($dadosDi);
@@ -439,13 +439,13 @@ class NfeController extends Controller
                 $dadosImposto = [];
                 $dadosImposto['item']     = $prod->item;
                 $dadosImposto['vTotTrib'] = $prod->qCom * $prod->vProd;
-                
+
                 $apenasImposto = [];
                 $apenasImposto[] = 'item';
                 $apenasImposto[] = 'vTotTrib';
 
                 $errors = $validadorXml->imposto($dadosImposto, $apenasImposto);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
 
@@ -488,13 +488,13 @@ class NfeController extends Controller
                 $dadosIcms['pICMSEfet']     = '';
                 $dadosIcms['vICMSEfet']     = '';
                 $dadosIcms['vICMSSubstituto'] = '';
-                
+
                 $apenasIcms = [];
                 $apenasIcms[] = 'item';
 
 
                 $errors = $validadorXml->icms($dadosIcms, $apenasIcms);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
                 $nfe->icms($dadosIcms);
@@ -516,23 +516,23 @@ class NfeController extends Controller
                 $dadosPartilha['vICMSST']   = 140.00;
                 $dadosPartilha['pBCOp']     = 10.00;
                 $dadosPartilha['UFST']      = 'MA';
-                
+
                 $apenasPartilha = [];
                 $apenasPartilha[] = 'item';
 
                 $errors = $validadorXml->imcsPartilha($dadosPartilha, $apenasPartilha);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
                 $nfe->imcsPartilha($dadosPartilha);
                 //dd($dados);
-                
+
             }
-            
+
             //---------------------NOTA: Ajustado para NT 2018.005 Node indicativo de local de retirada diferente do endereço do emitente 
             $dados = [];
             $dados['CPF']       = null; // OU cpf ou cnpj
-            $dados['CNPJ']      = '03810070000101';// OU cpf ou cnpj
+            $dados['CNPJ']      = '03810070000101'; // OU cpf ou cnpj
             $dados['IE']        = '03810070000101';
             $dados['xNome']     = 'Pedro';
             $dados['xLgr']      = 'Logradouro de teste';
@@ -567,15 +567,15 @@ class NfeController extends Controller
             $apenas[] = 'email';
 
             $errors = $validadorXml->localEntregaRetirada($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
-                   //
+            if (is_array($errors) && (count($errors) > 0)) {
+                //
             }
             $nfe->localRetirada($dados);
 
             //---------------------NOTA: NOTA: Ajustado para NT 2018.005 Node indicativo de local de entrega diferente do endereço do destinatário 
             $dados = [];
             $dados['CPF']       = null; // OU cpf ou cnpj
-            $dados['CNPJ']      = '03810070000101';// OU cpf ou cnpj
+            $dados['CNPJ']      = '03810070000101'; // OU cpf ou cnpj
             $dados['IE']        = '03810070000101';
             $dados['xNome']     = 'Pedro';
             $dados['xLgr']      = 'Logradouro de teste';
@@ -610,24 +610,24 @@ class NfeController extends Controller
             $apenas[] = 'email';
 
             $errors = $validadorXml->localEntregaRetirada($dados, $apenas);
-            if(is_array($errors) && (count($errors)> 0)){
-                   //
+            if (is_array($errors) && (count($errors) > 0)) {
+                //
             }
             $nfe->localEntrega($dados);
-            
+
 
             //------------------------------------------------------------------------------------------------
-            if($autorizarAcessoPessoaXml){
+            if ($autorizarAcessoPessoaXml) {
                 $dados = [];
                 $dados['CPF']       = null; // OU cpf ou cnpj
-                $dados['CNPJ']      = '03810070000101';// OU cpf ou cnpj
+                $dados['CNPJ']      = '03810070000101'; // OU cpf ou cnpj
 
                 $apenas = [];
                 $apenas[] = 'CPF';
                 $apenas[] = 'CNPJ';
 
                 $errors = $validadorXml->autorizaPessoaAcessXml($dados, $apenas);
-                if(is_array($errors) && (count($errors)> 0)){
+                if (is_array($errors) && (count($errors) > 0)) {
                     //
                 }
 
@@ -640,12 +640,11 @@ class NfeController extends Controller
             echo $xml;
             //$this->getPdfXml($xml);
             //dd($objFacade->getErrors());
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             //dd($ex);
             //dd($ex->getMessage());
             dd($objFacade->getErrors()); // Erros no xml
         }
-
     }
     public function montagemXml()
     {
@@ -1360,7 +1359,7 @@ class NfeController extends Controller
 
 
         //Node indicativo da forma de frete
-        
+
         $std = new \stdClass();
         $std->modFrete = 1;
 
@@ -1373,7 +1372,7 @@ class NfeController extends Controller
         $std->xEnder = 'Rua Um, sem numero';
         $std->xMun = 'Cotia';
         $std->UF = 'SP';
-        $std->CNPJ = '12345678901234';//só pode haver um ou CNPJ ou CPF, se um deles é especificado o outro deverá ser null
+        $std->CNPJ = '12345678901234'; //só pode haver um ou CNPJ ou CPF, se um deles é especificado o outro deverá ser null
         $std->CPF = null;
 
         $nfe->tagtransporta($std);
@@ -1522,7 +1521,7 @@ class NfeController extends Controller
 
         //Node com a identificação do processo ou ato concessório
         $std = new \stdClass();
-        $std->nProc='ks7277272';
+        $std->nProc = 'ks7277272';
         $std->indProc = 0;
 
         $nfe->tagprocRef($std);
@@ -1582,7 +1581,7 @@ class NfeController extends Controller
         //Node da informação referente ao Responsável Técnico NT 2018.005 Esta tag é OPCIONAL mas se for passada todos os campos devem ser passados para a função.
         $std = new \stdClass();
         $std->CNPJ = '99999999999999'; //CNPJ da pessoa jurídica responsável pelo sistema utilizado na emissão do documento fiscal eletrônico
-        $std->xContato= 'Fulano de Tal'; //Nome da pessoa a ser contatada
+        $std->xContato = 'Fulano de Tal'; //Nome da pessoa a ser contatada
         $std->email = 'fulano@soft.com.br'; //E-mail da pessoa jurídica a ser contatada
         $std->fone = '1155551122'; //Telefone da pessoa jurídica/física a ser contatada
         $std->CSRT = 'G8063VRTNDMO886SFNK5LDUDEI24XJ22YIPO'; //Código de Segurança do Responsável Técnico
@@ -1596,7 +1595,7 @@ class NfeController extends Controller
 
         //Este método executa a montagem do XML
         //NOTA: irá retornar uma Exception caso existam erros na montagem OU retorna o XML montado caso não hajam erros.
-       // $xml = $nfe->monta();
+        // $xml = $nfe->monta();
 
         //Este método retorna o XML em uma string, mesmo que existam erros.
         $xml = $nfe->getXML();
@@ -1607,17 +1606,13 @@ class NfeController extends Controller
         //Este método retorna o modelo de NFe 55 ou 65
 
         $modelo = $nfe->getModelo();
-
-
-
-
     }
 
-    public function getPdfXml(String $xml = '<h1>Hello world!</h1>'){
+    public function getPdfXml(String $xml = '<h1>Hello world!</h1>')
+    {
         $mpdf = new \Mpdf\Mpdf(['tempDir' => __DIR__ . '/tmp']);
         $mpdf->WriteHTML($xml);
         $mpdf->Output();
-
     }
 
     /**
@@ -1675,5 +1670,4 @@ class NfeController extends Controller
     {
         //
     }
-
 }

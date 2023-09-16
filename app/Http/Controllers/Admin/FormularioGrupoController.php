@@ -16,14 +16,13 @@ use Illuminate\Support\Facades\Auth;
 
 class FormularioGrupoController extends Controller
 {
-   /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
-       
     }
 
     /**
@@ -33,7 +32,6 @@ class FormularioGrupoController extends Controller
      */
     public function create(Request $request, $idAssistente)
     {
-        
     }
 
     /**
@@ -45,7 +43,7 @@ class FormularioGrupoController extends Controller
     public function store(Request $request)
     {
 
-        try{
+        try {
 
 
             set_time_limit(9000000);
@@ -56,26 +54,26 @@ class FormularioGrupoController extends Controller
 
             $sentinela = null;
             $dados = $request->all();
-            
+
             $dataItems = $dados['items'] ?? [];
 
-            if(is_array($dataItems) && count($dataItems) > 0){
-                foreach($dataItems as $datIt){
+            if (is_array($dataItems) && count($dataItems) > 0) {
+                foreach ($dataItems as $datIt) {
                     $this->validaDadosItemRequest($datIt);
                 }
-            }else{
+            } else {
                 throw new FormularioGrupoException("Informe os campos do formulário, por favor.");
             }
 
             $dadosRequest = [];
 
             $dadosRequest['name']               = $dados['name'];
-            $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['user_id']            = \Auth::User()->id; //trocar pelo id do usuario logado
             $dadosRequest['active']             = 'yes';
-            
+
             $form = FormularioGrupo::create($dadosRequest);
 
-            foreach($dataItems as $key=>$val){
+            foreach ($dataItems as $key => $val) {
                 $dadosRequest                           = [];
                 $dadosRequest['name']                   = $val['name'];
                 $dadosRequest['type']                   = $val['type'];
@@ -87,37 +85,33 @@ class FormularioGrupoController extends Controller
                 $dadosRequest['nr_linha']               = $val['nr_linha']      ?? null;
                 $dadosRequest['nr_coluna']              = $val['nr_coluna']     ?? null;
                 $dadosRequest['formulario_grupo_id']    = $form->id;
-                $dadosRequest['formulario_id']          = $form->formulario->id;                    
-                $dadosRequest['user_id']                = \Auth::User()->id;//trocar pelo id do usuario logado
+                $dadosRequest['formulario_id']          = $form->formulario->id;
+                $dadosRequest['user_id']                = \Auth::User()->id; //trocar pelo id do usuario logado
                 $dadosRequest['active']                 = 'yes';
-                
+
                 $formGroup                          = FormularioItem::create($dadosRequest);
-                if(! $formGroup){
+                if (!$formGroup) {
                     throw new FormularioGrupoException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
                 }
-            
             }
 
 
             \DB::commit();
-            
-            if(! $form){
+
+            if (!$form) {
                 throw new FormularioGrupoException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
             }
 
-            return response()->json(['mensagem'=>$form, 'class'=>'success'], 200);
-
-        }catch(FormularioGrupoException $e){
+            return response()->json(['mensagem' => $form, 'class' => 'success'], 200);
+        } catch (FormularioGrupoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
@@ -129,29 +123,28 @@ class FormularioGrupoController extends Controller
      */
     public function show(Request $request, $id, $idAssistente)
     {
-        
     }
 
 
     public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
 
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new FormularioGrupoException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
             $registro = FormularioGrupo::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
-            if($registro == null){
+            if ($registro == null) {
                 throw new FormularioGrupoException(' não encontrado');
             }
             $itens = $registro->item()->where('active', '=', 'yes')->get();
@@ -159,19 +152,16 @@ class FormularioGrupoController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-
-        }catch(FormularioGrupoException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (FormularioGrupoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
@@ -185,25 +175,19 @@ class FormularioGrupoController extends Controller
      */
     public function edit(Request $request, $id, $idAssistente)
     {
-        try{
-            
+        try {
+
             $dadosRequest = $request->all();
 
             $callBack = $dadosRequest['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-            if(! isset($id)){
+            if (!isset($id)) {
                 $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
             }
 
-            if($id <= 0){
-
-                
-
+            if ($id <= 0) {
             }
-
-            
-
-         }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
@@ -221,7 +205,7 @@ class FormularioGrupoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try{
+        try {
 
             $this->validaRequest($request);
 
@@ -234,17 +218,17 @@ class FormularioGrupoController extends Controller
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
             $dataItems      = $dados['items'] ?? [];
 
-            if( (!isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            if ((!isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['error' => 'Parâmetro inválido']], 400);
             }
-            if(is_array($dataItems) && count($dataItems) > 0){
-                foreach($dataItems as $datIt){
+            if (is_array($dataItems) && count($dataItems) > 0) {
+                foreach ($dataItems as $datIt) {
                     $this->validaDadosItemRequest($datIt);
                 }
-            }else{
+            } else {
                 throw new FormularioGrupoException("Informe os campos do formulário, por favor.");
             }
-            
+
 
             $registro = FormularioGrupo::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
@@ -254,16 +238,16 @@ class FormularioGrupoController extends Controller
             $registro->update($dadosRequest);
 
 
-            if(! $registro){
+            if (!$registro) {
                 throw new FormularioGrupoException('Registro não encontrado');
             }
             $itensForm = $registro->item;
-            
+
             $idItensUpdated = [];
-            foreach($dataItems as $key=>$val){
-                if(isset($val['id']) && $val['id'] > 0){
+            foreach ($dataItems as $key => $val) {
+                if (isset($val['id']) && $val['id'] > 0) {
                     $grupo = FormularioItem::where('active', '=', 'yes')->where('id', '=', $val['id'])->first();
-                    if($grupo){
+                    if ($grupo) {
                         $idItensUpdated[$val['id']] = $val['id'];
                         $dadosRequest = [];
                         $dadosRequest['name']                   = $val['name'];
@@ -278,7 +262,7 @@ class FormularioGrupoController extends Controller
                         $dadosRequest['user_update_id']     = \Auth::User()->id;
                         $grupo->update($dadosRequest);
                     }
-                }else{
+                } else {
                     $dadosRequest                           = [];
                     $dadosRequest['name']                   = $val['name'];
                     $dadosRequest['type']                   = $val['type'];
@@ -290,43 +274,37 @@ class FormularioGrupoController extends Controller
                     $dadosRequest['nr_linha']               = $val['nr_linha']      ?? null;
                     $dadosRequest['nr_coluna']              = $val['nr_coluna']     ?? null;
                     $dadosRequest['formulario_grupo_id']    = $registro->id;
-                    $dadosRequest['formulario_id']          = $registro->formulario->id;                    
-                    $dadosRequest['user_id']                = \Auth::User()->id;//trocar pelo id do usuario logado
+                    $dadosRequest['formulario_id']          = $registro->formulario->id;
+                    $dadosRequest['user_id']                = \Auth::User()->id; //trocar pelo id do usuario logado
                     $dadosRequest['active']                 = 'yes';
-                    
+
                     $formGroup                          = FormularioItem::create($dadosRequest);
-                    if(! $formGroup){
+                    if (!$formGroup) {
                         throw new FormularioGrupoException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
                     }
-
                 }
-            
             }
 
-            if($itensForm){
-                foreach($itensForm as $item){
-                    if(isset($item->id) && $item->id > 0 && !in_array($item->id, $idItensUpdated)){
-                        $item->update(['active'=>'no']);
+            if ($itensForm) {
+                foreach ($itensForm as $item) {
+                    if (isset($item->id) && $item->id > 0 && !in_array($item->id, $idItensUpdated)) {
+                        $item->update(['active' => 'no']);
                     }
                 }
             }
-            
-            \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(FormularioGrupoException $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
-        }
 
+            \DB::commit();
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (FormularioGrupoException $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
+        }
     }
 
     /**
@@ -337,64 +315,58 @@ class FormularioGrupoController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
-            if($id <= 0){
-                 return response()->json([['mensagem'=>'Parâmetro inválido', 'class'=>'warning'], 400]);
-
+            if ($id <= 0) {
+                return response()->json([['mensagem' => 'Parâmetro inválido', 'class' => 'warning'], 400]);
             }
 
             $registro = FormularioGrupo::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
-            if(! $registro){
-                return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
-            }else{
+            if (!$registro) {
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
+            } else {
 
-                $registro = $registro->update(['active'=>'no']);
-
+                $registro = $registro->update(['active' => 'no']);
             }
 
-            if($registro == null){
+            if ($registro == null) {
 
                 //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
                 //return redirect()->back();
-                 return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
             }
 
             \DB::commit();
-            return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
-        
-        }catch(FormularioGrupoException $e){
+            return response()->json(['mensagem' => 'Registro deletado com sucesso', 'class' => 'success'], 200);
+        } catch (FormularioGrupoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
     public function head(Request $request)
     {
         $dados = $request->all();
-        
-        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
-        if($isReload){
-           
+
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload'] : false;
+        if ($isReload) {
+
             return view('admin.formulario.head_refresh', compact('isReload'));
-        }else{
+        } else {
             return view('admin.formulario.head', compact('isReload'));
         }
-        
     }
 
-    
+
     /**
      * Return a listing of the resource in json.
      *
@@ -403,8 +375,8 @@ class FormularioGrupoController extends Controller
      */
     public function json(Request $request)
     {
-        try{
-            
+        try {
+
             //$this->validaRequest($request);
 
             \DB::beginTransaction();
@@ -412,95 +384,87 @@ class FormularioGrupoController extends Controller
             $consulta = $request->all();
             //dd($consulta);
 
-            $parse = [
-
-            ];
+            $parse = [];
 
             $registro = \DB::table('formulario_grupos as formg');
 
             $campos =  null;
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('formg.id', $val);
                             }
                             break;
                         case 'nome_grupo':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
-                                
-                                $registro->where('formg.name', 'like' , '%'.$val.'%');
+
+                                $registro->where('formg.name', 'like', '%' . $val . '%');
                             }
                             break;
-                            case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                    $registro->limit($val);
-                                }
-                                break;
-                            case 'ordem':
+                        case 'limite':
+                            $val = (int) $val;
+                            if (is_integer($val) && $val > 0) {
 
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
+                                $registro->limit($val);
+                            }
+                            break;
+                        case 'ordem':
 
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
 
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $val = explode(',', $val);
+                            for ($i = 0; !($i == count($val)); $i++) {
+                                $atual = explode('-', $val[$i]);
+                                if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                    $parsed = $parse[trim($atual[0])];
+
+                                    if ($parsed) {
+
+                                        $registro->orderBy($parsed, $atual[1]);
                                     }
-                                    
-                                    
                                 }
+                            }
 
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    $campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
                             break;
 
+                        case 'campos':
+                            if (is_array($val) && count($val) > 0) {
+                                $campos = $this->montaCamposConsulta($registro, $val);
+                            }
+                            break;
                     }
                 }
             }
-            if($campos){
+            if ($campos) {
                 $registro->select($campos);
-
-            }else{
+            } else {
                 $registro->select('formg.*');
-
             }
             //$registro = \App\::where('active', '=', 'yes')->get();
             $registro = $registro->where('formg.active', '=', 'yes')->get();
@@ -508,48 +472,46 @@ class FormularioGrupoController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
-
-        }catch(FormularioGrupoException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
+        } catch (FormularioGrupoException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
 
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'name'=> 'required|max:255|min:2',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255|min:2',
         ], [
             'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
             'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
             'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
-                $msg .= $mensagem.'<br/>';
+            foreach ($errors->all() as $mensagem) {
+                $msg .= $mensagem . '<br/>';
             }
-            
+
             throw new FormularioGrupoException($msg);
         }
 
         return true;
     }
 
-    protected function validaDadosItemRequest(Array $dados)
+    protected function validaDadosItemRequest(array $dados)
     {
-        $validator = Validator::make($dados,[
-            'name'=> 'required|max:255|min:2',
-            'type'=> 'required|max:255|min:2',
-            'label'=> 'required|max:255|min:2',
+        $validator = Validator::make($dados, [
+            'name' => 'required|max:255|min:2',
+            'type' => 'required|max:255|min:2',
+            'label' => 'required|max:255|min:2',
         ], [
             'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
             'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
@@ -561,14 +523,14 @@ class FormularioGrupoController extends Controller
             'label.max' => 'O "LABEL" dos itens do formulário suporta até :max caracteres.',
             'label.min' => 'O "LABEL" dos itens do formulário deve conter pelo menos :min caracteres.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
-                $msg .= $mensagem.'<br/>';
+            foreach ($errors->all() as $mensagem) {
+                $msg .= $mensagem . '<br/>';
             }
-            
+
             throw new FormularioGrupoException($msg);
         }
 

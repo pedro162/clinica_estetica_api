@@ -16,8 +16,9 @@
         "laravel/passport": "^9.4",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.4",
-        "mpdf/mpdf": "^8.0",
-        "nfephp-org/sped-nfe": "^5.0"
+        "nfephp-org/nfephp": "^4.0",
+        "nfephp-org/sped-da": "^1.1",
+        "nfephp-org/sped-nfe": "^5.1"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

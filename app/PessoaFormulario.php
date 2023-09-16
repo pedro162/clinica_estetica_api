@@ -11,18 +11,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class PessoaFormulario extends Model
 {
     use SoftDeletes;
-    protected $table="pessoa_formularios";
-    protected $primaryKey="id";
-    protected $fillable =[
+    protected $table = "pessoa_formularios";
+    protected $primaryKey = "id";
+    protected $fillable = [
         'observacao',
         'caminho_ficha',
         'pessoa_id',
-        'pessoa_id',
-        'profissional_id',
         'profissional_id',
         'formulario_id',
-        'formulario_id',
-        'user_id',
         'user_id',
         'user_update_id',
         'active',
@@ -32,21 +28,18 @@ class PessoaFormulario extends Model
         'dt_finalizacao',
         'dt_cancelamento',
         'pess_abert_id',
-        'pess_abert_id',
         'pess_cancel_id',
-        'pess_cancel_id',
-        'pess_finali_id',
         'pess_finali_id',
     ];
-    
-        
+
+
     public function pessoa()
     {
-    	return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
+        return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
     }
 
     public function profissional()
     {
-    	return $this->belongsTo(Profissional::class, 'profissional_id', 'id');
+        return $this->belongsTo(Profissional::class, 'profissional_id', 'id');
     }
 }

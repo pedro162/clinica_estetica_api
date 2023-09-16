@@ -11,10 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class PessoaFormularioResposta extends Model
 {
     use SoftDeletes;
-    protected $table="pessoa_formulario_respostas";
-    protected $primaryKey="id";
-    protected $fillable =[
-        'pess_form_id',
+    protected $table = "pessoa_formulario_respostas";
+    protected $primaryKey = "id";
+    protected $fillable = [
         'pess_form_id',
         'pergunta',
         'resposta',
@@ -23,22 +22,7 @@ class PessoaFormularioResposta extends Model
         'nr_coluna',
         'alerta_resposta',
         'user_id',
-        'user_id',
         'user_update_id',
         'active',
     ];
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
