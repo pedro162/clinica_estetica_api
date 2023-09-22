@@ -33,6 +33,7 @@ class TestesController extends Controller
      */
     public function index(Request $request)
     {
+        #https://github.com/nfephp-org/sped-da/blob/master/src/Common/DaCommon.php
         $emitente = [];
         $emitente["nome"] = "EMPRESA FULANO DE TAL";
         $emitente["fone"] = "98982547048";

@@ -490,6 +490,11 @@ class FichaAnamnese extends Common
 
     protected function pCabecalhoMapa($x = 0, $y = 0, $pag = '1', $totPag = '1')
     {
+        //https://produto.mercadolivre.com.br/MLB-1033967825-ficha-de-anamnese-estetica-bloco-com-100-folhas-_JM?matt_tool=58942467&matt_word=&matt_source=google&matt_campaign_id=14303385293&matt_ad_group_id=123813170097&matt_match_type=&matt_network=g&matt_device=c&matt_creative=539491049432&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=5068529360&matt_product_id=MLB1033967825&matt_product_partition_id=1805008106812&matt_target_id=aud-1966857867496:pla-1805008106812&gclid=CjwKCAjw6p-oBhAYEiwAgg2PghBg7gXB5f1PXmSxZQx3dxbPk6zPW3j1_ep6VA_trBbSWKKSoJQRSRoCNAkQAvD_BwE#&gid=1&pid=1
+        //https://github.com/nfephp-org/sped-da/blob/master/src/Legacy/Pdf.php
+        $dtInicial = $this->dadosArr['dtInicial'];
+        $dtFinal = $this->dadosArr['dtFinal'];
+
         $oldX = $x;
         $oldY = $y;
         if ($this->orientacao == 'P') {
@@ -503,14 +508,17 @@ class FichaAnamnese extends Common
         }
         //####################################################################################
         //coluna esquerda identificação do emitente
-        $w = round($maxW * 0.81, 0); //35;
+        $w = round($maxW * 1, 0); //35;0.81
+        if (is_file($this->logomarca)) {
+            $w = round($maxW * 0.81, 0);
+        }
         if ($this->orientacao == 'P') {
             $aFont = array('font' => $this->fontePadrao, 'size' => 7, 'style' => 'I');
         } else {
             $aFont = array('font' => $this->fontePadrao, 'size' => 8, 'style' => 'B');
         }
         $w1 = $w;
-        $h = 30;
+        $h = 60; //30;
         $oldY += $h;
         //$this->pdf->textBox($x, $y, $w, $h);
         // $texto = 'IDENTIFICAÇÃO DO EMITENTE';
@@ -542,53 +550,217 @@ class FichaAnamnese extends Common
 
             $yImg = $yImg + 15;
             $this->pdf->Image($this->logomarca, $xImg, $yImg, $nImgW, $nImgH);
+
+
+            $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => '');
+            $texto = "Espaço beleza";
+            //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+            $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 1, '');
+            //echo ($tw) . '<br/>';
+            //echo ($x1) . '<br/>';
+
+            $nextX = $x1 + $tw;
+            $x1 = $nextX;
+            //echo ($x1) . '<br/>';
+            //die();
+
+
+            //$y1 +=10;
+            $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => 'B');
+            $texto = "Registros de Atendimentos";
+            //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+            $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 1, '');
+
+            /* echo ($tw) . '<br/>';
+            echo ($x1) . '<br/>'; */
+
+            $nextX = $x1 + $tw;
+            $x1 = $nextX;
+            /* echo ($x1) . '<br/>';
+            die(); */
+            //$y1 +=10;
+            $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => '');
+            $texto = "Data " . $dtInicial . " até " . $dtFinal;
+            //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+            $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 1, '');
         } else {
             $x1 = $x;
-            $y1 = round($h / 3 + $y, 0) - 8;
-            $tw = $w;
+            $y1 = round($h / 3 + $y, 0) - 20;
+            $tw = round($w * 0.40);
+
+            $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => '');
+            $texto = "Espaço beleza";
+            //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+            $this->pdf->textBox($x1, $y1, $tw, 20, $texto, $aFont, 'C', 'L', 1, '');
+            //echo ($tw) . '<br/>';
+            //echo ($x1) . '<br/>';
+
+            $nextX = $x1 + $tw;
+            $x1 = $nextX;
+            $tw = round($w * 0.40);
+
+            //$y1 +=10;
+            $aFont = array('font' => $this->fontePadrao, 'size' => 14, 'style' => 'B');
+            $texto = "Estética Facial\n\rFicha de anamnese";
+            //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+            $this->pdf->textBox($x1, $y1, $tw, 20, $texto, $aFont, 'C', 'C', 1, '');
+
+
+            /* echo ($tw) . '<br/>';
+            echo ($x1) . '<br/>'; */
+
+            $nextX = $x1 + $tw;
+            $x1 = $nextX;
+            $tw = round($w * 0.205);
+
+            /* echo ($x1) . '<br/>';
+            die(); */
+            //$y1 +=10;
+            $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => '');
+            $texto = "Data " . $dtInicial;
+            //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+            $this->pdf->textBox($x1, $y1, $tw, 20, $texto, $aFont, 'C', 'L', 1, '');
         }
         // monta as informações apenas se diferente de full logo
+        /*
+        *   $texto = "Código";
+            $w1 = round($w * 0.10, 0);
+            $h = 6;
+            $aFont = array('font' => $this->fontePadrao, 'size' => 9, 'style' => 'B');
+            $this->pdf->textBox($x, $y, $w1, $h, $texto, $aFont, 'C', 'C', 0, '', 0, 0, 0, 1);
 
+            //DESCRIÇÃO DO PRODUTO / SERVIÇO
+            $x += $w1;
+            $w2 = round($w * 0.54, 0);
+            $texto = 'Registro de atendimento ';
+
+            $this->pdf->textBox($x, $y, $w2, $h, $texto, $aFont, 'C', 'C', 0, '', 0, 0, 0, 1);
+            //QUANT
+            $x += $w2;
+            $w3 = round($w * 0.12, 0);
+            $texto = 'Data';
+
+            $this->pdf->textBox($x, $y, $w3, $h, $texto, $aFont, 'C', 'C', 0, '', 0, 0, 0, 1);
+
+            //UN
+            $x += $w3;
+            $w4 = round($w * 0.12, 0);
+            $texto = 'Horário';
+
+            $this->pdf->textBox($x, $y, $w4, $h, $texto, $aFont, 'C', 'C', 0, '', 0, 0, 0, 1);
+
+            //VALOR TABELA
+            $x += $w4;
+            $w5 = round($w * 0.12, 0);
+            $texto = 'Pago';
+        */
         //Nome emitente
-        $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => '');
-        $texto = "Reservai";
-        //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
-        $this->pdf->textBox($x1 - 3, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
 
 
 
 
-        //$y1 +=10;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
-        $texto = "Registros de Atendimentos";
-        //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
-        $this->pdf->textBox($x + 80, $y1 + 2, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
-
-
-        $dtInicial = $this->dadosArr['dtInicial'];
-        $dtFinal = $this->dadosArr['dtFinal'];
-
-        //$y1 +=10;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 9, 'style' => '');
-        $texto = "Data " . $dtInicial . " até " . $dtFinal;
-        //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
-        $this->pdf->textBox($x + 160, $y1 + 2, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
 
 
         //$y1 = $y1+12;
         $x1 = $x;
-        $y1 += 9;
+        $y1 += 20;
         $this->pdf->Line($x, $y1, $x + $maxW, $y1);
         $y1 += 2;
+
+        //----------Nome completo e nascimento -----------------
+        $nextX = $x1;
+        $x1 = $nextX;
+        $tw = round($w * 0.40);
+
         //Nome emitente
         $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
-        $texto = $this->dadosArr['emitente']["nome"];
+        $texto = 'Nome completo: ';
+        $texto .= $this->dadosArr['emitente']["nome"];
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
+        $nextX = $x1 + $tw + 80;
+        $x1 = $nextX;
+        $tw = round($w * 0.20);
 
+        //Nome emitente
+        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
+        $texto = 'Data de nasc: ';
+        $texto .= '20-09-1996';
+        //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+        $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'R', 0, '');
+
+        $x1 = $x;
+        $y1 += 4;
+        $this->pdf->Line($x + 29, $y1, $x + $nextX, $y1);
+
+        $x1 = $x;
+        //$y1 += 4;
+        $this->pdf->Line($x + $nextX + 42, $y1, $nextX + 24, $y1);
+
+        //--------------------- RG CPF e Whatsapp ----------------------
+        //----------Nome completo e nascimento -----------------
+        $y1 += 1;
+
+        $nextX = $x1;
+        $x1 = $nextX;
+        $tw = round($w * 0.20);
+        $nextRg = $nextX;
+        $twRg = $tw;
+
+        //Nome emitente
+        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
+        $texto = 'RG: ';
+        $texto .= $this->dadosArr['emitente']["cpf"] ?? '0000000000-0';
+        //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+        $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
+
+        $nextX = $x1 + $tw;
+        $x1 = $nextX;
+        $tw = round($w * 0.40);
+        $nextCpf = $nextX;
+        $twCpf = $tw;
+
+        //Nome emitente
+        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
+        $texto = 'CPF: ';
+        $texto .= $this->dadosArr['emitente']["cpf"] ?? '000000000-00';
+        //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+        $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'R', 0, '');
+
+        $nextX = $x1 + $tw;
+        $x1 = $nextX;
+        $tw = round($w * 0.40);
+        $nextWhats = $nextX;
+        $twWhats = $tw;
+
+        //Nome emitente
+        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
+        $texto = 'Whatsapp: ';
+        $texto .= $this->dadosArr['emitente']["nrWhatsapp"] ?? '(98)99999-9999';
+        //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
+        $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'R', 0, '');
+
+        $x1 = $x;
+        $y1 += 4;
+
+        $this->pdf->Line($x1 + 8, $y1, 92, $y1);
+
+        $x1 = $x;
+        //$y1 += 4;
+        $this->pdf->Line($x1 + 100 /* + $nextX - 30 */, $y1, 162, $y1);
+
+        $x1 = $x;
+        //$y1 += 4;
+        $this->pdf->Line($x1 + 180 /* + $nextX - 30 */, $y1, 208, $y1);
+
+        /*
+            $nextWhats
+            $twWhats
+
+         */
 
         //endereço
         $y1 = $y1 + 5;

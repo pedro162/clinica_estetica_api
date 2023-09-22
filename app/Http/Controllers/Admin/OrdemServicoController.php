@@ -31,7 +31,6 @@ class OrdemServicoController extends Controller
      */
     public function index(Request $request)
     {
-       
     }
 
     /**
@@ -41,7 +40,6 @@ class OrdemServicoController extends Controller
      */
     public function create(Request $request, $idAssistente)
     {
-        
     }
 
     /**
@@ -53,7 +51,7 @@ class OrdemServicoController extends Controller
     public function store(Request $request)
     {
 
-        try{
+        try {
 
 
             set_time_limit(9000000);
@@ -64,26 +62,26 @@ class OrdemServicoController extends Controller
 
             $dados = $request->all();
 
-            $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
-            if(! $pessoas){
+            $pessoas = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->first();
+            if (!$pessoas) {
                 throw new OrdemServicoException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
             $profissional = Profissional::where('id', '=', $dados['profissional_id'])->where('active', '=', 'yes')->first();
-            if(! $profissional){
+            if (!$profissional) {
                 throw new OrdemServicoException('Profissional não identificado');
             }
 
             $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
-            if(! $filial){
+            if (!$filial) {
                 throw new OrdemServicoException('Filial não identificada');
             }
 
-            $pessoaRca = Rca::where('active', '=' ,'yes')->where('id', '=', $dados['rca_id'])->first();
-            if(! $pessoaRca){
+            $pessoaRca = Rca::where('active', '=', 'yes')->where('id', '=', $dados['rca_id'])->first();
+            if (!$pessoaRca) {
                 throw new OrdemServicoException('Vendedor não identificado. Tente novamente ou entre em contato com o suporte.');
             }
-            
+
             $dadosRequest = [];
 
             $dadosRequest['status']           = $dados['status'] ?? 'aberto';
@@ -95,31 +93,28 @@ class OrdemServicoController extends Controller
             $dadosRequest['vr_final']         = 0;
             $dadosRequest['vr_desconto']      = 0;
             $dadosRequest['pct_acrescimo']    = 0;
-            $dadosRequest['vr_acrescimo']     = 0;        
-            $dadosRequest['user_id']          = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['vr_acrescimo']     = 0;
+            $dadosRequest['user_id']          = \Auth::User()->id; //trocar pelo id do usuario logado
             $dadosRequest['active']           = 'yes';
-            
+
             $form = OrdemServico::create($dadosRequest);
 
             \DB::commit();
-            
-            if(! $form){
+
+            if (!$form) {
                 throw new OrdemServicoException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
             }
 
-            return response()->json(['mensagem'=>$form, 'class'=>'success'], 200);
-
-        }catch(OrdemServicoException $e){
+            return response()->json(['mensagem' => $form, 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
@@ -132,7 +127,7 @@ class OrdemServicoController extends Controller
     public function concluir(Request $request, $id)
     {
 
-        try{
+        try {
 
 
             $this->validaRequest($request);
@@ -145,36 +140,36 @@ class OrdemServicoController extends Controller
             $callBack       = $dados['callBack'] ?? '';
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-            if( (!isset($id)) || ($id <= 0)){
+            if ((!isset($id)) || ($id <= 0)) {
                 throw new OrdemServicoException('Parâmetro inválido');
             }
 
             $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException('Ordem de serviço não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
             $servicosArr = $registro->servico()->where('active', '=', 'yes')->get();
-            if(! $servicosArr){
+            if (!$servicosArr) {
                 throw new OrdemServicoException('Servições não identificados. Tente novamente ou entre em contato com o suporte.');
             }
             $vrTotSevicos       = 0;
             $vrTotDesconto      = 0;
             $vrTotServicoFinal  = 0;
 
-            foreach($servicosArr as $item){
-                
+            foreach ($servicosArr as $item) {
+
                 $vrTotSevicos       += $item->vrTotal;
                 $vrTotDesconto      += $item->vr_desconto;
                 $vrTotServicoFinal  += $item->vr_final;
             }
-            
+
 
             $dadosRequest = [];
             $dadosRequest['vrTotal']          = $vrTotSevicos;
             $dadosRequest['vr_final']         = $vrTotServicoFinal;
             $dadosRequest['vr_desconto']      = $vrTotDesconto;
-            $dadosRequest['pct_desconto']     = ($vrTotDesconto / $vrTotSevicos ) * 100;
+            $dadosRequest['pct_desconto']     = ($vrTotDesconto / $vrTotSevicos) * 100;
             $dadosRequest['status']           = 'aberto';
             $dadosRequest['pct_acrescimo']    = 0;
             $dadosRequest['vr_acrescimo']     = 0;
@@ -182,34 +177,31 @@ class OrdemServicoController extends Controller
             $registro->update($dadosRequest);
 
 
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException('Registro não encontrado');
             }
 
 
             $objOrdemHelper         = new OrdemServicoHelper();
             $datacobReceberObjArr   = $objOrdemHelper->gerarFinanceiro($registro);
-            if( !$datacobReceberObjArr){
+            if (!$datacobReceberObjArr) {
                 throw new OrdemServicoException('Não foi possível gerar o financeiro da ordem de serviço. Tente novamente ou entre em contato com o suporte.');
             }
-            
+
             $objOrdemHelper->marcarComoFaturada($registro);
-            
-            
+
+
             \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(OrdemServicoException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
@@ -223,7 +215,7 @@ class OrdemServicoController extends Controller
     public function cancelar(Request $request, $id)
     {
 
-        try{
+        try {
 
 
             $this->validaCancelarRequest($request);
@@ -236,34 +228,31 @@ class OrdemServicoController extends Controller
             $callBack       = $dados['callBack'] ?? '';
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-            if( (!isset($id)) || ($id <= 0)){
+            if ((!isset($id)) || ($id <= 0)) {
                 throw new OrdemServicoException('Parâmetro inválido');
             }
 
             $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException('Ordem de serviço não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
             $idMotivoCancel = $dados['motivo_cancel_id'] ?? 0;
-           
+
             $objOrdemHelper         = new OrdemServicoHelper();
             $objOrdemHelper->cancelarOrdemServico($registro, $idMotivoCancel);
-            
+
             \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(OrdemServicoException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
@@ -275,76 +264,72 @@ class OrdemServicoController extends Controller
      */
     public function show(Request $request, $id, $idAssistente)
     {
-        
     }
 
 
     public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
 
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new OrdemServicoException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
             $registro = OrdemServico::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
             $registro->pessoa;
             $dataItens = [];
-            if( $registro->item){
-                foreach( $registro->item as $key=>$item){
+            if ($registro->item) {
+                foreach ($registro->item as $key => $item) {
                     $item->servico;
                     //$dataItens[] = $item->servico;
                 }
             }
             $dataCobrancas = [];
-            if( $registro->cobranca){
-                foreach( $registro->cobranca as $key=>$cobranca){
+            if ($registro->cobranca) {
+                foreach ($registro->cobranca as $key => $cobranca) {
                     $cobranca->formaPgto;
                     $cobranca->planoPgto;
-                    
+
                     //$dataCobrancas[] = $cobranca->formaPgto;
-                    
+
 
                 }
             }
 
-            $registro->cobranca;// = $dataCobrancas;
-            $registro->item;// = $dataItens;
+            $registro->cobranca; // = $dataCobrancas;
+            $registro->item; // = $dataItens;
             //$registro->item;
             $registro->rca;
             $registro->filial;
-            
 
 
 
 
-            if($registro == null){
+
+            if ($registro == null) {
                 throw new OrdemServicoException(' não encontrado');
             }
-           
+
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-
-        }catch(OrdemServicoException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
@@ -358,25 +343,19 @@ class OrdemServicoController extends Controller
      */
     public function edit(Request $request, $id, $idAssistente)
     {
-        try{
-            
+        try {
+
             $dadosRequest = $request->all();
 
             $callBack = $dadosRequest['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-            if(! isset($id)){
+            if (!isset($id)) {
                 $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
             }
 
-            if($id <= 0){
-
-                
-
+            if ($id <= 0) {
             }
-
-            
-
-         }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
@@ -394,7 +373,7 @@ class OrdemServicoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try{
+        try {
 
             //$this->validaRequest($request);
 
@@ -406,7 +385,7 @@ class OrdemServicoController extends Controller
             $callBack       = $dados['callBack'] ?? '';
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-            if( (!isset($id)) || ($id <= 0)){
+            if ((!isset($id)) || ($id <= 0)) {
                 throw new OrdemServicoException('Parâmetro inválido');
             }
 
@@ -418,27 +397,23 @@ class OrdemServicoController extends Controller
             $registro->update($dadosRequest);
 
 
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException('Registro não encontrado');
             }
-            
-            
-            \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(OrdemServicoException $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
-        }
 
+
+            \DB::commit();
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
+        }
     }
 
     /**
@@ -450,7 +425,7 @@ class OrdemServicoController extends Controller
      */
     public function finalizar(Request $request, $id)
     {
-        try{
+        try {
 
             $this->validaRequest($request);
 
@@ -463,46 +438,42 @@ class OrdemServicoController extends Controller
             $isOrcamento    = $dados['is_orcamento'] ?? 'no';
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-            if( (!isset($id)) || ($id <= 0)){
+            if ((!isset($id)) || ($id <= 0)) {
                 throw new OrdemServicoException('Parâmetro inválido');
             }
 
             $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException('Registro não encontrado');
             }
 
             $objOrdemHelper = new OrdemServicoHelper();
 
-            if($isOrcamento == 'yes' || trim($isOrcamento) == 'sim' || $isOrcamento === true){                
+            if ($isOrcamento == 'yes' || trim($isOrcamento) == 'sim' || $isOrcamento === true) {
                 $objOrdemHelper->marcarComoOrcamento($registro);
-            }else{
-                
+            } else {
+
                 $objOrdemHelper->gerarFinanceiro($registro);
                 $objOrdemHelper->marcarComoFaturada($registro);
             }
 
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException('Registro não encontrado');
             }
-            
-            
-            \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(OrdemServicoException $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
-        }
 
+
+            \DB::commit();
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
+        }
     }
 
     /**
@@ -514,7 +485,7 @@ class OrdemServicoController extends Controller
      */
     public function finalizarProcedimento(Request $request, $id)
     {
-        try{
+        try {
 
             //$this->validaRequest($request);
 
@@ -526,39 +497,35 @@ class OrdemServicoController extends Controller
             $callBack       = $dados['callBack'] ?? '';
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-            if( (!isset($id)) || ($id <= 0)){
+            if ((!isset($id)) || ($id <= 0)) {
                 throw new OrdemServicoException('Parâmetro inválido');
             }
 
             $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException('Registro não encontrado');
             }
 
             $objOrdemHelper = new OrdemServicoHelper();
             $objOrdemHelper->marcarFinalizada($registro);
             //td_conclusao
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException('Registro não encontrado');
             }
-            
-            
-            \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(OrdemServicoException $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
-        }
 
+
+            \DB::commit();
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
+        }
     }
 
     /**
@@ -570,7 +537,7 @@ class OrdemServicoController extends Controller
      */
     public function adicionarItem(Request $request, $id)
     {
-        try{
+        try {
 
             $this->validaAddItemRequest($request);
 
@@ -591,7 +558,7 @@ class OrdemServicoController extends Controller
             $vrAcrecimos    = 0;
             $pctAcrecimos   = 0;
 
-            if( (!isset($id)) || ($id <= 0)){
+            if ((!isset($id)) || ($id <= 0)) {
                 throw new OrdemServicoException('Parâmetro para ordem de serviço inválido. Tente novamente ou entre em contato com o suporte');
             }
 
@@ -605,40 +572,38 @@ class OrdemServicoController extends Controller
             $registro->update($dadosRequest); */
 
 
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException('Registro não encontrado');
             }
 
             $servico = Servico::where('active', '=', 'yes')->where('id', '=', $idServico)->first();
-            if(! $servico){
+            if (!$servico) {
                 throw new OrdemServicoException('Serviço não encontrado');
             }
 
-            if(! ($servico->vrServico > 0) ){
-                throw new OrdemServicoException('O serviço de código nº '.$servico->id.' está sem preço de venda válido. Entre em contato com o gerente ou administrador.');
+            if (!($servico->vrServico > 0)) {
+                throw new OrdemServicoException('O serviço de código nº ' . $servico->id . ' está sem preço de venda válido. Entre em contato com o gerente ou administrador.');
             }
             $servicoItem = null;
-            if(isset($dados['os_item_id']) && $dados['os_item_id'] > 0){ 
-                
+            if (isset($dados['os_item_id']) && $dados['os_item_id'] > 0) {
+
                 $servicoItem = ServicoItem::where('id', '=', $dados['os_item_id'])->first();
-                if(! $servicoItem){
+                if (!$servicoItem) {
                     throw new OrdemServicoException('Registro não encontrado para atualizar.');
                 }
             }
 
-           
-            
+
+
             $vrItem         = Utilitarios::removeMaskMoney($vrItem);
             $vrItemBruto    = Utilitarios::removeMaskMoney($vrItemBruto);
             $pct_desconto   = Utilitarios::removeMaskMoney($pct_desconto);
-            if($pct_desconto > 100){
+            if ($pct_desconto > 100) {
                 $pct_desconto = 100;
-
-            }elseif($pct_desconto < 0){
+            } elseif ($pct_desconto < 0) {
                 $pct_desconto = 0;
-
             }
-            
+
             $vrDesconto     = $vrItemBruto * ($pct_desconto / 100);
             $dadosRequest   = [];
 
@@ -650,40 +615,35 @@ class OrdemServicoController extends Controller
             $dadosRequest['ordem_servico_id']   = $registro->id;
             $dadosRequest['pct_acrescimo']      = $pctAcrecimos;
             $dadosRequest['vr_acrescimo']       = $vrAcrecimos;
-            $dadosRequest['pct_desconto']       = $pct_desconto;    
-            $dadosRequest['vr_desconto']        = $vrDesconto;//--- Valor de desconto unitário
-            $dadosRequest['vr_final']           = $dadosRequest['vrItem'] * $dadosRequest['qtd'];   
-            $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['pct_desconto']       = $pct_desconto;
+            $dadosRequest['vr_desconto']        = $vrDesconto; //--- Valor de desconto unitário
+            $dadosRequest['vr_final']           = $dadosRequest['vrItem'] * $dadosRequest['qtd'];
+            $dadosRequest['user_id']            = \Auth::User()->id; //trocar pelo id do usuario logado
             $dadosRequest['active']             = 'yes';
 
-            if($servicoItem){
+            if ($servicoItem) {
                 $dadosRequest['user_update_id']   = \Auth::User()->id;
                 $servicoItem->update($dadosRequest);
-
-            }else{
+            } else {
                 $servicoItem = ServicoItem::create($dadosRequest);
             }
 
             //---Recalcula a ordem de serviço
             $registro = $this->recalcularOrdemServico($registro->id);
-            
-            
-            \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(OrdemServicoException $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
-            \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
-        }
 
+
+            \DB::commit();
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
+        }
     }
 
     /**
@@ -694,56 +654,53 @@ class OrdemServicoController extends Controller
      */
     public function removerItem($id)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new OrdemServicoException("Parâmetro inválido.");
             }
 
             $registro = ServicoItem::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
-            if(! $registro){
+            if (!$registro) {
                 throw new OrdemServicoException("Item não identificado.");
             }
-            
+
             $ordem = $registro->ordem;
-            if(! $ordem){
+            if (!$ordem) {
                 throw new OrdemServicoException("Ordem d serviço não identificada.");
             }
 
-            if(trim($ordem->is_faturado) == 'yes'){
+            if (trim($ordem->is_faturado) == 'yes') {
                 throw new OrdemServicoException("A ordem de serviço de código nº {$ordem->id} encontra-se faturada e não poderá ser modificada.");
             }
 
-            if(! in_array($ordem->status, ['aberto'])){
+            if (!in_array($ordem->status, ['aberto'])) {
                 throw new OrdemServicoException("A ordem de serviço de código nº {$ordem->id} encontra-se \"{$ordem->status}\" e não poderá ser modificada.");
             }
 
-            $response = $registro->update(['active'=>'no']);
+            $response = $registro->update(['active' => 'no']);
 
-            if(! $response){
+            if (!$response) {
                 throw new OrdemServicoException("Erro ao exclir registro.");
             }
             $registro = $registro->delete();
             $this->recalcularOrdemServico($ordem->id);
 
             \DB::commit();
-            return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
-        
-        }catch(OrdemServicoException $e){
+            return response()->json(['mensagem' => 'Registro deletado com sucesso', 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
@@ -757,43 +714,43 @@ class OrdemServicoController extends Controller
     {
 
 
-        if( (!isset($id)) || ($id <= 0)){
+        if ((!isset($id)) || ($id <= 0)) {
             throw new OrdemServicoException('Parâmetro inválido');
         }
 
         $registro = OrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
-        if(! $registro){
+        if (!$registro) {
             throw new OrdemServicoException('Ordem de serviço não identificada. Tente novamente ou entre em contato com o suporte.');
         }
 
         $servicosArr = $registro->item()->where('active', '=', 'yes')->get();
-        if(! $servicosArr){
+        if (!$servicosArr) {
             throw new OrdemServicoException('Servições não identificados. Tente novamente ou entre em contato com o suporte.');
         }
         $vrTotSevicos       = 0;
         $vrTotDesconto      = 0;
         $vrTotServicoFinal  = 0;
 
-        foreach($servicosArr as $item){
-            
+        foreach ($servicosArr as $item) {
+
             $vrTotSevicos       += $item->vrTotal;
             $vrTotDesconto      += $item->vr_desconto;
             $vrTotServicoFinal  += $item->vr_final;
         }
-        
+
 
         $dadosRequest = [];
         $dadosRequest['vrTotal']          = $vrTotSevicos;
         $dadosRequest['vr_final']         = $vrTotServicoFinal;
         $dadosRequest['vr_desconto']      = $vrTotDesconto;
-        $dadosRequest['pct_desconto']     = ($vrTotDesconto / $vrTotSevicos ) * 100;
+        $dadosRequest['pct_desconto']     = ($vrTotDesconto / $vrTotSevicos) * 100;
         $dadosRequest['pct_acrescimo']    = 0;
         $dadosRequest['vr_acrescimo']     = 0;
         $dadosRequest['user_update_id']         = \Auth::User()->id;
         $registro->update($dadosRequest);
 
 
-        if(! $registro){
+        if (!$registro) {
             throw new OrdemServicoException('Registro não encontrado');
         }
 
@@ -808,56 +765,49 @@ class OrdemServicoController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
-            if($id <= 0){
-                 return response()->json([['mensagem'=>'Parâmetro inválido', 'class'=>'warning'], 400]);
-
+            if ($id <= 0) {
+                return response()->json([['mensagem' => 'Parâmetro inválido', 'class' => 'warning'], 400]);
             }
 
             $registro = OrdemServico::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
-            if(! $registro){
-                return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
-            }else{
+            if (!$registro) {
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
+            } else {
 
-                $registro = $registro->update(['active'=>'no']);
-
+                $registro = $registro->update(['active' => 'no']);
             }
 
-            if($registro == null){
+            if ($registro == null) {
 
                 //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
                 //return redirect()->back();
-                 return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
             }
 
             \DB::commit();
-            return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
-        
-        }catch(OrdemServicoException $e){
+            return response()->json(['mensagem' => 'Registro deletado com sucesso', 'class' => 'success'], 200);
+        } catch (OrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
     public function head(Request $request)
     {
-        
-        
     }
 
-    
+
     /**
      * Return a listing of the resource in json.
      *
@@ -866,8 +816,8 @@ class OrdemServicoController extends Controller
      */
     public function json(Request $request)
     {
-        try{
-            
+        try {
+
             //$this->validaRequest($request);
 
             \DB::beginTransaction();
@@ -876,123 +826,109 @@ class OrdemServicoController extends Controller
             //dd($consulta);
             $ordem = $consulta['ordem'] ?? 'id-desc';
 
-            $parse = [
+            $parse = [];
 
-            ];
+            $registro = \DB::table('ordem_servicos as os')->join('pessoas as pes', function ($join) {
 
-            $registro = \DB::table('ordem_servicos as os')->join('pessoas as pes', function($join){
-                
                 $join->on('os.pessoa_id', '=', 'pes.id');
+            })->join('pessoas as pesrc', function ($join) {
 
-            })->join('pessoas as pesrc', function($join){
-                
                 $join->on('os.pessoa_rca_id', '=', 'pesrc.id');
+            })->join('filials as fl', function ($join) {
 
-            })->join('filials as fl', function($join){
-                
                 $join->on('os.filial_id', '=', 'fl.id');
+            })->join('pessoas as pesfl', function ($join) {
 
-            })->join('pessoas as pesfl', function($join){
-                
                 $join->on('fl.pessoa_id', '=', 'pesfl.id');
+            })->join('profissionals as pf', function ($join) {
 
-            })->join('profissionals as pf', function($join){
-                
                 $join->on('os.profissional_id', '=', 'pf.id');
+            })->join('pessoas as pesprf', function ($join) {
 
-            })->join('pessoas as pesprf', function($join){
-                
                 $join->on('pf.pessoa_id', '=', 'pesprf.id');
-
             });
 
             $campos =  null;
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('os.id', $val);
                             }
                             break;
-                            case 'nome_pssoa':
-                                if(is_string($val)){
-                                    
-                                    if($val[0] == ','){
-                                        $val = substr($val, 1);
-                                    } 
-                                    if($val[strlen($val) - 1] == ','){
-                                        $val = substr($val, 0, -1);
-                                    }
-                                    
-                                    $registro->where('pes.name', 'like' , '%'.$val.'%');
-                                }
-                            break;
-                            case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                    $registro->limit($val);
-                                }
-                                break;
-                            case 'ordem':
+                        case 'nome_pssoa':
+                            if (is_string($val)) {
 
-                                
-                                if($val[0] == ','){
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
+                                $registro->where('pes.name', 'like', '%' . $val . '%');
+                            }
+                            break;
+                        case 'limite':
+                            $val = (int) $val;
+                            if (is_integer($val) && $val > 0) {
 
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
+                                $registro->limit($val);
+                            }
+                            break;
+                        case 'ordem':
+
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $val = explode(',', $val);
+                            for ($i = 0; !($i == count($val)); $i++) {
+                                $atual = explode('-', $val[$i]);
+                                if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                    $parsed = $parse[trim($atual[0])];
+
+                                    if ($parsed) {
+
+                                        $registro->orderBy($parsed, $atual[1]);
                                     }
-                                    
-                                    
                                 }
+                            }
 
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    $campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
                             break;
 
+                        case 'campos':
+                            if (is_array($val) && count($val) > 0) {
+                                $campos = $this->montaCamposConsulta($registro, $val);
+                            }
+                            break;
                     }
                 }
             }
-            if($campos){
+            if ($campos) {
                 $registro->select($campos);
-
-            }else{
+            } else {
                 $registro->select('os.*', 'pes.name', 'pesrc.name as name_rca', 'pesfl.name as name_filial', 'pesprf.name as name_profissional');
-
             }
             //$registro = \App\::where('active', '=', 'yes')->get();
             $ordemArr   = explode('-', $ordem);
-            
+
             $oremCampo  = $ordemArr[0];
             $oremTipo  = $ordemArr[1];
 
@@ -1001,15 +937,13 @@ class OrdemServicoController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
-
-        }catch(OrdemServicoException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
+        } catch (OrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
 
@@ -1017,10 +951,10 @@ class OrdemServicoController extends Controller
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'filial_id'=> 'required|min:1',
-            'pessoa_id'=> 'required|min:1',
-            'rca_id'=> 'required|min:1',
+        $validator = Validator::make($request->all(), [
+            'filial_id' => 'required|min:1',
+            'pessoa_id' => 'required|min:1',
+            'rca_id' => 'required|min:1',
         ], [
             'filial_id.required' => 'O campo "Filial" é obrigatório.',
             'filial_id.min' => 'O "Filial" deve conter pelo menos :min caracteres.',
@@ -1029,14 +963,14 @@ class OrdemServicoController extends Controller
             'rca_id.required' => 'O campo "Vendedor" é obrigatório.',
             'rca_id.min' => 'O "Vendedor" deve conter pelo menos :min caracteres.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
-                $msg .= $mensagem.'<br/>';
+            foreach ($errors->all() as $mensagem) {
+                $msg .= $mensagem . '<br/>';
             }
-            
+
             throw new OrdemServicoException($msg);
         }
 
@@ -1045,54 +979,54 @@ class OrdemServicoController extends Controller
 
     protected function validaAddItemRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'servico_id'=> 'required|min:1',
-            'qtd'=> 'required|min:1',
-            'vrItem'=> 'required|min:0.01',
-            'pct_desconto'=> 'max:100',
+        $validator = Validator::make($request->all(), [
+            'servico_id' => 'required|min:1',
+            'qtd' => 'required|min:1',
+            'vrItem' => 'required|min:0.01',
+            'pct_desconto' => 'max:100',
         ], [
             'servico_id.required' => 'O campo "Serviço" é obrigatório.',
             'servico_id.min' => 'O "Serviço" deve conter pelo menos :min caracteres.',
             'qtd.required' => 'O campo "Quantidade" é obrigatório.',
-            'qtd.min' => 'O "Quantidade" deve conter pelo menos :min caracteres.',            
+            'qtd.min' => 'O "Quantidade" deve conter pelo menos :min caracteres.',
             'vrItem.required' => 'O campo "Valor" é obrigatório.',
             'vrItem.min' => 'O "Valor" deve conter pelo menos :min caracteres.',
             'pct_desconto.max' => 'O campo "Desconto" permite até :max %.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
-                $msg .= $mensagem.'<br/>';
+            foreach ($errors->all() as $mensagem) {
+                $msg .= $mensagem . '<br/>';
             }
-            
+
             throw new OrdemServicoException($msg);
         }
 
         return true;
     }
 
-    protected function validaCancelarRequest(Request $request){
-    
-            $validator = Validator::make($request->all(),[
-                'motivo_cancel_id'=> 'required|min:',
-            ], [
-                'motivo_cancel_id.required' => 'O campo "Motivo de cancelamento" é obrigatório.',
-                'motivo_cancel_id.min' => 'O "Motivo de cancelamento" deve ser maior ou igual a :min.',
-            ]);
-            
-            if($validator->fails()) {
-                $errors = $validator->errors();
-                $msg = '';
-                foreach($errors->all() as $mensagem){
-                    $msg .= $mensagem.'<br/>';
-                }
-                
-                throw new OrdemServicoException($msg);
-            }
-    
-            return true;
+    protected function validaCancelarRequest(Request $request)
+    {
 
-    } 
+        $validator = Validator::make($request->all(), [
+            'motivo_cancel_id' => 'required|min:',
+        ], [
+            'motivo_cancel_id.required' => 'O campo "Motivo de cancelamento" é obrigatório.',
+            'motivo_cancel_id.min' => 'O "Motivo de cancelamento" deve ser maior ou igual a :min.',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            $msg = '';
+            foreach ($errors->all() as $mensagem) {
+                $msg .= $mensagem . '<br/>';
+            }
+
+            throw new OrdemServicoException($msg);
+        }
+
+        return true;
+    }
 }
