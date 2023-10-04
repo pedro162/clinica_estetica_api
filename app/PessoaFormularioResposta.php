@@ -24,5 +24,6 @@ class PessoaFormularioResposta extends Model
         'user_id',
         'user_update_id',
         'active',
+        'form_item_id',
     ];
 }
