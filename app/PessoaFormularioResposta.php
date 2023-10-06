@@ -7,6 +7,7 @@ use App\EventoAgenda;
 use App\Pessoa;
 use App\Profissional;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\FormularioItem;
 
 class PessoaFormularioResposta extends Model
 {
@@ -26,4 +27,11 @@ class PessoaFormularioResposta extends Model
         'active',
         'form_item_id',
     ];
+
+
+
+    public function formitem()
+    {
+        return $this->belongsTo(FormularioItem::class, 'form_item_id', 'id');
+    }
 }

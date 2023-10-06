@@ -10,10 +10,11 @@ use App\ContaReceber as CobrancaReceber;
 use App\Venda;
 use App\User;
 use App\Filial;
+use App\PessoaFormulario;
 
 class Pessoa extends Model
 {
-	protected $fillable = 
+	protected $fillable =
 	[
 		'name',
 		'name_opcional',
@@ -80,6 +81,11 @@ class Pessoa extends Model
 
 	public function filial()
 	{
-		return $this->hasOne(Filial::class, 'pessoa_id' , 'id');
+		return $this->hasOne(Filial::class, 'pessoa_id', 'id');
+	}
+
+	public function formulario()
+	{
+		return $this->hasMany(PessoaFormulario::class, 'pessoa_id', 'id');
 	}
 }

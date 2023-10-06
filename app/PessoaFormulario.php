@@ -7,6 +7,7 @@ use App\EventoAgenda;
 use App\Pessoa;
 use App\Profissional;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\PessoaFormularioResposta;
 
 class PessoaFormulario extends Model
 {
@@ -41,5 +42,10 @@ class PessoaFormulario extends Model
     public function profissional()
     {
         return $this->belongsTo(Profissional::class, 'profissional_id', 'id');
+    }
+
+    public function resposta()
+    {
+        return $this->hasMany(PessoaFormularioResposta::class, 'pess_form_id', 'id');
     }
 }

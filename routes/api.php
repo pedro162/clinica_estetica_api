@@ -106,6 +106,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/pessoa/destroy/{id}/{id_assistente?}', ['as' => 'pessoa.destroy', 'uses' => 'Admin\PessoaController@destroy']);
 	Route::get('/pessoa/valida/cpf/{cpf}/{id_assistente?}', ['as' => 'pessoa.valida.cpf', 'uses' => 'Admin\PessoaController@validarCpf']);
 	Route::get('/pessoa/plano/adicionar/{id}/{id_assistente?}', ['as' => 'pessoa.plano.adicionar', 'uses' => 'Admin\PessoaController@adicionarPlano']);
+	Route::get('/pessoa/ultima/ficha/info/{id}', ['as' => 'pessoa.ultima.ficha.info', 'uses' => 'Admin\PessoaController@lastFichaInfo']);
+	Route::post('/pessoa/ultima/ficha/info/{id}', ['as' => 'pessoa.ultima.ficha.info', 'uses' => 'Admin\PessoaController@lastFichaInfo']);
 
 	Route::get('/agenda/evento/json', ['as' => 'agenda.evento.json', 'uses' => 'Admin\EventoAgendaController@json']);
 	Route::post('/agenda/evento/json', ['as' => 'agenda.evento.json', 'uses' => 'Admin\EventoAgendaController@json']);
