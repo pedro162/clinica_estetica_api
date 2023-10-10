@@ -31,6 +31,7 @@ class PessoaFormulario extends Model
         'pess_abert_id',
         'pess_cancel_id',
         'pess_finali_id',
+        'filial_id',
     ];
 
 

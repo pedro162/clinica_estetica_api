@@ -16,66 +16,65 @@ class FilialController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
+
     public function index(Request $request)
     {
 
-    	try {
+        try {
             \DB::beginTransaction();
-    		
+
             $consulta = $request->all();
 
             $campos =  null;
 
             $registro = Filial::where('active', '=', 'yes');
 
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('id', $val);
                             }
                             break;
                         case 'name':
-                            if($val[0] == ','){
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('name', 'like' , '%'.$val.'%');
+
+                            $registro->where('name', 'like', '%' . $val . '%');
                             break;
                     }
                 }
             }
 
-    		$registro = $registro->get();
+            $registro = $registro->get();
 
             return view('admin.filial.index', compact('registro', 'consulta'));
-    		
-            \DB::commit();
 
-    	}catch(FilialException $e){
+            \DB::commit();
+        } catch (FilialException $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -83,7 +82,6 @@ class FilialController extends Controller
 
             //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
-
     }
 
     public function json(Request $request)
@@ -91,15 +89,15 @@ class FilialController extends Controller
 
         try {
             \DB::beginTransaction();
-            
+
             $consulta = $request->all();
 
             $campos =  null;
 
             $registro = \DB::table('filials as fl')
-            ->join('pessoas as p', function($join){
-                $join->on('p.id', '=', 'fl.pessoa_id');
-            });
+                ->join('pessoas as p', function ($join) {
+                    $join->on('p.id', '=', 'fl.pessoa_id');
+                });
 
 
             /*$registro->join('cidades', function($join){
@@ -110,82 +108,78 @@ class FilialController extends Controller
             
              */
 
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('id', $val);
                             }
                             break;
                         case 'name':
-                            if($val[0] == ','){
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('name', 'like' , '%'.$val.'%');
+
+                            $registro->where('name', 'like', '%' . $val . '%');
                             break;
-                        
+
                         case 'description_to_search':
-                            if($val[0] == ','){
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('name', 'like' , '%'.$val.'%');
+
+                            $registro->where('name', 'like', '%' . $val . '%');
                             break;
                     }
                 }
-            }//
+            } //
 
 
-            if($campos){
+            if ($campos) {
                 $registro->select($campos);
-            }else{
+            } else {
                 $registro->select('fl.*', 'p.name as name_filial');
-
             }
-           
-            $registro = $registro->where('fl.active', '=', 'yes')
-            ->where('p.active', '=', 'yes')->get();
 
-            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
+            $registro = $registro->where('fl.active', '=', 'yes')
+                ->where('p.active', '=', 'yes')->get();
+
+            if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
                 $dataToRequest = [];
-                foreach($registro as $reg){
-                    $dataToRequest[] = ['label'=>$reg->name, 'value'=>$reg->id];
+                foreach ($registro as $reg) {
+                    $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
                 }
 
                 $registro = $dataToRequest;
             }
-            
+
             \DB::commit();
-            
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
-        }catch(FilialException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (FilialException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
-
     }
 
     /**
@@ -193,27 +187,26 @@ class FilialController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
+
     public function create(Request $request, $idAssistente)
     {
-        try{
+        try {
 
             $dadosRequest = $request->all();
 
             $callBack = $dadosRequest['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
 
-            return view('admin.filial.create', compact('callBack','idAssistente', 'dadosRequest'));
-
-        }catch(FilialException $e){
+            return view('admin.filial.create', compact('callBack', 'idAssistente', 'dadosRequest'));
+        } catch (FilialException $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
 
-        // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -233,7 +226,7 @@ class FilialController extends Controller
     public function store(Request $request)
     {
 
-        try{
+        try {
 
 
             $validator = $this->validaRequest($request);
@@ -245,12 +238,12 @@ class FilialController extends Controller
             $user_id = \Auth::User()->id;
             $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->fist();
 
-            if(! $pessoa){
-                throw new FilialException('Pessoa não identificada'); 
+            if (!$pessoa) {
+                throw new FilialException('Pessoa não identificada');
             }
 
-            if(Filial::where('pessoa_id', '=', $pessoa->id)->first()){                
-                throw new FilialException('Já existe uma filial para a pessoa informada.'); 
+            if (Filial::where('pessoa_id', '=', $pessoa->id)->first()) {
+                throw new FilialException('Já existe uma filial para a pessoa informada.');
             }
 
             $dadosFilial                        = [];
@@ -259,29 +252,27 @@ class FilialController extends Controller
             $dadosFilial['dsAtividade']         = $dados['dsAtividade'] ?? null;
             $dadosFilial['dsTextoContrato']     = $dados['dsTextoContrato'] ?? null;
             $dadosFilial['active']              = 'yes';
-            
+
             $registro             = Filial::create($dadosFilial);
-            
-            if(! $registro){
+
+            if (!$registro) {
                 throw new FilialException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o supote.');
             }
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-
-
-        }catch (FilialException $th) {
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (FilialException $th) {
 
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor: '.$th->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $th->getMessage(), 'class' => 'warning'], 500);
             //throw $th;
         }
     }
@@ -294,10 +285,10 @@ class FilialController extends Controller
      */
     public function show($id)
     {
-        try{
+        try {
 
-            
-            if($id <= 0){
+
+            if ($id <= 0) {
 
                 throw new FilialException('Parâmetro inválido. Entre em contato com o supote.');
             }
@@ -305,11 +296,11 @@ class FilialController extends Controller
             \DB::beginTransaction();
 
             $registro = Filial::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
             //dd($registro);
 
-            if(! $registro){
+            if (!$registro) {
 
                 throw new FilialException('Registro não encontrado.');
             }
@@ -318,16 +309,15 @@ class FilialController extends Controller
 
             //return view('admin.produto.info', compact('registro'));
             return view('admin.filial.show', compact('registro'));
-
-        }catch(FilialException $e){
+        } catch (FilialException $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -340,14 +330,14 @@ class FilialController extends Controller
 
     public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             \DB::beginTransaction();
-            
-            if($id <= 0){
+
+            if ($id <= 0) {
 
                 throw new FilialException('Parâmetro inválido. Entre em contato com o supote.');
             }
@@ -355,9 +345,9 @@ class FilialController extends Controller
             $registro = null;
 
             $registro = Filial::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
-            if($registro == null){
+            if ($registro == null) {
 
                 throw new FilialException('Registro não encontrado.');
             }
@@ -369,20 +359,18 @@ class FilialController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-
-        }catch(FilialException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (FilialException $e) {
             \DB::rollback();
 
             //$msg = $e->getMessage();
             //return view('layouts._admin._error', compact('msg'));
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
     /*
@@ -394,33 +382,30 @@ class FilialController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    
+
     public function edit(Request $request, $id, $idAssistente)
     {
 
-    	try {
+        try {
             $dadosRequest = $request->all();
 
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new FilialException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
             $registro = Filial::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
-            if(! $registro){
+            if (!$registro) {
                 throw new FilialException('Registro não encontrado');
-                
             }
 
             \DB::commit();
 
-	        return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-
-
-    	}catch(FilialException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (FilialException $e) {
 
             \DB::rollback();
 
@@ -429,12 +414,11 @@ class FilialController extends Controller
 
             // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
-
     }
 
     /**
@@ -446,8 +430,8 @@ class FilialController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try{
-                        
+        try {
+
             $this->validaRequest($request);
 
             \DB::beginTransaction();
@@ -457,7 +441,7 @@ class FilialController extends Controller
             $registro   = null;
             $user_id    = \Auth::User()->id;
             $erros      = [];
-            
+
             $dados = $request->all();
 
             $user_id        = \Auth::User()->id;
@@ -465,22 +449,21 @@ class FilialController extends Controller
             $registro       = Filial::where('id', '=', $id)->where('active', '=', 'yes')->first();
             $pessoaFilial   = Filial::where('pessoa_id', '=', $dados['pessoa_id'])->where('active', '=', 'yes')->first();
 
-            if(! $registro){
+            if (!$registro) {
                 $erros[] = "Registro não identificado";
             }
 
-            if(! $pessoa){
+            if (!$pessoa) {
                 $erros[] = "Pessoa não identificada";
             }
 
-            if($registro && $pessoaFilial && $registro->id != $pessoaFilial->id){
+            if ($registro && $pessoaFilial && $registro->id != $pessoaFilial->id) {
                 $erros[] = "Já existe uma pessoa para esta filial";
             }
 
-            if($erros) {
+            if ($erros) {
 
-                throw new FilialException(implode("<br/><br/>",$erros));
-
+                throw new FilialException(implode("<br/><br/>", $erros));
             }
 
             $dadosFilial                        = [];
@@ -489,27 +472,26 @@ class FilialController extends Controller
             $dadosFilial['dsAtividade']         = $dados['dsAtividade'] ?? null;
             $dadosFilial['dsTextoContrato']     = $dados['dsTextoContrato'] ?? null;
             $dadosFilial['active']              = 'yes';
-            
+
             $registro             = Filial::create($dadosFilial);
-            
-            if(! $registro){
+
+            if (!$registro) {
                 throw new FilialException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o supote.');
             }
 
             \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class' => 'success'], 200);
-
-        }catch(FilialException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (FilialException $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
 
             //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
@@ -523,42 +505,40 @@ class FilialController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
-            if($id <= 0){
+            if ($id <= 0) {
 
                 // \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
 
                 //return redirect()->route('filial.index');
-                return response()->json(['mensagem'=>'Erro ao deletar registro', 'class'=>'warning'], 400);
-
+                return response()->json(['mensagem' => 'Erro ao deletar registro', 'class' => 'warning'], 400);
             }
 
             \DB::beginTransaction();
 
             $pessoa = Filial::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
-            if(! $pessoa){
+                ->where('id', '=', $id)->first();
+            if (!$pessoa) {
                 throw new FilialException('Registro não encontrado');
             }
 
-            $pessoa->update(['active'=>'no']);
+            $pessoa->update(['active' => 'no']);
             $pessoa->delete();
 
             \DB::commit();
-            return response()->json(['mensagem'=>'Registro atulizado com sucesso', 'class'=>'success']);
-
-        }catch(FilialException $e){
+            return response()->json(['mensagem' => 'Registro atulizado com sucesso', 'class' => 'success']);
+        } catch (FilialException $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
 
             //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
@@ -567,15 +547,14 @@ class FilialController extends Controller
     public function head(Request $request)
     {
         $dados = $request->all();
-        
-        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
-        if($isReload){
-           
+
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload'] : false;
+        if ($isReload) {
+
             return view('admin.filial.head_refresh', compact('isReload'));
-        }else{
+        } else {
             return view('admin.filial.head', compact('isReload'));
         }
-        
     }
 
 
@@ -583,20 +562,20 @@ class FilialController extends Controller
     {
         $result = Utilitarios::validaCpf($cpf);
 
-        if($result == true){
-            return response()->json(['mensagem'=>'Cpf ok', 'class'=>'success'], 200);
+        if ($result == true) {
+            return response()->json(['mensagem' => 'Cpf ok', 'class' => 'success'], 200);
         }
 
-        return response()->json(['mensagem'=>'Cpf inválido', 'class'=>'warning'], 400); 
+        return response()->json(['mensagem' => 'Cpf inválido', 'class' => 'warning'], 400);
     }
 
 
     public function adicionarPlano($id)
     {
-        try{
+        try {
 
-            if((! isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['params'=>'Parametro inválido']], 400);
+            if ((!isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['params' => 'Parametro inválido']], 400);
             }
 
             $registro           = null;
@@ -604,7 +583,7 @@ class FilialController extends Controller
             $planoPagamento     = null;
             $operadorFinanceiro = null;
             $plano              = null;
-            \DB::transaction(function() use (&$id, &$registro, &$formaPagamento, &$planoPagamento, &$operadorFinanceiro, &$plano){
+            \DB::transaction(function () use (&$id, &$registro, &$formaPagamento, &$planoPagamento, &$operadorFinanceiro, &$plano) {
                 $registro = Filial::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
                 $formaPagamento         = FormaPagamento::where('active', '=', 'yes')->get();
@@ -612,39 +591,37 @@ class FilialController extends Controller
                 $operadorFinanceiro     = OperadorFinanceiro::where('active', '=', 'yes')->get();
                 $plano                  = Plano::where('active', '=', 'yes')->get();
             });
-            
-            if(($registro == null) || ($formaPagamento == null) || ($plano == null)){
-                 return response()->json(['errors'=>['erro'=>'Erro ao carregar o registro'], 'class'=>'warning'], 400);
+
+            if (($registro == null) || ($formaPagamento == null) || ($plano == null)) {
+                return response()->json(['errors' => ['erro' => 'Erro ao carregar o registro'], 'class' => 'warning'], 400);
             }
             return view('admin.plano.painelVenda', compact('registro', 'formaPagamento', 'planoPagamento', 'operadorFinanceiro', 'plano'));
-
-        }catch(\Exception $e){
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor '.$e->getMessage().' > '.$e->getFile().' > '.$e->getLine(), 'class'=>'warning'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor ' . $e->getMessage() . ' > ' . $e->getFile() . ' > ' . $e->getLine(), 'class' => 'warning'], 500);
         }
     }
 
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'name'=> 'required|max:255|min:2',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255|min:2',
         ], [
             'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
             'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
             'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
-                $msg .= $mensagem.'<br/>';
+            foreach ($errors->all() as $mensagem) {
+                $msg .= $mensagem . '<br/>';
             }
-            
+
             throw new FilialException($msg);
         }
 
         return true;
     }
-
 }

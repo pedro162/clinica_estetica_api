@@ -38,6 +38,16 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/usuario/destroy/{id}/{id_assistente?}', ['as' => 'usuario.destroy', 'uses' => 'UsuarioController@destroy']);
 	Route::post('/usuario/destroy/{id}/{id_assistente?}', ['as' => 'usuario.destroy', 'uses' => 'UsuarioController@destroy']);
 
+	Route::get('/filial/json', ['as' => 'filial.json', 'uses' => 'Admin\FilialController@json']);
+	Route::post('/filial/json', ['as' => 'filial.json', 'uses' => 'Admin\FilialController@json']);
+	Route::post('/filial/store', ['as' => 'filial.store', 'uses' => 'Admin\FilialController@store']);
+	Route::get('/filial/edit/{id}', ['as' => 'filial.edit', 'uses' => 'Admin\FilialController@edit']);
+	Route::post('/filial/edit/{id}', ['as' => 'filial.edit', 'uses' => 'Admin\FilialController@edit']);
+	Route::put('/filial/update/{id}', ['as' => 'filial.update', 'uses' => 'Admin\FilialController@update']);
+	Route::get('/filial/info/{id}', ['as' => 'filial.info', 'uses' => 'Admin\FilialController@info']);
+	Route::post('/filial/info/{id}', ['as' => 'filial.info', 'uses' => 'Admin\FilialController@info']);
+	Route::get('/filial/destroy/{id}', ['as' => 'filial.destroy', 'uses' => 'Admin\FilialController@destroy']);
+
 	Route::get('/produto/index/{id_assistente?}', ['as' => 'produto.index', 'uses' => 'Admin\ProdutoController@index']);
 	Route::post('/produto/index/post', ['as' => 'produto.index.post', 'uses' => 'Admin\ProdutoController@index']);
 	Route::get('/produto/create/{id_assistente?}', ['as' => 'produto.create', 'uses' => 'Admin\ProdutoController@create']);

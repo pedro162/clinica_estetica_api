@@ -348,12 +348,12 @@ class PessoaFichaController extends Controller
             })->join('pessoas as pesfl', function ($join) {
 
                 $join->on('fl.pessoa_id', '=', 'pesfl.id');
-            })->join('profissionals as pf', function ($join) {
+            })->join('profissionals as prf', function ($join) {
 
-                $join->on('pf.profissional_id', '=', 'pf.id');
+                $join->on('pf.profissional_id', '=', 'prf.id');
             })->join('pessoas as pesprf', function ($join) {
 
-                $join->on('pf.pessoa_id', '=', 'pesprf.id');
+                $join->on('prf.pessoa_id', '=', 'pesprf.id');
             });
 
             $campos =  null;
@@ -433,7 +433,7 @@ class PessoaFichaController extends Controller
             $oremCampo  = $ordemArr[0];
             $oremTipo  = $ordemArr[1];
 
-            $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+            $registro   = $registro->where('pf.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
 
 
             \DB::commit();
