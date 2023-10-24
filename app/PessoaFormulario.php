@@ -8,6 +8,8 @@ use App\Pessoa;
 use App\Profissional;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\PessoaFormularioResposta;
+use App\Formulario;
+use App\Filial;
 
 class PessoaFormulario extends Model
 {
@@ -43,6 +45,16 @@ class PessoaFormulario extends Model
     public function profissional()
     {
         return $this->belongsTo(Profissional::class, 'profissional_id', 'id');
+    }
+
+    public function formulario()
+    {
+        return $this->belongsTo(Formulario::class, 'formulario_id', 'id');
+    }
+
+    public function filial()
+    {
+        return $this->belongsTo(Filial::class, 'filial_id', 'id');
     }
 
     public function resposta()

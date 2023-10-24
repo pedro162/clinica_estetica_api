@@ -156,19 +156,11 @@ class PessoaFichaController extends Controller
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
-            if ($id <= 0) {
-                throw new PessoaFichaExcepton('Parâmetro ínválido');
-            }
 
             \DB::beginTransaction();
 
-            $registro = PessoaFormulario::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
-            $registro->pessoa;
-
-            if ($registro == null) {
-                throw new PessoaFichaExcepton(' não encontrado');
-            }
+            $objPessoaFichaHelper = new PessoaFichaHelper();
+            $registro = $objPessoaFichaHelper->info($dados, $id);
 
             \DB::commit();
 
@@ -241,13 +233,10 @@ class PessoaFichaController extends Controller
                 throw new PessoaFichaExcepton('Parâmetro inválido');
             }
 
-            $registro = PessoaFormulario::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            $dados = $request->all();
 
-            $dadosRequest = [];
-            $dadosRequest['user_update_id']     = \Auth::User()->id;
-            $registro->update($dadosRequest);
-
-
+            $pessoaFichaHelper = new PessoaFichaHelper();
+            $registro = $pessoaFichaHelper->create($dados, $id);
             if (!$registro) {
                 throw new PessoaFichaExcepton('Registro não encontrado');
             }
@@ -335,7 +324,11 @@ class PessoaFichaController extends Controller
 
             $consulta = $request->all();
             //dd($consulta);
-            $ordem = $consulta['ordem'] ?? 'id-desc';
+
+            if (!(isset($consulta['ordem']) && strlen($consulta['ordem']) > 0)) {
+                $consulta['ordem'] = 'id-desc';
+            }
+
 
             $parse = [];
 
@@ -354,6 +347,9 @@ class PessoaFichaController extends Controller
             })->join('pessoas as pesprf', function ($join) {
 
                 $join->on('prf.pessoa_id', '=', 'pesprf.id');
+            })->join('formularios as form', function ($join) {
+
+                $join->on('form.id', '=', 'pf.formulario_id');
             });
 
             $campos =  null;
@@ -368,7 +364,7 @@ class PessoaFichaController extends Controller
 
                             $registro->whereIn('pf.id', $val);
                             break;
-                        case 'nome_pssoa':
+                        case 'name_pessoa':
                             if (is_string($val)) {
 
                                 if ($val[0] == ',') {
@@ -380,6 +376,40 @@ class PessoaFichaController extends Controller
 
                                 $registro->where('pes.name', 'like', '%' . $val . '%');
                             }
+                            break;
+
+                        case 'name_form':
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
+                                    $val = substr($val, 1);
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $registro->where('form.name', 'like', '%' . $val . '%');
+                            }
+                            break;
+                        case 'sigiloso':
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
+                                    $val = substr($val, 1);
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $registro->where('pf.sigiloso', '=', $val);
+                            }
+                            break;
+                        case 'status':
+
+                            $val = trim($val, ',');
+                            $val = explode(',', $val);
+
+                            $registro->whereIn('pf.status', $val);
                             break;
                         case 'limite':
                             $val = (int) $val;
@@ -409,6 +439,8 @@ class PessoaFichaController extends Controller
 
                                         $registro->orderBy($parsed, $atual[1]);
                                     }
+                                } else {
+                                    $registro->orderBy($atual[0], $atual[1]);
                                 }
                             }
 
@@ -425,15 +457,17 @@ class PessoaFichaController extends Controller
             if ($campos) {
                 $registro->select($campos);
             } else {
-                $registro->select('pf.*', 'pes.name', 'pesfl.name as name_filial', 'pesprf.name as name_profissional');
+                $registro->select('pf.*', 'pes.name', 'pesfl.name as name_filial', 'pesprf.name as name_profissional', 'form.name as name_form');
             }
             //$registro = \App\::where('active', '=', 'yes')->get();
-            $ordemArr   = explode('-', $ordem);
+            /* $ordemArr   = explode('-', $ordem);
 
             $oremCampo  = $ordemArr[0];
-            $oremTipo  = $ordemArr[1];
+            $oremTipo  = $ordemArr[1]; */
 
-            $registro   = $registro->where('pf.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+            //$registro   = $registro->where('pf.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+
+            $registro   = $registro->where('pf.active', '=', 'yes')->get();
 
 
             \DB::commit();

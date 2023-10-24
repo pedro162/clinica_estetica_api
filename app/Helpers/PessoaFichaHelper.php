@@ -21,8 +21,14 @@ use Illuminate\Support\Facades\Auth;
 class PessoaFichaHelper
 {
 
-
-    public function create(array $dados)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  array  $dados
+     * @param  int  $id
+     * @return \App\PessoaFormulario
+     */
+    public function create(array $dados, int $id = null)
     {
 
         //------Salve the form header ----------------------------------------
@@ -59,7 +65,31 @@ class PessoaFichaHelper
         $dadosRequest['user_id']          = \Auth::User()->id; //trocar pelo id do usuario logado
         $dadosRequest['active']           = 'yes';
 
-        $formPessoa = PessoaFormulario::create($dadosRequest);
+        //---Se tiver uma ficha informada, tento carregar e atualizar
+        if ($id > 0) {
+            $formPessoa = PessoaFormulario::where('active', '=', 'yes')->where('id', '=', $id)->first();
+
+            if (!$formulario) {
+                throw new PessoaFichaExcepton('Ficha não identificada');
+            }
+
+            $dadosRequest['user_update_id']     = \Auth::User()->id;
+            $formPessoa->update($dadosRequest);
+
+            $respostas = $formPessoa->resposta();
+            //---- Pego todas as respostas anteriores e excluo para que as novas fiquem no lugar
+            if ($respostas) {
+                foreach ($respostas as $resposta) {
+                    if ($resposta) {
+                        $resposta->update(['active' => 'no']);
+                        $resposta->delete();
+                    }
+                }
+            }
+        } else {
+            $formPessoa = PessoaFormulario::create($dadosRequest);
+        }
+
 
         $dataQuestionario = $dados['questionario'] ?? [];
         //------Save the response item from form ----------------------------------------
@@ -140,5 +170,30 @@ class PessoaFichaHelper
         $formPessoa->update($dadosRequest);
 
         return $formPessoa;
+    }
+
+    public function info($dados, $id)
+    {
+        if (!($id > 0)) {
+            throw new PessoaFichaExcepton('Parâmetro ínválido');
+        }
+
+        $registro = PessoaFormulario::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+        $registro->pessoa;
+        $registro->resposta;
+        $registro->profissional;
+        $registro->formulario;
+        if ($registro->resposta) {
+            foreach ($registro->resposta as $resposta) {
+                $resposta->formitem;
+            }
+        }
+
+        if ($registro == null) {
+            throw new PessoaFichaExcepton(' não encontrado');
+        }
+
+        return $registro;
     }
 }

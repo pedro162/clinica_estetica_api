@@ -23,6 +23,7 @@ use \App\ServicoItem;
 use \App\Servico;
 use \App\Plano;
 use App\Exceptions\PessoaException;
+use App\Helpers\PessoaHelper;
 
 class PessoaController extends Controller
 {
@@ -409,34 +410,9 @@ class PessoaController extends Controller
             $id = $id ?? $dados['id'];
             \DB::beginTransaction();
 
-            if ($id <= 0) {
+            $objPessHelper = new PessoaHelper();
 
-                throw new PessoaException('Parâmetro inválido. Entre em contato com o supote.');
-            }
-
-            $registro = null;
-
-            $registro = Pessoa::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
-
-            if ($registro == null) {
-
-                throw new PessoaException('Registro não encontrado.');
-            }
-            /*
-            if($logr = $registro->logradouro->where('importancia', '=', 'principal')->first()){
-                $registro->logradouro = $logr->estado_logradouro->pais;
-            }
-            
-            $registro->grupo;
-            $registro->telefone;*/
-            if ($logr = $registro->logradouro->where('importancia', '=', 'principal')->first()) {
-                $registro->logradouro = $logr->estado_logradouro->pais;
-            }
-
-            $registro->grupo;
-            $registro->telefone;
-            //dd($registro);
+            $registro = $objPessHelper->info($dados, $id);
 
             \DB::commit();
 
@@ -487,6 +463,7 @@ class PessoaController extends Controller
             $registro->grupo;
             $registro->telefone;*/
             if ($logr = $registro->logradouro->where('importancia', '=', 'principal')->first()) {
+                //return response()->json(['mensagem' => $logr, 'class' => 'sucess'], 200);
                 $registro->logradouro = $logr->estado_logradouro->pais;
             }
 

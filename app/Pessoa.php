@@ -36,7 +36,7 @@ class Pessoa extends Model
 
 	public function logradouro()
 	{
-		return $this->belongsToMany(Logradouro::class);
+		return $this->belongsToMany(Logradouro::class, 'logradouro_pessoa', 'pessoa_id', 'logradouro_id');
 	}
 
 	public function adicionarGrupo($grupo, $dados)

@@ -305,7 +305,7 @@ class FormularioItenController extends Controller
 
             $registro = \DB::table('formulario_items as formit')
                 ->join('formulario_grupos as formg', function ($join) {
-                    $join->on('formg.id', '=', 'formit.formulario_id');
+                    $join->on('formg.id', '=', 'formit.formulario_grupo_id');
                 });
 
             /**
