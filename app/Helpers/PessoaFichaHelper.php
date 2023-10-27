@@ -181,7 +181,13 @@ class PessoaFichaHelper
         $registro = PessoaFormulario::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
         $registro->pessoa;
-        $registro->resposta;
+        $logradouros = $registro->pessoa->logradouro;
+        if ($logradouros) {
+            foreach ($logradouros as $logradouro) {
+                $logradouro->estado_logradouro;
+            }
+        }
+        $registro->resposta = $registro->resposta()->where('active', '=', 'yes')->get();
         $registro->profissional;
         $registro->formulario;
         if ($registro->resposta) {
