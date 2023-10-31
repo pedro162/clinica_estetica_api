@@ -36,10 +36,12 @@ class PessoaHelper
         
         $registro->grupo;
         $registro->telefone;*/
-        if ($logr = $registro->logradouro()->where('importancia', '=', 'principal')->first()) {
+        $logr = $registro->logradouro()->where('importancia', '=', 'principal')->first();
+        $registro->logradouro = $logr;
+        if ($registro->logradouro) {
 
-            if ($logr->estado_logradouro) {
-                $registro->logradouro = $logr->estado_logradouro->pais;
+            if ($registro->logradouro->estado_logradouro) {
+                $registro->logradouro->estado_logradouro->pais;
             }
         }
 

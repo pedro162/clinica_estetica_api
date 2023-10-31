@@ -16,6 +16,7 @@ use \App\Profissional;
 use \App\Formulario;
 use \App\Helpers\PessoaFichaRespostaHelper;
 use \App\Exceptions\PessoaFichaExcepton;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class PessoaFichaHelper
@@ -67,6 +68,7 @@ class PessoaFichaHelper
 
         //---Se tiver uma ficha informada, tento carregar e atualizar
         if ($id > 0) {
+            // throw new \Exception('teste');
             $formPessoa = PessoaFormulario::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
             if (!$formulario) {
@@ -76,7 +78,7 @@ class PessoaFichaHelper
             $dadosRequest['user_update_id']     = \Auth::User()->id;
             $formPessoa->update($dadosRequest);
 
-            $respostas = $formPessoa->resposta();
+            $respostas = $formPessoa->resposta()->where('active', '=', 'yes')->get();
             //---- Pego todas as respostas anteriores e excluo para que as novas fiquem no lugar
             if ($respostas) {
                 foreach ($respostas as $resposta) {
