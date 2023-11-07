@@ -21,6 +21,7 @@ use \App\Rca;
 use \App\Exceptions\CobrancaReceberException;
 use \App\ExceptionApplication;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\ContaReceberHelper;
 
 
 
@@ -34,139 +35,130 @@ class CobrancaReceberController extends Controller
      */
     public function index(Request $request)
     {
-        try{
+        try {
             \DB::beginTransaction();
 
             $consulta = $request->all();
             $campos =  null;
-            $parse = [
-               
-            ];
+            $parse = [];
 
             $registro = \DB::table('conta_recebers');
-            $registro->join('pessoas', function($join){                
+            $registro->join('pessoas', function ($join) {
                 $join->on('pessoas.id', '=', 'conta_recebers.pessoa_id');
-
-            })->join('forma_pagamentos as fp', function($join){                
+            })->join('forma_pagamentos as fp', function ($join) {
                 $join->on('fp.id', '=', 'conta_recebers.forma_pagamento_id');
-
             });
-            
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('conta_recebers.id', $val);
                             }
                             break;
                         case 'nmPessoa':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
-                                
-                                $registro->where('pessoas.name', 'like' , '%'.$val.'%');
+
+                                $registro->where('pessoas.name', 'like', '%' . $val . '%');
                             }
                             break;
                         case 'pessoa_id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('pessoas.id', $val);
                             }
                             break;
                         case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
+                            $val = (int) $val;
+                            if (is_integer($val) && $val > 0) {
+
+                                $registro->limit($val);
+                            }
                             break;
                         case 'ordem':
 
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
 
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
 
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
+                            $val = explode(',', $val);
+                            for ($i = 0; !($i == count($val)); $i++) {
+                                $atual = explode('-', $val[$i]);
+                                if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                    $parsed = $parse[trim($atual[0])];
+
+                                    if ($parsed) {
+
+                                        $registro->orderBy($parsed, $atual[1]);
                                     }
-                                    
-                                    
                                 }
+                            }
 
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
                             break;
 
+                        case 'campos':
+                            if (is_array($val) && count($val) > 0) {
+                                //$campos = $this->montaCamposConsulta($registro, $val);
+
+                            }
+                            break;
                     }
                 }
             }
-            if($campos){
+            if ($campos) {
                 $registro->select($campos);
-            }else{
+            } else {
                 $registro->select('conta_recebers.*', 'IFNUL(conta_recebers.vrLiquido, 0) - (IFNUL(conta_recebers.vrPago, 0) + IFNUL(conta_recebers.vrDevolvido, 0)) as vrAberto', 'pessoas.name', 'fp.cdCobrancaTipo', 'fp.name as name_cob_tp');
-
             }
-           
+
             $registro = $registro->where('conta_recebers.active', '=', 'yes')
-            ->where('pessoas.active', '=', 'yes')->get();
+                ->where('pessoas.active', '=', 'yes')->get();
 
             \DB::commit();
 
             //dd( $registro);
 
             return view('admin.cobranca_receber.index', compact('registro', 'consulta'));
-
-        }catch(CobrancaReceberException $e){
+        } catch (CobrancaReceberException $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -183,194 +175,26 @@ class CobrancaReceberController extends Controller
      */
     public function json(Request $request)
     {
-        try{
+        try {
             \DB::beginTransaction();
 
-            $consulta = $request->all();
-            $campos =  null;
-            $parse = [
-               
-            ];
 
-            $registro = \DB::table('conta_recebers as cr');
-            $registro->join('pessoas', function($join){                
-                $join->on('pessoas.id', '=', 'cr.pessoa_id');
+            $objCobReceberHelper = new ContaReceberHelper();
 
-            })->join('filials as fl', function($join){
-                
-                $join->on('cr.filial_id', '=', 'fl.id');
-
-            })->join('pessoas as pesfl', function($join){
-                
-                $join->on('fl.pessoa_id', '=', 'pesfl.id');
-
-            })->join('forma_pagamentos as fp', function($join){                
-                $join->on('fp.id', '=', 'cr.forma_pagamento_id');
-
-            });
-            
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
-                        case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('cr.id', $val);
-                            }
-                            break;
-                        case 'nmPessoa':
-                        case 'pessoa_name':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('pessoas.name', 'like' , '%'.$val.'%');
-                            }
-                            break;
-                        case 'pessoa_id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('pessoas.id', $val);
-                            }
-                            break;                        
-                        case 'referencia_id':
-                                if(is_string($val)){
-                                    
-                                    if($val[0] == ','){
-                                        $val = substr($val, 1);
-                                    } 
-                                    if($val[strlen($val) - 1] == ','){
-                                        $val = substr($val, 0, -1);
-                                    }
-                                }
-
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('cr.referencia_id', $val);
-                            break;
-                                                
-                        case 'referencia':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('cr.referencia', $val);
-                            }
-                            break;
-                        case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
-                            break;
-                        case 'ordem':
-
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
-
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
-                                    }
-                                    
-                                    
-                                }
-
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
-                            break;
-
-                    }
-                }
-            }
-            $sqlDsReferencia ='(
-                    CASE 
-                        WHEN cr.referencia = "ordem_servicos" THEN "Ordem de serviço"
-                        ELSE "Referência não mapeada"
-                    END
-                )
-                as dsReferencia
-            ';
-            if($campos){
-                $registro->select($campos);
-            }else{
-                $registro->select('cr.*',\DB::raw('(IFNULL(cr.vrLiquido, 0) - (IFNULL(cr.vrPago, 0) + IFNULL(cr.vrDevolvido, 0)))  vrAberto'), \DB::raw($sqlDsReferencia), 'fp.cdCobrancaTipo', 'fp.name as name_cob_tp', 'pessoas.name', 'pesfl.name as name_filial');
-
-            }
-           
-            $registro = $registro->where('cr.active', '=', 'yes')
-            ->where('pessoas.active', '=', 'yes')->get();
+            $registro = $objCobReceberHelper->json($request);
 
             \DB::commit();
-            
-            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
-                $dataToRequest = [];
-                foreach($registro as $reg){
-                    $dataToRequest[] = ['label'=>$reg->name, 'value'=>$reg->id];
-                }
-
-                $registro = $dataToRequest;
-            }
-
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
 
 
-        }catch(CobrancaReceberException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
+        } catch (CobrancaReceberException $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
 
@@ -385,7 +209,7 @@ class CobrancaReceberController extends Controller
 
         $callBack = $dadosRequest['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-        return view('admin.cobranca_receber.create', compact('callBack','idAssistente'));
+        return view('admin.cobranca_receber.create', compact('callBack', 'idAssistente'));
     }
 
     /**
@@ -396,21 +220,21 @@ class CobrancaReceberController extends Controller
      */
     public function store(Request $request)
     {
-        try{
+        try {
 
             $this->validaRequest($request);
-             
+
             \DB::beginTransaction();
 
             $dados = $request->all();
 
-            $pessoa = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
-            if(! $pessoa){
+            $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->first();
+            if (!$pessoa) {
                 throw new CobrancaReceberException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
             }
- 
+
             $dadosRequest = [];
-             
+
             $dadosRequest['referencia_id']              = $dados['referencia_id']           ?? null;
             $dadosRequest['referencia']                 = $dados['referencia']              ?? null;
             $dadosRequest['pessoa_id']                  = $pessoa->id;
@@ -429,24 +253,22 @@ class CobrancaReceberController extends Controller
             $dadosRequest['user_update_id']             = null;
             $dadosRequest['active']                     =  'yes';
 
-             
+
             $registro = CobrancaReceber::create($dadosRequest);
             \DB::commit();
- 
-            if($registro){
-                return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-            }else{
+
+            if ($registro) {
+                return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+            } else {
                 throw new CobrancaReceberException('Erro ao cadastrar');
             }
- 
-         }catch(CobrancaReceberException $e){
-             \DB::rollback();
-             return response()->json(['errors'=>['error'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
- 
-         }catch(\Exception $e){
-             \DB::rollback();
-             return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
-         }
+        } catch (CobrancaReceberException $e) {
+            \DB::rollback();
+            return response()->json(['errors' => ['error' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 400);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
+        }
     }
 
     /**
@@ -460,48 +282,27 @@ class CobrancaReceberController extends Controller
         //
     }
 
-    public function info(Request $request, $id, $idAssistente)
+    public function info(Request $request, $id, $idAssistente = 0)
     {
-        
-        try{
 
-            $dados = $request->all();
-            $id = $id ?? $dados['id'];
-            $callBack = $dados['callBack'] ?? '';
-            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
-
-            if($id <= 0){
-                throw new CobrancaReceberException('Parâmetro ínválido');
-            }
+        try {
 
             \DB::beginTransaction();
+            $objCobReceberHelper = new ContaReceberHelper();
 
-            $registro = CobrancaReceber::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
-
-            if($registro == null){
-                throw new CobrancaReceberException('Registro não encontrado');
-            }
+            $registro = $objCobReceberHelper->info($request, $id, $idAssistente);
 
             \DB::commit();
 
-            //return view('admin.produto.info', compact('registro'));
-            return view('admin.cobranca_receber.info', compact('registro', 'idAssistente', 'callBack'));
-
-        }catch(CobrancaReceberException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
+        } catch (CobrancaReceberException $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
-
+            return response()->json(['errors' => ['error' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
 
@@ -513,17 +314,17 @@ class CobrancaReceberController extends Controller
      */
     public function edit(Request $request, $id, $idAssistente)
     {
-        try{
-            
+        try {
+
             $dadosRequest = $request->all();
 
             $callBack = $dadosRequest['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-            if(! isset($id)){
+            if (!isset($id)) {
                 $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
             }
 
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new CobrancaReceberException('Parâmetro ínválido');
             }
 
@@ -532,26 +333,24 @@ class CobrancaReceberController extends Controller
             $registro = CobrancaReceber::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
 
-            if($registro == null){
+            if ($registro == null) {
                 throw new CobrancaReceberException('Registro não encontrado');
-                
             }
 
             \DB::commit();
 
             return view('admin.cobranca_receber.edit', compact('registro', 'idAssistente', 'callBack'));
-
-         }catch(CobrancaReceberException $e){
+        } catch (CobrancaReceberException $e) {
 
             \DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
-            
+
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -572,14 +371,14 @@ class CobrancaReceberController extends Controller
     public function update(Request $request, $id)
     {
         try {
-           
-            
+
+
             $this->validaRequest($request);
 
             \DB::beginTransaction();
 
-            $dadosRequest = [];         
-             
+            $dadosRequest = [];
+
             $dadosRequest['referencia_id']              = $dados['referencia_id']           ?? null;
             $dadosRequest['referencia']                 = $dados['referencia']              ?? null;
             $dadosRequest['pessoa_id']                  = $pessoa->id;
@@ -596,9 +395,9 @@ class CobrancaReceberController extends Controller
             $dadosRequest['vrJuros']                    = $dados['vrJuros']                 ?? 0;
             $dadosRequest['user_update_id']             = \Auth::User()->id;
             $dadosRequest['active']                     =  'yes';
-           
+
             $registro = CobrancaReceber::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if(! $registro){
+            if (!$registro) {
                 throw new CobrancaReceberException('Registro não identificado');
             }
 
@@ -606,20 +405,18 @@ class CobrancaReceberController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-
-
-        }catch (CobrancaReceberException $th) {
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (CobrancaReceberException $th) {
 
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
         }
     }
@@ -632,16 +429,16 @@ class CobrancaReceberController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
             $dadosRequest = [];
 
-            $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['user_update_id']     = \Auth::User()->id; //trocar pelo id do usuario logado
             $dadosRequest['active']             = 'no';
             $registro = CobrancaReceber::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if(! $registro){
+            if (!$registro) {
                 throw new CobrancaReceberException('Registro não identificado');
             }
 
@@ -650,19 +447,18 @@ class CobrancaReceberController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>[], 'class'=>'sucess'], 200);
-
-        }catch (CobrancaReceberException $th) {
+            return response()->json(['mensagem' => [], 'class' => 'sucess'], 200);
+        } catch (CobrancaReceberException $th) {
 
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
         }
     }
@@ -670,22 +466,21 @@ class CobrancaReceberController extends Controller
     public function head(Request $request)
     {
         $dados = $request->all();
-        
-        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
-        if($isReload){
-           
+
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload'] : false;
+        if ($isReload) {
+
             return view('admin.cobranca_receber.head_refresh', compact('isReload'));
-        }else{
+        } else {
             return view('admin.cobranca_receber.head', compact('isReload'));
         }
-        
     }
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'descricao'=> 'required|max:255|min:2',
-            'pessoa_id'=> 'required|min:1',
+        $validator = Validator::make($request->all(), [
+            'descricao' => 'required|max:255|min:2',
+            'pessoa_id' => 'required|min:1',
             'vrBruto'   => 'required',
         ], [
             'descricao.required' => 'Informe uma descrição para o contas a receber.',
@@ -695,18 +490,17 @@ class CobrancaReceberController extends Controller
             'pessoa_id.min' => 'O código da pessoa deve ter pelo menos  :min caracteres.',
             'vrBruto.required' => 'Informe o valor bruto do contas a receber.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
-                $msg .= $mensagem.'<br/>';
+            foreach ($errors->all() as $mensagem) {
+                $msg .= $mensagem . '<br/>';
             }
-            
+
             throw new CobrancaReceberException($msg);
         }
 
         return true;
     }
-
 }
