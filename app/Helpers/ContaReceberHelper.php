@@ -260,10 +260,27 @@ class ContaReceberHelper
         return $datacobReceberObjArr;
     }
 
-    public function info(Request $request, $id, $idAssistente = 0)
+    public function update(array $data, int $id){
+        $dadosRequest = [];
+
+        $dadosRequest['descricao']                  = $data['descricao'];
+        $dadosRequest['user_update_id']             = \Auth::User()->id;
+        $dadosRequest['active']                     =  'yes';
+
+        $registro = CobrancaReceber::where('active', '=', 'yes')->where('id', '=', $id)->first();
+        if (!$registro) {
+            throw new CobrancaReceberException('Registro não identificado');
+        }
+        
+        $registro->update($dadosRequest);
+
+        return $registro;
+    }
+
+    public function info(array $data, $id, $idAssistente = 0)
     {
 
-        $dados = $request->all();
+        $dados = $data;
         $id = $id ?? $dados['id'];
         $callBack = $dados['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
@@ -288,9 +305,9 @@ class ContaReceberHelper
      *
      * @return \Illuminate\Http\Response
      */
-    public function json(Request $request)
+    public function json(array $data)
     {
-        $consulta = $request->all();
+        $consulta = $data;
         $campos =  null;
         $parse = [];
 

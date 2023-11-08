@@ -36,114 +36,13 @@ class CobrancaReceberController extends Controller
     public function index(Request $request)
     {
         try {
+            
             \DB::beginTransaction();
+            
+            $data = $request->all();
+            $objCobReceberHelper = new ContaReceberHelper();
 
-            $consulta = $request->all();
-            $campos =  null;
-            $parse = [];
-
-            $registro = \DB::table('conta_recebers');
-            $registro->join('pessoas', function ($join) {
-                $join->on('pessoas.id', '=', 'conta_recebers.pessoa_id');
-            })->join('forma_pagamentos as fp', function ($join) {
-                $join->on('fp.id', '=', 'conta_recebers.forma_pagamento_id');
-            });
-
-            if (is_array($consulta) && count($consulta) > 0) {
-                foreach ($consulta as $key => $val) {
-
-                    switch (trim($key)) {
-                        case 'id':
-                            if (is_string($val)) {
-
-                                if ($val[0] == ',') {
-                                    $val = substr($val, 1);
-                                }
-                                if ($val[strlen($val) - 1] == ',') {
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-
-                                $registro->whereIn('conta_recebers.id', $val);
-                            }
-                            break;
-                        case 'nmPessoa':
-                            if (is_string($val)) {
-
-                                if ($val[0] == ',') {
-                                    $val = substr($val, 1);
-                                }
-                                if ($val[strlen($val) - 1] == ',') {
-                                    $val = substr($val, 0, -1);
-                                }
-
-                                $registro->where('pessoas.name', 'like', '%' . $val . '%');
-                            }
-                            break;
-                        case 'pessoa_id':
-                            if (is_string($val)) {
-
-                                if ($val[0] == ',') {
-                                    $val = substr($val, 1);
-                                }
-                                if ($val[strlen($val) - 1] == ',') {
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-
-                                $registro->whereIn('pessoas.id', $val);
-                            }
-                            break;
-                        case 'limite':
-                            $val = (int) $val;
-                            if (is_integer($val) && $val > 0) {
-
-                                $registro->limit($val);
-                            }
-                            break;
-                        case 'ordem':
-
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $val = explode(',', $val);
-                            for ($i = 0; !($i == count($val)); $i++) {
-                                $atual = explode('-', $val[$i]);
-                                if (array_key_exists(trim($atual[0]), $parse)) {
-
-                                    $parsed = $parse[trim($atual[0])];
-
-                                    if ($parsed) {
-
-                                        $registro->orderBy($parsed, $atual[1]);
-                                    }
-                                }
-                            }
-
-                            break;
-
-                        case 'campos':
-                            if (is_array($val) && count($val) > 0) {
-                                //$campos = $this->montaCamposConsulta($registro, $val);
-
-                            }
-                            break;
-                    }
-                }
-            }
-            if ($campos) {
-                $registro->select($campos);
-            } else {
-                $registro->select('conta_recebers.*', 'IFNUL(conta_recebers.vrLiquido, 0) - (IFNUL(conta_recebers.vrPago, 0) + IFNUL(conta_recebers.vrDevolvido, 0)) as vrAberto', 'pessoas.name', 'fp.cdCobrancaTipo', 'fp.name as name_cob_tp');
-            }
-
-            $registro = $registro->where('conta_recebers.active', '=', 'yes')
-                ->where('pessoas.active', '=', 'yes')->get();
+            $registro = $objCobReceberHelper->json($data);
 
             \DB::commit();
 
@@ -178,10 +77,11 @@ class CobrancaReceberController extends Controller
         try {
             \DB::beginTransaction();
 
+            $data = $request->all();
 
             $objCobReceberHelper = new ContaReceberHelper();
 
-            $registro = $objCobReceberHelper->json($request);
+            $registro = $objCobReceberHelper->json($data);
 
             \DB::commit();
 
@@ -290,7 +190,8 @@ class CobrancaReceberController extends Controller
             \DB::beginTransaction();
             $objCobReceberHelper = new ContaReceberHelper();
 
-            $registro = $objCobReceberHelper->info($request, $id, $idAssistente);
+            $data = $request->all();
+            $registro = $objCobReceberHelper->info($data, $id, $idAssistente);
 
             \DB::commit();
 
@@ -373,35 +274,14 @@ class CobrancaReceberController extends Controller
         try {
 
 
-            $this->validaRequest($request);
+            //$this->validaRequest($request);
 
             \DB::beginTransaction();
 
-            $dadosRequest = [];
+            $objCobReceberHelper = new ContaReceberHelper();
 
-            $dadosRequest['referencia_id']              = $dados['referencia_id']           ?? null;
-            $dadosRequest['referencia']                 = $dados['referencia']              ?? null;
-            $dadosRequest['pessoa_id']                  = $pessoa->id;
-            $dadosRequest['descricao']                  = $dados['descricao'];
-            $dadosRequest['documento']                  = $dados['documento']               ?? null;
-            $dadosRequest['dtVencimentoOriginal']       = $dados['dtVencimentoOriginal'];
-            $dadosRequest['dtVencimento']               = $dados['dtVencimento']            ?? null;
-            $dadosRequest['vrBruto']                    = $dados['vrBruto'];
-            $dadosRequest['vrLiquido']                  = $dados['vrLiquido'];
-            $dadosRequest['vrDevolvido']                = $dados['vrDevolvido']             ?? 0;
-            $dadosRequest['vrPago']                     = $dados['vrPago']                  ?? 0;
-            $dadosRequest['vrTaxa']                     = $dados['vrTaxa']                  ?? 0;
-            $dadosRequest['vrDesconto']                 = $dados['vrDesconto']              ?? 0;
-            $dadosRequest['vrJuros']                    = $dados['vrJuros']                 ?? 0;
-            $dadosRequest['user_update_id']             = \Auth::User()->id;
-            $dadosRequest['active']                     =  'yes';
-
-            $registro = CobrancaReceber::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if (!$registro) {
-                throw new CobrancaReceberException('Registro não identificado');
-            }
-
-            $registro->update($dadosRequest);
+            $data       = $request->all();
+            $registro   = $objCobReceberHelper->update($data, $id);
 
             \DB::commit();
 
