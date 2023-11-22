@@ -867,7 +867,20 @@ class OrdemServicoController extends Controller
                                 $registro->whereIn('os.id', $val);
                             }
                             break;
-                        case 'nome_pssoa':
+                        case 'nome_pessoa':
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
+                                    $val = substr($val, 1);
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $registro->where('pes.name', 'like', '%' . $val . '%');
+                            }
+
+                        case 'name_pessoa':
                             if (is_string($val)) {
 
                                 if ($val[0] == ',') {
