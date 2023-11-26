@@ -171,6 +171,39 @@ class CobrancaReceberController extends Controller
         }
     }
 
+    public function baixar(Request $request, $id, $idAssistente=0){
+
+        
+        try {
+
+
+            //$this->validaRequest($request);
+
+            \DB::beginTransaction();
+
+            $objCobReceberHelper = new ContaReceberHelper();
+
+            $data       = $request->all();
+            $registro   = $objCobReceberHelper->baixar($data, $id);
+
+            \DB::commit();
+
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (CobrancaReceberException $th) {
+
+            \DB::rollback();
+
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+
+            //throw $th;
+        } catch (\Exception $th) {
+            \DB::rollback();
+
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: '.$th->getMessage().' - '.$th->getLine().' - '.$th->getFile(), 'class' => 'warning'], 500);
+            //throw $th;
+        }
+    }
+
     /**
      * Display the specified resource.
      *

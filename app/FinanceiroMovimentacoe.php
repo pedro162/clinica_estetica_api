@@ -3,10 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FinanceiroMovimentacoe extends Model
 {
+    use SoftDeletes;
     protected $primaryKey = 'id';
+    protected $table = 'financeiro_movimentacoes';
+    
     protected $fillable = [
         'id',
         'referencia_id',

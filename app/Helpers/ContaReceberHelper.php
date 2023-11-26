@@ -260,6 +260,95 @@ class ContaReceberHelper
         return $datacobReceberObjArr;
     }
 
+    public function baixar(array $dados, int $id){
+
+        $id = $id ?? $dados['id'];
+        $callBack = $dados['callBack'] ?? '';
+        $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
+
+        if ($id <= 0) {
+            throw new CobrancaReceberException('Parâmetro ínválido');
+        }
+
+        $vrCobranca = $dados['vr_final'] ?? 0;
+        $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca); 
+
+         if (! ($vrCobranca > 0)) {
+            throw new CobrancaReceberException('O valor para baixa é inválido');
+        }
+
+        $registro = CobrancaReceber::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+
+        if (! $registro) {
+            throw new CobrancaReceberException('Registro não identificado. Tentenovamente ou entre em contato com o suporte');
+        }
+
+        $dataParcela = [
+            'pessoa_id' => $registro->pessoa->id,
+            'descricao' => $dados['descricao'] ?? "Recita financeira",
+            'documento' => $dados['documento'] ?? null,
+            'dtVencimentoOriginal' => $registro->dtVencimentoOriginal,
+            'dtVencimento' => $registro->dtVencimento,
+            'vrPago' => 0,
+            'vrBruto' => $vrCobranca,
+            'vrLiquido' => $vrCobranca,
+            'vrDevolvido' => 0,
+            'vrTaxa' => 0,
+            'vrDesconto' => 0,
+            'vrJuros' => 0,
+            'user_id' => \Auth::User()->id,
+            'active' => 'yes',
+            'importacao_dados' => 'no',
+            'referencia_id' => $registro->referencia_id ?? null,
+            'referencia' => $registro->referencia ?? null,
+            'filial_id' => $registro->filial_id ?? null,
+            'responsavel_id' => $registro->responsavel_id ?? 0,
+            'qtd_parcelas' => 1,
+            'nr_parcela' => 1,
+            'forma_pagamento_id' => $registro->formaPagamento->id,
+            'plano_pagamento_id' => $registro->planoPagamento->id,
+            'operador_financeiro_id' => $registro->operadorFinanceiro->id ?? 0,
+            'status' => 'aberto',
+
+        ];
+
+        $objCobReceberItemHelp = new ContaReceberItemHelper();
+        
+        //contaRecebrItem
+        $dataResponse = $objCobReceberItemHelp->gerarCobrancaItem(
+            $registro,
+            $vrCobranca,
+            $registro->formaPagamento->id,
+            $registro->planoPagamento->id,
+            $registro->operadorFinanceiro->id ?? 0,
+            $dataParcela
+        );
+        if(!(is_array($dataResponse) && count($dataResponse) > 0)){
+            throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
+        }
+
+        $dataItens = $dataResponse['data_cob_receber_item'] ?? [];
+
+        if(!(is_array($dataItens) && count($dataItens) > 0)){
+            throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
+        }
+
+        
+       
+        foreach($dataItens as $key=>$contaRecebrItem){
+            if(!( $contaRecebrItem)){
+                throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
+            }
+            $objCobReceberItemHelp = new ContaReceberItemHelper();
+            $objCobReceberItemHelp->baixar($dados, $contaRecebrItem->id);
+        }
+
+        
+
+        return $registro;
+    }
+
     public function update(array $data, int $id){
         $dadosRequest = [];
 

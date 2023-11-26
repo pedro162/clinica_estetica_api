@@ -10,7 +10,11 @@ use \App\PlanoPagamento;
 use \App\OperadorFinanceiro;
 use \App\Helpers\ContaReceberCartao;
 use \App\Helpers\ContaReceberCartaoHelper;
+use \App\Helpers\FinanceiroMovimentacoeHelper;
+use \App\Validators\CaixaValidator;
+use \App\Validators\ContaReceberItemValidator;
 use \App\Pessoa;
+use \App\Caixa;
 use \App\Exceptions\CobrancaReceberException;
 
 class ContaReceberItemHelper{
@@ -289,5 +293,106 @@ class ContaReceberItemHelper{
         }
 
         return $datacobReceberObjArr;
+    }
+
+    public function baixar(array $dados, int $id){
+
+        $erros = [];
+
+        $id             = $id ?? $dados['id'];
+        $callBack       = $dados['callBack'] ?? '';
+        $caixa_id       = $dados['caixa_id'] ?? 0;
+
+        if ($id <= 0) {
+            throw new CobrancaReceberException('Parâmetro ínválido');
+        }
+
+        if (! ($caixa_id > 0)) {
+            throw new CobrancaReceberException('Parâmetro ínválido para o caixa de baixa');
+        }
+
+
+        $objCaixaValidator  = new CaixaValidator();
+        $errosEncontrados   = $objCaixaValidator->validarCaixaBaixar($caixa_id, $dados);
+        if(is_array($errosEncontrados) && count($errosEncontrados) > 0){
+            $erros = array_merge($erros, $errosEncontrados);
+
+        }
+        // throw new CobrancaReceberException('teste');
+
+        $objContaReceberItemValidator   = new ContaReceberItemValidator();
+        $errosEncontrados               = $objContaReceberItemValidator->validarBaixar($id, $dados);
+        if(is_array($errosEncontrados) && count($errosEncontrados) > 0){
+            $erros = array_merge($erros, $erros);
+        }
+
+        if(is_array($erros) && count($erros) > 0){
+            throw new CobrancaReceberException(implode('<br/>', $erros));
+        }
+
+
+        $objCaixa = Caixa::where('active', '=', 'yes')
+            ->where('id', '=', $caixa_id)->first();
+
+         if(! $objCaixa){
+            throw new CobrancaReceberException('Caixa não identificao. Tente novamente ou entre em contato com o suporte.');
+        }
+
+
+        $registro = ContaReceberItem::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+
+        if(! $registro){
+            throw new CobrancaReceberException('Contas a receber não identificado. Tente novamente ou entre em contato com o suporte.');
+        }
+
+        $objCobrancaReceber = $registro->contaReceber;
+
+        if(! $objCobrancaReceber){
+            throw new CobrancaReceberException('O cabeçalho do contas a receber não foi identificado. Tente novamente ou entre em contato com o suporte.');
+        }
+
+        //--------------------- Gerar movimentação de caixa ----------------------------------------
+        $objMovimentacaoHelper = new FinanceiroMovimentacoeHelper();
+
+        $dadosRequest = [];
+
+        $dadosRequest['referencia']         = 'conta_recebers';
+        $dadosRequest['referencia_id']      = $registro->conta_receber_id;
+        //$dadosRequest['sub_referencia']     = 'conta_receber_items';
+        //$dadosRequest['sub_referencia_id']  = $registro->id;
+        $dadosRequest['historico']          = 'Baixa parcial contas a receber código nº '.$registro->conta_receber_id.' - Cliente: '.$objCobrancaReceber->pessoa->name;
+        $dadosRequest['caixa_id']           = $objCaixa->id;
+        $dadosRequest['vr_movimentacao']    = $registro->vrLiquido;
+        $dadosRequest['conciliado']         = 'no';
+        $dadosRequest['estornado']          = 'no';
+        $dadosRequest['hash_operacao']      = null;
+
+        $registroMovimentacao = $objMovimentacaoHelper->store($dadosRequest);
+
+        if(! $registroMovimentacao){
+            throw new CobrancaReceberException('Não foi possível gerar movimentação de caixa. Tente novamente ou entre em contato com o suporte.');
+        }
+
+        //--------------------- Marcar o contas a receber como pago ----------------------------------------
+        $dadosRequest = [];
+
+        $dadosRequest['status']                  = 'pago';
+        $dadosRequest['vrPago']                  = $registro->vrLiquido;
+        $dadosRequest['user_update_id']          = \Auth::User()->id;
+
+        $registro->update($dadosRequest);
+        if(! $registro){
+            throw new CobrancaReceberException('Não foi possível baixar o contas a receber. Tente novamente ou entre em contato com o suporte.');
+        }
+
+        //---Atualizo o cabeçalho-------------------------
+        $objCobrancaReceber->update(['vrPago'=>$objCobrancaReceber->vrPago+$dadosRequest['vrPago']]);
+
+        if(! $objCobrancaReceber){
+            throw new CobrancaReceberException('Não foi possível atualizar o valor pago do contas a receber. Tente novamente ou entre em contato com o suporte.');
+        }
+
+        return $registro;
     }
 }

@@ -449,6 +449,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/receber/head/{id_assistente?}', ['as' => 'receber.head', 'uses' => 'Admin\CobrancaReceberController@head']);
 	Route::get('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\CobrancaReceberController@destroy']);
 	Route::post('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\CobrancaReceberController@destroy']);
+	Route::put('/receber/baixar/{id}/{id_assistente?}', ['as' => 'receber.baixar', 'uses' => 'Admin\CobrancaReceberController@baixar']);
 
 	Route::get('/caixa/index/{id_assistente?}', ['as' => 'caixa.index', 'uses' => 'Admin\CaixaController@index']);
 	Route::post('/caixa/index/{id_assistente?}', ['as' => 'caixa.index', 'uses' => 'Admin\CaixaController@index']);
