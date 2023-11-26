@@ -387,7 +387,14 @@ class ContaReceberItemHelper{
         }
 
         //---Atualizo o cabeçalho-------------------------
-        $objCobrancaReceber->update(['vrPago'=>$objCobrancaReceber->vrPago+$dadosRequest['vrPago']]);
+        $dadosRequestBKP = $dadosRequest;
+        $vrPagoToal = $objCobrancaReceber->vrPago+$dadosRequestBKP['vrPago'];
+        $dadosRequest = ['vrPago'=>$vrPagoToal];
+        if($dadosRequest['vrPago'] >= $objCobrancaReceber->vrLiquido){
+            $dadosRequest['status'] = 'pago';
+
+        }
+        $objCobrancaReceber->update($dadosRequest);
 
         if(! $objCobrancaReceber){
             throw new CobrancaReceberException('Não foi possível atualizar o valor pago do contas a receber. Tente novamente ou entre em contato com o suporte.');
