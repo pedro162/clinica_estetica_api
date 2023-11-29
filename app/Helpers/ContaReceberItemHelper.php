@@ -33,9 +33,19 @@ class ContaReceberItemHelper{
 
         //tipo_pagamento
 
+        $vrSaldoCobrancas   = $objCobReceber->vrLiquido - $objCobReceber->vrPago;
 
+        $vrCobranca         = Utilitarios::removeMaskMoney($vrCobranca);    
 
-        $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);        
+        $difSaldoCob        =  $vrSaldoCobrancas - $vrCobranca;
+        $difSaldoCobAbs     = abs($difSaldoCob);
+        $difSaldoCobFormat  = number_format($vrSaldoCobrancas, 2, ',','.');
+        
+        if(! ($vrSaldoCobrancas >= $vrCobranca)){
+            if($difSaldoCobAbs > 0.02){
+                $erros[] = 'O saldo para novas cobranças é de '.$difSaldoCobFormat.' .';
+            }
+        }  
         
         if(! $objPessoa){
             $erros[] = 'A pessoa de código nº '.$objCobReceber->pessoa_id.' não foi identificada.';

@@ -25,6 +25,8 @@ class ContaReceberItemValidator{
         $id             		= $id ?? $dados['id'];
         $caixa_id       		= $dados['caixa_id'] ?? 0;
         $dados['receber_id'] 	= $id;
+
+        $vrPago 				= $dados['vrPago'];
         
         $errosEncontrados = $this->validaBaixaRequest($dados);
         if(is_array($errosEncontrados) && count($errosEncontrados) > 0){
@@ -46,6 +48,26 @@ class ContaReceberItemValidator{
         		if(! ($registro->status == 'aberto')){
 		            $erros[] = "O contas a receber de código encontra-se \"{$registro->status}\" e não poderá ser baixado";
 		        }
+
+		        $objCobrancaReceber = $registro->contaReceber;
+		        if(! $objCobrancaReceber){
+		            throw new CobrancaReceberException('O cabeçalho do contas a receber não foi identificado. Tente novamente ou entre em contato com o suporte.');
+		        }
+
+		        $vrPagoToal = $objCobrancaReceber->vrPago+$registro->vrLiquido;
+		        $dif = $objCobrancaReceber->vrLiquido - $vrPagoToal;
+		        $difAbs = bas($dif);
+		        $difAbsFormat = number_format($difAbs, 2, ',' '.');
+
+		        if($vrPagoToal > $objCobrancaReceber->vrLiquido){
+		        	if($difAbs > 0.02){
+		        		$erros[] = "O saldo disónível para baixa é de apenas {$difAbsFormat}";
+		        	}
+
+		        }
+
+
+		        
         	}
 
 
