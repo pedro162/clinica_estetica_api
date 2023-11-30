@@ -56,8 +56,8 @@ class ContaReceberItemValidator{
 
 		        $vrPagoToal = $objCobrancaReceber->vrPago+$registro->vrLiquido;
 		        $dif = $objCobrancaReceber->vrLiquido - $vrPagoToal;
-		        $difAbs = bas($dif);
-		        $difAbsFormat = number_format($difAbs, 2, ',' '.');
+		        $difAbs = abs($dif);
+		        $difAbsFormat = number_format($difAbs, 2, ',', '.');
 
 		        if($vrPagoToal > $objCobrancaReceber->vrLiquido){
 		        	if($difAbs > 0.02){
