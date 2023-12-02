@@ -596,4 +596,154 @@ class OrdemServicoHelper{
         return $registro;
     }
 
+    public function json(array $data)
+    {
+        
+
+        $consulta = $data;
+        //dd($consulta);
+        $ordem = $consulta['ordem'] ?? 'id-desc';
+
+        $parse = [];
+
+        $registro = \DB::table('ordem_servicos as os')->join('pessoas as pes', function ($join) {
+
+            $join->on('os.pessoa_id', '=', 'pes.id');
+        })->join('pessoas as pesrc', function ($join) {
+
+            $join->on('os.pessoa_rca_id', '=', 'pesrc.id');
+        })->join('filials as fl', function ($join) {
+
+            $join->on('os.filial_id', '=', 'fl.id');
+        })->join('pessoas as pesfl', function ($join) {
+
+            $join->on('fl.pessoa_id', '=', 'pesfl.id');
+        })->join('profissionals as pf', function ($join) {
+
+            $join->on('os.profissional_id', '=', 'pf.id');
+        })->join('pessoas as pesprf', function ($join) {
+
+            $join->on('pf.pessoa_id', '=', 'pesprf.id');
+        });
+
+        $campos =  null;
+        if (is_array($consulta) && count($consulta) > 0) {
+            foreach ($consulta as $key => $val) {
+
+                switch (trim($key)) {
+                    case 'id':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+                            $val = explode(',', $val);
+
+                            $registro->whereIn('os.id', $val);
+                        }
+                        break;
+                    case 'status'://'aberto','cancelado','aguardando','concluido'
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+                            $val = explode(',', $val);
+
+                            $registro->whereIn('os.status', $val);
+                        }
+                        break;
+                    case 'nome_pessoa':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $registro->where('pes.name', 'like', '%' . $val . '%');
+                        }
+
+                    case 'name_pessoa':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $registro->where('pes.name', 'like', '%' . $val . '%');
+                        }
+                        break;
+                    case 'limite':
+                        $val = (int) $val;
+                        if (is_integer($val) && $val > 0) {
+
+                            $registro->limit($val);
+                        }
+                        break;
+                    case 'ordem':
+
+
+                        if ($val[0] == ',') {
+                            $val = substr($val, 1);
+                        }
+                        if ($val[strlen($val) - 1] == ',') {
+                            $val = substr($val, 0, -1);
+                        }
+
+                        $val = explode(',', $val);
+                        for ($i = 0; !($i == count($val)); $i++) {
+                            $atual = explode('-', $val[$i]);
+                            if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                $parsed = $parse[trim($atual[0])];
+
+                                if ($parsed) {
+
+                                    $registro->orderBy($parsed, $atual[1]);
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case 'campos':
+                        if (is_array($val) && count($val) > 0) {
+                            $campos = $this->montaCamposConsulta($registro, $val);
+                        }
+                        break;
+                }
+            }
+        }
+        if ($campos) {
+            $registro->select($campos);
+        } else {
+            $registro->select('os.*', 'pes.name', 'pesrc.name as name_rca', 'pesfl.name as name_filial', 'pesprf.name as name_profissional');
+        }
+        //$registro = \App\::where('active', '=', 'yes')->get();
+        $ordemArr   = explode('-', $ordem);
+
+        $oremCampo  = $ordemArr[0];
+        $oremTipo  = $ordemArr[1];
+
+        $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+
+
+            
+
+        return $registro;
+        
+    }
+
 }
