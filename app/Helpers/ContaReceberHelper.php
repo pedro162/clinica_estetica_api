@@ -447,7 +447,10 @@ class ContaReceberHelper
                         }
                         break;
                     case 'vencido':
+
                          if (is_string($val)) {
+                            $registro->whereIn('cr.status', ['aberto']);
+                            
                             if(trim($val) == 'yes'){
                                 $registro->where('cr.dtVencimento', '<', date('Y-m-d'));
 
