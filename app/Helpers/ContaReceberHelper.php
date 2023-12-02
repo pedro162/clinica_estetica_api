@@ -433,6 +433,7 @@ class ContaReceberHelper
                         break;
                     case 'nmPessoa':
                     case 'pessoa_name':
+                    case 'name_pessoa':
                         if (is_string($val)) {
 
                             if ($val[0] == ',') {
@@ -445,6 +446,18 @@ class ContaReceberHelper
                             $registro->where('pessoas.name', 'like', '%' . $val . '%');
                         }
                         break;
+                    case 'vencido':
+                         if (is_string($val)) {
+                            if(trim($val) == 'yes'){
+                                $registro->where('cr.dtVencimento', '<', date('Y-m-d'));
+
+                            }elseif(trim($val) == 'no'){
+                                $registro->where('cr.dtVencimento', '>=', date('Y-m-d'));
+                            }
+                         }
+                        
+                        break;
+
                     case 'pessoa_id':
                         if (is_string($val)) {
 
@@ -487,6 +500,20 @@ class ContaReceberHelper
                             $val = explode(',', $val);
 
                             $registro->whereIn('cr.referencia', $val);
+                        }
+                        break;
+                    case 'status':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+                            $val = explode(',', $val);
+
+                            $registro->whereIn('cr.status', $val);
                         }
                         break;
                     case 'limite':

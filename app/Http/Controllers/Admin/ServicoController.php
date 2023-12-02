@@ -338,6 +338,8 @@ class ServicoController extends Controller
                             }
                             break;
                         case 'nome_item':
+                        case 'name':
+                        case 'name_servico':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
