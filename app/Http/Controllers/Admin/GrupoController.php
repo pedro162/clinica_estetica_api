@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Exceptions\GrupoException;
 use App\Grupo;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\GrupoHelper;
 
 class GrupoController extends Controller
 {
@@ -17,249 +18,19 @@ class GrupoController extends Controller
      */
     public function index(Request $request)
     {
-        try{
-            \DB::beginTransaction();
-
-            $consulta = $request->all();
-            $campos =  null;
-            $parse = [
-                'grupo_name'=>'grupos.name'
-
-            ];
-
-            $registro = \DB::table('grupos');
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
-                        case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('grupos.id', $val);
-                            }
-                            break;
-                        case 'name':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('grupos.name', 'like' , '%'.$val.'%');
-                            }
-                            break;
-                        case 'grupo_id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('grupos.id', '=' , ''.$val.'');
-                            }
-                            break;
-                        case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
-                            break;
-                        case 'ordem':
-
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
-
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
-                                    }
-                                    
-                                    
-                                }
-
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
-                            break;
-
-                    }
-                }
-            }
-            if($campos){
-                $registro->select($campos);
-            }else{
-                $registro->select('grupos.*');
-
-            }
-           
-            $registro = $registro->where('grupos.active', '=', 'yes')->get();
-
-            \DB::commit();
-
-            //dd( $registro);
-
-            return view('admin.grupo.index', compact('registro', 'consulta'));
-
-        }catch(GrupoException $e){
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
-        }
+        
     }
 
     public function json(Request $request)
     {
         try{
+            
             \DB::beginTransaction();
 
             $consulta = $request->all();
-            $campos =  null;
-            $parse = [
-                'grupo_name'=>'grupos.name'
-
-            ];
-
-            $registro = \DB::table('grupos');
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
-                        case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('grupos.id', $val);
-                            }
-                            break;
-                        case 'name':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('grupos.name', 'like' , '%'.$val.'%');
-                            }
-                            break;
-                        case 'grupo_id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('grupos.id', '=' , ''.$val.'');
-                            }
-                            break;
-                        case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
-                            break;
-                        case 'ordem':
-
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
-
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
-                                    }
-                                    
-                                    
-                                }
-
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
-                            break;
-
-                    }
-                }
-            }
-            if($campos){
-                $registro->select($campos);
-            }else{
-                $registro->select('grupos.*');
-
-            }
+            $grupoHelper = new GrupoHelper();
            
-            $registro = $registro->where('grupos.active', '=', 'yes')->get();
+            $registro = $grupoHelper->json($consulta);
 
             \DB::commit();
 
@@ -328,12 +99,14 @@ class GrupoController extends Controller
  
          }catch(GrupoException $e){
              \DB::rollback();
-             return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
+             return response()->json(['mensagem'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 400);
  
          }catch(\Exception $e){
              \DB::rollback();
-             return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+             return response()->json(['mensagem'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
          }
+
+        
     }
 
     /**
@@ -562,14 +335,12 @@ class GrupoController extends Controller
     {
         $validator = Validator::make($request->all(),[
             'name'=> 'required|max:255|min:2',
-            'descricao'=> 'required|max:255|min:2',
+            'descricao'=> 'max:255',
         ], [
             'name.required' => 'O campo "NOME" é obrigatório.',
             'name.max' => 'O "NOME" suporta até :max caracteres.',
             'name.min' => 'O "NOME" deve conter pelo menos :min caracteres.',
-            'descricao.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
             'descricao.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
-            'descricao.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
         ]);
         
         if($validator->fails()) {
