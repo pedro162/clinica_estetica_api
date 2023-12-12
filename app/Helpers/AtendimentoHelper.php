@@ -300,7 +300,7 @@ class AtendimentoHelper
                                 $val = substr($val, 0, -1);
                             }
                             
-                            $registro->where('atendimentos.name', 'like' , '%'.$val.'%');
+                            $registro->where('pessoas.name', 'like' , '%'.$val.'%');
                         }
                     case 'name_pessoa':
                             if(is_string($val)){
