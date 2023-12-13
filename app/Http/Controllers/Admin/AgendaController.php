@@ -60,6 +60,20 @@ class AgendaController extends Controller
                                  $registro->whereIn('agendas.id', $val);
                              }
                              break;
+                        case 'status':
+                             if(is_string($val)){
+                                 
+                                 if($val[0] == ','){
+                                     $val = substr($val, 1);
+                                 } 
+                                 if($val[strlen($val) - 1] == ','){
+                                     $val = substr($val, 0, -1);
+                                 }
+                                 $val = explode(',', $val);
+                                 
+                                 $registro->whereIn('agendas.status', $val);
+                             }
+                             break;
                          case 'name':
                              if(is_string($val)){
                                  
