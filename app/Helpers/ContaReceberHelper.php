@@ -397,8 +397,18 @@ class ContaReceberHelper
     public function json(array $data)
     {
         $consulta = $data;
+
+        if(! isset($consulta['ordem'])){
+
+             $consulta['ordem'] =  'id-desc';
+        }
+
         $campos =  null;
-        $parse = [];
+        $parse = [
+            'id'=>'cr.id',
+            'name'=>'pessoas.name',
+            'filial_id'=>'cr.filial_id',
+        ];
 
         $registro = \DB::table('conta_recebers as cr');
         $registro->join('pessoas', function ($join) {

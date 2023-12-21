@@ -25,7 +25,12 @@ class ProfissionalController extends Controller
             \DB::beginTransaction();
             
             $consulta = $request->all();
+            
+            if(! isset($consulta['ordem'])){
 
+                $consulta['ordem'] =  'id-desc';
+            }
+            
             $campos =  null;
 
             //$registro = Profissional::where('active', '=', 'yes');
@@ -33,7 +38,9 @@ class ProfissionalController extends Controller
             $parse = [
                 'marca_profissionals'=>'marca.name',
                 'codigo_profissionals'=>'profissionals.id',
-                'nome_profissionals'=>'profissionals.name'
+                'id'=>'profissionals.id',
+                'nome_profissionals'=>'pessoas.name',
+                'name'=>'pessoas.name',
 
             ];
 
@@ -63,7 +70,22 @@ class ProfissionalController extends Controller
                                 $registro->whereIn('profissionals.id', $val);
                             }
                             break;
+                        case 'status':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                                $val = explode(',', $val);
+                                
+                                $registro->whereIn('profissionals.status', $val);
+                            }
+                            break;
                         case 'name':
+                        case 'name_pessoa':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
@@ -73,7 +95,7 @@ class ProfissionalController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
                                 
-                                $registro->where('profissionals.name', 'like' , '%'.$val.'%');
+                                $registro->where('pessoas.name', 'like' , '%'.$val.'%');
                             }
                             break;
                         
@@ -153,7 +175,7 @@ class ProfissionalController extends Controller
                 $registro->select($campos);
 
             }else{
-                $registro->select('profissionals.id', 'pessoas.name as name_pessoa', 'pessoas.id as pessoa_id', 'pessoas.name_opcional', 'pessoas.documento', 'pessoas.documento_complementar', 'pessoas.nascimento_fundacao', 'pessoas.sexo', 'pessoas.email');
+                $registro->select('profissionals.id', 'profissionals.filial_id', 'profissionals.status', 'profissionals.ponto_obrigatorio', 'pessoas.name as name_pessoa', 'pessoas.id as pessoa_id', 'pessoas.name_opcional', 'pessoas.documento', 'pessoas.documento_complementar', 'pessoas.nascimento_fundacao', 'pessoas.sexo', 'pessoas.email');
 
             }
 
