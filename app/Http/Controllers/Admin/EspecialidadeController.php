@@ -24,6 +24,20 @@ class EspecialidadeController extends Controller
             
             $consulta = $request->all();
 
+            if(! isset($consulta['ordem'])){
+                $consulta['ordem'] = 'id-desc';
+            }
+
+            $parse = [
+               
+                'id'=>'especialidades.id',
+
+            ];
+
+
+            $ordem = $consulta['ordem'] ?? 'id-desc';
+
+
             $campos =  null;
 
             $registro = Especialidade::where('active', '=', 'yes');
@@ -55,6 +69,40 @@ class EspecialidadeController extends Controller
                             }
                             
                             $registro->where('name', 'like' , '%'.$val.'%');
+                            break;
+                        case 'limite':
+                            $val = (int) $val;
+                            if(is_integer($val) && $val > 0){
+                                     
+                                $registro->limit($val);
+                            }
+                            break;
+                         case 'ordem':
+ 
+                                 
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+
+                                $val = explode(',', $val);
+                                for($i= 0; !($i == count($val)); $i++) {
+                                    $atual = explode('-', $val[$i]);
+                                    if(array_key_exists(trim($atual[0]), $parse)){
+                                        $parsed = $parse[trim($atual[0])];
+                                        
+                                        if($parsed){
+                                           
+                                            $registro->orderBy($parsed,$atual[1]);
+                                        }
+                                    }
+                                     
+                                     
+                                }
+
                             break;
                     }
                 }
