@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Pais;
 use App\Exceptions\PaisException;
 use Illuminate\Support\Facades\Validator;
+use \App\Helpers\PaisHelper;
+
 
 class PaisController extends Controller
 {
@@ -158,114 +160,10 @@ class PaisController extends Controller
             \DB::beginTransaction();
 
             $consulta = $request->all();
-            $campos =  null;
-            $parse = [
-                'name_Pais'=>'pais.dsIpi',
-                'nmPais'=>'pais.nmPais',
-                'id'=>'pais.id',
-
-            ];
-
-            $registro = \DB::table('pais');
             
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
-                        case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('pais.id', $val);
-                            }
-                            break;
-                        case 'tipo':
-                            if(is_string($val)){
-                                    
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                    
-                                $registro->whereIn('pais.tpCalculo', $val);
-                            }
-                        break;
-                        case 'nmPais':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('pais.nmPais', 'like' , '%'.$val.'%');
-                            }
-                            break;
-                        case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
-                            break;
-                        case 'ordem':
 
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
-
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
-                                    }
-                                    
-                                    
-                                }
-
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
-                            break;
-
-                    }
-                }
-            }
-            if($campos){
-                $registro->select($campos);
-            }else{
-                $registro->select('pais.*');
-
-            }
-           
-            $registro = $registro->where('pais.active', '=', 'yes')->get();
+            $objPaisHelper  = new PaisHelper();
+            $registro       = $objPaisHelper->json($consulta);
 
             \DB::commit();
              return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
@@ -309,19 +207,16 @@ class PaisController extends Controller
 
             $this->validaRequest($request);
              
-             \DB::beginTransaction();
-             $dados = $request->all();
- 
-             $dadosRequest = [];
- 
-             $dadosRequest['user_id']            = \Auth::User()->id;
-             $dadosRequest['user_update_id']     = \Auth::User()->id;
-             $dadosRequest['nmPais']             = $dados['nmPais'];
-             $dadosRequest['cdPais']             = $dados['cdPais'];
-             $dadosRequest['padrao']             = $dados['padrao'];
-             $dadosRequest['active']             = 'yes';
-             
-             $registro = Pais::create($dadosRequest);
+            \DB::beginTransaction();
+            $dados = $request->all();
+
+            $objPaisHelper = new PaisHelper();
+            $registro       = $objPaisHelper->store($dados);
+
+            if (!$registro) {
+                throw new PaisException(' não encontrado');
+            }
+
              \DB::commit();
  
              if($registro){
@@ -351,48 +246,38 @@ class PaisController extends Controller
         //
     }
 
-    public function info(Request $request, $id, $idAssistente)
+    
+
+    public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
+
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
-            $callBack = $dados['callBack'] ?? '';
-            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
-
-            if($id <= 0){
-                throw new PaisException('Parâmetro ínválido');
-            }
 
             \DB::beginTransaction();
 
-            $registro = Pais::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+            $objPaisHelper = new PaisHelper();
+            $registro       = $objPaisHelper->info($dados, $id);
 
-            if($registro == null){
-                throw new PaisException('Registro não encontrado');
+            if ($registro == null) {
+                throw new PaisException(' não encontrado');
             }
 
             \DB::commit();
 
-            //return view('admin.produto.info', compact('registro'));
-            return view('admin.pais.info', compact('registro', 'idAssistente', 'callBack'));
-
-        }catch(PaisException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (PaisException $e) {
             \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
-
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
 
