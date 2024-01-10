@@ -8,6 +8,7 @@ use App\Estado;
 use App\Pais;
 use App\Exceptions\EstadoException;
 use Illuminate\Support\Facades\Validator;
+use \App\Helpers\EstadoHelper;
 
 class EstadoController extends Controller
 {
@@ -22,145 +23,9 @@ class EstadoController extends Controller
             \DB::beginTransaction();
 
             $consulta = $request->all();
-            $campos =  null;
-            $parse = [
-                'name_estado'=>'estadoss.dsIpi'
 
-            ];
-            /*
-
-				
-					<!--
-						'nmEStado',
-						'codEstado',
-						'sigla',
-						'padrao',
-						'pais_id',
-						'user_id',
-						'user_update_id',
-						'active',
-
-					 
-            */
-
-            $registro = \DB::table('estadoss');
-            $registro->join('pais', function($join){
-                
-                $join->on('pais.id', '=', 'estadoss.pais_id');
-
-            });
-            
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
-                        case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('estadoss.id', $val);
-                            }
-                            break;
-                        case 'nmEStado':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('estadoss.nmEStado', 'like' , '%'.$val.'%');
-                            }
-                            break;
-                        case 'codEstado':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('estadoss.codEstado', '=' , ''.$val.'');
-                            }
-                            break;
-                            case 'sigla':
-                                if(is_string($val)){
-                                    
-                                    if($val[0] == ','){
-                                        $val = substr($val, 1);
-                                    } 
-                                    if($val[strlen($val) - 1] == ','){
-                                        $val = substr($val, 0, -1);
-                                    }
-                                    
-                                    $registro->where('estadoss.sigla', '=' , ''.$val.'');
-                                }
-                            break;
-                        case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
-                            break;
-                        case 'ordem':
-
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
-
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
-                                    }
-                                    
-                                    
-                                }
-
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
-                            break;
-
-                    }
-                }
-            }
-            if($campos){
-                $registro->select($campos);
-            }else{
-                $registro->select('estadoss.*', 'pais.nmPais', 'pais.cdPais');
-
-            }
-           
-            $registro = $registro->where('estadoss.active', '=', 'yes')
-            ->where('pais.active', '=', 'yes')->get();
+            $objEstadoHelper    = new EstadoHelper();
+            $registro           = $objEstadoHelper->json($consulta, $id);
 
             \DB::commit();
 
@@ -197,145 +62,8 @@ class EstadoController extends Controller
             \DB::beginTransaction();
 
             $consulta = $request->all();
-            $campos =  null;
-            $parse = [
-                'name_estado'=>'estadoss.dsIpi'
-
-            ];
-            /*
-
-                
-                    <!--
-                        'nmEStado',
-                        'codEstado',
-                        'sigla',
-                        'padrao',
-                        'pais_id',
-                        'user_id',
-                        'user_update_id',
-                        'active',
-
-                     
-            */
-
-            $registro = \DB::table('estadoss');
-            $registro->join('pais', function($join){
-                
-                $join->on('pais.id', '=', 'estadoss.pais_id');
-
-            });
-            
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
-                        case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('estadoss.id', $val);
-                            }
-                            break;
-                        case 'nmEStado':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('estadoss.nmEStado', 'like' , '%'.$val.'%');
-                            }
-                            break;
-                        case 'codEstado':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('estadoss.codEstado', '=' , ''.$val.'');
-                            }
-                            break;
-                            case 'sigla':
-                                if(is_string($val)){
-                                    
-                                    if($val[0] == ','){
-                                        $val = substr($val, 1);
-                                    } 
-                                    if($val[strlen($val) - 1] == ','){
-                                        $val = substr($val, 0, -1);
-                                    }
-                                    
-                                    $registro->where('estadoss.sigla', '=' , ''.$val.'');
-                                }
-                            break;
-                        case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
-                            break;
-                        case 'ordem':
-
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
-
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
-                                    }
-                                    
-                                    
-                                }
-
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
-                            break;
-
-                    }
-                }
-            }
-            if($campos){
-                $registro->select($campos);
-            }else{
-                $registro->select('estadoss.*', 'pais.nmPais', 'pais.cdPais');
-
-            }
-           
-            $registro = $registro->where('estadoss.active', '=', 'yes')
-            ->where('pais.active', '=', 'yes')->get();
+            $objEstadoHelper = new EstadoHelper();
+            $registro       = $objEstadoHelper->json($consulta);
 
             \DB::commit();
 
@@ -386,23 +114,9 @@ class EstadoController extends Controller
 
             $dados = $request->all();
 
-            $pais = Pais::where('active', '=' ,'yes')->where('id', '=', $dados['pais_id'])->first();
-            if(! $pais){
-                throw new EstadoException('País não identificado. Tente novamente ou entre em contato com o suporte.');
-            }
- 
-            $dadosRequest = [];
-             
-            $dadosRequest['user_id']            = \Auth::User()->id;
-            $dadosRequest['user_update_id']     = \Auth::User()->id;
-            $dadosRequest['nmEStado']           = $dados['nmEStado'];
-            $dadosRequest['codEstado']          = $dados['codEstado'];
-            $dadosRequest['sigla']              = $dados['sigla'];
-            $dadosRequest['pais_id']            = $pais->id;
-            $dadosRequest['padrao']             = $dados['padrao'];
-            $dadosRequest['active']             = 'yes';
-             
-            $registro = Estado::create($dadosRequest);
+            $objEstadoHelper = new EstadoHelper();
+            $registro       = $objEstadoHelper->store($dados);
+
             \DB::commit();
  
             if($registro){
@@ -432,50 +146,42 @@ class EstadoController extends Controller
         //
     }
 
-    public function info(Request $request, $id, $idAssistente)
+
+
+
+    public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
+
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
-            $callBack = $dados['callBack'] ?? '';
-            $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
-
-            if($id <= 0){
-                throw new EstadoException('Parâmetro ínválido');
-            }
 
             \DB::beginTransaction();
 
-            $registro = Estado::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+            $objEstadoHelper = new EstadoHelper();
+            $registro       = $objEstadoHelper->info($dados, $id);
 
-            if($registro == null){
-                throw new EstadoException('Registro não encontrado');
+            if ($registro == null) {
+                throw new EstadoException(' não encontrado');
             }
 
             \DB::commit();
 
-            //return view('admin.produto.info', compact('registro'));
-            return view('admin.estado.info', compact('registro', 'idAssistente', 'callBack'));
-
-        }catch(EstadoException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (EstadoException $e) {
             \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
-            //return redirect()->back();
-
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Error $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -586,7 +292,7 @@ class EstadoController extends Controller
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor - '.$th->getMessage(), 'class'=>'warning'], 500);
             //throw $th;
         }
     }
