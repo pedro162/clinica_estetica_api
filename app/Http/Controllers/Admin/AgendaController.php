@@ -24,13 +24,24 @@ class AgendaController extends Controller
              \DB::beginTransaction();
              
              $consulta = $request->all();
+
+             if(! isset($consulta['ordem'])){
+
+                 $consulta['ordem'] =  'id-desc';
+            }
+
+            if(! isset($consulta['limite'])){
+
+                 $consulta['limite'] =  500;
+            }
  
              $campos =  null;
  
              //$registro = Agenda::where('active', '=', 'yes');
  
              $parse = [
-                 'pessoa_name'=>'pessoa.name'
+                 'pessoa_name'=>'pessoa.name',
+                 'id'=>'agendas.id',
  
              ];
  
@@ -39,6 +50,10 @@ class AgendaController extends Controller
                  
                  $join->on('agendas.pessoa_id', '=', 'pessoas.id');
  
+             })->leftJoin("atendimentos as at", function($join){
+                    $join->on("at.id", '=', 'agendas.referencia_id')->where('referencia', '=', 'atendimentos');
+             })->leftJoin("pessoas as pa", function($join){
+                    $join->on("pa.id", '=', 'at.pessoa_id');
              });
              //name_especialidade
              $campos =  null;
@@ -164,7 +179,7 @@ class AgendaController extends Controller
                  $registro->select($campos);
  
              }else{
-                 $registro->select('agendas.id', 'agendas.descricao', 'agendas.data', \DB::raw('DATE_FORMAT(agendas.data, \'%d-%m-%Y\') as data_format') ,'agendas.hora','agendas.status','pessoas.name as name_pessoa','pessoas.name_opcional',  'pessoas.sexo', 'pessoas.email');
+                 $registro->select('agendas.id', 'agendas.pessoa_id', 'agendas.descricao', 'agendas.data', \DB::raw('DATE_FORMAT(agendas.data, \'%d-%m-%Y\') as data_format') ,'agendas.hora','agendas.status','pessoas.name as name_pessoa','pessoas.name_opcional',  'pessoas.sexo', 'pessoas.email', 'pa.name as  name_pessoa_atendimento', 'pa.id as pessoa_atendimento_id', 'at.historico as historico_atendimento');
  
              }
  
