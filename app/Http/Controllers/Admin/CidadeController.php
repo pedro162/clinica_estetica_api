@@ -22,9 +22,21 @@ class CidadeController extends Controller
             \DB::beginTransaction();
 
             $consulta = $request->all();
+
+            if(! isset($consulta['ordem'])){
+
+                 $consulta['ordem'] =  'id-desc';
+            }
+
+            if(! isset($consulta['limite'])){
+
+                 $consulta['limite'] =  500;
+            }
+
             $campos =  null;
             $parse = [
-                'name_cidade'=>'cidades.dsIpi'
+                'name_cidade'=>'cidades.dsIpi',
+                'id'=>'cidades.id'
 
             ];
 
@@ -181,10 +193,24 @@ class CidadeController extends Controller
         try{
             \DB::beginTransaction();
 
+
+
             $consulta = $request->all();
+            
+            if(! isset($consulta['ordem'])){
+
+                 $consulta['ordem'] =  'id-desc';
+            }
+
+            if(! isset($consulta['limite'])){
+
+                 $consulta['limite'] =  500;
+            }
+
             $campos =  null;
             $parse = [
-                'name_cidade'=>'cidades.dsIpi'
+                'name_cidade'=>'cidades.dsIpi',
+                'id'=>'cidades.id'
 
             ];
 
@@ -214,6 +240,8 @@ class CidadeController extends Controller
                             }
                             break;
                         case 'nmCidade':
+                        case 'name_nome_cidade':
+                        case 'name':
                             if(is_string($val)){
                                 
                                 if($val[0] == ','){
