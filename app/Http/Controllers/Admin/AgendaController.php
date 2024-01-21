@@ -34,6 +34,13 @@ class AgendaController extends Controller
 
                  $consulta['limite'] =  500;
             }
+
+            $tpUser     = \Auth::User()->type;
+            $pessoaUser = \Auth::User()->pessoa;
+
+            if($tpUser == 'external'){
+                $consulta['pessoa_atendimento_id'] = $pessoaUser->id;
+            }
  
              $campos =  null;
  
@@ -103,7 +110,24 @@ class AgendaController extends Controller
                              }
                              break;
                          
-                         
+                         case 'pessoa_atendimento_id':
+                            if(is_string($val)){
+                                
+                                if($val[0] == ','){
+                                    $val = substr($val, 1);
+                                } 
+                                if($val[strlen($val) - 1] == ','){
+                                    $val = substr($val, 0, -1);
+                                }
+                               
+                            }
+
+
+                            $val = explode(',', $val);
+                               
+                            $registro->whereIn('at.pessoa_id', $val);
+
+                            break;
                          case 'description_to_search':
                              if($val[0] == ','){
                                  $val = substr($val, 1);

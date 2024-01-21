@@ -117,6 +117,13 @@ class AtendimentoHelper
 
         $ordem = $consulta['ordem'] ?? 'id-desc';
 
+        $tpUser     = \Auth::User()->type;
+        $pessoaUser = \Auth::User()->pessoa;
+
+        if($tpUser == 'external'){
+            $consulta['pessoa_id'] = $pessoaUser->id;
+        }
+
 
         $campos =  null;
         $parse = [

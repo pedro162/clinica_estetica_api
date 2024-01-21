@@ -329,6 +329,13 @@ class PessoaFichaController extends Controller
                 $consulta['ordem'] = 'id-desc';
             }
 
+            $tpUser     = \Auth::User()->type;
+            $pessoaUser = \Auth::User()->pessoa;
+
+            if($tpUser == 'external'){
+                $consulta['pessoa_id'] = $pessoaUser->id;
+            }
+
 
             $parse = [];
 
@@ -376,6 +383,13 @@ class PessoaFichaController extends Controller
 
                                 $registro->where('pes.name', 'like', '%' . $val . '%');
                             }
+                            break;
+                        case 'pessoa_id':
+
+                            $val = trim($val, ',');
+                            $val = explode(',', $val);
+
+                            $registro->whereIn('pf.pessoa_id', $val);
                             break;
 
                         case 'name_form':

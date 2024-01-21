@@ -32,6 +32,44 @@ class UsuarioController extends Controller
         }
     }
 
+    public function logarApi(Request $request)
+    {
+        
+
+
+        try{
+
+
+            set_time_limit(9000000);
+
+            \DB::beginTransaction();
+
+            $dados = $request->only('email', 'password');
+            $autenticado =false;
+
+            if(Auth::attempt(['email'=>$dados['email'], 'password'=>$dados['password']])){
+                $autenticado = true;
+            }else{
+                throw new Exception("Não autorizado");
+            }
+
+             $user = User::where('email', '=' , $dados['email'])->first();
+
+            \DB::commit();
+            
+
+            return response()->json(['mensagem'=>$user, 'class'=>'success'], 200);
+
+        }catch(\Error $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+    
+        }catch(\Exception $e){
+            \DB::rollback();
+            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+        }
+    }
+
     public function sair()
     {
     	Auth::logout();

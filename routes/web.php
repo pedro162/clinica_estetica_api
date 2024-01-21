@@ -19,7 +19,7 @@ Route::get('/prato/index', ['as' => 'prato.index', 'uses' => 'Site\PratoControll
 Route::get('/admin/login', ['as' => 'admin.login', function () {
 	return view('admin.login.index');
 }])->middleware('tenant');
-Route::post('/admin/login', ['as' => 'admin.login', 'uses' => 'UsuarioController@login'])->middleware('tenant');;
+Route::post('/admin/login', ['as' => 'admin.login', 'uses' => 'UsuarioController@login'])->middleware('tenant');
 
 Route::group(['middleware' => ['tenant', 'auth']], function () {
 
