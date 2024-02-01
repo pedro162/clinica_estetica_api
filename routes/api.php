@@ -163,6 +163,16 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/profissional/info/{id}', ['as' => 'profissional.info', 'uses' => 'Admin\ProfissionalController@info']);
 	Route::get('/profissional/destroy/{id}', ['as' => 'profissional/destroy', 'uses' => 'Admin\ProfissionalController@destroy']);
 
+	Route::get('/profissional/hoario/json', ['as' => 'profissional.hoario.json', 'uses' => 'Admin\ProfissionalHorarioController@json']);
+	Route::post('/profissional/hoario/json', ['as' => 'profissional.hoario.json', 'uses' => 'Admin\ProfissionalHorarioController@json']);
+	Route::post('/profissional/hoario/store', ['as' => 'profissional.hoario.store', 'uses' => 'Admin\ProfissionalHorarioController@store']);
+	Route::get('/profissional/hoario/edit/{id}', ['as' => 'profissional.hoario.edit', 'uses' => 'Admin\ProfissionalHorarioController@edit']);
+	Route::post('/profissional/hoario/edit/{id}', ['as' => 'profissional.hoario.edit', 'uses' => 'Admin\ProfissionalHorarioController@edit']);
+	Route::put('/profissional/hoario/update/{id}', ['as' => 'profissional.hoario.update', 'uses' => 'Admin\ProfissionalHorarioController@update']);
+	Route::get('/profissional/hoario/info/{id}', ['as' => 'profissional.hoario.info', 'uses' => 'Admin\ProfissionalHorarioController@info']);
+	Route::post('/profissional/hoario/info/{id}', ['as' => 'profissional.hoario.info', 'uses' => 'Admin\ProfissionalHorarioController@info']);
+	Route::get('/profissional/hoario/destroy/{id}', ['as' => 'profissional.hoario/destroy', 'uses' => 'Admin\ProfissionalHorarioController@destroy']);
+
 
 	Route::get('/grupo/index/{id_assistente?}', ['as' => 'grupo.index', 'uses' => 'Admin\GrupoController@index']);
 	Route::post('/grupo/index/{id_assistente?}', ['as' => 'grupo.index', 'uses' => 'Admin\GrupoController@index']);

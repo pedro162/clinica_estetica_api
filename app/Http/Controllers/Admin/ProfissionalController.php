@@ -49,6 +49,10 @@ class ProfissionalController extends Controller
                 
                 $join->on('profissionals.pessoa_id', '=', 'pessoas.id');
 
+            })->leftJoin('espec_prof', function($join){
+                $join->on('espec_prof.profissional_id', '=', 'profissionals.id');
+            })->leftJoin('especialidades as esp', function($join){
+                $join->on('esp.id', '=', 'espec_prof.especialidade_id');
             });
             //name_especialidade
             $campos =  null;
