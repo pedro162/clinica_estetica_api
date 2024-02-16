@@ -173,6 +173,16 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/profissional/hoario/info/{id}', ['as' => 'profissional.hoario.info', 'uses' => 'Admin\ProfissionalHorarioController@info']);
 	Route::get('/profissional/hoario/destroy/{id}', ['as' => 'profissional.hoario/destroy', 'uses' => 'Admin\ProfissionalHorarioController@destroy']);
 
+	Route::get('/profissional/dia/exprediente/json', ['as' => 'profissional.dia.exprediente.json', 'uses' => 'Admin\ProfissionalDiaExpedienteController@json']);
+	Route::post('/profissional/dia/exprediente/json', ['as' => 'profissional.dia.exprediente.json', 'uses' => 'Admin\ProfissionalDiaExpedienteController@json']);
+	Route::post('/profissional/dia/exprediente/store', ['as' => 'profissional.dia.exprediente.store', 'uses' => 'Admin\ProfissionalDiaExpedienteController@store']);
+	Route::get('/profissional/dia/exprediente/edit/{id}', ['as' => 'profissional.dia.exprediente.edit', 'uses' => 'Admin\ProfissionalDiaExpedienteController@edit']);
+	Route::post('/profissional/dia/exprediente/edit/{id}', ['as' => 'profissional.dia.exprediente.edit', 'uses' => 'Admin\ProfissionalDiaExpedienteController@edit']);
+	Route::put('/profissional/dia/exprediente/update/{id}', ['as' => 'profissional.dia.exprediente.update', 'uses' => 'Admin\ProfissionalDiaExpedienteController@update']);
+	Route::get('/profissional/dia/exprediente/info/{id}', ['as' => 'profissional.dia.exprediente.info', 'uses' => 'Admin\ProfissionalDiaExpedienteController@info']);
+	Route::post('/profissional/dia/exprediente/info/{id}', ['as' => 'profissional.dia.exprediente.info', 'uses' => 'Admin\ProfissionalDiaExpedienteController@info']);
+	Route::get('/profissional/dia/exprediente/destroy/{id}', ['as' => 'profissional.dia.exprediente/destroy', 'uses' => 'Admin\ProfissionalDiaExpedienteController@destroy']);
+
 
 	Route::get('/grupo/index/{id_assistente?}', ['as' => 'grupo.index', 'uses' => 'Admin\GrupoController@index']);
 	Route::post('/grupo/index/{id_assistente?}', ['as' => 'grupo.index', 'uses' => 'Admin\GrupoController@index']);

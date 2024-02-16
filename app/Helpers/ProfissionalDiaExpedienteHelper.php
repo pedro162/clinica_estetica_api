@@ -3,13 +3,13 @@
 namespace App\Helpers;
 
 use \App\Utilitarios;
-use \App\HoraProfExpediente;
+use \App\DiasProfExpediente;
 use \App\Pessoa;
 use \App\Filial;
 use \App\Profissional;
 use \App\Exceptions\ProfissionalHorarioExcepton;
 
-class ProfissionalHorarioHelper{
+class ProfissionalDiaExpedienteHelper{
 
     
 
@@ -29,7 +29,7 @@ class ProfissionalHorarioHelper{
         $dadosRequest['user_id']          = \Auth::User()->id; //trocar pelo id do usuario logado
         $dadosRequest['active']           = 'yes';
 
-        $form = HoraProfExpediente::create($dadosRequest);
+        $form = DiasProfExpediente::create($dadosRequest);
 
         if (!$form) {
             throw new ProfissionalHorarioExcepton('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
@@ -50,9 +50,10 @@ class ProfissionalHorarioHelper{
             throw new ProfissionalHorarioExcepton('Parâmetro ínválido');
         }
 
-        $registro = HoraProfExpediente::where('active', '=', 'yes')
+        $registro = DiasProfExpediente::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
-        $registro->diasProfExpediente->pessoa;
+        $registro->pessoa;
+        
 
         return $registro;
     }
@@ -68,7 +69,7 @@ class ProfissionalHorarioHelper{
             throw new ProfissionalHorarioExcepton('Parâmetro inválido');
         }
 
-        $registro = HoraProfExpediente::where('active', '=', 'yes')->where('id', '=', $id)->first();
+        $registro = DiasProfExpediente::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
         if (!$registro) {
             throw new ProfissionalHorarioExcepton('Registro não encontrado');
@@ -103,7 +104,7 @@ class ProfissionalHorarioHelper{
             throw new ProfissionalHorarioExcepton('Parâmetro inválido');
         }
 
-        $registro = HoraProfExpediente::where('active', '=', 'yes')
+        $registro = DiasProfExpediente::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
         if (!$registro) {
             throw new ProfissionalHorarioExcepton('Erro ao exclir registro');
@@ -132,10 +133,7 @@ class ProfissionalHorarioHelper{
 
         $parse = [];
 
-        $registro = \DB::table('hora_prof_expedientes as hpex')->join('dias_prof_expedientes as dprx', function ($join) {
-
-            $join->on('hpex.dias_prof_expediente_id', '=', 'dprx.id');
-        })->join('profissionals as pf', function ($join) {
+        $registro = \DB::table('dias_prof_expedientes as dprx')->join('profissionals as pf', function ($join) {
 
             $join->on('dprx.profissional_id', '=', 'pf.id');
         })->join('pessoas as pesprf', function ($join) {
@@ -159,7 +157,7 @@ class ProfissionalHorarioHelper{
                             }
                             $val = explode(',', $val);
 
-                            $registro->whereIn('os.id', $val);
+                            $registro->whereIn('dprx.id', $val);
                         }
                         break;
                     case 'nome_pessoa':
@@ -232,7 +230,7 @@ class ProfissionalHorarioHelper{
         if ($campos) {
             $registro->select($campos);
         } else {
-            $registro->select('hpex.*', 'pesprf.name as name_profissional', 'pf.id as profissional_id', 'pf.filial_id as filial_id');
+            $registro->select('dprx.*', 'pesprf.name as name_profissional', 'pesprf.id as profissional_id');
         }
         //$registro = \App\::where('active', '=', 'yes')->get();
         $ordemArr   = explode('-', $ordem);
@@ -240,7 +238,7 @@ class ProfissionalHorarioHelper{
         $oremCampo  = $ordemArr[0];
         $oremTipo  = $ordemArr[1];
 
-        $registro   = $registro->where('hpex.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+        $registro   = $registro->where('dprx.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
 
 
             
