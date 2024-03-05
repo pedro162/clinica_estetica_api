@@ -143,7 +143,35 @@ class ProfissionalHorarioHelper{
             $join->on('pf.pessoa_id', '=', 'pesprf.id');
         });
 
+        $colunasComplementares = "";
         $campos =  null;
+        $camposDefault = ['hpex.*', 'pesprf.name as name_profissional', 'pf.id as profissional_id', 'pf.filial_id as filial_id'];
+        $groupByDefault = ['hpex.id', 'hpex.name', 'pesprf.name', 'hpex.dias_prof_expediente_id', 'hpex.hora', 'hpex.user_id', 'hpex.deleted_at', 'hpex.created_at', 'hpex.updated_at', 'hpex.active' ,'hpex.user_update_id', 'pf.id', 'pf.filial_id'];
+
+
+        if(isset($consulta['verificar_data_agenda'])){
+            $dt = str_replace(['/'], ['-'], $consulta['verificar_data_agenda']);
+            $dtArr = explode('-', $dt);
+            $nrAno = $dtArr[0];
+            $nrMes = $dtArr[1];
+
+            if($nrMes  < 9){
+                $nrMes = "0".$nrMes ;
+            }
+            $nrDia = $dtArr[2];
+            if($nrDia  < 9){
+                $nrDia = "0".$nrDia ;
+            }
+            $nrAno = trim($nrAno);
+            $nrMes = trim($nrMes);
+            $nrDia = trim($nrDia);
+
+            $consulta['verificar_data_agenda'] = $nrAno.'-'.$nrMes.'-'.$nrDia;
+
+            $registro->whereRaw('SUBSTRING(hpex.hora, 1, 5) NOT IN (SELECT SUBSTRING(IFNULL(ag.hora, "00:00"), 1, 5) FROM agendas as ag WHERE ag.active="yes" AND SUBSTRING(ag.hora, 1, 5) = SUBSTRING(hpex.hora, 1, 5) AND DATE_FORMAT(ag.data, "%Y-%m-%d") = DATE_FORMAT(?, "%Y-%m-%d") AND ag.pessoa_id = pf.pessoa_id  )', 
+                [$consulta['verificar_data_agenda']]);
+        }
+        
         if (is_array($consulta) && count($consulta) > 0) {
             foreach ($consulta as $key => $val) {
 
@@ -157,10 +185,30 @@ class ProfissionalHorarioHelper{
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            $val = explode(',', $val);
-
-                            $registro->whereIn('os.id', $val);
+                            
                         }
+
+                        $val = explode(',', $val);
+
+                        $registro->whereIn('hpex.id', $val);
+                        
+                        break;
+                    case 'nr_dia':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+                            
+                        }
+
+                        $val = explode(',', $val);
+
+                        $registro->whereIn('dprx.nr_dia', $val);
+                        
                         break;
                     case 'nome_pessoa':
                         if (is_string($val)) {
@@ -232,7 +280,7 @@ class ProfissionalHorarioHelper{
         if ($campos) {
             $registro->select($campos);
         } else {
-            $registro->select('hpex.*', 'pesprf.name as name_profissional', 'pf.id as profissional_id', 'pf.filial_id as filial_id');
+            $registro->select($camposDefault);
         }
         //$registro = \App\::where('active', '=', 'yes')->get();
         $ordemArr   = explode('-', $ordem);
@@ -240,7 +288,10 @@ class ProfissionalHorarioHelper{
         $oremCampo  = $ordemArr[0];
         $oremTipo  = $ordemArr[1];
 
-        $registro   = $registro->where('hpex.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+        $registro->where('hpex.active', '=', 'yes')->groupBy($groupByDefault);
+        //$sql = $registro->orderBy($oremCampo, $oremTipo)->toSql();
+        //throw new ProfissionalHorarioExcepton($sql);
+        $registro   =  $registro->orderBy($oremCampo, $oremTipo)->get();
 
 
             

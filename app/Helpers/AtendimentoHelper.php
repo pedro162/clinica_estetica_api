@@ -9,6 +9,7 @@ use App\Pessoa;
 use App\Profissional;
 use App\Filial;
 use App\Agenda;
+use App\HoraProfExpediente;
 use App\Exceptions\AtendimentoException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -33,14 +34,35 @@ class AtendimentoHelper
             throw new AtendimentoException('Filial não identificada');
         }
 
+        $horario = null;
+        if(isset($dados['horario_id']) && $dados['horario_id'] > 0){
+
+            $horario = HoraProfExpediente::where('id', '=', $dados['horario_id'])->where('active', '=', 'yes')->first();
+            if(! $horario){
+                throw new AtendimentoException('Horário não identificado');
+            }
+        }
+
+        $hrInico = $dados['hr_inicio'] ? $dados['hr_inicio'] : ($horario ? $horario->hora : null);
+
+        $dtInico = $dados['dt_inicio'] ?? $dados['dt_inicio'];
+
+        $agenda = Agenda::where('pessoa_id', '=', $profissional->pessoa->id)
+        ->where('active', '=', 'yes')->where('data', '=', $dtInico)
+        ->where('hora', '=', $hrInico)->whereIn('status', ['pendente'])->first();
+
+        if($agenda){
+            throw new AtendimentoException('O profissional ecolhido não está mais com esse horário disponível. Tente ecolher um outro horário, por favor.');
+        }
+
         $dadosRequest = [];
          
         $dadosRequest['user_id']            = \Auth::User()->id;
         $dadosRequest['name']               = $dados['name'];
         $dadosRequest['historico']          = $dados['historico'];
         $dadosRequest['pessoa_id']          = $pessoas->id;
-        $dadosRequest['dt_inicio']          = $dados['dt_inicio'] ?? $dados['dt_inicio'];
-        $dadosRequest['hr_inicio']          = $dados['hr_inicio'] ?? $dados['hr_inicio'];
+        $dadosRequest['dt_inicio']          = $dtInico;
+        $dadosRequest['hr_inicio']          = $hrInico;
         $dadosRequest['prioridade']         = $dados['prioridade'];
         $dadosRequest['status']             = $dados['status'] ?? 'pendente';
         $dadosRequest['dt_fim']             = $dados['dt_fim'];

@@ -141,6 +141,10 @@ class ProfissionalDiaExpedienteHelper{
             $join->on('pf.pessoa_id', '=', 'pesprf.id');
         });
 
+        if(isset($consulta['verificar_data_agenda'])){
+            $registro->whereRaw('dprx.nr_dia NOT IN (SELECT WEEKDAY(IFNULL(ag.data, "-1")) FROM agendas as ag WHERE ag.active="yes" AND WEEKDAY(IFNULL(ag.data, "-1")) = dprx.nr_dia AND ag.data >= CURRENT_DATE() AND ag.pessoa_id = pf.pessoa_id  )', []);
+        }
+
         $campos =  null;
         if (is_array($consulta) && count($consulta) > 0) {
             foreach ($consulta as $key => $val) {
