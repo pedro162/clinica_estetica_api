@@ -88,7 +88,7 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', 'database-1.chggya42a5ow.us-east-2.rds.amazonaws.com'),//127.0.0.1
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'database-1')//forge,
+            'database' => env('DB_DATABASE', 'database-1'),//forge,
             'username' => env('DB_USERNAME', 'admin'),//forge
             'password' => env('DB_PASSWORD', 'pedro0000'),//''
             'unix_socket' => env('DB_SOCKET', ''),
