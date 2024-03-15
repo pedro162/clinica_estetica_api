@@ -45,13 +45,13 @@ return [
 
         'tenant' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', "database-1.chggya42a5ow.us-east-2.rds.amazonaws.com"),//'127.0.0.1'
-            'port' => env('DB_PORT', '3306'),
+            'url' => env('DATABASE_URL_'),
+            'host' => env('DB_HOST_', "database-1.chggya42a5ow.us-east-2.rds.amazonaws.com"),//'127.0.0.1'
+            'port' => env('DB_PORT_', '3306'),
             'database' => 'clinida_estetica',//''
             'username' => 'admin',//''
             'password' => 'pedro0000',//''
-            'unix_socket' => env('DB_SOCKET', ''),
+            'unix_socket' => env('DB_SOCKET_', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -65,13 +65,13 @@ return [
 
         'landlord' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('LANDLORD_DB_HOST', 'database-1.chggya42a5ow.us-east-2.rds.amazonaws.com'),//127.0.0.1
-            'port' => env('LANDLORD_DB_PORT', '3306'),
-            'database' => env('LANDLORD_DB_DATABASE', 'clinida_estetica'),//forge
-            'username' => env('LANDLORD_DB_USERNAME', 'admin'),//forge
-            'password' => env('LANDLORD_DB_PASSWORD', 'pedro0000'),//''
-            'unix_socket' => env('DB_SOCKET', ''),
+            'url' => env('DATABASE_URL_'),
+            'host' => env('LANDLORD_DB_HOST_', 'database-1.chggya42a5ow.us-east-2.rds.amazonaws.com'),//127.0.0.1
+            'port' => env('LANDLORD_DB_PORT_', '3306'),
+            'database' => env('LANDLORD_DB_DATABASE_', 'clinida_estetica'),//forge
+            'username' => env('LANDLORD_DB_USERNAME_', 'admin'),//forge
+            'password' => env('LANDLORD_DB_PASSWORD_', 'pedro0000'),//''
+            'unix_socket' => env('DB_SOCKET_', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -85,13 +85,13 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', 'database-1.chggya42a5ow.us-east-2.rds.amazonaws.com'),//127.0.0.1
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'clinida_estetica'),//forge,
-            'username' => env('DB_USERNAME', 'admin'),//forge
-            'password' => env('DB_PASSWORD', 'pedro0000'),//''
-            'unix_socket' => env('DB_SOCKET', ''),
+            'url' => env('DATABASE_URL_'),
+            'host' => env('DB_HOST_', 'database-1.chggya42a5ow.us-east-2.rds.amazonaws.com'),//127.0.0.1
+            'port' => env('DB_PORT_', '3306'),
+            'database' => env('DB_DATABASE_', 'clinida_estetica'),//forge,
+            'username' => env('DB_USERNAME_', 'admin'),//forge
+            'password' => env('DB_PASSWORD_', 'pedro0000'),//''
+            'unix_socket' => env('DB_SOCKET_', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
