@@ -475,6 +475,25 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\CobrancaReceberController@destroy']);
 	Route::put('/receber/baixar/{id}/{id_assistente?}', ['as' => 'receber.baixar', 'uses' => 'Admin\CobrancaReceberController@baixar']);
 
+	Route::get('/financeiro/movimentacoes/index/{id_assistente?}', ['as' => 'financeiro.movimentacoes.index', 'uses' => 'Admin\MovimentacoesFinanceirasController@index']);
+	Route::post('/financeiro/movimentacoes/index/{id_assistente?}', ['as' => 'financeiro.movimentacoes.index', 'uses' => 'Admin\MovimentacoesFinanceirasController@index']);
+	Route::get('/financeiro/movimentacoes/json/{id_assistente?}', ['as' => 'financeiro.movimentacoes.json', 'uses' => 'Admin\MovimentacoesFinanceirasController@json']);
+	Route::post('/financeiro/movimentacoes/json/{id_assistente?}', ['as' => 'financeiro.movimentacoes.json', 'uses' => 'Admin\MovimentacoesFinanceirasController@json']);
+	Route::get('/financeiro/movimentacoes/create/{id_assistente?}', ['as' => 'financeiro.movimentacoes.create', 'uses' => 'Admin\MovimentacoesFinanceirasController@create']);
+	Route::post('/financeiro/movimentacoes/create/{id_assistente?}', ['as' => 'financeiro.movimentacoes.create', 'uses' => 'Admin\MovimentacoesFinanceirasController@create']);
+	Route::post('/financeiro/movimentacoes/store/{id_assistente?}', ['as' => 'financeiro.movimentacoes.store', 'uses' => 'Admin\MovimentacoesFinanceirasController@store']);
+	Route::get('/financeiro/movimentacoes/edit/{id}/{id_assistente?}', ['as' => 'financeiro.movimentacoes.edit', 'uses' => 'Admin\MovimentacoesFinanceirasController@edit']);
+	Route::post('/financeiro/movimentacoes/edit/{id}/{id_assistente?}', ['as' => 'financeiro.movimentacoes.edit', 'uses' => 'Admin\MovimentacoesFinanceirasController@edit']);
+	Route::put('/financeiro/movimentacoes/update/{id}/{id_assistente?}', ['as' => 'financeiro.movimentacoes.update', 'uses' => 'Admin\MovimentacoesFinanceirasController@update']);
+	Route::get('/financeiro/movimentacoes/show/{id}/{id_assistente?}', ['as' => 'financeiro.movimentacoes.show', 'uses' => 'Admin\MovimentacoesFinanceirasController@show']);
+	Route::post('/financeiro/movimentacoes/show/{id}/{id_assistente?}', ['as' => 'financeiro.movimentacoes.show', 'uses' => 'Admin\MovimentacoesFinanceirasController@show']);
+	Route::get('/financeiro/movimentacoes/info/{id}/{id_assistente?}', ['as' => 'financeiro.movimentacoes.info', 'uses' => 'Admin\MovimentacoesFinanceirasController@info']);
+	Route::post('/financeiro/movimentacoes/info/{id}/{id_assistente?}', ['as' => 'financeiro.movimentacoes.info', 'uses' => 'Admin\MovimentacoesFinanceirasController@info']);
+	Route::get('/financeiro/movimentacoes/head/{id_assistente?}', ['as' => 'financeiro.movimentacoes.head', 'uses' => 'Admin\MovimentacoesFinanceirasController@head']);
+	Route::post('/financeiro/movimentacoes/head/{id_assistente?}', ['as' => 'financeiro.movimentacoes.head', 'uses' => 'Admin\MovimentacoesFinanceirasController@head']);
+	Route::get('/financeiro/movimentacoes/destroy/{id}/{id_assistente?}', ['as' => 'financeiro.movimentacoes.destroy', 'uses' => 'Admin\MovimentacoesFinanceirasController@destroy']);
+	Route::post('/financeiro/movimentacoes/destroy/{id}/{id_assistente?}', ['as' => 'financeiro.movimentacoes.destroy', 'uses' => 'Admin\MovimentacoesFinanceirasController@destroy']);
+
 	Route::get('/caixa/index/{id_assistente?}', ['as' => 'caixa.index', 'uses' => 'Admin\CaixaController@index']);
 	Route::post('/caixa/index/{id_assistente?}', ['as' => 'caixa.index', 'uses' => 'Admin\CaixaController@index']);
 	Route::get('/caixa/json/{id_assistente?}', ['as' => 'caixa.json', 'uses' => 'Admin\CaixaController@json']);
