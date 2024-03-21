@@ -22,6 +22,7 @@ class Caixa extends Model
         'active',
         'vrSaldo',
         'tpSaldo',
+        'filial_id'
     ];
     
 }

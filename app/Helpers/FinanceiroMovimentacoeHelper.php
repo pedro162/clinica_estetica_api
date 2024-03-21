@@ -288,7 +288,7 @@ class FinanceiroMovimentacoeHelper
         if ($campos) {
             $registro->select($campos);
         } else {
-            $registro->select('fm.*',  \DB::raw($sqlDsReferencia), 'cx.name as caixa_name');
+            $registro->select('fm.*',  \DB::raw($sqlDsReferencia), 'cx.name as caixa_name', 'cx.filial_id');
         }
 
         $registro = $registro->where('fm.active', '=', 'yes')->get();
