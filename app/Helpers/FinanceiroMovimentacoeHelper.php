@@ -205,7 +205,7 @@ class FinanceiroMovimentacoeHelper
 
                             $registro->whereIn('fm.referencia', $val);
                         }
-                        break;
+                        break;//tp_movimentacao
                     case 'conciliado':
                         if (is_string($val)) {
 
@@ -219,6 +219,20 @@ class FinanceiroMovimentacoeHelper
                         }
 
                         $registro->whereIn('fm.conciliado', $val);
+                        break;
+                    case 'tp_movimentacao':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+                            $val = explode(',', $val);
+                        }
+
+                        $registro->whereIn('fm.tp_movimentacao', $val);
                         break;
                     case 'estornado':
                         if (is_string($val)) {
