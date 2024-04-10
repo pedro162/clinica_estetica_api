@@ -27,7 +27,10 @@ class FilialController extends Controller
 
             $campos =  null;
 
-            $registro = Filial::where('active', '=', 'yes');
+            $registro = Filial::where('active', '=', 'yes')
+            ->join('pessoas', function ($join) {
+                $join->on('pessoas.id', '=', 'filials.pessoa_id');
+            });
 
             if (is_array($consulta) && count($consulta) > 0) {
                 foreach ($consulta as $key => $val) {
@@ -127,6 +130,7 @@ class FilialController extends Controller
                             }
                             break;
                         case 'name':
+                        case 'name_filial':
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
@@ -155,7 +159,7 @@ class FilialController extends Controller
             if ($campos) {
                 $registro->select($campos);
             } else {
-                $registro->select('fl.*', 'p.name as name_filial');
+                $registro->select('fl.*', 'p.name as name_filial', 'p.documento');
             }
 
             $registro = $registro->where('fl.active', '=', 'yes')
