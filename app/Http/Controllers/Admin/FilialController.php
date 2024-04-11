@@ -240,7 +240,7 @@ class FilialController extends Controller
 
             $dados = $request->all();
             $user_id = \Auth::User()->id;
-            $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->fist();
+            $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->first();
 
             if (!$pessoa) {
                 throw new FilialException('Pessoa não identificada');
@@ -253,7 +253,7 @@ class FilialController extends Controller
             $dadosFilial                        = [];
             $dadosFilial['user_id']             = \Auth::User()->id;
             $dadosFilial['pessoa_id']           = $pessoa->id;
-            $dadosFilial['dsAtividade']         = $dados['dsAtividade'] ?? null;
+            $dadosFilial['dsAtividade']         = $dados['dsAtividade'] ?? 'comercio';
             $dadosFilial['dsTextoContrato']     = $dados['dsTextoContrato'] ?? null;
             $dadosFilial['active']              = 'yes';
 
@@ -356,7 +356,7 @@ class FilialController extends Controller
                 throw new FilialException('Registro não encontrado.');
             }
 
-            $registro->logradouro = $registro->logradouro->where('importancia', '=', 'principal')->first()->estado_logradouro->pais;
+            $registro->logradouro = $registro->logradouro ? $registro->logradouro->where('importancia', '=', 'principal')->first()->estado_logradouro->pais : null;
             $registro->grupo;
             $registro->telefone;
             //dd($registro);
@@ -449,7 +449,7 @@ class FilialController extends Controller
             $dados = $request->all();
 
             $user_id        = \Auth::User()->id;
-            $pessoa         = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->fist();
+            $pessoa         = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->first();
             $registro       = Filial::where('id', '=', $id)->where('active', '=', 'yes')->first();
             $pessoaFilial   = Filial::where('pessoa_id', '=', $dados['pessoa_id'])->where('active', '=', 'yes')->first();
 
@@ -609,11 +609,10 @@ class FilialController extends Controller
     protected function validaRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255|min:2',
+            'pessoa_id' => 'required|min:1',
         ], [
-            'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
-            'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
-            'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
+            'pessoa_id.required' => 'O campo "Pessoa" é obrigatório.',
+            'pessoa_id.min' => 'O "Pessoa" deve ser maior ou igua a :min caracteres.',
         ]);
 
         if ($validator->fails()) {
