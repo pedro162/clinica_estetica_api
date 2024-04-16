@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Exceptions\FilialException;
 use \App\Filial;
 use \App\Pessoa;
+use \App\Helpers\FilialHelper;
 
 class FilialController extends Controller
 {
@@ -94,85 +95,13 @@ class FilialController extends Controller
             \DB::beginTransaction();
 
             $consulta = $request->all();
-
-            $campos =  null;
-
-            $registro = \DB::table('filials as fl')
-                ->join('pessoas as p', function ($join) {
-                    $join->on('p.id', '=', 'fl.pessoa_id');
-                });
-
-
-            /*$registro->join('cidades', function($join){
-                
-                $join->on('cidades.id', '=', 'bairros.cidade_id');
-
-            });
             
-             */
 
-            if (is_array($consulta) && count($consulta) > 0) {
-                foreach ($consulta as $key => $val) {
-
-                    switch (trim($key)) {
-                        case 'id':
-                            if (is_string($val)) {
-
-                                if ($val[0] == ',') {
-                                    $val = substr($val, 1);
-                                }
-                                if ($val[strlen($val) - 1] == ',') {
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-
-                                $registro->whereIn('id', $val);
-                            }
-                            break;
-                        case 'name':
-                        case 'name_filial':
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('name', 'like', '%' . $val . '%');
-                            break;
-
-                        case 'description_to_search':
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('name', 'like', '%' . $val . '%');
-                            break;
-                    }
-                }
-            } //
-
-
-            if ($campos) {
-                $registro->select($campos);
-            } else {
-                $registro->select('fl.*', 'p.name as name_filial', 'p.documento');
-            }
-
-            $registro = $registro->where('fl.active', '=', 'yes')
-                ->where('p.active', '=', 'yes')->get();
-
-            if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
-                $dataToRequest = [];
-                foreach ($registro as $reg) {
-                    $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
-                }
-
-                $registro = $dataToRequest;
-            }
+            $objFilialHelper    = new FilialHelper();
+            $registro           = $objFilialHelper->json($consulta);
+            if (!$registro) {
+                throw new PaisException('Registro não identifiado');
+            }            
 
             \DB::commit();
 
@@ -194,30 +123,7 @@ class FilialController extends Controller
 
     public function create(Request $request, $idAssistente)
     {
-        try {
-
-            $dadosRequest = $request->all();
-
-            $callBack = $dadosRequest['callBack'] ?? '';
-            $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-
-            return view('admin.filial.create', compact('callBack', 'idAssistente', 'dadosRequest'));
-        } catch (FilialException $e) {
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-
-        } catch (\Exception $e) {
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
-        }
+        
     }
 
 
@@ -239,29 +145,14 @@ class FilialController extends Controller
             \DB::beginTransaction();
 
             $dados = $request->all();
-            $user_id = \Auth::User()->id;
-            $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->first();
 
-            if (!$pessoa) {
-                throw new FilialException('Pessoa não identificada');
-            }
-
-            if (Filial::where('pessoa_id', '=', $pessoa->id)->first()) {
-                throw new FilialException('Já existe uma filial para a pessoa informada.');
-            }
-
-            $dadosFilial                        = [];
-            $dadosFilial['user_id']             = \Auth::User()->id;
-            $dadosFilial['pessoa_id']           = $pessoa->id;
-            $dadosFilial['dsAtividade']         = $dados['dsAtividade'] ?? 'comercio';
-            $dadosFilial['dsTextoContrato']     = $dados['dsTextoContrato'] ?? null;
-            $dadosFilial['active']              = 'yes';
-
-            $registro             = Filial::create($dadosFilial);
+            $objFilialHelper = new FilialHelper();
+            $registro       = $objFilialHelper->store($dados);
 
             if (!$registro) {
                 throw new FilialException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o supote.');
             }
+
 
             \DB::commit();
 
@@ -289,46 +180,7 @@ class FilialController extends Controller
      */
     public function show($id)
     {
-        try {
-
-
-            if ($id <= 0) {
-
-                throw new FilialException('Parâmetro inválido. Entre em contato com o supote.');
-            }
-
-            \DB::beginTransaction();
-
-            $registro = Filial::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
-
-            //dd($registro);
-
-            if (!$registro) {
-
-                throw new FilialException('Registro não encontrado.');
-            }
-
-            \DB::commit();
-
-            //return view('admin.produto.info', compact('registro'));
-            return view('admin.filial.show', compact('registro'));
-        } catch (FilialException $e) {
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-
-        } catch (\Exception $e) {
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
-        }
+        
     }
 
 
@@ -341,24 +193,12 @@ class FilialController extends Controller
             $id = $id ?? $dados['id'];
             \DB::beginTransaction();
 
-            if ($id <= 0) {
-
-                throw new FilialException('Parâmetro inválido. Entre em contato com o supote.');
-            }
-
-            $registro = null;
-
-            $registro = Filial::where('active', '=', 'yes')
-                ->where('id', '=', $id)->first();
+            $objFilialHelper = new FilialHelper();
+            $registro       = $objFilialHelper->info($dados, $id);
 
             if ($registro == null) {
-
-                throw new FilialException('Registro não encontrado.');
+                throw new PaisException('Registro não encontrado');
             }
-
-            $registro->logradouro = $registro->logradouro ? $registro->logradouro->where('importancia', '=', 'principal')->first()->estado_logradouro->pais : null;
-            $registro->grupo;
-            $registro->telefone;
             //dd($registro);
 
             \DB::commit();
@@ -377,9 +217,7 @@ class FilialController extends Controller
             return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
-    /*
-        {"mensagem":{"id":1,"name":"Jos\u00e9 Pedro","name_opcional":"Ferreira","documento":"61224450370","documento_complementar":"123456","email":"phedroclooney@gmail.com","nascimento_fundacao":null,"sexo":"m","tipo":"fisica","user_id":1,"user_update_id":1,"active":"yes","created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-10-08T23:46:26.000000Z","logradouro":[{"id":1,"cep":"65061-220","cidade":"S\u00e3o luis","logradouro":"Rua S\u00e3o Sebasti\u00e3o","bairro":"Ipase","estado":"1","complemento":"teste","numero":"123","bloco":null,"tipo":"casa","importancia":"principal","user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-07-19T02:12:31.000000Z","pivot":{"pessoa_id":1,"logradouro_id":1},"estado_logradouro":{"id":1,"nmEStado":"Maranh\u00e3o","codEstado":"98","sigla":"MA","padrao":"yes","pais_id":1,"user_id":1,"user_update_id":1,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:08:36.000000Z","updated_at":"2022-07-19T02:08:36.000000Z","pais":{"id":1,"nmPais":"BRASIL","cdPais":"55","padrao":"yes","user_id":1,"user_update_id":1,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:07:34.000000Z","updated_at":"2022-07-19T02:07:34.000000Z"}}}],"grupo":[{"id":1,"name":"Cliente","descricao":"Cliente","user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:11:11.000000Z","updated_at":"2022-07-19T02:11:11.000000Z","pivot":{"pessoa_id":1,"groupo_id":1}}],"telefone":[{"id":1,"numero":"(98) 98425-7623","tipo":"celular","whatsapp":"nao","importancia":"principal","pessoa_id":1,"user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-07-19T02:12:31.000000Z"},{"id":2,"numero":"(98) 98425-7623","tipo":"celular","whatsapp":"nao","importancia":"principal","pessoa_id":1,"user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-07-19T02:12:31.000000Z"},{"id":3,"numero":"9894239891","tipo":"fixo","whatsapp":"nao","importancia":"principal","pessoa_id":1,"user_id":1,"user_update_id":null,"active":"yes","deleted_at":null,"created_at":"2022-07-19T02:12:31.000000Z","updated_at":"2022-07-19T02:12:31.000000Z"}]},"class":"sucess"}
-    */
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -471,13 +309,13 @@ class FilialController extends Controller
             }
 
             $dadosFilial                        = [];
-            $dadosFilial['user_id']             = \Auth::User()->id;
+            $dadosFilial['user_update_id']      = \Auth::User()->id;
             $dadosFilial['pessoa_id']           = $pessoa->id;
-            $dadosFilial['dsAtividade']         = $dados['dsAtividade'] ?? null;
+            $dadosFilial['dsAtividade']         = $dados['dsAtividade'] ?? 'comercio';
             $dadosFilial['dsTextoContrato']     = $dados['dsTextoContrato'] ?? null;
             $dadosFilial['active']              = 'yes';
 
-            $registro             = Filial::create($dadosFilial);
+            $registro->update($dadosFilial);
 
             if (!$registro) {
                 throw new FilialException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o supote.');
