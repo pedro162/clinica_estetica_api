@@ -133,7 +133,7 @@ class CobrancaReceberController extends Controller
                 throw new CobrancaReceberException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
-            $dadosRequest = [];
+            /*$dadosRequest = [];
 
             $dadosRequest['referencia_id']              = $dados['referencia_id']           ?? null;
             $dadosRequest['referencia']                 = $dados['referencia']              ?? null;
@@ -154,7 +154,31 @@ class CobrancaReceberController extends Controller
             $dadosRequest['active']                     =  'yes';
 
 
-            $registro = CobrancaReceber::create($dadosRequest);
+            $registro = CobrancaReceber::create($dadosRequest);*/
+
+            $vrCobranca   = Utilitarios::removeMaskMoney($dados['vrLiquido']);
+
+            $cobRecebHelper = new ContaReceberHelper();
+            $erros = $cobRecebHelper->validaGerCobranca($pessoa->id, $vrCobranca, $dados['forma_pagamento_id'], $dados['plano_pagamento_id'], $dados['operador_financeiro_id'] ?? 0, []);
+        
+            if( (is_array($erros) && count($erros) > 0) ){
+                throw new CobrancaReceberException(implode('<br/>', $erros));
+            }
+
+            $cobRecebHelper = new ContaReceberHelper();
+            
+            $dadosRequest=[
+                'filial_id'=>$dados['filial_id'],
+                'referencia'=>'sem_refe',
+                'referencia_id'=>date('ymdhms'),
+                'documento'=>$dados['documento'],
+                'descricao'=>$dados['descricao'],
+                'responsavel_id'=>\Auth::User()->pessoa->id,
+        
+            ];
+            $registro = $cobRecebHelper->gerarCobranca($pessoa->id, $vrCobranca, $dados['forma_pagamento_id'], $dados['plano_pagamento_id'], $dados['operador_financeiro_id'] ?? 0, $dadosRequest);
+
+
             \DB::commit();
 
             if ($registro) {
@@ -164,11 +188,12 @@ class CobrancaReceberController extends Controller
             }
         } catch (CobrancaReceberException $e) {
             \DB::rollback();
-            return response()->json(['errors' => ['error' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 400);
+            return response()->json(['mensagem' =>$e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 400);
         } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' ' . $e->getLine() . ' ' . $e->getFile(), 'class' => 'warning'], 500);
         }
+
     }
 
     public function baixar(Request $request, $id, $idAssistente=0){
