@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BandeiraCartao extends Model
 {
-    
+    //
     protected $primaryKey="id";
 	protected $table="bandeira_cartaos";
 	protected $fillable = 
