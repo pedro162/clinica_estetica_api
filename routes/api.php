@@ -678,4 +678,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/motivo/cancelamento/ordem/servico/info/{id}', ['as' => 'motivo.cancelamento.ordem.servico.info', 'uses' => 'Admin\MotivoCancelamentoOrdemServicoController@info']);
 	Route::post('/motivo/cancelamento/ordem/servico/info/{id}', ['as' => 'motivo.cancelamento.ordem.servico.info', 'uses' => 'Admin\MotivoCancelamentoOrdemServicoController@info']);
 	Route::get('/motivo/cancelamento/ordem/servico/destroy/{id}', ['as' => 'motivo.cancelamento.ordem.servico.destroy', 'uses' => 'Admin\MotivoCancelamentoOrdemServicoController@destroy']);
+
+
+	Route::get('/widget/faturamento/liquidez/mes_ano/json/{widget?}', ['as' => 'widget.faturamento.liquidez.mes_ano.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoMesAnoWidgetJson']);
+	Route::post('/widget/faturamento/liquidez/mes_ano/json/{widget?}', ['as' => 'widget.faturamento.liquidez.mes_ano.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoMesAnoWidgetJson']);
+	
 });
