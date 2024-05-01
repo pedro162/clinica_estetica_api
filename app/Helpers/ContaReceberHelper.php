@@ -412,6 +412,26 @@ class ContaReceberHelper
         return $this->json($data);
     }
 
+    public function faturamentoLiquidezFilialWidgetJson(array $data){
+        
+        $rawSqlYear = \DB::raw('YEAR(cr.created_at)');
+        $rawSqlMes = \DB::raw('MONTH(cr.created_at)');
+        $rawSqlDia = \DB::raw('DAY(cr.created_at)');
+        $rawSqlFilial = \DB::raw('cr.filial_id');
+
+        $data['campos'] = [
+            \DB::raw('SUM(IFNULL(cr.vrLiquido, 0)) as vrFaturamentoLiquidez'),
+            \DB::raw('cr.filial_id as filial_id'),
+        ];
+
+        //select SUM(IFNULL(cr.vrLiquido, 0)) as vrFaturamentoLiquidez, YEAR(cr.created_at) as anoFaturamentoLiquidez, MONTH(cr.created_at) as mesFaturamentoLiquidez, DAY(cr.created_at) as diaFaturamentoLiquidez, cr.filial_id as filial_id from `conta_recebers` as `cr` inner join `pessoas` on `pessoas`.`id` = `cr`.`pessoa_id` inner join `filials` as `fl` on `cr`.`filial_id` = `fl`.`id` inner join `pessoas` as `pesfl` on `fl`.`pessoa_id` = `pesfl`.`id` inner join `forma_pagamentos` as `fp` on `fp`.`id` = `cr`.`forma_pagamento_id` where `cr`.`active` = yes and `pessoas`.`active` = yes group by filial_id,anoFaturamentoLiquidez,mesFaturamentoLiquidez order by `cr`.`id` desc
+        $data['raw_grop_by'] = "{$rawSqlFilial}"; 
+
+        
+
+        return $this->json($data);
+    }
+
     /**
      * Display a listing of the resource.
      *

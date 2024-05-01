@@ -67,4 +67,36 @@ class WidgetController extends Controller
         }
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function faturamentoLiquidezAgrupadoFilialWidgetJson(Request $request)
+    {
+        try {
+            \DB::beginTransaction();
+
+            $data = $request->all();
+
+            $objCobReceberHelper = new ContaReceberHelper();
+
+            $registro = $objCobReceberHelper->faturamentoLiquidezFilialWidgetJson($data);
+
+            \DB::commit();
+
+
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
+        } catch (CobrancaReceberException $e) {
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
+        }
+    }
+
+
 }
