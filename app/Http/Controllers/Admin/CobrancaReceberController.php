@@ -133,29 +133,6 @@ class CobrancaReceberController extends Controller
                 throw new CobrancaReceberException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
-            /*$dadosRequest = [];
-
-            $dadosRequest['referencia_id']              = $dados['referencia_id']           ?? null;
-            $dadosRequest['referencia']                 = $dados['referencia']              ?? null;
-            $dadosRequest['pessoa_id']                  = $pessoa->id;
-            $dadosRequest['descricao']                  = $dados['descricao'];
-            $dadosRequest['documento']                  = $dados['documento']               ?? null;
-            $dadosRequest['dtVencimentoOriginal']       = $dados['dtVencimentoOriginal'];
-            $dadosRequest['dtVencimento']               = $dados['dtVencimento']            ?? null;
-            $dadosRequest['vrBruto']                    = $dados['vrBruto'];
-            $dadosRequest['vrLiquido']                  = $dados['vrLiquido'];
-            $dadosRequest['vrDevolvido']                = $dados['vrDevolvido']             ?? 0;
-            $dadosRequest['vrPago']                     = $dados['vrPago']                  ?? 0;
-            $dadosRequest['vrTaxa']                     = $dados['vrTaxa']                  ?? 0;
-            $dadosRequest['vrDesconto']                 = $dados['vrDesconto']              ?? 0;
-            $dadosRequest['vrJuros']                    = $dados['vrJuros']                 ?? 0;
-            $dadosRequest['user_id']                    = \Auth::User()->id;
-            $dadosRequest['user_update_id']             = null;
-            $dadosRequest['active']                     =  'yes';
-
-
-            $registro = CobrancaReceber::create($dadosRequest);*/
-
             $vrCobranca   = Utilitarios::removeMaskMoney($dados['vrLiquido']);
 
             $cobRecebHelper = new ContaReceberHelper();

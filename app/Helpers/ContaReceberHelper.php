@@ -404,7 +404,6 @@ class ContaReceberHelper
             \DB::raw('cr.filial_id as filial_id'),
         ];
 
-        //select SUM(IFNULL(cr.vrLiquido, 0)) as vrFaturamentoLiquidez, YEAR(cr.created_at) as anoFaturamentoLiquidez, MONTH(cr.created_at) as mesFaturamentoLiquidez, DAY(cr.created_at) as diaFaturamentoLiquidez, cr.filial_id as filial_id from `conta_recebers` as `cr` inner join `pessoas` on `pessoas`.`id` = `cr`.`pessoa_id` inner join `filials` as `fl` on `cr`.`filial_id` = `fl`.`id` inner join `pessoas` as `pesfl` on `fl`.`pessoa_id` = `pesfl`.`id` inner join `forma_pagamentos` as `fp` on `fp`.`id` = `cr`.`forma_pagamento_id` where `cr`.`active` = yes and `pessoas`.`active` = yes group by filial_id,anoFaturamentoLiquidez,mesFaturamentoLiquidez order by `cr`.`id` desc
         $data['raw_grop_by'] = "{$rawSqlFilial},{$rawSqlYear},{$rawSqlMes}"; 
 
         
@@ -424,9 +423,29 @@ class ContaReceberHelper
             \DB::raw('cr.filial_id as filial_id'),
         ];
 
-        //select SUM(IFNULL(cr.vrLiquido, 0)) as vrFaturamentoLiquidez, YEAR(cr.created_at) as anoFaturamentoLiquidez, MONTH(cr.created_at) as mesFaturamentoLiquidez, DAY(cr.created_at) as diaFaturamentoLiquidez, cr.filial_id as filial_id from `conta_recebers` as `cr` inner join `pessoas` on `pessoas`.`id` = `cr`.`pessoa_id` inner join `filials` as `fl` on `cr`.`filial_id` = `fl`.`id` inner join `pessoas` as `pesfl` on `fl`.`pessoa_id` = `pesfl`.`id` inner join `forma_pagamentos` as `fp` on `fp`.`id` = `cr`.`forma_pagamento_id` where `cr`.`active` = yes and `pessoas`.`active` = yes group by filial_id,anoFaturamentoLiquidez,mesFaturamentoLiquidez order by `cr`.`id` desc
         $data['raw_grop_by'] = "{$rawSqlFilial}"; 
 
+        
+
+        return $this->json($data);
+    }
+
+
+    public function faturamentoLiquidezProfissionallWidgetJson(array $data){
+        
+        $rawSqlYear         = \DB::raw('YEAR(cr.created_at)');
+        $rawSqlProfi        = \DB::raw('IFNULL(os.profissional_id, "000000")');
+        $rawSqlProfiNome   = \DB::raw('IFNULL(pprof.name, "Sem profissíonal")');
+
+        $data['campos'] = [
+            \DB::raw('SUM(IFNULL(cr.vrLiquido, 0)) as vrFaturamentoLiquidez'),
+            \DB::raw('IFNULL(os.profissional_id, "000000") as profissional_id'),
+            \DB::raw('IFNULL(pprof.name, "Sem profissíonal") as name_profissional'),
+        ];
+
+        $data['raw_grop_by']        = "{$rawSqlProfi},{$rawSqlProfiNome}"; 
+        $data['com_ordem_servico']  = true; 
+        
         
 
         return $this->json($data);
@@ -465,6 +484,19 @@ class ContaReceberHelper
         })->join('forma_pagamentos as fp', function ($join) {
             $join->on('fp.id', '=', 'cr.forma_pagamento_id');
         });
+
+        if(isset($data['com_ordem_servico'])){
+            $registro->leftJoin('ordem_servicos as os', function ($join) {
+                $join->on('os.id', '=', 'cr.referencia_id')->on('cr.referencia', '=',  \DB::raw('"ordem_servicos"'));
+            })->join('profissionals as prof', function ($join) {
+                $join->on('prof.id', '=', 'os.profissional_id');
+            })->join('pessoas as pprof', function ($join) {
+                $join->on('pprof.id', '=', 'prof.pessoa_id');
+            });
+            //echo $registro->toSql();
+        }
+
+        //select*from `conta_recebers`as `cr`inner join `pessoas`on `pessoas`.`id`=`cr`.`pessoa_id`inner join `filials`as `fl`on `cr`.`filial_id`=`fl`.`id`inner join `pessoas`as `pesfl`on `fl`.`pessoa_id`=`pesfl`.`id`inner join `forma_pagamentos`as `fp`on `fp`.`id`=`cr`.`forma_pagamento_id`left join `ordem_servicos`as `os`on `os`.`id`=`cr`.`referencia_id`and `cr`.`referencia`=?inner join `profissionals`as `prof`on `prof`.`id`=`os`.`profissional_id`inner join `pessoas`as `pprof`on `pprof`.`id`=`prof`.`pessoa_id`
 
         if (is_array($consulta) && count($consulta) > 0) {
             foreach ($consulta as $key => $val) {
@@ -637,6 +669,7 @@ class ContaReceberHelper
         $registro = $registro->where('cr.active', '=', 'yes')
             ->where('pessoas.active', '=', 'yes')->get();
 
+        
 
         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
             $dataToRequest = [];

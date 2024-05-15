@@ -23,97 +23,97 @@ use \App\Rca;
 
 use \App\Exceptions\OrdemServicoException;
 
-class OrdemServicoHelper{
+class OrdemServicoHelper
+{
 
-    public function gerarFinanceiro(OrdemServico $ordemServico){
-        
-        if(! $ordemServico){
+    public function gerarFinanceiro(OrdemServico $ordemServico)
+    {
+
+        if (!$ordemServico) {
             throw new OrdemServicoException('Registro não encontrado');
         }
 
         $cobrancas  = $ordemServico->cobranca;
         $pessoa     = $ordemServico->pessoa;
 
-        if(! $cobrancas){
+        if (!$cobrancas) {
             throw new OrdemServicoException('Nenhuma cobrança foi encontrada pra a ordem de serviço informada');
         }
 
         //---- Primerio loop só para validações
         $vrTotalCobrancas = 0;
-        foreach($cobrancas as $obranca){
+        foreach ($cobrancas as $obranca) {
             $formaPagamento     = $obranca->formaPgto;
             $planoPagamento     = $obranca->planoPgto;
             $operadorFinanceiro = $obranca->operadorFinanceiro;
-        
-            if(! $formaPagamento){
-                throw new OrdemServicoException('A forma de pagamento de código nº '.$obranca->forma_pagamento_id.' não foi identificada.');
+
+            if (!$formaPagamento) {
+                throw new OrdemServicoException('A forma de pagamento de código nº ' . $obranca->forma_pagamento_id . ' não foi identificada.');
             }
 
-            if(! $planoPagamento){
-                throw new OrdemServicoException('O plano de pagamento de código nº '.$obranca->plano_pagamento_id.' não foi identificado.');
+            if (!$planoPagamento) {
+                throw new OrdemServicoException('O plano de pagamento de código nº ' . $obranca->plano_pagamento_id . ' não foi identificado.');
             }
-            
+
             //---Se não tiver operador financeiro, verifico se a forma de pagamento exige
-            if(! ($obranca->operador_financeiro_id > 0)){
+            if (!($obranca->operador_financeiro_id > 0)) {
 
-                if($formaPagamento->hasOperadorFinanceiro == 'yes'){
-                    if(! $operadorFinanceiro){
-                        throw new OrdemServicoException('O operador financeiro de código nº '.$obranca->operador_financeiro_id.' não foi identificado.');
+                if ($formaPagamento->hasOperadorFinanceiro == 'yes') {
+                    if (!$operadorFinanceiro) {
+                        throw new OrdemServicoException('O operador financeiro de código nº ' . $obranca->operador_financeiro_id . ' não foi identificado.');
                     }
                 }
             }
-            
+
             $vrTotalCobrancas += $obranca->vr_final;
-            
+
             $cobRecebHelper = new ContaReceberHelper();
             $erros = $cobRecebHelper->validaGerCobranca($pessoa->id, $obranca->vr_final, $formaPagamento->id, $planoPagamento->id, $operadorFinanceiro->id ?? 0, []);
-        
-            if( (is_array($erros) && count($erros) > 0) ){
+
+            if ((is_array($erros) && count($erros) > 0)) {
                 throw new OrdemServicoException(implode('<br/>', $erros));
             }
-
         }
 
         $difAbsCobOs = $ordemServico->vr_final - $vrTotalCobrancas;
         $difAbsCobOs = abs($difAbsCobOs);
 
-        if($ordemServico->vr_final > $vrTotalCobrancas){
-            if($difAbsCobOs > 0.02){
-                throw new OrdemServicoException('Informe, por favor, o saldo restante das cobranças. O saldo restante é de : '.(number_format($difAbsCobOs, 2, ',', '.')));
+        if ($ordemServico->vr_final > $vrTotalCobrancas) {
+            if ($difAbsCobOs > 0.02) {
+                throw new OrdemServicoException('Informe, por favor, o saldo restante das cobranças. O saldo restante é de : ' . (number_format($difAbsCobOs, 2, ',', '.')));
             }
         }
 
-        if($difAbsCobOs > 0.02){
+        if ($difAbsCobOs > 0.02) {
             throw new OrdemServicoException('O total das cobraças é diferente do todal da ordem de serviço');
         }
-        
+
         //--Second loop to data commit
-        foreach($cobrancas as $obranca){
+        foreach ($cobrancas as $obranca) {
             $formaPagamento     = $obranca->formaPgto;
             $planoPagamento     = $obranca->planoPgto;
             $operadorFinanceiro = $obranca->operadorFinanceiro;
 
             $cobRecebHelper = new ContaReceberHelper();
-            
-            $dados=[
-                'filial_id'=>$ordemServico->filial_id,
-                'referencia'=>$ordemServico->getTable(),
-                'referencia_id'=>$ordemServico->id,
-                'documento'=>$obranca->nr_doc,
-                'descricao'=>'Conta a receber ordem de serviço nº '.$ordemServico->id,
-                'responsavel_id'=>\Auth::User()->pessoa->id,
-        
+
+            $dados = [
+                'filial_id' => $ordemServico->filial_id,
+                'referencia' => $ordemServico->getTable(),
+                'referencia_id' => $ordemServico->id,
+                'documento' => $obranca->nr_doc,
+                'descricao' => 'Conta a receber ordem de serviço nº ' . $ordemServico->id,
+                'responsavel_id' => \Auth::User()->pessoa->id,
+
             ];
             $cobRecebHelper->gerarCobranca($pessoa->id, $obranca->vr_final, $formaPagamento->id, $planoPagamento->id, $operadorFinanceiro->id ?? 0, $dados);
-            
-
         }
 
         return $ordemServico;
     }
 
-    public function marcarComoFaturada(OrdemServico $ordemServico){
-        
+    public function marcarComoFaturada(OrdemServico $ordemServico)
+    {
+
         $dadosRequest = [];
         $dadosRequest['is_faturado']        = 'yes';
         $dadosRequest['type']               = 'pedido';
@@ -126,8 +126,9 @@ class OrdemServicoHelper{
         //
     }
 
-    public function marcarComoOrcamento(OrdemServico $ordemServico){
-        
+    public function marcarComoOrcamento(OrdemServico $ordemServico)
+    {
+
         $dadosRequest = [];
         $dadosRequest['is_faturado']        = 'no';
         $dadosRequest['is_orcamento']       = 'yes';
@@ -141,8 +142,9 @@ class OrdemServicoHelper{
         //
     }
 
-    public function marcarFinalizada(OrdemServico $ordemServico){
-        
+    public function marcarFinalizada(OrdemServico $ordemServico)
+    {
+
         $dadosRequest = [];
         $dadosRequest['td_conclusao']       = date('Y-m-d H:i:s');
         $dadosRequest['status']             = 'concluido';
@@ -151,15 +153,16 @@ class OrdemServicoHelper{
 
         return $ordemServico;
         //'type',
-		//'is_orcamento'
+        //'is_orcamento'
     }
 
-    public function cancelarOrdemServico(OrdemServico $ordemServico, int $idMotivo){
-        if(! $idMotivo){
+    public function cancelarOrdemServico(OrdemServico $ordemServico, int $idMotivo)
+    {
+        if (!$idMotivo) {
             throw new OrdemServicoException('Motivo de cancelamento não identificado. Tente novamente ou entre em contato com o suporte.');
         }
         $objMotivoCancel = MotivoCancelamentoOrdemServico::where('active', '=', 'yes')->where('id', '=', $idMotivo)->first();
-        if(! $objMotivoCancel){
+        if (!$objMotivoCancel) {
             throw new OrdemServicoException('Motivo de cancelamento não identificado. Tente novamente ou entre em contato com o suporte.');
         }
 
@@ -174,7 +177,8 @@ class OrdemServicoHelper{
         return $ordemServico;
     }
 
-    public function store(array $dados){
+    public function store(array $dados)
+    {
         $pessoas = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->first();
         if (!$pessoas) {
             throw new OrdemServicoException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
@@ -217,11 +221,11 @@ class OrdemServicoHelper{
         }
 
         return $form;
-
     }
 
-    public function concluir(array $dados, int $id=0){
-        
+    public function concluir(array $dados, int $id = 0)
+    {
+
         $id             = $id ?? $dados['id'];
         $callBack       = $dados['callBack'] ?? '';
         $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
@@ -277,7 +281,8 @@ class OrdemServicoHelper{
         return $registro;
     }
 
-    public function cancelar(array $dados, int $id=0){
+    public function cancelar(array $dados, int $id = 0)
+    {
 
         $id             = $id ?? $dados['id'];
         $callBack       = $dados['callBack'] ?? '';
@@ -299,7 +304,8 @@ class OrdemServicoHelper{
         return $registro;
     }
 
-    public function info(array $dados, int $id=0){
+    public function info(array $dados, int $id = 0)
+    {
 
         $id         = $id ?? $dados['id'];
         $callBack   = $dados['callBack'] ?? '';
@@ -340,7 +346,8 @@ class OrdemServicoHelper{
     }
 
 
-    public function update(array $dados, int $id=0){
+    public function update(array $dados, int $id = 0)
+    {
 
         $id             = $id ?? $dados['id'];
         $callBack       = $dados['callBack'] ?? '';
@@ -365,7 +372,8 @@ class OrdemServicoHelper{
         return $registro;
     }
 
-    public function finalizar(array $dados, int $id=0){
+    public function finalizar(array $dados, int $id = 0)
+    {
 
         $id             = $id ?? $dados['id'];
         $callBack       = $dados['callBack'] ?? '';
@@ -395,10 +403,10 @@ class OrdemServicoHelper{
         }
 
         return $registro;
-
     }
 
-    public function adicionarItem(array $dados, int $id=0){
+    public function adicionarItem(array $dados, int $id = 0)
+    {
 
         $id             = $id ?? $dados['id'];
         $callBack       = $dados['callBack'] ?? '';
@@ -489,7 +497,8 @@ class OrdemServicoHelper{
         return $registro;
     }
 
-    public function removerItem(int $id){
+    public function removerItem(int $id)
+    {
         if ($id <= 0) {
             throw new OrdemServicoException("Parâmetro inválido.");
         }
@@ -525,7 +534,8 @@ class OrdemServicoHelper{
         return $registro;
     }
 
-    public function recalcularOrdemServico(int $id){
+    public function recalcularOrdemServico(int $id)
+    {
 
 
         if ((!isset($id)) || ($id <= 0)) {
@@ -571,7 +581,8 @@ class OrdemServicoHelper{
         return $registro;
     }
 
-    public function destroy(int $id){
+    public function destroy(int $id)
+    {
 
         if ($id <= 0) {
             throw new OrdemServicoException('Parâmetro inválido');
@@ -590,15 +601,15 @@ class OrdemServicoHelper{
 
             //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
             //return redirect()->back();
-           throw new OrdemServicoException('Erro ao exclir registro');
+            throw new OrdemServicoException('Erro ao exclir registro');
         }
 
         return $registro;
     }
 
-    public function json(array $data)
+    public function json(array $data, $usePaginate = false)
     {
-        
+
 
         $consulta = $data;
         //dd($consulta);
@@ -645,7 +656,7 @@ class OrdemServicoHelper{
                             $registro->whereIn('os.id', $val);
                         }
                         break;
-                    case 'status'://'aberto','cancelado','aguardando','concluido'
+                    case 'status': //'aberto','cancelado','aguardando','concluido'
                         if (is_string($val)) {
 
                             if ($val[0] == ',') {
@@ -736,14 +747,15 @@ class OrdemServicoHelper{
 
         $oremCampo  = $ordemArr[0];
         $oremTipo  = $ordemArr[1];
+        $usePaginate = true;
+        if ($usePaginate) {
+            $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate(10);
+        } else {
+            $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+        }
 
-        $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
 
-
-            
 
         return $registro;
-        
     }
-
 }

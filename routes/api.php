@@ -685,5 +685,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::get('/widget/faturamento/liquidez/filial/json/{widget?}', ['as' => 'widget.faturamento.liquidez.filial.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoFilialWidgetJson']);
 	Route::post('/widget/faturamento/liquidez/filial/json/{widget?}', ['as' => 'widget.faturamento.liquidez.filial.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoFilialWidgetJson']);
+
+	Route::get('/widget/faturamento/liquidez/profissional/json/{widget?}', ['as' => 'widget.faturamento.liquidez.profissional.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoProfissionalWidgetJson']);
+	Route::post('/widget/faturamento/liquidez/profissional/json/{widget?}', ['as' => 'widget.faturamento.liquidez.profissional.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoProfissionalWidgetJson']);
+
+	
 	
 });
