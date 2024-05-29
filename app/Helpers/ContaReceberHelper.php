@@ -260,7 +260,8 @@ class ContaReceberHelper
         return $datacobReceberObjArr;
     }
 
-    public function baixar(array $dados, int $id){
+    public function baixar(array $dados, int $id)
+    {
 
         $id = $id ?? $dados['id'];
         $callBack = $dados['callBack'] ?? '';
@@ -271,16 +272,16 @@ class ContaReceberHelper
         }
 
         $vrCobranca = $dados['vr_final'] ?? 0;
-        $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca); 
+        $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);
 
-         if (! ($vrCobranca > 0)) {
+        if (!($vrCobranca > 0)) {
             throw new CobrancaReceberException('O valor para baixa é inválido');
         }
 
         $registro = CobrancaReceber::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
-        if (! $registro) {
+        if (!$registro) {
             throw new CobrancaReceberException('Registro não identificado. Tentenovamente ou entre em contato com o suporte');
         }
 
@@ -314,7 +315,7 @@ class ContaReceberHelper
         ];
 
         $objCobReceberItemHelp = new ContaReceberItemHelper();
-        
+
         //contaRecebrItem
         $dataResponse = $objCobReceberItemHelp->gerarCobrancaItem(
             $registro,
@@ -324,32 +325,33 @@ class ContaReceberHelper
             $registro->operadorFinanceiro->id ?? 0,
             $dataParcela
         );
-        if(!(is_array($dataResponse) && count($dataResponse) > 0)){
+        if (!(is_array($dataResponse) && count($dataResponse) > 0)) {
             throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
         }
 
         $dataItens = $dataResponse['data_cob_receber_item'] ?? [];
 
-        if(!(is_array($dataItens) && count($dataItens) > 0)){
+        if (!(is_array($dataItens) && count($dataItens) > 0)) {
             throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
         }
 
-        
-       
-        foreach($dataItens as $key=>$contaRecebrItem){
-            if(!( $contaRecebrItem)){
+
+
+        foreach ($dataItens as $key => $contaRecebrItem) {
+            if (!($contaRecebrItem)) {
                 throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
             }
             $objCobReceberItemHelp = new ContaReceberItemHelper();
             $objCobReceberItemHelp->baixar($dados, $contaRecebrItem->id);
         }
 
-        
+
 
         return $registro;
     }
 
-    public function update(array $data, int $id){
+    public function update(array $data, int $id)
+    {
         $dadosRequest = [];
 
         $dadosRequest['descricao']                  = $data['descricao'];
@@ -360,7 +362,7 @@ class ContaReceberHelper
         if (!$registro) {
             throw new CobrancaReceberException('Registro não identificado');
         }
-        
+
         $registro->update($dadosRequest);
 
         return $registro;
@@ -389,8 +391,9 @@ class ContaReceberHelper
         return $registro;
     }
 
-    public function faturamentoLiquidezMesAnoWidgetJson(array $data){
-        
+    public function faturamentoLiquidezMesAnoWidgetJson(array $data)
+    {
+
         $rawSqlYear = \DB::raw('YEAR(cr.created_at)');
         $rawSqlMes = \DB::raw('MONTH(cr.created_at)');
         $rawSqlDia = \DB::raw('DAY(cr.created_at)');
@@ -404,15 +407,15 @@ class ContaReceberHelper
             \DB::raw('cr.filial_id as filial_id'),
         ];
 
-        $data['raw_grop_by'] = "{$rawSqlFilial},{$rawSqlYear},{$rawSqlMes}"; 
+        $data['raw_grop_by'] = "{$rawSqlFilial},{$rawSqlYear},{$rawSqlMes}";
 
-        
+
 
         return $this->json($data);
     }
 
-    public function faturamentoLiquidezFilialWidgetJson(array $data){
-        
+    public function faturamentoLiquidezFilialWidgetJson(array $data)
+    {
         $rawSqlYear = \DB::raw('YEAR(cr.created_at)');
         $rawSqlMes = \DB::raw('MONTH(cr.created_at)');
         $rawSqlDia = \DB::raw('DAY(cr.created_at)');
@@ -423,16 +426,14 @@ class ContaReceberHelper
             \DB::raw('cr.filial_id as filial_id'),
         ];
 
-        $data['raw_grop_by'] = "{$rawSqlFilial}"; 
-
-        
+        $data['raw_grop_by'] = "{$rawSqlFilial}";
 
         return $this->json($data);
     }
 
 
-    public function faturamentoLiquidezProfissionallWidgetJson(array $data){
-        
+    public function faturamentoLiquidezProfissionallWidgetJson(array $data)
+    {
         $rawSqlYear         = \DB::raw('YEAR(cr.created_at)');
         $rawSqlProfi        = \DB::raw('IFNULL(os.profissional_id, "000000")');
         $rawSqlProfiNome   = \DB::raw('IFNULL(pprof.name, "Sem profissíonal")');
@@ -443,10 +444,8 @@ class ContaReceberHelper
             \DB::raw('IFNULL(pprof.name, "Sem profissíonal") as name_profissional'),
         ];
 
-        $data['raw_grop_by']        = "{$rawSqlProfi},{$rawSqlProfiNome}"; 
-        $data['com_ordem_servico']  = true; 
-        
-        
+        $data['raw_grop_by']        = "{$rawSqlProfi},{$rawSqlProfiNome}";
+        $data['com_ordem_servico']  = true;
 
         return $this->json($data);
     }
@@ -460,16 +459,16 @@ class ContaReceberHelper
     {
         $consulta = $data;
 
-        if(! isset($consulta['ordem'])){
+        if (!isset($consulta['ordem'])) {
 
-             $consulta['ordem'] =  'id-desc';
+            $consulta['ordem'] =  'id-desc';
         }
 
         $campos =  $data['campos'] ?? [];
         $parse = [
-            'id'=>'cr.id',
-            'name'=>'pessoas.name',
-            'filial_id'=>'cr.filial_id',
+            'id' => 'cr.id',
+            'name' => 'pessoas.name',
+            'filial_id' => 'cr.filial_id',
         ];
 
         $registro = \DB::table('conta_recebers as cr');
@@ -485,7 +484,7 @@ class ContaReceberHelper
             $join->on('fp.id', '=', 'cr.forma_pagamento_id');
         });
 
-        if(isset($data['com_ordem_servico'])){
+        if (isset($data['com_ordem_servico'])) {
             $registro->leftJoin('ordem_servicos as os', function ($join) {
                 $join->on('os.id', '=', 'cr.referencia_id')->on('cr.referencia', '=',  \DB::raw('"ordem_servicos"'));
             })->join('profissionals as prof', function ($join) {
@@ -495,8 +494,6 @@ class ContaReceberHelper
             });
             //echo $registro->toSql();
         }
-
-        //select*from `conta_recebers`as `cr`inner join `pessoas`on `pessoas`.`id`=`cr`.`pessoa_id`inner join `filials`as `fl`on `cr`.`filial_id`=`fl`.`id`inner join `pessoas`as `pesfl`on `fl`.`pessoa_id`=`pesfl`.`id`inner join `forma_pagamentos`as `fp`on `fp`.`id`=`cr`.`forma_pagamento_id`left join `ordem_servicos`as `os`on `os`.`id`=`cr`.`referencia_id`and `cr`.`referencia`=?inner join `profissionals`as `prof`on `prof`.`id`=`os`.`profissional_id`inner join `pessoas`as `pprof`on `pprof`.`id`=`prof`.`pessoa_id`
 
         if (is_array($consulta) && count($consulta) > 0) {
             foreach ($consulta as $key => $val) {
@@ -533,17 +530,16 @@ class ContaReceberHelper
                         break;
                     case 'vencido':
 
-                         if (is_string($val)) {
+                        if (is_string($val)) {
                             $registro->whereIn('cr.status', ['aberto']);
-                            
-                            if(trim($val) == 'yes'){
-                                $registro->where('cr.dtVencimento', '<', date('Y-m-d'));
 
-                            }elseif(trim($val) == 'no'){
+                            if (trim($val) == 'yes') {
+                                $registro->where('cr.dtVencimento', '<', date('Y-m-d'));
+                            } elseif (trim($val) == 'no') {
                                 $registro->where('cr.dtVencimento', '>=', date('Y-m-d'));
                             }
-                         }
-                        
+                        }
+
                         break;
 
                     case 'pessoa_id':
@@ -669,7 +665,7 @@ class ContaReceberHelper
         $registro = $registro->where('cr.active', '=', 'yes')
             ->where('pessoas.active', '=', 'yes')->get();
 
-        
+
 
         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
             $dataToRequest = [];

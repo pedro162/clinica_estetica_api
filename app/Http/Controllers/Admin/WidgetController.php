@@ -22,10 +22,11 @@ use \App\Exceptions\CobrancaReceberException;
 use \App\ExceptionApplication;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\ContaReceberHelper;
+use App\Helpers\AtendimentoHelper;
 
 class WidgetController extends Controller
 {
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -33,7 +34,6 @@ class WidgetController extends Controller
      */
     public function index(Request $request)
     {
-        
     }
 
     /**
@@ -65,7 +65,6 @@ class WidgetController extends Controller
             \DB::rollback();
             return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
-        
     }
 
     /**
@@ -134,5 +133,37 @@ class WidgetController extends Controller
 
 
 
-    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function atendimentosPorTipoWidgetJson(Request $request)
+    {
+        try {
+            \DB::beginTransaction();
+
+            $data = $request->all();
+
+            $objHelper = new AtendimentoHelper();
+
+            $registro = $objHelper->qtdAtendimentosPorTipo($data);
+
+            \DB::commit();
+
+
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
+        } catch (CobrancaReceberException $e) {
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            //return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 404);
+            return response()->json(['errors' => ['error' => $msg]], 404);
+        } catch (\Exception $e) {
+            \DB::rollback();
+
+            $msg = $e->getMessage();
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $msg]], 500);
+        }
+    }
 }

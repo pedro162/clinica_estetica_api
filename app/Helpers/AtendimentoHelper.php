@@ -16,29 +16,29 @@ use Illuminate\Validation\Rule;
 
 class AtendimentoHelper
 {
-    
+
     public function store(array $dados)
     {
-        $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
-        if(! $pessoas){
+        $pessoas = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->first();
+        if (!$pessoas) {
             throw new AtendimentoException('País não identificado. Tente novamente ou entre em contato com o suporte.');
         }
 
         $profissional = Profissional::where('id', '=', $dados['profissional_id'])->where('active', '=', 'yes')->first();
-        if(! $profissional){
+        if (!$profissional) {
             throw new AtendimentoException('Profissional não identificado');
         }
 
         $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
-        if(! $filial){
+        if (!$filial) {
             throw new AtendimentoException('Filial não identificada');
         }
 
         $horario = null;
-        if(isset($dados['horario_id']) && $dados['horario_id'] > 0){
+        if (isset($dados['horario_id']) && $dados['horario_id'] > 0) {
 
             $horario = HoraProfExpediente::where('id', '=', $dados['horario_id'])->where('active', '=', 'yes')->first();
-            if(! $horario){
+            if (!$horario) {
                 throw new AtendimentoException('Horário não identificado');
             }
         }
@@ -48,15 +48,15 @@ class AtendimentoHelper
         $dtInico = $dados['dt_inicio'] ?? $dados['dt_inicio'];
 
         $agenda = Agenda::where('pessoa_id', '=', $profissional->pessoa->id)
-        ->where('active', '=', 'yes')->where('data', '=', $dtInico)
-        ->where('hora', '=', $hrInico)->whereIn('status', ['pendente'])->first();
+            ->where('active', '=', 'yes')->where('data', '=', $dtInico)
+            ->where('hora', '=', $hrInico)->whereIn('status', ['pendente'])->first();
 
-        if($agenda){
+        if ($agenda) {
             throw new AtendimentoException('O profissional ecolhido não está mais com esse horário disponível. Tente ecolher um outro horário, por favor.');
         }
 
         $dadosRequest = [];
-         
+
         $dadosRequest['user_id']            = \Auth::User()->id;
         $dadosRequest['name']               = $dados['name'];
         $dadosRequest['historico']          = $dados['historico'];
@@ -72,29 +72,29 @@ class AtendimentoHelper
 
         $dadosRequest['profissional_id']    = $profissional->id;
         $dadosRequest['filial_id']          = $filial->id;
-        
+
         $dadosRequest['active']             = 'yes';
-        
+
         $registro = Atendimento::create($dadosRequest);
-        if(!$registro){
+        if (!$registro) {
             throw new AtendimentoException('Erro ao registrar atendimento');
         }
 
         $dadosRequest = [];
-         
+
         $dadosRequest['user_id']            = \Auth::User()->id;
         $dadosRequest['descricao']          = ucfirst($dados['tipo'] ?? 'consulta');
         $dadosRequest['data']               = $dados['dt_inicio'];
         $dadosRequest['hora']               = $dados['hr_inicio'];
         $dadosRequest['name_atendido']      = $dados['name_atendido'];
         $dadosRequest['status']             = 'pendente';
-        $dadosRequest['pessoa_id']          = $profissional->pessoa_id;            
+        $dadosRequest['pessoa_id']          = $profissional->pessoa_id;
         $dadosRequest['referencia']         = 'atendimentos';
-        $dadosRequest['referencia_id']      = $registro->id;            
+        $dadosRequest['referencia_id']      = $registro->id;
         $dadosRequest['active']             = 'yes';
 
         $registroAgenda = Agenda::create($dadosRequest);
-        if(!$registroAgenda){
+        if (!$registroAgenda) {
             throw new AtendimentoException('Erro ao registrar agenda');
         }
 
@@ -103,21 +103,21 @@ class AtendimentoHelper
 
     public function info($dados, $id)
     {
-        
+
         $id = $id ?? $dados['id'];
         $callBack = $dados['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-        if($id <= 0){
+        if ($id <= 0) {
             throw new AtendimentoException('Parâmetro ínválido');
         }
 
         \DB::beginTransaction();
 
         $registro = Atendimento::where('active', '=', 'yes')
-        ->where('id', '=', $id)->first();
+            ->where('id', '=', $id)->first();
 
-        if($registro == null){
+        if ($registro == null) {
             throw new AtendimentoException('Registro não encontrado');
         }
 
@@ -125,7 +125,22 @@ class AtendimentoHelper
         $registro->profissional->pessoa;
         $registro->pessoa;
 
-		return $registro;           
+        return $registro;
+    }
+
+    public function qtdAtendimentosPorTipo()
+    {
+        $rawSqlId = \DB::raw('COUNT(atendimentos.id)');
+        $rawSqlTpAtendimento = \DB::raw('IFNULL(atendimentos.tipo, "SEM TIPO")');
+
+        $data['campos'] = [
+            \DB::raw('COUNT(atendimentos.id) as qtdAtendimentos'),
+            \DB::raw('IFNULL(atendimentos.tipo, "SEM TIPO") as tpAtendimento'),
+        ];
+
+        $data['raw_grop_by']        = "{$rawSqlTpAtendimento}";
+
+        return $this->json($data);
     }
 
 
@@ -133,321 +148,322 @@ class AtendimentoHelper
     {
         $consulta = $dados;
 
-        if(! isset($consulta['ordem'])){
+        if (!isset($consulta['ordem'])) {
             $consulta['ordem'] = 'id-desc';
         }
 
-        $ordem = $consulta['ordem'] ?? 'id-desc';
-
+        $ordem      = $consulta['ordem'] ?? 'id-desc';
         $tpUser     = \Auth::User()->type;
         $pessoaUser = \Auth::User()->pessoa;
 
-        if($tpUser == 'external'){
+        if ($tpUser == 'external') {
             $consulta['pessoa_id'] = $pessoaUser->id;
         }
 
-
-        $campos =  null;
+        $campos =  $dados['campos'] ?? [];
         $parse = [
-            'name_atendimento'=>'atendimentos.name',
-            'name_pessoa'=>'pessoas.name',
-            'id'=>'atendimentos.id',
-            'tipo'=>'atendimentos.tipo',
-            'status'=>'atendimentos.status',
-            'prioridade'=>'atendimentos.prioridade',
-            'filial_id'=>'atendimentos.filial_id',
-            'pessoa_id'=>'atendimentos.pessoa_id',
-            'profissional_id'=>'atendimentos.profissional_id',
-            'ds_cancelamento'=>'atendimentos.ds_cancelamento',
-            'vr_atendimento'=>'atendimentos.vr_atendimento',
-            'historico'=>'atendimentos.historico',
+            'name_atendimento' => 'atendimentos.name',
+            'name_pessoa' => 'pessoas.name',
+            'id' => 'atendimentos.id',
+            'tipo' => 'atendimentos.tipo',
+            'status' => 'atendimentos.status',
+            'prioridade' => 'atendimentos.prioridade',
+            'filial_id' => 'atendimentos.filial_id',
+            'pessoa_id' => 'atendimentos.pessoa_id',
+            'profissional_id' => 'atendimentos.profissional_id',
+            'ds_cancelamento' => 'atendimentos.ds_cancelamento',
+            'vr_atendimento' => 'atendimentos.vr_atendimento',
+            'historico' => 'atendimentos.historico',
 
         ];
 
         $registro = \DB::table('atendimentos');
-        $registro->join('pessoas', function($join){
-            
-            $join->on('pessoas.id', '=', 'atendimentos.pessoa_id');
+        $registro->join('pessoas', function ($join) {
 
-        })->join("profissionals as p", function($join){
+            $join->on('pessoas.id', '=', 'atendimentos.pessoa_id');
+        })->join("profissionals as p", function ($join) {
             $join->on('p.id', '=', 'atendimentos.profissional_id');
-        })->join("pessoas as ppf", function($join){
+        })->join("pessoas as ppf", function ($join) {
             $join->on("ppf.id", '=', 'p.pessoa_id');
         });
-        
-        if(is_array($consulta) && count($consulta) > 0){
-            foreach($consulta as $key=>$val){
-                
-                switch(trim($key)){
+
+        if (is_array($consulta) && count($consulta) > 0) {
+            foreach ($consulta as $key => $val) {
+
+                switch (trim($key)) {
                     case 'id':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
                         }
 
                         $val = explode(',', $val);
-                            
+
                         $registro->whereIn('atendimentos.id', $val);
-                        
+
                         break;
                     case 'status':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
                             $val = explode(',', $val);
-                            
+
                             $registro->whereIn('atendimentos.status', $val);
                         }
                         break;
 
                     case 'prioridade':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
                             $val = explode(',', $val);
-                            
+
                             $registro->whereIn('atendimentos.prioridade', $val);
                         }
                         break;
 
-                    
+
                     case 'tipo':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
                             $val = explode(',', $val);
-                            
+
                             $registro->whereIn('atendimentos.tipo', $val);
                         }
                         break;
-                    
+
                     case 'historico':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('atendimentos.historico', 'like' , '%'.$val.'%');
+
+                            $registro->where('atendimentos.historico', 'like', '%' . $val . '%');
                         }
                         break;
                     case 'name_atendido':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('atendimentos.name_atendido', 'like' , '%'.$val.'%');
+
+                            $registro->where('atendimentos.name_atendido', 'like', '%' . $val . '%');
                         }
                         break;
 
                     case 'name_profissional':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('ppf.name', 'like' , '%'.$val.'%');
+
+                            $registro->where('ppf.name', 'like', '%' . $val . '%');
                         }
                         break;
                     case 'profissional_id':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                           
                         }
 
 
                         $val = explode(',', $val);
-                           
+
                         $registro->whereIn('p.id', $val);
 
                         break;
 
                     case 'filial_id':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                           
                         }
 
 
                         $val = explode(',', $val);
-                           
+
                         $registro->whereIn('atendimentos.filial_id', $val);
 
                         break;
                     case 'name':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('pessoas.name', 'like' , '%'.$val.'%');
+
+                            $registro->where('pessoas.name', 'like', '%' . $val . '%');
                         }
                     case 'name_pessoa':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('pessoas.name', 'like' , '%'.$val.'%');
-                            }
-                        break;
-                    case 'pessoa_id':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
+
+                            $registro->where('pessoas.name', 'like', '%' . $val . '%');
+                        }
+                        break;
+                    case 'pessoa_id':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
                         }
 
                         $val = explode(',', $val);
-                            
+
                         $registro->whereIn('atendimentos.pessoa_id', $val);
-                        
+
                         break;
                     case 'dt_periodo':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
+                        if (is_string($val)) {
 
-                                $val = explode(',', $val);
-                                
-                                $registro->where('atendimentos.created_at', '>=' , $val[0].' 00:00:00');
-                                $registro->where('atendimentos.created_at', '<=' , $val[1].' 23:59:59');
-                            }
-                        break;
-                    case 'atendimento_id':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
-                                $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('atendimentos.id', '=' , ''.$val.'');
-                        }
-                        break;
-                    case 'limite':
-                            $val = (int) $val;
-                            if(is_integer($val) && $val > 0){
-                                    
-                               $registro->limit($val);
-                            }
-                        break;
-                    case 'ordem':
-
-                            
-                            if($val[0] == ','){
-                                $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
 
                             $val = explode(',', $val);
-                            for($i= 0; !($i == count($val)); $i++) {
-                                $atual = explode('-', $val[$i]);
-                                if(array_key_exists(trim($atual[0]), $parse)){
 
-                                    $parsed = $parse[trim($atual[0])];
-                                    
-                                    if($parsed){
-                                       
-                                        $registro->orderBy($parsed,$atual[1]);
-                                    }
+                            $registro->where('atendimentos.created_at', '>=', $val[0] . ' 00:00:00');
+                            $registro->where('atendimentos.created_at', '<=', $val[1] . ' 23:59:59');
+                        }
+                        break;
+                    case 'atendimento_id':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $registro->where('atendimentos.id', '=', '' . $val . '');
+                        }
+                        break;
+                    case 'limite':
+                        $val = (int) $val;
+                        if (is_integer($val) && $val > 0) {
+
+                            $registro->limit($val);
+                        }
+                        break;
+                    case 'ordem':
+
+
+                        if ($val[0] == ',') {
+                            $val = substr($val, 1);
+                        }
+                        if ($val[strlen($val) - 1] == ',') {
+                            $val = substr($val, 0, -1);
+                        }
+
+                        $val = explode(',', $val);
+                        for ($i = 0; !($i == count($val)); $i++) {
+                            $atual = explode('-', $val[$i]);
+                            if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                $parsed = $parse[trim($atual[0])];
+
+                                if ($parsed) {
+
+                                    $registro->orderBy($parsed, $atual[1]);
                                 }
-                                
-                                
                             }
+                        }
 
-                            break;
-
-                    case'campos':
-                            if(is_array($val) && count($val) > 0){
-                                //$campos = $this->montaCamposConsulta($registro, $val);
-                                
-                            }
                         break;
 
+                    case 'campos':
+                        if (is_array($val) && count($val) > 0) {
+                            //$campos = $this->montaCamposConsulta($registro, $val);
+                        }
+                        break;
+                    case 'grop_by':
+                        $registro->groupBy($val);
+                        break;
+                    case 'raw_grop_by':
+                        $registro->groupByRaw($val);
+                        break;
                 }
             }
         }
-        if($campos){
+        if ($campos) {
             $registro->select($campos);
-        }else{
+        } else {
             $registro->select('atendimentos.*', 'pessoas.name as name_pessoa', 'ppf.name as name_profissional');
-
         }
-       
+
         $registro = $registro->where('atendimentos.active', '=', 'yes')
-        ->whereNull('atendimentos.deleted_at')
-        ->where('pessoas.active', '=', 'yes')->get();
+            ->whereNull('atendimentos.deleted_at')
+            ->where('pessoas.active', '=', 'yes')->get();
+        
+        if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
+            $dataToRequest = [];
+            foreach ($registro as $reg) {
+                $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
+            }
+
+            $registro = $dataToRequest;
+        }
 
         return $registro;
-        
-       
     }
 }

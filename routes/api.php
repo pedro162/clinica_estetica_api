@@ -689,6 +689,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/widget/faturamento/liquidez/profissional/json/{widget?}', ['as' => 'widget.faturamento.liquidez.profissional.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoProfissionalWidgetJson']);
 	Route::post('/widget/faturamento/liquidez/profissional/json/{widget?}', ['as' => 'widget.faturamento.liquidez.profissional.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoProfissionalWidgetJson']);
 
+	Route::get('/widget/atendimento/qtd/json/{widget?}', ['as' => 'widget.atendimento.qtd.json', 'uses' => 'Admin\WidgetController@atendimentosPorTipoWidgetJson']);
+	Route::post('/widget/atendimento/qtd/json/{widget?}', ['as' => 'widget.atendimento.qtd.json', 'uses' => 'Admin\WidgetController@atendimentosPorTipoWidgetJson']);
+	
 	
 	
 });
