@@ -14,10 +14,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class OrdemServico extends Model
 {
 	use SoftDeletes;
-    protected $table="ordem_servicos";
-    protected $primaryKey="id";
-    protected $fillable = [
-    	'vrTotal',
+	protected $table = "ordem_servicos";
+	protected $primaryKey = "id";
+	protected $fillable = [
+		'vrTotal',
 		'status',
 		'observacao',
 		'dsArquivo',
@@ -31,7 +31,7 @@ class OrdemServico extends Model
 		'vr_desconto',
 		'pct_acrescimo',
 		'vr_acrescimo',
-        'pct_desconto',
+		'pct_desconto',
 		'is_faturado',
 		'td_faturamento',
 		'td_cancelamento',
@@ -45,10 +45,11 @@ class OrdemServico extends Model
 		'is_orcamento'
 	];
 
-	public function getTable(){
+	public function getTable()
+	{
 		return $this->table;
 	}
-	
+
 	public function cobrancaReceber()
 	{
 		return $this->belongsToMany(CobrancaReceber::class);
@@ -64,15 +65,18 @@ class OrdemServico extends Model
 		return $this->hasMany(OrdemServicoCobranca::class, 'ordem_servico_id', 'id');
 	}
 
-	public function pessoa(){
+	public function pessoa()
+	{
 		return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
 	}
 
-	public function rca(){
+	public function rca()
+	{
 		return $this->belongsTo(Rca::class, 'pessoa_rca_id', 'id');
 	}
 
-	public function filial(){
+	public function filial()
+	{
 		return $this->belongsTo(Filial::class, 'filial_id', 'id');
 	}
 }

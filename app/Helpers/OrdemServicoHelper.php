@@ -22,8 +22,9 @@ use \App\Profissional;
 use \App\Rca;
 
 use \App\Exceptions\OrdemServicoException;
+use App\Helpers\BaseHelper;
 
-class OrdemServicoHelper
+class OrdemServicoHelper extends BaseHelper
 {
 
     public function gerarFinanceiro(OrdemServico $ordemServico)
@@ -745,11 +746,14 @@ class OrdemServicoHelper
         //$registro = \App\::where('active', '=', 'yes')->get();
         $ordemArr   = explode('-', $ordem);
 
-        $oremCampo  = $ordemArr[0];
-        $oremTipo  = $ordemArr[1];
-        $usePaginate = true;
-        if ($usePaginate) {
-            $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate(10);
+        $oremCampo      = $ordemArr[0];
+        $oremTipo       = $ordemArr[1];
+        $usePaginate    = $consulta['usePaginate'] ?? 0;
+        $usePaginate    = (int) $usePaginate;
+        $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::PAGINACAO_ITENS_POR_PAGINA_PADRAO;
+        $usePaginate    = (int) $usePaginate;
+        if ($usePaginate > 0) {
+            $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
         } else {
             $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
         }
