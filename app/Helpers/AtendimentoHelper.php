@@ -13,8 +13,9 @@ use App\HoraProfExpediente;
 use App\Exceptions\AtendimentoException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Helpers\BaseHelper;
 
-class AtendimentoHelper
+class AtendimentoHelper extends BaseHelper
 {
 
     public function store(array $dados)
@@ -451,10 +452,24 @@ class AtendimentoHelper
             $registro->select('atendimentos.*', 'pessoas.name as name_pessoa', 'ppf.name as name_profissional');
         }
 
-        $registro = $registro->where('atendimentos.active', '=', 'yes')
-            ->whereNull('atendimentos.deleted_at')
-            ->where('pessoas.active', '=', 'yes')->get();
-        
+        //----
+        $ordemArr   = explode('-', $ordem);
+        $oremCampo  = $ordemArr[0];
+        $oremTipo  = $ordemArr[1];
+
+        $usePaginate = $consulta['usePaginate'] ?? 0;
+        $usePaginate = (int) $usePaginate;
+        $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::PAGINACAO_ITENS_POR_PAGINA_PADRAO;
+        if ($usePaginate > 0) {
+            $registro   = $registro->where('atendimentos.active', '=', 'yes')
+                ->whereNull('atendimentos.deleted_at')
+                ->where('pessoas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+        } else {
+            $registro = $registro->where('atendimentos.active', '=', 'yes')
+                ->whereNull('atendimentos.deleted_at')
+                ->where('pessoas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+        }
+
         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
             $dataToRequest = [];
             foreach ($registro as $reg) {

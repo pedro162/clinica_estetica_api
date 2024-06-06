@@ -18,8 +18,9 @@ use \App\Helpers\PessoaFichaRespostaHelper;
 use \App\Exceptions\PessoaFichaExcepton;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\BaseHelper;
 
-class PessoaFichaHelper
+class PessoaFichaHelper extends BaseHelper
 {
 
     /**
@@ -202,6 +203,186 @@ class PessoaFichaHelper
             throw new PessoaFichaExcepton(' não encontrado');
         }
 
+        return $registro;
+    }
+
+    public function json(array $dados)
+    {
+
+        $consulta = $dados;
+
+        if (!(isset($consulta['ordem']) && strlen($consulta['ordem']) > 0)) {
+            $consulta['ordem'] = 'id-desc';
+        }
+        $ordem      = $consulta['ordem'] ?? 'id-desc';
+
+        $tpUser     = \Auth::User()->type;
+        $pessoaUser = \Auth::User()->pessoa;
+
+        if ($tpUser == 'external') {
+            $consulta['pessoa_id'] = $pessoaUser->id;
+        }
+
+
+        $parse = [];
+
+        $registro = \DB::table('pessoa_formularios as pf')->join('pessoas as pes', function ($join) {
+
+            $join->on('pf.pessoa_id', '=', 'pes.id');
+        })->join('filials as fl', function ($join) {
+
+            $join->on('pf.filial_id', '=', 'fl.id');
+        })->join('pessoas as pesfl', function ($join) {
+
+            $join->on('fl.pessoa_id', '=', 'pesfl.id');
+        })->join('profissionals as prf', function ($join) {
+
+            $join->on('pf.profissional_id', '=', 'prf.id');
+        })->join('pessoas as pesprf', function ($join) {
+
+            $join->on('prf.pessoa_id', '=', 'pesprf.id');
+        })->join('formularios as form', function ($join) {
+
+            $join->on('form.id', '=', 'pf.formulario_id');
+        });
+
+        $campos =  null;
+        if (is_array($consulta) && count($consulta) > 0) {
+            foreach ($consulta as $key => $val) {
+
+                switch (trim($key)) {
+                    case 'id':
+
+                        $val = trim($val, ',');
+                        $val = explode(',', $val);
+
+                        $registro->whereIn('pf.id', $val);
+                        break;
+                    case 'name_pessoa':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $registro->where('pes.name', 'like', '%' . $val . '%');
+                        }
+                        break;
+                    case 'pessoa_id':
+
+                        $val = trim($val, ',');
+                        $val = explode(',', $val);
+
+                        $registro->whereIn('pf.pessoa_id', $val);
+                        break;
+
+                    case 'name_form':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $registro->where('form.name', 'like', '%' . $val . '%');
+                        }
+                        break;
+                    case 'sigiloso':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $registro->where('pf.sigiloso', '=', $val);
+                        }
+                        break;
+                    case 'status':
+
+                        $val = trim($val, ',');
+                        $val = explode(',', $val);
+
+                        $registro->whereIn('pf.status', $val);
+                        break;
+                    case 'limite':
+                        $val = (int) $val;
+                        if (is_integer($val) && $val > 0) {
+
+                            $registro->limit($val);
+                        }
+                        break;
+                    case 'ordem':
+
+
+                        if ($val[0] == ',') {
+                            $val = substr($val, 1);
+                        }
+                        if ($val[strlen($val) - 1] == ',') {
+                            $val = substr($val, 0, -1);
+                        }
+
+                        $val = explode(',', $val);
+                        for ($i = 0; !($i == count($val)); $i++) {
+                            $atual = explode('-', $val[$i]);
+                            if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                $parsed = $parse[trim($atual[0])];
+
+                                if ($parsed) {
+
+                                    $registro->orderBy($parsed, $atual[1]);
+                                }
+                            } else {
+                                $registro->orderBy($atual[0], $atual[1]);
+                            }
+                        }
+
+                        break;
+
+                    case 'campos':
+                        if (is_array($val) && count($val) > 0) {
+                            //$campos = $this->montaCamposConsulta($registro, $val);
+                        }
+                        break;
+                }
+            }
+        }
+        if ($campos) {
+            $registro->select($campos);
+        } else {
+            $registro->select('pf.*', 'pes.name', 'pesfl.name as name_filial', 'pesprf.name as name_profissional', 'form.name as name_form');
+        }
+
+        //----
+        $ordemArr   = explode('-', $ordem);
+        $oremCampo  = $ordemArr[0];
+        $oremTipo  = $ordemArr[1];
+
+        $usePaginate = $consulta['usePaginate'] ?? 0;
+        $usePaginate = (int) $usePaginate;
+        $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::PAGINACAO_ITENS_POR_PAGINA_PADRAO;
+        if ($usePaginate > 0) {
+            $registro   = $registro->where('pf.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+        } else {
+            $registro = $registro->where('pf.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+        }
+
+        if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
+            $dataToRequest = [];
+            foreach ($registro as $reg) {
+                $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
+            }
+
+            $registro = $dataToRequest;
+        }
         return $registro;
     }
 }
