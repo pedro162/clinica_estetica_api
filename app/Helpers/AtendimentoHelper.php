@@ -150,10 +150,10 @@ class AtendimentoHelper extends BaseHelper
         $consulta = $dados;
 
         if (!isset($consulta['ordem'])) {
-            $consulta['ordem'] = 'id-desc';
+            $consulta['ordem'] = 'atendimentos.id-desc';
         }
 
-        $ordem      = $consulta['ordem'] ?? 'id-desc';
+        $ordem      = $consulta['ordem'] ?? 'atendimentos.id-desc';
         $tpUser     = \Auth::User()->type;
         $pessoaUser = \Auth::User()->pessoa;
 
