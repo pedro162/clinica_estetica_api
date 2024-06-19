@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Services\Whatsapp;
+namespace App\Infrastructure\Services\Notifications\Whatsapp;
 
 use Illuminate\Support\Facades\Http;
 

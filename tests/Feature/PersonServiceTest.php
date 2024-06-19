@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Application\Handlers\CreatePersonHandler;
 use App\Application\Services\PersonApplicationService;
 use App\Infrastructure\Persistence\Eloquent\EloquentPersonRepository;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -19,6 +20,7 @@ class PersonServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->settingUpUser();
         $this->testPersonApplicationServiceBootstrap();
     }
     /**
@@ -52,5 +54,12 @@ class PersonServiceTest extends TestCase
         $objCreatHandler = new CreatePersonHandler($objRepo);
         $objServicePerson = new PersonApplicationService($objCreatHandler);
         $this->personApplicationService = $objServicePerson;
+    }
+
+    private function settingUpUser(): void
+    {
+        if (!User::where('email', '=', 'admin@gmail.com')->first()) {
+            User::create(['name' => 'admin', 'email' => 'admin@gmail.com',  'password' => bcrypt(123456)]);
+        }
     }
 }

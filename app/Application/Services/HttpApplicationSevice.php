@@ -2,16 +2,16 @@
 
 namespace App\Application\Services;
 
-use App\Application\Commands\CreatePersonCommand;
-use App\Application\Handlers\CreatePersonHandler;
+use App\Application\Commands\CreateHttpCommand;
+use App\Application\Handlers\CreateHttpHandler;
 use App\Domain\Person\Entities\Person;
 use App\Funcionario;
 
-class PersonApplicationService
+class HttpApplicationSevice
 {
-    private CreatePersonHandler $createPersonHandler;
+    private CreateHttpHandler $createPersonHandler;
 
-    public function __construct(CreatePersonHandler $createPersonHandler)
+    public function __construct(CreateHttpHandler $createPersonHandler)
     {
         $this->createPersonHandler = $createPersonHandler;
     }
@@ -26,8 +26,8 @@ class PersonApplicationService
         string $personEmail = ''
     ): ?Person {
 
-        $command = new CreatePersonCommand();
-
+        $command = new CreateHttpCommand();
+        
         $command->personId($personId)->personName($personName)
             ->personOptionalName($personOptionalName)
             ->personDocument($personDocument)

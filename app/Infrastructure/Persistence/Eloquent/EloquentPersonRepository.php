@@ -13,6 +13,7 @@ use App\Domain\Person\ValueObjects\PersonOptionalName;
 use App\Domain\Person\ValueObjects\PersonSex;
 use Illuminate\Support\Facades\DB;
 use App\Pessoa;
+use App\User;
 
 class EloquentPersonRepository implements PersonRepositoryInterface
 {
@@ -22,6 +23,7 @@ class EloquentPersonRepository implements PersonRepositoryInterface
         //Implement an object model instance and save or update within database, after that, return the object person implementation
         $personId = (string) $person->getId();
         $personId = (int) $personId;
+        $userId   = User::first()->id;
         if ($personId > 0) {
             //update
             $personMomel = Pessoa::where('id', '=', $personId)->first();
@@ -46,22 +48,23 @@ class EloquentPersonRepository implements PersonRepositoryInterface
                 'nascimento_fundacao' => null,
                 'sexo' => $person->getSex(),
                 'email' => $person->getEmail(),
-                'user_id' => 0
+                'user_id' => $userId
             ]);
+            $person->setId(new PersonId($personMomel->id));
         }
 
-        return $this->findById($personMomel->id);
+        return $this->findById($person->getId());
     }
     public function findById(PersonId $id): ?Person
     {
-        $person = DB::table('person')->where('id', '=', (string)$id)->first();
+        $person = DB::table('pessoas')->where('id', '=', (string)$id)->first();
         if ($person) {
             $objPerson =  new Person();
             $objPerson->setId(new PersonId($person->id));
             $objPerson->setName(new PersonName($person->name));
             $objPerson->setOptionalName(new PersonOptionalName($person->name_opcional));
             $objPerson->setDocument(new PersonDocument($person->documento));
-            $objPerson->setExtraDocument(new PersonExtraDocument($person->nascimento_fundacao));
+            $objPerson->setExtraDocument(new PersonExtraDocument($person->documento_complementar ?? ''));
             $objPerson->setSex(new PersonSex($person->sexo));
             $objPerson->setEmail(new PersonEmail($person->email));
             return $objPerson;

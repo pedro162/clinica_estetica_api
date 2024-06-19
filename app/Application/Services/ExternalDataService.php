@@ -2,7 +2,7 @@
 
 namespace App\Application\Services;
 
-use App\Infrastructure\Services\WhatsAppInterface;
+use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppInterface;
 
 class ExternalDataService
 {
