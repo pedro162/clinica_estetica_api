@@ -9,11 +9,18 @@ use App\Pessoa;
 use App\Profissional;
 use App\Filial;
 use App\Agenda;
+use App\Application\Handlers\CreateNotificationHandler;
+use App\Application\Services\NotificationApplicationService;
+use App\Domain\Notification\Entities\Notification;
+use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
+use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\HoraProfExpediente;
 use App\Exceptions\AtendimentoException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Helpers\BaseHelper;
+use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
+use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 
 class AtendimentoHelper extends BaseHelper
 {
@@ -99,6 +106,20 @@ class AtendimentoHelper extends BaseHelper
             throw new AtendimentoException('Erro ao registrar agenda');
         }
 
+        $objRepo = new EloquentNotificationRepository();
+        $objCreatHandler = new CreateNotificationHandler($objRepo);
+        $objServiceNotification = new NotificationApplicationService($objCreatHandler);
+
+        $sender = new WhatsAppOfficialApi();
+        $notification = new Notification();
+        $notification->setTargetContactAddress(new NotificationTargetContactAddress('5598984257623'));
+        $notification->setTargetContactName(new NotificationTargetContactName($registro->pessoa->name));
+        $objServiceNotification->sender($sender);
+        $response = $objServiceNotification->sendNotification($notification);
+
+        if (!$response) {
+            throw new AtendimentoException('Não foi possível notificar o cliente');
+        }
         return $registro;
     }
 

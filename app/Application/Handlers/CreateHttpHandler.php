@@ -2,36 +2,30 @@
 
 namespace App\Application\Handlers;
 
-use App\Application\Commands\CreatePersonCommand;
-use App\Domain\Person\Entities\Person;
-use App\Domain\Person\Repositories\PersonRepositoryInterface;
-use App\Domain\Person\ValueObjects\PersonDocument;
-use App\Domain\Person\ValueObjects\PersonEmail;
-use App\Domain\Person\ValueObjects\PersonExtraDocument;
-use App\Domain\Person\ValueObjects\PersonId;
-use App\Domain\Person\ValueObjects\PersonName;
-use App\Domain\Person\ValueObjects\PersonOptionalName;
-use App\Domain\Person\ValueObjects\PersonSex;
+use App\Application\Commands\CreateHttpCommand;
+use App\Domain\Http\Entities\Http;
+use App\Domain\Http\Repositories\HttpRepositoryInterface;
+use App\Domain\Http\ValueObjects\HttpDocument;
+use App\Domain\Http\ValueObjects\HttpEmail;
+use App\Domain\Http\ValueObjects\HttpExtraDocument;
+use App\Domain\Http\ValueObjects\HttpId;
+use App\Domain\Http\ValueObjects\HttpName;
+use App\Domain\Http\ValueObjects\HttpOptionalName;
+use App\Domain\Http\ValueObjects\HttpSex;
 
 class CreateHttpHandler
 {
-    private PersonRepositoryInterface $repository;
+    private HttpRepositoryInterface $repository;
 
-    public function __construct(PersonRepositoryInterface $repository)
+    public function __construct(HttpRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
 
-    public function handler(CreatePersonCommand $command): ?Person
+    public function handler(CreateHttpCommand $command): ?Http
     {
-        $person = new Person();
-        $person->setId(new PersonId($command->getPersonId()));
-        $person->setName(new PersonName($command->getPersonName()));
-        $person->setOptionalName(new PersonOptionalName($command->getPersonOptionalName()));
-        $person->setDocument(new PersonDocument($command->getPersonDocument()));
-        $person->setExtraDocument(new PersonExtraDocument($command->getPersonExtraDocument()));
-        $person->setSex(new PersonSex($command->getPersonSex()));
-        $person->setEmail(new PersonEmail($command->getPersonEmail()));
+        $person = new Http();
+        $person->setId(new HttpId($command->getHttpId()));
 
         return $this->repository->save($person);
     }

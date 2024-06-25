@@ -4,37 +4,32 @@ namespace App\Application\Services;
 
 use App\Application\Commands\CreateHttpCommand;
 use App\Application\Handlers\CreateHttpHandler;
-use App\Domain\Person\Entities\Person;
+use App\Domain\Http\Entities\Http;
 use App\Funcionario;
 
-class HttpApplicationSevice
+class HttpApplicationService
 {
-    private CreateHttpHandler $createPersonHandler;
+    private CreateHttpHandler $createHttpHandler;
 
-    public function __construct(CreateHttpHandler $createPersonHandler)
+    public function __construct(CreateHttpHandler $createHttpHandler)
     {
-        $this->createPersonHandler = $createPersonHandler;
+        $this->createHttpHandler = $createHttpHandler;
     }
 
-    public function createPerson(
-        string $personId = '',
-        string $personName = '',
-        string $personOptionalName = '',
-        string $personDocument = '',
-        string $personExtraDocument = '',
-        string $personSex = '',
-        string $personEmail = ''
-    ): ?Person {
+    public function createHttp(
+        string $httpId = '',
+        string $httpName = '',
+        string $httpOptionalName = '',
+        string $httpDocument = '',
+        string $httpExtraDocument = '',
+        string $httpSex = '',
+        string $httpEmail = ''
+    ): ?Http {
 
         $command = new CreateHttpCommand();
-        
-        $command->personId($personId)->personName($personName)
-            ->personOptionalName($personOptionalName)
-            ->personDocument($personDocument)
-            ->personExtraDocument($personExtraDocument)
-            ->personSex($personSex)
-            ->personEmail($personEmail);
 
-        return $this->createPersonHandler->handler($command);
+        $command->httpId($httpId);
+
+        return $this->createHttpHandler->handler($command);
     }
 }

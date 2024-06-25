@@ -2,14 +2,14 @@
 
 namespace App\Domain\Notification\ValueObjects;
 
-class NotificationName
+class NotificationOriginContactAddress
 {
     private string $value;
 
     public function __construct(string $value)
     {
         if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("Notification name cannot be empty");
+            throw new \InvalidArgumentException("Notification Origin Contact Address cannot be empty");
         }
         $this->value = $value;
     }

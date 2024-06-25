@@ -1,24 +1,16 @@
+Header
 <?php
 
 namespace App\Domain\Http\ValueObjects;
 
-class HttpId
+class HttpHeader
 {
     private string $value;
-
-    /*
-        httpId
-        httpCode
-        httpDataRequest
-        httpUrl
-        httpHeader
-        httpBody
-    */
 
     public function __construct(string $value)
     {
         if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("Http ID cannot be empty");
+            throw new \InvalidArgumentException("Http Header cannot be empty");
         }
         $this->value = $value;
     }

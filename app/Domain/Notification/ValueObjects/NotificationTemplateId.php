@@ -1,24 +1,14 @@
 <?php
 
-namespace App\Domain\Http\ValueObjects;
+namespace App\Domain\Notification\ValueObjects;
 
-class HttpId
+class NotificationTemplateId
 {
     private string $value;
-
-    /*
-        httpId
-        httpCode
-        httpDataRequest
-        httpUrl
-        httpHeader
-        httpBody
-    */
-
     public function __construct(string $value)
     {
         if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("Http ID cannot be empty");
+            throw new \InvalidArgumentException("Notification Template ID cannot be empty");
         }
         $this->value = $value;
     }
