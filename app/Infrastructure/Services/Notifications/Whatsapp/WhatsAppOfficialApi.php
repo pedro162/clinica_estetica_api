@@ -74,6 +74,57 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
 
     public function send(Notification $notification): bool
     {
+        $typeMessage    = 'template'; //text
+
+
+        if ($typeMessage == 'template') { //Criar metodo para melhorar esa condicao
+            return $this->sendMessageTemplate($notification);
+        } else {
+            return $this->sendMessageText($notification);
+        }
+    }
+
+    public function sendMessageText(Notification $notification): bool
+    {
+
+        $url = $this->buildUrlRequest() . '/' . $this->whatsAppBusinessAccountId . '/messages';
+        $accessToken = $this->accessToken;
+        $to = (string) $notification->getTargetContactAddress();
+
+        $data = [
+            "messaging_product" => "whatsapp",
+            "to" => $to,
+            "type" => "text",
+            "text" => [
+                "body" => $notification->getMessage(),
+            ]
+        ];
+
+        $ch = curl_init();
+
+        //Configura as ações
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $accessToken,
+            'Content-Type: application/json'
+        ]);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+        dd($response);
+        if ($response == false) {
+            return false;
+        }
+        return true;
+    }
+
+
+
+    public function sendMessageTemplate(Notification $notification): bool
+    {
         //Documentation: https://laravel.com/docs/8.x/http-client#main-content
         //Postman: https://www.postman.com/meta/workspace/whatsapp-business-platform/request/13382743-8eb0859b-b19e-43bc-acd3-ab46b9ead11b
         //https://www.postman.com/meta/workspace/whatsapp-business-platform/documentation/13382743-2fd9b32d-f63c-4056-873e-4c398dde9d6d?entity=request-13382743-7dee3bda-71c2-4c15-8f48-4778548b5501
@@ -110,12 +161,13 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
             {{8}}
         */
 
+        $templateObj    = $notification->getTemplate();
+        $typeMessage    = 'template'; //text
+
         $url = $this->buildUrlRequest() . '/' . $this->whatsAppBusinessAccountId . '/messages';
         $accessToken = $this->accessToken;
         $to = (string) $notification->getTargetContactAddress();
-        $template = 'confirm_service'; //previa//hello_world//statement_available_2
-        $language = 'en_US';//en_US//pt_BR
-        $variables = [
+        /* $variables = [
             ['type' => 'text', 'text' => (string) $notification->getTargetContactName()], //Client name
             ['type' => 'text', 'text' => "Studio Beleza"], //Company
             ['type' => 'text', 'text' => "2024-06-30"], //Date
@@ -125,19 +177,31 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
             ['type' => 'text', 'text' => "+55(98)984257623"], //Origin phone number
             ['type' => 'text', 'text' => "http://localhost:3000"], //Origin phone number
 
-        ];
+        ]; */
+
+        $variables = [];
+
+        $tempArrayObj   = $templateObj->getVariables();
+        $template       = $templateObj->getName() ?? 'confirm_service'; //previa//hello_world//statement_available_2//confirm_service
+        $language       = $templateObj->getLanguage() ?? 'en_US'; //en_US//pt_BR
+
+        if (is_array($tempArrayObj) && count($tempArrayObj) > 0) {
+            foreach ($tempArrayObj as $variable) {
+                $variables[] = ['type' => 'text', 'text' => (string) $variable->getValue()];
+            }
+        }
 
         $component = [];
         if (is_array($variables) && count($variables) > 0) {
             $component['type'] = 'body';
             $component['parameters'] = $variables;
         }
-        //$component = [];
+
         $data = [
-            'messaging_product' => 'whatsapp',
-            'to' => $to,
-            'type' => 'template', //text
-            'template' => [
+            "messaging_product" => "whatsapp",
+            "to" => $to,
+            "type" => "text",
+            "template" => [
                 'name' => $template,
                 'language' => [
                     'code' => $language
@@ -145,6 +209,9 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
                 'components' => [$component]
             ]
         ];
+
+
+        //$data = $templateObj->getDataRequest();
 
         $ch = curl_init();
 

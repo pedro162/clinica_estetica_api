@@ -10,6 +10,8 @@ use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\Notification\ValueObjects\NotificationTemplateId;
 use App\Domain\Notification\ValueObjects\NotificationSentDate;
+use App\Domain\Template\Entities\Template;
+use App\Domain\Template\Interfaces\TemplateInterface;
 
 class Notification
 {
@@ -30,6 +32,7 @@ notificationOriginContactAddress */
     protected NotificationTargetContactAddress $target_contact_address;
     protected notificationTargetContactName $target_contact_name;
     protected notificationOriginContactAddress $origin_contact_address;
+    protected TemplateInterface $template;
 
     public function setId(NotificationId $id): Notification
     {
@@ -56,6 +59,12 @@ notificationOriginContactAddress */
     public function setMessage(NotificationMessage $message): Notification
     {
         $this->message = $message;
+        return $this;
+    }
+
+    public function setTemplate(TemplateInterface $template): Notification
+    {
+        $this->template = $template;
         return $this;
     }
 
@@ -94,5 +103,10 @@ notificationOriginContactAddress */
     public function getOriginContactAddress(): notificationOriginContactAddress
     {
         return $this->origin_contact_address;
+    }
+
+    public function getTemplate(): TemplateInterface
+    {
+        return $this->template;
     }
 }

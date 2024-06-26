@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Domain\Notification\ValueObjects;
+namespace App\Domain\TemplateVariable\ValueObjects;
 
-class NotificationSentDate
+class TemplateVariableValue
 {
     private string $value;
 
     public function __construct(string $value)
     {
         if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("Notification Sent Date cannot be empty");
+            throw new \InvalidArgumentException("TemplateVariable title cannot be empty");
         }
         $this->value = $value;
     }
