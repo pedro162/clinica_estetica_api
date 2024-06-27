@@ -5,13 +5,22 @@ namespace App\Application\Services;
 use App\Application\Commands\CreateNotificationCommand;
 use App\Application\Commands\CreateTemplateCommand;
 use App\Application\Handlers\CreateNotificationHandler;
+use App\Domain\Appointment\Entities\Appointment;
 use App\Domain\Factories\TemplateFactory;
 use App\Domain\Notification\Entities\Notification;
 use App\Domain\Notification\Interfaces\NotificationInterface;
+use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
+use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\Template\Entities\Template;
+use App\Domain\Template\Entities\WhatsAppTemplate;
 use App\Domain\Template\Interfaces\TemplateInterface;
 use App\Domain\Template\Repositories\TemplateRepositoryInterface;
 use App\Domain\Template\ValueObjects\TemplateId;
+use App\Domain\Template\ValueObjects\TemplateLanguage;
+use App\Domain\TemplateVariable\Entities\TemplateVariable;
+use App\Domain\TemplateVariable\ValueObjects\TemplateVariableId;
+use App\Domain\TemplateVariable\ValueObjects\TemplateVariableSyntax;
+use App\Domain\TemplateVariable\ValueObjects\TemplateVariableValue;
 use App\Infrastructure\Services\Notifications\NotificationServiceInterface;
 
 class NotificationApplicationService
@@ -44,7 +53,16 @@ class NotificationApplicationService
         return $this->sender->send($notification);
     }
 
-    public function sendServiceNotification(Notification $notification, TemplateInterface $service)
+    public function sendNotificationOfId(string $notification_id): bool
+    {
+        //---template
+        //--- Alimentar variaveis template
+
+        //return $this->sender->send($notification);
+        return true;
+    }
+
+    public function createAppointmentNotification(Appointment $appointment)
     {
         //---Alimentar variaveis
         $idTemplateLoad = 1;
@@ -52,13 +70,64 @@ class NotificationApplicationService
         $templateCommandObj->templateId($idTemplateLoad);
         $idTemplate = new TemplateId($templateCommandObj->getTemplateId());
 
-        $templateObj = $this->templateRepository->findById($idTemplate);
-        $whatsappTemplate = TemplateFactory::create(TemplateFactory::WHATS_APP_TEMPLATE, $templateCommandObj);
-        //--fill in whatsapp template
-        //$whatsappTemplate->setVariable($ervice->name);
-        //$whatsappTemplate->setVariable($ervice->company);
+        $notification = new Notification();
+        $notification->setTargetContactAddress(new NotificationTargetContactAddress('5598984257623'));
+        $notification->setTargetContactName(new NotificationTargetContactName((string) $appointment->getName()));
 
-        $notification->setTemplate($whatsappTemplate);
+        //$templateObj = $this->templateRepository->findById($idTemplate);
+        $templateObj = new WhatsAppTemplate();
+        $templateObj->setLanguage(new TemplateLanguage('en_US'));
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string)$appointment->getName()));
+        $varOj->setVariable(new TemplateVariableSyntax('{{1}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string)'Studio Beleza'));
+        $varOj->setVariable(new TemplateVariableSyntax('{{2}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) $appointment->getStartDate()));
+        $varOj->setVariable(new TemplateVariableSyntax('{{3}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) $appointment->getStartHour()));
+        $varOj->setVariable(new TemplateVariableSyntax('{{4}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) "Skin care"));
+        $varOj->setVariable(new TemplateVariableSyntax('{{5}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) "Rua das Amoras, Brazil"));
+        $varOj->setVariable(new TemplateVariableSyntax('{{6}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) "+55(98)984257623"));
+        $varOj->setVariable(new TemplateVariableSyntax('{{7}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) "http://localhost:3000"));
+        $varOj->setVariable(new TemplateVariableSyntax('{{7}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $notification->setTemplate($templateObj);
 
         return $this->sender->send($notification);
     }

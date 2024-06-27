@@ -6,7 +6,8 @@ use App\Domain\Template\Interfaces\TemplateInterface;
 use App\Domain\Template\ValueObjects\TemplateId;
 use App\Domain\Template\ValueObjects\TemplateBody;
 use App\Domain\Template\ValueObjects\TemplateTitle;
-use App\Domain\TemplateVariable\Entities\TemplateVariable;
+use App\Domain\Template\ValueObjects\TemplateLanguage;
+use App\Domain\TemplateVariable\Entities\TemplateVariable;;
 
 class Template
 {
@@ -14,6 +15,7 @@ class Template
     protected TemplateBody $body;
     protected TemplateTitle $title;
     protected array $variables;
+    protected TemplateLanguage $language;
 
     public function setId(TemplateId $id): Template
     {
@@ -62,5 +64,11 @@ class Template
     public function getLanguage()
     {
         return ''; //TODO
+    }
+
+    public function setLanguage(TemplateLanguage $language)
+    {
+        $this->language = $language;
+        return $this;
     }
 }

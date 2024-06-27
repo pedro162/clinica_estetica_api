@@ -9,8 +9,12 @@ use App\Pessoa;
 use App\Profissional;
 use App\Filial;
 use App\Agenda;
+use App\Application\Commands\CreateAppointmentCommand;
+use App\Application\Handlers\CreateAppointmentHandler;
 use App\Application\Handlers\CreateNotificationHandler;
+use App\Application\Services\AppointmentApplicationService;
 use App\Application\Services\NotificationApplicationService;
+use App\Domain\Appointment\Entities\Appointment;
 use App\Domain\Notification\Entities\Notification;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
@@ -19,6 +23,7 @@ use App\Exceptions\AtendimentoException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Helpers\BaseHelper;
+use App\Infrastructure\Persistence\Eloquent\EloquentAppointmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
 use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 
@@ -77,10 +82,8 @@ class AtendimentoHelper extends BaseHelper
         $dadosRequest['hr_fim']             = $dados['hr_fim'];
         $dadosRequest['name_atendido']      = $dados['name_atendido'];
         $dadosRequest['tipo']               = $dados['tipo'] ?? 'consulta';
-
         $dadosRequest['profissional_id']    = $profissional->id;
         $dadosRequest['filial_id']          = $filial->id;
-
         $dadosRequest['active']             = 'yes';
 
         $registro = Atendimento::create($dadosRequest);
@@ -106,7 +109,23 @@ class AtendimentoHelper extends BaseHelper
             throw new AtendimentoException('Erro ao registrar agenda');
         }
 
-        $objRepo = new EloquentNotificationRepository();
+        //-------------------------------------------
+        //Appointment $appointment
+
+        $objRepo = new EloquentAppointmentRepository();
+        $objCreateHandler = new CreateAppointmentHandler($objRepo);
+        $objServiceAppointment = new AppointmentApplicationService($objCreateHandler);
+
+        $command = new CreateAppointmentCommand();
+        $command->appointmentId(0)
+            ->appointmentStartDate($dtInico)
+            ->appointmentPersonId($pessoas->id);
+
+        $newAppointment = $objServiceAppointment->createAppointment($command);
+
+        //-------------------------------------------
+
+        /* $objRepo = new EloquentNotificationRepository();
         $objCreatHandler = new CreateNotificationHandler($objRepo);
         $objServiceNotification = new NotificationApplicationService($objCreatHandler);
 
@@ -115,12 +134,23 @@ class AtendimentoHelper extends BaseHelper
         $notification->setTargetContactAddress(new NotificationTargetContactAddress('5598984257623'));
         $notification->setTargetContactName(new NotificationTargetContactName($registro->pessoa->name));
         $objServiceNotification->sender($sender);
-        $response = $objServiceNotification->sendNotification($notification);
+        $response = $objServiceNotification->sendNotification($notification); */
+        $response = $this->createNotificationAppointment($newAppointment);
 
         if (!$response) {
             throw new AtendimentoException('Não foi possível notificar o cliente');
         }
         return $registro;
+    }
+
+    public function createNotificationAppointment(Appointment $appointment)
+    {
+        $objRepo = new EloquentNotificationRepository();
+        $objCreateHandler = new CreateNotificationHandler($objRepo);
+        $objServiceNotification = new NotificationApplicationService($objCreateHandler);
+
+
+        return $objServiceNotification->createAppointmentNotification($appointment);
     }
 
     public function info($dados, $id)

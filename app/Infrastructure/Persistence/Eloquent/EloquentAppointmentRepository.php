@@ -1,0 +1,94 @@
+<?php
+
+namespace App\Infrastructure\Persistence\Eloquent;
+
+use App\Domain\Appointment\Entities\Appointment;
+use App\Domain\Appointment\Repositories\AppointmentRepositoryInterface;
+use App\Domain\Appointment\ValueObjects\AppointmentDocument;
+use App\Domain\Appointment\ValueObjects\AppointmentEmail;
+use App\Domain\Appointment\ValueObjects\AppointmentExtraDocument;
+use App\Domain\Appointment\ValueObjects\AppointmentId;
+use App\Domain\Appointment\ValueObjects\AppointmentMessage;
+use App\Domain\Appointment\ValueObjects\AppointmentSex;
+use Illuminate\Support\Facades\DB;
+use App\Atendimento as AppointmentModel;
+use App\User;
+
+class EloquentAppointmentRepository implements AppointmentRepositoryInterface
+{
+    public function save(Appointment $appointment): ?Appointment
+    {
+        //Todo
+        //Implement an object model instance and save or update within database, after that, return the object appointment implementation
+        $appointmentId = (string) $appointment->getId();
+        $appointmentId = (int) $appointmentId;
+        $userId   = User::first()->id;
+        if ($appointmentId > 0) {
+            //update
+            $appointmentMomel = AppointmentModel::where('id', '=', $appointmentId)->first();
+            $appointmentMomel->updated([
+                'name' => (string)$appointment->getName(),
+                'historico' => (string)$appointment->getReminder(),
+                'pessoa_id' => (string)$appointment->getPersonId(),
+                'user_id' => $userId,
+                'user_update_id' => $userId,
+                'active' => (string)$appointment->getActive(),
+                'profissional_id' => (string)$appointment->getProfessionalId(),
+                'prioridade' => (string)$appointment->getPriority(),
+                'status' => (string)$appointment->getStatus(),
+                'dt_fim' => (string)$appointment->getEndDate(),
+                'hr_fim' => (string)$appointment->getEndHour(),
+                'name_atendido' => (string)$appointment->getName(),
+                'tipo' => (string)$appointment->getType(),
+                'dt_inicio' => (string)$appointment->getStartDate(),
+                'hr_inicio' => (string)$appointment->getStartHour(),
+                'filial_id' => (string)$appointment->getBranchId(),
+                'dt_cancelamento' => null,
+                'ds_cancelamento' => null,
+                'pess_cancel_id' => null,
+                'vr_atendimento' => null,
+                'vr_desconto' => null,
+                'vr_acrescimo' => null,
+            ]);
+        } else {
+            //create
+            $appointmentMomel = AppointmentModel::create([
+                'name' => (string)$appointment->getName(),
+                'historico' => (string)$appointment->getReminder(),
+                'pessoa_id' => (string)$appointment->getPersonId(),
+                'user_id' => $userId,
+                'user_update_id' => null,
+                'active' => (string)$appointment->getActive(),
+                'profissional_id' => (string)$appointment->getProfessionalId(),
+                'prioridade' => (string)$appointment->getPriority(),
+                'status' => (string)$appointment->getStatus(),
+                'dt_fim' => (string)$appointment->getEndDate(),
+                'hr_fim' => (string)$appointment->getEndHour(),
+                'name_atendido' => (string)$appointment->getName(),
+                'tipo' => (string)$appointment->getType(),
+                'dt_inicio' => (string)$appointment->getStartDate(),
+                'hr_inicio' => (string)$appointment->getStartHour(),
+                'filial_id' => (string)$appointment->getBranchId(),
+                'dt_cancelamento' => null,
+                'ds_cancelamento' => null,
+                'pess_cancel_id' => null,
+                'vr_atendimento' => null,
+                'vr_desconto' => null,
+                'vr_acrescimo' => null,
+            ]);
+            $appointment->setId(new AppointmentId($appointmentMomel->id));
+        }
+
+        return $this->findById($appointment->getId());
+    }
+    public function findById(AppointmentId $id): ?Appointment
+    {
+        $appointment = DB::table('pessoas')->where('id', '=', (string)$id)->first();
+        if ($appointment) {
+            $objAppointment =  new Appointment();
+            $objAppointment->setId(new AppointmentId($appointment->id));
+            return $objAppointment;
+        }
+        return null;
+    }
+}

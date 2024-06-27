@@ -18,7 +18,8 @@
         "laravel/ui": "^2.4",
         "nfephp-org/nfephp": "^4.0",
         "nfephp-org/sped-da": "^1.1",
-        "nfephp-org/sped-nfe": "^5.1"
+        "nfephp-org/sped-nfe": "^5.1",
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^10.2"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

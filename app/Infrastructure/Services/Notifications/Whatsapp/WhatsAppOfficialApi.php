@@ -182,7 +182,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
         $variables = [];
 
         $tempArrayObj   = $templateObj->getVariables();
-        $template       = $templateObj->getName() ?? 'confirm_service'; //previa//hello_world//statement_available_2//confirm_service
+        $template       = $templateObj->getTitle() ?? 'confirm_service'; //previa//hello_world//statement_available_2//confirm_service
         $language       = $templateObj->getLanguage() ?? 'en_US'; //en_US//pt_BR
 
         if (is_array($tempArrayObj) && count($tempArrayObj) > 0) {
