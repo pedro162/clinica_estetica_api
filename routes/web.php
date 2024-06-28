@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\SendNotification;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test/rabbitmq', function () {
+	$resp = SendNotification::dispatch('fafafafafafa')->onQueue('notifications');
+	dd($resp);
+});
 Route::get('/', ['as' => 'site.home', 'uses' => 'Site\SiteController@index']);
 Route::get('/prato/index', ['as' => 'prato.index', 'uses' => 'Site\PratoController@index']);
 

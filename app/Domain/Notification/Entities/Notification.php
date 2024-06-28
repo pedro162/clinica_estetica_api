@@ -10,28 +10,24 @@ use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\Notification\ValueObjects\NotificationTemplateId;
 use App\Domain\Notification\ValueObjects\NotificationSentDate;
+use App\Domain\Notification\ValueObjects\NotificationShippingState;
+use App\Domain\NotificationVariable\Entities\NotificationVariable;
 use App\Domain\Template\Entities\Template;
 
 class Notification
 {
-
-    /* 
-notificationTemplateId
-notificationTitle
-notificationMessage
-notificationSentDate
-notificationTargetContactAddress
-notificationTargetContactName
-notificationOriginContactAddress */
-
     protected NotificationId $id;
     protected NotificationMessage $message;
     protected NotificationTitle $title;
-    protected NotificationTitle $set_date;
+    protected NotificationSentDate $sent_date;
     protected NotificationTargetContactAddress $target_contact_address;
     protected notificationTargetContactName $target_contact_name;
     protected notificationOriginContactAddress $origin_contact_address;
+    protected NotificationTemplateId $template_id;
+    protected NotificationShippingState $shipping_state;
     protected Template $template;
+    protected array $variables;
+
 
     public function setId(NotificationId $id): Notification
     {
@@ -99,13 +95,57 @@ notificationOriginContactAddress */
         return $this;
     }
 
-    public function getOriginContactAddress(): notificationOriginContactAddress
+    public function getOriginContactAddress(): NotificationOriginContactAddress
     {
         return $this->origin_contact_address;
+    }
+
+    public function setTemplateId(NotificationTemplateId $template_id): Notification
+    {
+        $this->template_id = $template_id;
+        return $this;
+    }
+
+    public function getTemplateId(): NotificationTemplateId
+    {
+        return $this->template_id;
+    }
+
+    public function setShippingState(NotificationShippingState $shipping_state): Notification
+    {
+        $this->shipping_state = $shipping_state;
+        return $this;
+    }
+
+    public function getShippingState(): NotificationShippingState
+    {
+        return $this->shipping_state;
+    }
+
+    public function setSentDate(NotificationSentDate $sent_date): Notification
+    {
+        $this->sent_date = $sent_date;
+        return $this;
+    }
+
+    public function getSentDate(): NotificationSentDate
+    {
+        return $this->sent_date;
     }
 
     public function getTemplate(): Template
     {
         return $this->template;
+    }
+
+    public function getVariables(): array
+    {
+        return $this->variables;
+    }
+
+    public function addVariable(NotificationVariable $variable)
+    {
+        $this->variables[] = $variable;
+        return $this;
     }
 }

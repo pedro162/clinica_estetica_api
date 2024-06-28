@@ -1,5 +1,6 @@
 <?php
 
+use App\OperadorFinanceiro;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,5 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(FiliaisSeeds::class);
         $this->call(PaisSeeds::class);
         $this->call(EstadoSeeds::class);
+        $this->call(TemplateSeeds::class);
+        $this->call(TemplateVariableSeeds::class);
     }
 }

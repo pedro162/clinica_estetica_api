@@ -11,7 +11,7 @@ use App\Domain\Template\ValueObjects\TemplateId;
 use App\Domain\Template\ValueObjects\TemplateMessage;
 use App\Domain\Template\ValueObjects\TemplateSex;
 use Illuminate\Support\Facades\DB;
-use App\Tempate as TemplateModel;
+use App\Template as TemplateModel;
 use App\User;
 
 class EloquentTemplateRepository implements TemplateRepositoryInterface

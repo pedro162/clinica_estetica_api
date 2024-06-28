@@ -28,12 +28,12 @@ use App\Domain\Appointment\ValueObjects\AppointmentStatus;
 use App\Domain\Appointment\ValueObjects\AppointmentType;
 use App\Domain\Appointment\ValueObjects\AppointmentUserId;
 use App\User;
+use Exception;
 
 class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {
     public function save(Appointment $appointment): ?Appointment
     {
-        return  $appointment; //test
         //Todo
         //Implement an object model instance and save or update within database, after that, return the object appointment implementation
         $appointmentId = (string) $appointment->getId();
@@ -68,6 +68,8 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
             ]);
         } else {
             //create
+            $end_date = (string)$appointment->getEndDate();
+            $end_hour = (string)$appointment->getEndHour();
             $appointmentMomel = AppointmentModel::create([
                 'name' => (string)$appointment->getName(),
                 'historico' => (string)$appointment->getReminder(),
@@ -78,8 +80,8 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
                 'profissional_id' => (string)$appointment->getProfessionalId(),
                 'prioridade' => (string)$appointment->getPriority(),
                 'status' => (string)$appointment->getStatus(),
-                'dt_fim' => (string)$appointment->getEndDate(),
-                'hr_fim' => (string)$appointment->getEndHour(),
+                'dt_fim' => strlen($end_date) > 0 ? $end_date : null,
+                'hr_fim' => strlen($end_hour) > 0 ? $end_hour : null,
                 'name_atendido' => (string)$appointment->getName(),
                 'tipo' => (string)$appointment->getType(),
                 'dt_inicio' => (string)$appointment->getStartDate(),
@@ -99,25 +101,25 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
     }
     public function findById(AppointmentId $id): ?Appointment
     {
-        $appointment = DB::table('pessoas')->where('id', '=', (string)$id)->first();
+        $appointment = DB::table('atendimentos')->where('id', '=', (string)$id)->first();
         if ($appointment) {
             $objAppointment =  new Appointment();
-            $objAppointment->setId(new AppointmentId($appointment->id))
-                ->setPersonId(new AppointmentPersonId($appointment->person_id))
-                ->setStartDate(new AppointmentStartDate($appointment->dt_inicio))
-                ->setStartHour(new AppointmentStartHour($appointment->hr_inicio))
-                ->setEndDate(new AppointmentEndDate($appointment->dt_fim))
-                ->setEndHour(new AppointmentEndHour($appointment->hr_fim))
-                ->setProfessionalId(new AppointmentProfessionalId($appointment->profissional_id))
-                ->setBranchId(new AppointmentBranchId($appointment->filial_id))
-                ->setName(new AppointmentPersonContactName($appointment->name))
-                ->setNickname(new AppointmentPersonContactNickname($appointment->id))
-                ->setReminder(new AppointmentReminder($appointment->historico))
-                ->setPriority(new AppointmentPriority($appointment->prioridade))
-                ->setType(new AppointmentType($appointment->tipo))
-                ->setActive(new AppointmentActive($appointment->active))
-                ->setUserId(new AppointmentUserId($appointment->user_id))
-                ->setStatus(new AppointmentStatus($appointment->status));
+            $objAppointment->setId(new AppointmentId($appointment->id ?? ''))
+                ->setPersonId(new AppointmentPersonId($appointment->pessoa_id ?? ''))
+                ->setStartDate(new AppointmentStartDate($appointment->dt_inicio ?? ''))
+                ->setStartHour(new AppointmentStartHour($appointment->hr_inicio ?? ''))
+                ->setEndDate(new AppointmentEndDate($appointment->dt_fim ?? ''))
+                ->setEndHour(new AppointmentEndHour($appointment->hr_fim ?? ''))
+                ->setProfessionalId(new AppointmentProfessionalId($appointment->profissional_id ?? ''))
+                ->setBranchId(new AppointmentBranchId($appointment->filial_id ?? ''))
+                ->setName(new AppointmentPersonContactName($appointment->name ?? ''))
+                ->setNickname(new AppointmentPersonContactNickname($appointment->id ?? ''))
+                ->setReminder(new AppointmentReminder($appointment->historico ?? ''))
+                ->setPriority(new AppointmentPriority($appointment->prioridade ?? ''))
+                ->setType(new AppointmentType($appointment->tipo ?? ''))
+                ->setActive(new AppointmentActive($appointment->active ?? ''))
+                ->setUserId(new AppointmentUserId($appointment->user_id ?? ''))
+                ->setStatus(new AppointmentStatus($appointment->status ?? ''));
             return $objAppointment;
         }
         return null;

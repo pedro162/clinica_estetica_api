@@ -10,8 +10,10 @@ use App\Profissional;
 use App\Filial;
 use App\Agenda;
 use App\Application\Commands\CreateAppointmentCommand;
+use App\Application\Commands\CreateNotificationCommand;
 use App\Application\Handlers\CreateAppointmentHandler;
 use App\Application\Handlers\CreateNotificationHandler;
+use App\Application\Handlers\CreateNotificationVariableHandler;
 use App\Application\Services\AppointmentApplicationService;
 use App\Application\Services\NotificationApplicationService;
 use App\Domain\Appointment\Entities\Appointment;
@@ -25,6 +27,9 @@ use Illuminate\Validation\Rule;
 use App\Helpers\BaseHelper;
 use App\Infrastructure\Persistence\Eloquent\EloquentAppointmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentNotificationVariableRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentTemplateRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentTemplateVariableRepository;
 use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 
 class AtendimentoHelper extends BaseHelper
@@ -86,7 +91,37 @@ class AtendimentoHelper extends BaseHelper
         $dadosRequest['filial_id']          = $filial->id;
         $dadosRequest['active']             = 'yes';
 
-        $registro = Atendimento::create($dadosRequest);
+
+
+        //-------------------------------------------
+        //Appointment $appointment
+
+        $objRepo = new EloquentAppointmentRepository();
+        $objCreateHandler = new CreateAppointmentHandler($objRepo);
+        $objServiceAppointment = new AppointmentApplicationService($objCreateHandler);
+
+        $command = new CreateAppointmentCommand();
+        $command->appointmentId(0)
+            ->appointmentStartDate($dtInico)
+            ->appointmentPersonId($pessoas->id)
+            ->appointmentStartHour($hrInico)
+            ->appointmentEndDate($dados['dt_fim'] ?? '')
+            ->appointmentEndHour($dados['hr_fim'] ?? '')
+            ->appointmentProfessionalId($profissional->id)
+            ->appointmentBranchId($filial->id)
+            ->appointmentName($dados['name'])
+            ->appointmentNickname($dados['name'])
+            ->appointmentReminder($dados['historico'])
+            ->appointmentPriority($dados['prioridade'])
+            ->appointmentType($dados['tipo'] ?? 'consulta')
+            ->appointmentActive('yes')
+            ->appointmentUserId(\Auth::User()->id)
+            ->appointmentStatus($dados['status'] ?? 'pendente');
+
+        $newAppointment = $objServiceAppointment->createAppointment($command);
+
+        $registro = Atendimento::find((string)$newAppointment->getId());
+        //$registro = Atendimento::create($dadosRequest);
         if (!$registro) {
             throw new AtendimentoException('Erro ao registrar atendimento');
         }
@@ -110,33 +145,6 @@ class AtendimentoHelper extends BaseHelper
         }
 
         //-------------------------------------------
-        //Appointment $appointment
-
-        $objRepo = new EloquentAppointmentRepository();
-        $objCreateHandler = new CreateAppointmentHandler($objRepo);
-        $objServiceAppointment = new AppointmentApplicationService($objCreateHandler);
-
-        $command = new CreateAppointmentCommand();
-        $command->appointmentId(0)
-            ->appointmentStartDate($dtInico)
-            ->appointmentPersonId($pessoas->id)
-            ->appointmentStartHour($hrInico)
-            ->appointmentEndDate($dados['dt_fim'])
-            ->appointmentEndHour($dados['hr_fim'])
-            ->appointmentProfessionalId($profissional->id)
-            ->appointmentBranchId($filial->id)
-            ->appointmentName($dados['name'])
-            ->appointmentNickname($dados['name'])
-            ->appointmentReminder($dados['historico'])
-            ->appointmentPriority($dados['prioridade'])
-            ->appointmentType($dados['tipo'] ?? 'consulta')
-            ->appointmentActive('yes')
-            ->appointmentUserId(\Auth::User()->id)
-            ->appointmentStatus($dados['status'] ?? 'pendente');
-
-        $newAppointment = $objServiceAppointment->createAppointment($command);
-
-        //-------------------------------------------
 
         /* $objRepo = new EloquentNotificationRepository();
         $objCreatHandler = new CreateNotificationHandler($objRepo);
@@ -148,10 +156,10 @@ class AtendimentoHelper extends BaseHelper
         $notification->setTargetContactName(new NotificationTargetContactName($registro->pessoa->name));
         $objServiceNotification->sender($sender);
         $response = $objServiceNotification->sendNotification($notification); */
-        $response = $this->createNotificationAppointment($newAppointment);
+        $notificationResponse = $this->createNotificationAppointment($newAppointment);
 
-        if (!$response) {
-            throw new AtendimentoException('Não foi possível notificar o cliente');
+        if (!$notificationResponse) {
+            throw new AtendimentoException('Was not possible to create the appointment notification.');
         }
         return $registro;
     }
@@ -161,9 +169,86 @@ class AtendimentoHelper extends BaseHelper
         $objRepo = new EloquentNotificationRepository();
         $objCreateHandler = new CreateNotificationHandler($objRepo);
         $objServiceNotification = new NotificationApplicationService($objCreateHandler);
+        $sender = new WhatsAppOfficialApi();
+        $objServiceNotification->sender($sender);
+        $objServiceNotification->templateRepository(new EloquentTemplateRepository());
+        $objServiceNotification->templateVariableRepository(new EloquentTemplateVariableRepository());
+
+        $objVariableRepo = new EloquentNotificationVariableRepository();
+        $objVariableCreateHandler = new CreateNotificationVariableHandler($objVariableRepo);
+        //$objServiceNotificationVariable = new NotificationApplicationService($objCreateHandler);
+        $objServiceNotification->createNotificationVariableHandler($objVariableCreateHandler);
 
 
         return $objServiceNotification->createAppointmentNotification($appointment);
+
+        /**
+         * //---Alimentar variaveis
+        $idTemplateLoad = 1;
+        $templateCommandObj = new CreateTemplateCommand();
+        $templateCommandObj->templateId($idTemplateLoad);
+        $idTemplate = new TemplateId($templateCommandObj->getTemplateId());
+
+        $notification = new Notification();
+        $notification->setTargetContactAddress(new NotificationTargetContactAddress('5598984257623'));
+        $notification->setTargetContactName(new NotificationTargetContactName((string) $appointment->getName()));
+
+        //$templateObj = $this->templateRepository->findById($idTemplate);
+        $templateObj = new WhatsAppTemplate();
+        $templateObj->setLanguage(new TemplateLanguage('en_US'));
+        $templateObj->setTitle(new TemplateTitle('confirm_service'));
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string)$appointment->getName()));
+        $varOj->setVariable(new TemplateVariableSyntax('{{1}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string)'Studio Beleza'));
+        $varOj->setVariable(new TemplateVariableSyntax('{{2}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) $appointment->getStartDate()));
+        $varOj->setVariable(new TemplateVariableSyntax('{{3}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) $appointment->getStartHour()));
+        $varOj->setVariable(new TemplateVariableSyntax('{{4}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) "Skin care"));
+        $varOj->setVariable(new TemplateVariableSyntax('{{5}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) "Rua das Amoras, Brazil"));
+        $varOj->setVariable(new TemplateVariableSyntax('{{6}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) "+55(98)984257623"));
+        $varOj->setVariable(new TemplateVariableSyntax('{{7}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $varOj = new TemplateVariable();
+        $varOj->setValue(new TemplateVariableValue((string) "http://localhost:3000"));
+        $varOj->setVariable(new TemplateVariableSyntax('{{7}}'));
+        $varOj->setId(new TemplateVariableId(0));
+        $templateObj->addVariable($varOj);
+
+        $notification->setTemplate($templateObj);
+         */
     }
 
     public function info($dados, $id)

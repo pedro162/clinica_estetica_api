@@ -12,7 +12,19 @@ class CreateNotificationCommand
     protected string $notificationSentDate;
     protected string $notificationTargetContactAddress;
     protected string $notificationTargetContactName;
+    protected string $notificationShippingState;
     protected string $notificationOriginContactAddress;
+    /**'title',
+    'message',
+    'origin_contact_address',
+    'target_contact_address',
+    'target_contact_name',
+    'template_id',
+    'shipping_state',
+    'sent_date',
+    'user_id',
+    'user_update_id',
+    'active', */
 
     public function notificationId(string $notificationId): CreateNotificationCommand
     {
@@ -56,6 +68,18 @@ class CreateNotificationCommand
         return $this;
     }
 
+    public function notificationShippingState(string $notificationShippingState): CreateNotificationCommand
+    {
+        $this->notificationShippingState = $notificationShippingState;
+        return $this;
+    }
+
+    public function notificationTargetContactName(string $notificationTargetContactName): CreateNotificationCommand
+    {
+        $this->notificationTargetContactName = $notificationTargetContactName;
+        return $this;
+    }
+
     public function getNotificationId(): ?string
     {
         return $this->notificationId;
@@ -85,8 +109,18 @@ class CreateNotificationCommand
         return $this->notificationTargetContactName;
     }
 
+    public function getNotificationOriginContactAddress(): ?string
+    {
+        return $this->notificationOriginContactAddress;
+    }
+
     public function getNotificationTemplateId(): ?string
     {
         return $this->notificationTemplateId;
+    }
+
+    public function getNotificationShippingState(): ?string
+    {
+        return $this->notificationShippingState;
     }
 }

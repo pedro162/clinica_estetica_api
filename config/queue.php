@@ -68,9 +68,9 @@ return [
         ],
         'rabbitmq' => [
             'driver' => 'rabbitmq',
-            'queue' => env('RABBITMQ_QUEUE', 'default'),
-            'connection' => PhpAmqpLib\Connection\AMQPLazyConnection::class,
-            'host' => env('RABBITMQ_HOST', '172.24.0.4'),
+            'queue' => env('RABBITMQ_QUEUE', 'notifications'), //default
+            //'connection' => PhpAmqpLib\Connection\AMQPLazyConnection::class,
+            'host' => env('RABBITMQ_HOST', '172.24.0.3'),
             'port' => env('RABBITMQ_PORT', 5672),
             'user' => env('RABBITMQ_USER', 'guest'),
             'password' => env('RABBITMQ_PASSWORD', 'guest'),
@@ -82,7 +82,7 @@ return [
                     'local_key' => env('RABBITMQ_SSL_LOCALKEY', null),
                     'verify_peer' => env('RABBITMQ_SSL_VERIFY_PEER', true),
                     'passphrase' => env('RABBITMQ_SSL_PASSPHRASE', null),
-                ]
+                ],
             ],
             'worker' => env('RABBITMQ_WORKER', 'default'),
 

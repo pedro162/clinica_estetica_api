@@ -2,14 +2,14 @@
 
 namespace App\Domain\Notification\ValueObjects;
 
-class NotificationSentDate
+class NotificationShippingState
 {
     private string $value;
 
     public function __construct(string $value)
     {
-        if ((isset($value) && strlen(trim($value)) > 0)) {
-            //throw new \InvalidArgumentException("Notification Sent Date cannot be empty");
+        if (!(isset($value) && strlen(trim($value)) > 0)) {
+            throw new \InvalidArgumentException("Notification Shipping State cannot be empty");
         }
         $this->value = $value;
     }

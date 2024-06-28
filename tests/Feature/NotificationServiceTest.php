@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Application\Commands\CreateAppointmentCommand;
 use App\Application\Commands\CreateTemplateCommand;
+use App\Application\Handlers\CreateAppointmentHandler;
 use App\Application\Handlers\CreateNotificationHandler;
+use App\Application\Services\AppointmentApplicationService;
 use App\Application\Services\NotificationApplicationService;
 use App\Domain\Notification\Entities\Notification;
 use App\Domain\Notification\ValueObjects\NotificationMessage;
@@ -17,7 +20,10 @@ use App\Domain\TemplateVariable\Entities\TemplateVariable;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableId;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableSyntax;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableValue;
+use App\Infrastructure\Persistence\Eloquent\EloquentAppointmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentTemplateRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentTemplateVariableRepository;
 use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 use App\Jobs\SendNotification;
 use App\User;
@@ -28,6 +34,8 @@ use Tests\TestCase;
 class NotificationServiceTest extends TestCase
 {
     protected NotificationApplicationService $notificationApplicationService;
+    protected AppointmentApplicationService $appointmentApplicationService;
+
     //Test Documentatin: https://www.devmedia.com.br/teste-unitario-com-phpunit/41231#assertgreaterthan-
     ///opt/lampp$ sudo ./manager-linux-x64.run
 
@@ -38,6 +46,46 @@ class NotificationServiceTest extends TestCase
         $objSetup = new SetupTest();
         $objSetup->settingUpUser();
         $this->testNotificationApplicationServiceBootstrap();
+    }
+
+    /**
+     * Attempt to create a notification using the DDD Service class resource
+     *@return void
+     */
+    public function testCreateNotificationFromAppointmentData()
+    {
+        $objRepo = new EloquentNotificationRepository();
+        $objCreateHandler = new CreateNotificationHandler($objRepo);
+        $objServiceNotification = new NotificationApplicationService($objCreateHandler);
+        $sender = new WhatsAppOfficialApi();
+        $objServiceNotification->sender($sender);
+        $objServiceNotification->templateRepository(new EloquentTemplateRepository());
+        $objServiceNotification->templateVariableRepository(new EloquentTemplateVariableRepository());
+
+        $command = new CreateAppointmentCommand();
+        $command->appointmentId(0)
+            ->appointmentStartDate("2024-06-30")
+            ->appointmentPersonId(1)
+            ->appointmentStartHour('10:45')
+            ->appointmentEndDate('')
+            ->appointmentEndHour('')
+            ->appointmentProfessionalId(3)
+            ->appointmentBranchId(1)
+            ->appointmentName('José')
+            ->appointmentNickname('Pedro')
+            ->appointmentReminder("Test")
+            ->appointmentPriority('alta')
+            ->appointmentType('consulta')
+            ->appointmentActive('yes')
+            ->appointmentUserId(1)
+            ->appointmentStatus('pendente');
+        $appointment = $this->appointmentApplicationService->createAppointment($command);
+        $response = $objServiceNotification->createAppointmentNotification($appointment);
+
+        $idNotification = (string) $response->getId();
+        $idNotification = (int) $idNotification;
+
+        $this->assertGreaterThan(0, $idNotification, "it was not possible to create a natural person");
     }
 
     /**
@@ -115,8 +163,11 @@ class NotificationServiceTest extends TestCase
         $notification->setTemplate($templateObj);
 
         //--------------------------
-        $this->notificationApplicationService->sender($sender);
-        SendNotification::dispatch('9')->onQueue('notifications');
+        //---No send notification $this->notificationApplicationService->sender($sender);
+        $resp = SendNotification::dispatch('1')->onQueue('notifications');
+        //dd($resp);
+        ///opt/lampp/htdocs/html# docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rabbitmq
+
         //$response = $this->notificationApplicationService->sendNotification($notification);
         $response = false;
         $this->assertTrue($response);
@@ -141,6 +192,11 @@ class NotificationServiceTest extends TestCase
         $objCreatHandler = new CreateNotificationHandler($objRepo);
         $objServiceNotification = new NotificationApplicationService($objCreatHandler);
         $this->notificationApplicationService = $objServiceNotification;
+
+        $objRepo = new EloquentAppointmentRepository();
+        $objCreateHandler = new CreateAppointmentHandler($objRepo);
+        $objServiceNotification = new AppointmentApplicationService($objCreateHandler);
+        $this->appointmentApplicationService = $objServiceNotification;
     }
 
     /* private function settingUpUser(): void

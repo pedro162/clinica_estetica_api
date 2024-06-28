@@ -5,6 +5,7 @@ namespace App\Domain\TemplateVariable\Entities;
 use App\Domain\TemplateVariable\Interfaces\TemplateVariableInterface;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableId;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableSyntax;
+use App\Domain\TemplateVariable\ValueObjects\TemplateVariableTemplateId;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableValue;
 
 class TemplateVariable
@@ -12,7 +13,7 @@ class TemplateVariable
     protected TemplateVariableId $id;
     protected TemplateVariableSyntax $variable;
     protected TemplateVariableValue $value;
-    protected array $variables;
+    protected TemplateVariableTemplateId $template_id;
 
     public function setId(TemplateVariableId $id): TemplateVariable
     {
@@ -45,5 +46,16 @@ class TemplateVariable
     public function getVariable(): TemplateVariableSyntax
     {
         return $this->variable;
+    }
+
+    public function setTemplateId(TemplateVariableTemplateId $template_id): TemplateVariable
+    {
+        $this->template_id = $template_id;
+        return $this;
+    }
+
+    public function getTemplateId(): TemplateVariableTemplateId
+    {
+        return $this->template_id;
     }
 }
