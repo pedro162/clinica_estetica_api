@@ -16,7 +16,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentHttpRepository;
 class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
 {
     protected string $baseUrl = 'https://graph.facebook.com';
-    protected string $accessToken = 'EAAG3C2TVdgsBO0ae53iOcUZBnPw0W3IZBgj0lERWvkHenvWXuJcznlaTxvaVlXlVudy2TGtJp0noD2Eo5PDJx6vyjIoNfAjAZArjFqLGjrpZAkmzhR2LOab4GcLenuWorJdTdWyslOpATGoJ8VduXnmhqUqKILsYbXScrjvNVcgtANwgbpcH7LyRkXHVz3j3rP9tibmq45yzZBhM3vGoZD';
+    protected string $accessToken = 'EAAG3C2TVdgsBO2pr57mJzVFoxgdbriePQ5o2sP1KsGcpNCF3BHK4ctRTOSBqv55pjEN5QBlFYUBEjPgARlQOHZB7m9veLzz3ZCseRLArZBTynucIlv14So45tgDuXiAzobWztBgZC7FMx32G3WDN0XToaYikFYhdxdRi48kdHh1c9lH3GgWDVSGsp0uUk01pK5SYNhsE6RT0xG0tiZBAb';
     protected string $whatsAppBusinessAccountId  = '253133564553408'; //253133564553408//253133564553408
     protected string $apiVersoin = 'v19.0';
     protected string $targetContact;

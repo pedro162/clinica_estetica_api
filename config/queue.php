@@ -70,7 +70,7 @@ return [
             'driver' => 'rabbitmq',
             'queue' => env('RABBITMQ_QUEUE', 'notifications'), //default
             //'connection' => PhpAmqpLib\Connection\AMQPLazyConnection::class,
-            'host' => env('RABBITMQ_HOST', '172.24.0.3'),
+            'host' => env('RABBITMQ_HOST', '172.24.0.2'),
             'port' => env('RABBITMQ_PORT', 5672),
             'user' => env('RABBITMQ_USER', 'guest'),
             'password' => env('RABBITMQ_PASSWORD', 'guest'),

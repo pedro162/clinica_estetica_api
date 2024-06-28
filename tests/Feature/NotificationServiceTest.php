@@ -48,6 +48,12 @@ class NotificationServiceTest extends TestCase
         $this->testNotificationApplicationServiceBootstrap();
     }
 
+    public function testSendNotificationById()
+    {
+        $response = $this->notificationApplicationService->sendNotificationOfId(1);
+        $this->assertTrue($response);
+    }
+
     /**
      * Attempt to create a notification using the DDD Service class resource
      *@return void

@@ -109,7 +109,7 @@ class AtendimentoHelper extends BaseHelper
             ->appointmentEndHour($dados['hr_fim'] ?? '')
             ->appointmentProfessionalId($profissional->id)
             ->appointmentBranchId($filial->id)
-            ->appointmentName($dados['name'])
+            ->appointmentName($pessoas->name)
             ->appointmentNickname($dados['name'])
             ->appointmentReminder($dados['historico'])
             ->appointmentPriority($dados['prioridade'])

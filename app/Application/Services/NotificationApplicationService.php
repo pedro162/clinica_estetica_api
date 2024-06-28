@@ -11,6 +11,8 @@ use App\Domain\Appointment\Entities\Appointment;
 use App\Domain\Factories\TemplateFactory;
 use App\Domain\Notification\Entities\Notification;
 use App\Domain\Notification\Interfaces\NotificationInterface;
+use App\Domain\Notification\ValueObjects\NotificationId;
+use App\Domain\NotificationVariable\ValueObjects\NotificationId as NotificationVariableId;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\NotificationVariable\Repositories\NotificationVariableRepositoryInterface;
@@ -27,9 +29,15 @@ use App\Domain\TemplateVariable\ValueObjects\TemplateVariableId;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableSyntax;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableTemplateId;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableValue;
+use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentNotificationVariableRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentTemplateRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentTemplateVariableRepository;
 use App\Infrastructure\Services\Notifications\NotificationServiceInterface;
+use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 use App\Jobs\SendNotification;
 use Exception;
+use Mockery\CountValidator\Exact;
 
 class NotificationApplicationService
 {
@@ -85,9 +93,42 @@ class NotificationApplicationService
     {
         //---template
         //--- Alimentar variaveis template
+        $notificationRepository = new EloquentNotificationRepository();
+        $notification = $notificationRepository->findById(new NotificationId($notification_id));
+        if (!$notification) {
+            throw new Exception("The notification was not found.");
+        }
 
-        //return $this->sender->send($notification);
-        return true;
+        $notificationVariablesObj = new EloquentNotificationVariableRepository();
+        $notificationVariables = $notificationVariablesObj->findByNotificationId(new NotificationVariableId($notification_id));
+
+        $templateRepository = new EloquentTemplateRepository();
+        $templateVariableRepository = new EloquentTemplateVariableRepository();
+        $objTemplate = $templateRepository->findById(new TemplateId((string) $notification->getTemplateId()));
+        $templateVariables = $templateVariableRepository->findByTemplateId(
+            new TemplateVariableTemplateId((string)$objTemplate->getId())
+        );
+
+
+        $templateObj = new WhatsAppTemplate();
+        $templateObj->setLanguage(new TemplateLanguage((string)$objTemplate->getLanguage()));
+        $templateObj->setTitle(new TemplateTitle((string)$objTemplate->getTitle()));
+        if ($notificationVariables) {
+            foreach ($notificationVariables as $key => $variable) {
+                if ($variable) {
+                    $varOj = new TemplateVariable();
+                    $varOj->setValue(new TemplateVariableValue((string)$variable->getValue()));
+                    $varOj->setVariable(new TemplateVariableSyntax((string)$variable->getVariable()));
+                    $varOj->setId(new TemplateVariableId(0));
+                    $templateObj->addVariable($varOj);
+                }
+            }
+        }
+        $notification->setTemplate($templateObj);
+        $sender = new WhatsAppOfficialApi();
+        //$this->sender($sender);
+
+        return $sender->send($notification);
     }
 
     public function createAppointmentNotification(Appointment $appointment)
@@ -103,7 +144,6 @@ class NotificationApplicationService
         $templateVariables = $this->templateVariableRepository->findByTemplateId(
             new TemplateVariableTemplateId((string)$objTemplate->getId())
         );
-
         $command = new CreateNotificationCommand();
         $command->notificationId(0)
             ->notificationTitle('Appointment Remainder')
@@ -150,7 +190,11 @@ class NotificationApplicationService
                 }
             }
         }
+        //---Adding to queue
+        $resp = SendNotification::dispatch((string)$newNotification->getId())->onQueue('notifications');
         return $newNotification;
+        //--get rabbitmq ip
+        //docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rabbitmq
     }
     public function createAppointmentNotificationBkp(Appointment $appointment)
     {
@@ -220,9 +264,9 @@ class NotificationApplicationService
 
         $notification->setTemplate($templateObj);
 
-        $resp = SendNotification::dispatch('1')->onQueue('notifications');
-        return false;
-        //---return $this->sender->send($notification);
+        //$resp = SendNotification::dispatch('1')->onQueue('notifications');
+        //return false;
+        return $this->sender->send($notification);
     }
 
     public function createNotification(

@@ -54,7 +54,7 @@ class EloquentTemplateVariableRepository implements TemplateVariableRepositoryIn
     }
     public function findById(TemplateVariableId $id): ?TemplateVariable
     {
-        $template = DB::table('template_variables')->where('id', '=', (string)$id)->first();
+        $template = DB::table('template_variables')->where('template_id', '=', (string)$id)->first();
         if ($template) {
             $objTemplateVariable =  new TemplateVariable();
             $objTemplateVariable->setId(new TemplateVariableId($template->id ?? 0));
@@ -68,7 +68,7 @@ class EloquentTemplateVariableRepository implements TemplateVariableRepositoryIn
     }
     public function findByTemplateId(TemplateVariableTemplateId $id): ?array
     {
-        $template = DB::table('template_variables')->where('active', '=', 'yes')->where('id', '=', (string)$id)->get();
+        $template = DB::table('template_variables')->where('active', '=', 'yes')->where('template_id', '=', (string)$id)->get();
         $variables = [];
         if ($template) {
             foreach ($template as $key => $variable) {

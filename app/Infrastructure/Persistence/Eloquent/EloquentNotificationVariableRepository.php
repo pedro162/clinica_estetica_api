@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Domain\Notification\ValueObjects\NotificationId as ValueObjectsNotificationId;
 use App\Domain\NotificationVariable\Entities\NotificationVariable;
 use App\Domain\NotificationVariable\ValueObjects\NotificationId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableId;
@@ -70,7 +71,26 @@ class EloquentNotificationVariableRepository implements NotificationVariableRepo
 
     public function findByTemplateId(NotificationVariableTemplateVariableId $id): ?array
     {
-        $template = DB::table('notification_variables')->where('active', '=', 'yes')->where('id', '=', (string)$id)->get();
+        $template = DB::table('notification_variables')->where('active', '=', 'yes')->where('template_variable_id', '=', (string)$id)->get();
+        $variables = [];
+        if ($template) {
+            foreach ($template as $key => $variable) {
+                $objNotificationVariable =  new NotificationVariable();
+                $objNotificationVariable->setId(new NotificationVariableId($variable->id ?? 0));
+                $objNotificationVariable->setValue(new NotificationVariableValue($variable->value ?? ''));
+                $objNotificationVariable->setVariable(new NotificationVariableSyntax($variable->syntax ?? ''));
+                $objNotificationVariable->setTemplateId(new NotificationVariableTemplateVariableId($variable->variable_id ?? 0));
+                $objNotificationVariable->setNotificationId(new NotificationId($variable->template_id ?? 0));
+
+                $variables[] = $objNotificationVariable;
+            }
+        }
+        return $variables;
+    }
+
+    public function findByNotificationId(NotificationId $id): ?array
+    {
+        $template = DB::table('notification_variables')->where('active', '=', 'yes')->where('notification_id', '=', (string)$id)->get();
         $variables = [];
         if ($template) {
             foreach ($template as $key => $variable) {
