@@ -8,8 +8,9 @@ class AppointmentEndHour
 
     public function __construct(string $value)
     {
-        if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("Appointment end hour cannot be empty");
+        if ((isset($value) && strlen(trim($value)) > 0)) {
+            //--Is it a valid hour?
+            //throw new \InvalidArgumentException("Appointment end hour cannot be empty");
         }
         $this->value = $value;
     }

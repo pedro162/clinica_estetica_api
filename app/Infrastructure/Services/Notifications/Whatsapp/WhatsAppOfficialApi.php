@@ -16,7 +16,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentHttpRepository;
 class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
 {
     protected string $baseUrl = 'https://graph.facebook.com';
-    protected string $accessToken = 'EAAG3C2TVdgsBOwhbkJacdQLWHkPEqqq5P3ZA5jQnZBlI63bwcOu99mpe6JXgNDFCi5peQQq1rAuYaZBmyLsxcQazeydUhwZB5wfJILRsLo7INW4pxdoSDTHqGNMI4LdhZBc5GXlMmORfbjTokSZACMHfikWED0QRexVEKFI97KOewCjSnulRrZAgfy5TcF5vhrZAyeWkuk7hHtPHdmBIsKQZD';
+    protected string $accessToken = 'EAAG3C2TVdgsBO0ae53iOcUZBnPw0W3IZBgj0lERWvkHenvWXuJcznlaTxvaVlXlVudy2TGtJp0noD2Eo5PDJx6vyjIoNfAjAZArjFqLGjrpZAkmzhR2LOab4GcLenuWorJdTdWyslOpATGoJ8VduXnmhqUqKILsYbXScrjvNVcgtANwgbpcH7LyRkXHVz3j3rP9tibmq45yzZBhM3vGoZD';
     protected string $whatsAppBusinessAccountId  = '253133564553408'; //253133564553408//253133564553408
     protected string $apiVersoin = 'v19.0';
     protected string $targetContact;
@@ -114,7 +114,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
 
         $response = curl_exec($ch);
         curl_close($ch);
-        dd($response);
+        //dd($response);
         if ($response == false) {
             return false;
         }
@@ -161,30 +161,17 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
             {{8}}
         */
 
+
         $templateObj    = $notification->getTemplate();
         $typeMessage    = 'template'; //text
-
         $url = $this->buildUrlRequest() . '/' . $this->whatsAppBusinessAccountId . '/messages';
         $accessToken = $this->accessToken;
         $to = (string) $notification->getTargetContactAddress();
-        /* $variables = [
-            ['type' => 'text', 'text' => (string) $notification->getTargetContactName()], //Client name
-            ['type' => 'text', 'text' => "Studio Beleza"], //Company
-            ['type' => 'text', 'text' => "2024-06-30"], //Date
-            ['type' => 'text', 'text' => "10:10 A.M"], //Hour
-            ['type' => 'text', 'text' => "Skin care"], //Service
-            ['type' => 'text', 'text' => "Rua das Amoras, Brazil"], //Origin Address
-            ['type' => 'text', 'text' => "+55(98)984257623"], //Origin phone number
-            ['type' => 'text', 'text' => "http://localhost:3000"], //Origin phone number
-
-        ]; */
 
         $variables = [];
-
         $tempArrayObj   = $templateObj->getVariables();
         $template       = $templateObj->getTitle() ?? 'confirm_service'; //previa//hello_world//statement_available_2//confirm_service
         $language       = $templateObj->getLanguage() ?? 'en_US'; //en_US//pt_BR
-
         if (is_array($tempArrayObj) && count($tempArrayObj) > 0) {
             foreach ($tempArrayObj as $variable) {
                 $variables[] = ['type' => 'text', 'text' => (string) $variable->getValue()];
@@ -200,21 +187,19 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
         $data = [
             "messaging_product" => "whatsapp",
             "to" => $to,
-            "type" => "text",
+            "type" => $typeMessage,
             "template" => [
-                'name' => $template,
+                'name' => (string)$template,
                 'language' => [
-                    'code' => $language
+                    'code' => (string)$language
                 ],
                 'components' => [$component]
             ]
         ];
 
-
         //$data = $templateObj->getDataRequest();
 
         $ch = curl_init();
-
         //Configura as ações
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -227,7 +212,6 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
 
         $response = curl_exec($ch);
         curl_close($ch);
-        dd($response);
         if ($response == false) {
             return false;
         }

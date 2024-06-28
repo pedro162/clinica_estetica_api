@@ -119,7 +119,20 @@ class AtendimentoHelper extends BaseHelper
         $command = new CreateAppointmentCommand();
         $command->appointmentId(0)
             ->appointmentStartDate($dtInico)
-            ->appointmentPersonId($pessoas->id);
+            ->appointmentPersonId($pessoas->id)
+            ->appointmentStartHour($hrInico)
+            ->appointmentEndDate($dados['dt_fim'])
+            ->appointmentEndHour($dados['hr_fim'])
+            ->appointmentProfessionalId($profissional->id)
+            ->appointmentBranchId($filial->id)
+            ->appointmentName($dados['name'])
+            ->appointmentNickname($dados['name'])
+            ->appointmentReminder($dados['historico'])
+            ->appointmentPriority($dados['prioridade'])
+            ->appointmentType($dados['tipo'] ?? 'consulta')
+            ->appointmentActive('yes')
+            ->appointmentUserId(\Auth::User()->id)
+            ->appointmentStatus($dados['status'] ?? 'pendente');
 
         $newAppointment = $objServiceAppointment->createAppointment($command);
 

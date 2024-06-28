@@ -17,6 +17,7 @@ use App\Domain\Template\Interfaces\TemplateInterface;
 use App\Domain\Template\Repositories\TemplateRepositoryInterface;
 use App\Domain\Template\ValueObjects\TemplateId;
 use App\Domain\Template\ValueObjects\TemplateLanguage;
+use App\Domain\Template\ValueObjects\TemplateTitle;
 use App\Domain\TemplateVariable\Entities\TemplateVariable;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableId;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableSyntax;
@@ -77,6 +78,7 @@ class NotificationApplicationService
         //$templateObj = $this->templateRepository->findById($idTemplate);
         $templateObj = new WhatsAppTemplate();
         $templateObj->setLanguage(new TemplateLanguage('en_US'));
+        $templateObj->setTitle(new TemplateTitle('confirm_service'));
 
         $varOj = new TemplateVariable();
         $varOj->setValue(new TemplateVariableValue((string)$appointment->getName()));

@@ -4,10 +4,11 @@ namespace App\Domain\Template\Entities;
 
 use App\Domain\Template\Interfaces\TemplateInterface;
 use App\Domain\Template\Entities\Template;
+use App\Domain\Template\ValueObjects\TemplateLanguage;
 
 class WhatsAppTemplate extends Template implements TemplateInterface
 {
-    public function getVariables(): array
+    public function getVariablesTemplate(): array
     {
         return $this->getVariables();
     }
@@ -15,9 +16,9 @@ class WhatsAppTemplate extends Template implements TemplateInterface
     {
         return (string) $this->getTitle();
     }
-    public function getLanguage()
+    public function getLanguageTemplate(): TemplateLanguage
     {
-        return ''; //TODO
+        return $this->language; //TODO
     }
 
     public function getBodyFill(): string

@@ -10,14 +10,14 @@ use App\DiasProfExpediente;
 
 class Profissional extends Model
 {
-    protected $table="profissionals";
-    protected $primaryKey="id";
-    protected $fillable =[
-        'pessoa_id',
-        'user_id',
-        'user_update_id',
-        'active',
-        'vr_salario',
+	protected $table = "profissionals";
+	protected $primaryKey = "id";
+	protected $fillable = [
+		'pessoa_id',
+		'user_id',
+		'user_update_id',
+		'active',
+		'vr_salario',
 		'titulo_eleitor',
 		'zona_eleitor',
 		'naturalidade',
@@ -34,19 +34,29 @@ class Profissional extends Model
 		'tipo_contrato',
 		'filial_id',
 		'uf_cnh_id',
-    ];
-    public function especialidade()
-    {
-    	return $this->belongsToMany(Especialidade::class, 'espec_prof', 'profissional_id', 'especialidade_id')
-    	->withPivot('nr_doc', 'dt_emiss_doc', 'dt_vencimento_doc','org_expedidor','especialidade_id','profissional_id',
-    		'user_id','user_update_id','active');
-    }
+	];
+	public function especialidade()
+	{
+		return $this->belongsToMany(Especialidade::class, 'espec_prof', 'profissional_id', 'especialidade_id')
+			->withPivot(
+				'nr_doc',
+				'dt_emiss_doc',
+				'dt_vencimento_doc',
+				'org_expedidor',
+				'especialidade_id',
+				'profissional_id',
+				'user_id',
+				'user_update_id',
+				'active'
+			);
+	}
 
-	public function pessoa(){
+	public function pessoa()
+	{
 		return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
 	}
 
-    public function adicionarEspecialidade($especialidade, $dados)
+	public function adicionarEspecialidade($especialidade, $dados)
 	{
 		return $this->especialidade()->attach($especialidade, $dados);
 	}
@@ -57,12 +67,12 @@ class Profissional extends Model
 	}
 
 	public function eventoAgenda()
-    {
-    	return $this->hasMany(EventoAgenda::class, 'profissional_id', 'id');
-    }
+	{
+		return $this->hasMany(EventoAgenda::class, 'profissional_id', 'id');
+	}
 
-    public function diasExpediente()
-    {
-        return $this->hasMany(DiasProfExpediente::class, 'profissional_id', 'id');
-    }
+	public function diasExpediente()
+	{
+		return $this->hasMany(DiasProfExpediente::class, 'profissional_id', 'id');
+	}
 }

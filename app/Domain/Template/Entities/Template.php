@@ -7,7 +7,8 @@ use App\Domain\Template\ValueObjects\TemplateId;
 use App\Domain\Template\ValueObjects\TemplateBody;
 use App\Domain\Template\ValueObjects\TemplateTitle;
 use App\Domain\Template\ValueObjects\TemplateLanguage;
-use App\Domain\TemplateVariable\Entities\TemplateVariable;;
+use App\Domain\TemplateVariable\Entities\TemplateVariable;
+use Carbon\Language;;
 
 class Template
 {
@@ -61,9 +62,9 @@ class Template
         return $this;
     }
 
-    public function getLanguage()
+    public function getLanguage(): TemplateLanguage
     {
-        return ''; //TODO
+        return $this->language; //TODO
     }
 
     public function setLanguage(TemplateLanguage $language)

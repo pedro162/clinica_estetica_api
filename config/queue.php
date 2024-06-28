@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('QUEUE_CONNECTION', 'sync'),
+    'default' => env('QUEUE_CONNECTION', 'rabbitmq'), //sync
 
     /*
     |--------------------------------------------------------------------------
@@ -70,13 +70,11 @@ return [
             'driver' => 'rabbitmq',
             'queue' => env('RABBITMQ_QUEUE', 'default'),
             'connection' => PhpAmqpLib\Connection\AMQPLazyConnection::class,
-            'hosts' => [
-                'host' => env('RABBITMQ_HOST', '127.0.0.1'),
-                'port' => env('RABBITMQ_PORT', 5672),
-                'user' => env('RABBITMQ_USER', 'guest'),
-                'password' => env('RABBITMQ_PASSWORD', 'guest'),
-                'vhost' => env('RABBITMQ_VHOST', '/'),
-            ],
+            'host' => env('RABBITMQ_HOST', '172.24.0.4'),
+            'port' => env('RABBITMQ_PORT', 5672),
+            'user' => env('RABBITMQ_USER', 'guest'),
+            'password' => env('RABBITMQ_PASSWORD', 'guest'),
+            'vhost' => env('RABBITMQ_VHOST', '/'),
             'options' => [
                 'ssl_options' => [
                     'cafile' => env('RABBITMQ_SSL_CAFILE', null),
@@ -91,7 +89,13 @@ return [
         ]
 
     ],
-
+    /*
+        $host = config('queue.connections.rabbitmq.host');
+            $port = config('queue.connections.rabbitmq.port');
+            $user = config('queue.connections.rabbitmq.user');
+            $password = config('queue.connections.rabbitmq.password');
+            $vhost = config('queue.connections.rabbitmq.vhost');
+    */
     /*
     |--------------------------------------------------------------------------
     | Failed Queue Jobs
