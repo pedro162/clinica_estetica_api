@@ -29,7 +29,11 @@ use App\Jobs\SendNotification;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Artisan;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
+
 
 class NotificationServiceTest extends TestCase
 {
@@ -43,6 +47,8 @@ class NotificationServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        //Artisan::call('migrate', ['--force']);
+
         $objSetup = new SetupTest();
         $objSetup->settingUpUser();
         $this->testNotificationApplicationServiceBootstrap();
@@ -101,6 +107,21 @@ class NotificationServiceTest extends TestCase
     public function testSendNotificationOfServiceConfirmationWhatsApp()
     {
         $sender = new WhatsAppOfficialApi();
+
+        $mockSender = $this->getMockBuilder(WhatsAppOfficialApi::class)
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->onlyMethods(['send', 'sendMessageTemplate', 'sendMessageText'])
+            ->getMock();
+        $mockSender->expects($this->once())
+            ->method('send')
+            ->with(new Notification())
+            ->willReturn(true);
+        $mockSender->expects($this->once())
+            ->method('sendMessageTemplate')
+            ->with(new Notification())
+            ->willReturn(true);
+
         $notification = new Notification();
         $notification->setTargetContactAddress(new NotificationTargetContactAddress('5598984257623'));
         $notification->setTargetContactName(new NotificationTargetContactName('Pedro'));
@@ -170,13 +191,15 @@ class NotificationServiceTest extends TestCase
 
         //--------------------------
         //---No send notification $this->notificationApplicationService->sender($sender);
-        $resp = SendNotification::dispatch('1')->onQueue('notifications');
+
+        $response = $this->notificationApplicationService->sender($mockSender);
+        //$resp = SendNotification::dispatch('1')->onQueue('notifications');
         //dd($resp);
         ///opt/lampp/htdocs/html# docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rabbitmq
 
         //$response = $this->notificationApplicationService->sendNotification($notification);
-        $response = false;
-        $this->assertTrue($response);
+        //$response = false;
+        $this->assertTrue($response, 'Was not possible to send the message');
     }
 
     /**

@@ -15,6 +15,7 @@ use App\Pessoa;
 use App\Profissional;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AppointmentServiceTest extends TestCase
@@ -27,6 +28,7 @@ class AppointmentServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Artisan::call('migrate', ['--force']);
         $objSetup = new SetupTest();
         $objSetup->settingUpUser();
         $this->testNotificationApplicationServiceBootstrap();

@@ -14,13 +14,13 @@ class CreateUsersPessoasTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->bigInteger('pessoa_id')->unsigned();
+            $table->bigInteger('pessoa_id')->unsigned()->nullable();
             $table->foreign('pessoa_id')->references('id')->on('pessoas')->onDelete('cascade')->onUpdate('cascade');
-            $table->bigInteger('filial_id')->unsigned();
+            $table->bigInteger('filial_id')->unsigned()->nullable();
             $table->foreign('filial_id')->references('id')->on('filials')->onUpdate('cascade')->onDelete('cascade');
-            
-            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);  
-            $table->enum('active',['yes', 'no'])->default('no');
+
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
+            $table->enum('active', ['yes', 'no'])->default('no');
             //$table->softDeletes();
 
         });
@@ -33,6 +33,6 @@ class CreateUsersPessoasTable extends Migration
      */
     public function down()
     {
-       // Schema::dropIfExists('users_pessoas');
+        // Schema::dropIfExists('users_pessoas');
     }
 }

@@ -14,8 +14,8 @@ class CreateServicoItemsForeignTable extends Migration
     public function up()
     {
         Schema::table('servico_items', function (Blueprint $table) {
-            
-            $table->bigInteger('ordem_servico_id')->unsigned();
+
+            $table->bigInteger('ordem_servico_id')->unsigned()->nullable();
             $table->foreign('ordem_servico_id')->references('id')->on('ordem_servicos')->onDelete('cascade')->onUpdate('cascade');
         });
     }
@@ -27,6 +27,6 @@ class CreateServicoItemsForeignTable extends Migration
      */
     public function down()
     {
-       // Schema::dropIfExists('servico_items_foreign');
+        // Schema::dropIfExists('servico_items_foreign');
     }
 }

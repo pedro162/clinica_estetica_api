@@ -20,8 +20,9 @@ use \App\Pessoa;
 use \App\Caixa;
 use \App\FinanceiroMovimentacoe;
 use \App\Exceptions\FinanceiroMovimentacoeException;
+use App\Helpers\BaseHelper;
 
-class FinanceiroMovimentacoeHelper
+class FinanceiroMovimentacoeHelper extends BaseHelper
 {
 
 	public function store(array $dados){
@@ -113,6 +114,7 @@ class FinanceiroMovimentacoeHelper
              $consulta['ordem'] =  'id-desc';
         }
 
+        $ordem      = $consulta['ordem'] ?? 'id-desc'; 
         $campos =  null;
         $parse = [
             'id'=>'fm.id',
@@ -305,10 +307,23 @@ class FinanceiroMovimentacoeHelper
             $registro->select('fm.*',  \DB::raw($sqlDsReferencia), 'cx.name as caixa_name', 'cx.filial_id');
         }
 
-        $registro = $registro->where('fm.active', '=', 'yes')->get();
+
+        //----
+        $ordemArr   = explode('-', $ordem);
+        $oremCampo  = $ordemArr[0];
+        $oremTipo  = $ordemArr[1];
+
+        $usePaginate = $consulta['usePaginate'] ?? 0;
+        $usePaginate = (int) $usePaginate;
+        $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::PAGINACAO_ITENS_POR_PAGINA_PADRAO;
+        if ($usePaginate > 0) {
+            $registro   = $registro->where('fm.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+        } else {
+            $registro = $registro->where('fm.active', '=', 'yes')->get();
+        }
 
 
-        if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
+         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
             $dataToRequest = [];
             foreach ($registro as $reg) {
                 $dataToRequest[] = ['label' => $reg->historico, 'value' => $reg->id];

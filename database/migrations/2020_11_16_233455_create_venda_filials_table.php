@@ -11,11 +11,11 @@ class CreateVendaFilialsTable extends Migration
      *
      * @return void
      */
-    public function up()//ok
+    public function up() //ok
     {
         Schema::table('vendas', function (Blueprint $table) {
-            $table->bigInteger('filial_id')->unsigned();
-             $table->foreign('filial_id')->references('id')->on('filials')->onUpdate('cascade')->onDelete('cascade');
+            $table->bigInteger('filial_id')->unsigned()->nullable();
+            $table->foreign('filial_id')->references('id')->on('filials')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

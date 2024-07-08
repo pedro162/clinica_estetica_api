@@ -17,8 +17,9 @@ use \App\Helpers\ContaReceberCartaoHelper;
 use \App\Helpers\ContaReceberItemHelper;
 use \App\Pessoa;
 use \App\Exceptions\CobrancaReceberException;
+use App\Helpers\BaseHelper;
 
-class ContaReceberHelper
+class ContaReceberHelper extends BaseHelper
 {
 
     public function validaGerCobranca(int $idPessoa, float $vrCobranca, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = []): array
@@ -464,6 +465,8 @@ class ContaReceberHelper
             $consulta['ordem'] =  'id-desc';
         }
 
+        $ordem      = $consulta['ordem'] ?? 'id-desc'; 
+
         $campos =  $data['campos'] ?? [];
         $parse = [
             'id' => 'cr.id',
@@ -662,10 +665,22 @@ class ContaReceberHelper
             $registro->select('cr.*', \DB::raw('(IFNULL(cr.vrLiquido, 0) - (IFNULL(cr.vrPago, 0) + IFNULL(cr.vrDevolvido, 0)))  vrAberto'), \DB::raw($sqlDsReferencia), 'fp.cdCobrancaTipo', 'fp.name as name_cob_tp', 'pessoas.name', 'pesfl.name as name_filial');
         }
 
-        $registro = $registro->where('cr.active', '=', 'yes')
+        
+        //----
+        $ordemArr   = explode('-', $ordem);
+        $oremCampo  = $ordemArr[0];
+        $oremTipo  = $ordemArr[1];
+
+        $usePaginate = $consulta['usePaginate'] ?? 0;
+        $usePaginate = (int) $usePaginate;
+        $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::PAGINACAO_ITENS_POR_PAGINA_PADRAO;
+        if ($usePaginate > 0) {
+            $registro   = $registro->where('cr.active', '=', 'yes')
+            ->where('pessoas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+        } else {
+            $registro = $registro->where('cr.active', '=', 'yes')
             ->where('pessoas.active', '=', 'yes')->get();
-
-
+        }
 
         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
             $dataToRequest = [];
@@ -675,6 +690,7 @@ class ContaReceberHelper
 
             $registro = $dataToRequest;
         }
+        //---
 
         return  $registro;
     }
