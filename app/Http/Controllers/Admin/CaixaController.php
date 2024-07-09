@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Exceptions\CaixaException;
 use App\Caixa;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\CaixaHelper;
 
 class CaixaController extends Controller
 {
@@ -155,117 +156,17 @@ class CaixaController extends Controller
         try{
             \DB::beginTransaction();
 
-            $consulta = $request->all();
-            $campos =  null;
-            $parse = [
-                'caixa_name'=>'caixas.name'
+            $data = $request->all();
 
-            ];
+            $objCaixaHelper = new CaixaHelper();
 
-            $registro = \DB::table('caixas');
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
-                        case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('caixas.id', $val);
-                            }
-                            break;
-                        case 'name':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('caixas.name', 'like' , '%'.$val.'%');
-                            }
-                            break;
-                        case 'caixa_id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                
-                                $registro->where('caixas.id', '=' , ''.$val.'');
-                            }
-                            break;
-                        case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
-                            break;
-                        case 'ordem':
-
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
-
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
-                                    }
-                                    
-                                    
-                                }
-
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
-                            break;
-
-                    }
-                }
-            }
-            if($campos){
-                $registro->select($campos);
-            }else{
-                $registro->select('caixas.*');
-
-            }
-           
-            $registro = $registro->where('caixas.active', '=', 'yes')->get();
+            $registro = $objCaixaHelper->json($data);
 
             \DB::commit();
 
             //dd( $registro);
 
-            return response()->json(['registro'=>$registro, 'class'=>'sucess'], 201);
+            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 201);
 
         }catch(CaixaException $e){
             \DB::rollback();

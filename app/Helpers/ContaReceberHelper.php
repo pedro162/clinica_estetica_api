@@ -461,10 +461,8 @@ class ContaReceberHelper extends BaseHelper
         $consulta = $data;
 
         if (!isset($consulta['ordem'])) {
-
             $consulta['ordem'] =  'id-desc';
         }
-
         $ordem      = $consulta['ordem'] ?? 'id-desc'; 
 
         $campos =  $data['campos'] ?? [];
