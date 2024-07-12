@@ -528,7 +528,7 @@ class ContaReceberHelper extends BaseHelper
 
                             $registro->where('pessoas.name', 'like', '%' . $val . '%');
                         }
-                        break;
+                        break;//
                     case 'vencido':
 
                         if (is_string($val)) {
@@ -539,6 +539,32 @@ class ContaReceberHelper extends BaseHelper
                             } elseif (trim($val) == 'no') {
                                 $registro->where('cr.dtVencimento', '>=', date('Y-m-d'));
                             }
+                        }
+
+                        break;
+                    case 'dt_exercicio':
+                        $tpExercicio = 'dtVencimento';
+
+                        if(isset($consulta['tp_exercicio'])){
+                            switch ($consulta['tp_exercicio']) {
+                                case 'created_at':
+                                case 'criacao':
+                                    $tpExercicio = 'created_at';
+                                    break;
+                                case 'vencimento':
+                                    $tpExercicio = 'dtVencimento';
+                                    break;
+                                
+                                default:
+                                    $tpExercicio = 'dtVencimento';
+                                    break;
+                            }
+                            $tpExercicio = 'dtVencimento';
+                        }
+                        if (is_string($val) && strpos($val, ',') > -1) {
+                            $val = explode(',', $val);
+                            $registro->where('cr.'.$tpExercicio, '>=', date($val[0]));
+                            $registro->where('cr.'.$tpExercicio, '<=', date($val[1]));
                         }
 
                         break;

@@ -24,8 +24,8 @@ class EstadoController extends Controller
 
             $consulta = $request->all();
 
-            $objEstadoHelper    = new EstadoHelper();
-            $registro           = $objEstadoHelper->json($consulta, $id);
+            $objEstadoHelper = new EstadoHelper();
+            $registro = $objEstadoHelper->json($consulta);
 
             \DB::commit();
 
