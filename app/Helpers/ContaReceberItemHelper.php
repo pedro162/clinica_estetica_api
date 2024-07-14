@@ -117,7 +117,7 @@ class ContaReceberItemHelper{
         $dtBaixa            = null;
         $rashbaixa          = null;
         $vrPago             = 0;
-        $tpBaixa            = null;
+        $tpBaixa            = 'user';
         $tpStatusCobranca   = 'pago';//aberto
         $rashbaixa          = null;
         $idCaixaBaixa       = null;
@@ -167,6 +167,8 @@ class ContaReceberItemHelper{
                 'rashBaixa'=>$rashbaixa,
             
             ];
+
+            $dataParcelas[] = $dataParcela;
 
             if($qtdDiasIntervalo > 0){
 

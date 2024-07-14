@@ -103,6 +103,9 @@ class ContaReceberHelper extends BaseHelper
         }
 
         $vrTotalParelasGeradas = 0;
+        
+        $idReferenciaPadrao = date('ymdhis');
+        $reFerenciaPadrao = 'sem_referencia';
 
         for ($i = 0; !($i == $qtdParcela); $i++) {
             $dtVencimento = $objDtVencimento->format("Y-m-d H:i:s");
@@ -122,8 +125,8 @@ class ContaReceberHelper extends BaseHelper
                 'user_id' => \Auth::User()->id,
                 'active' => 'yes',
                 'importacao_dados' => 'no',
-                'referencia_id' => $dados['referencia_id'] ?? null,
-                'referencia' => $dados['referencia'] ?? null,
+                'referencia_id' => $dados['referencia_id'] ?? $idReferenciaPadrao,
+                'referencia' => $dados['referencia'] ?? $reFerenciaPadrao,
                 'filial_id' => $dados['filial_id'] ?? null,
                 'responsavel_id' => $dados['responsavel_id'] ?? 0,
                 'forma_pagamento_id' => $objFormaPagamento->id,
@@ -302,8 +305,8 @@ class ContaReceberHelper extends BaseHelper
             'user_id' => \Auth::User()->id,
             'active' => 'yes',
             'importacao_dados' => 'no',
-            'referencia_id' => $registro->referencia_id ?? null,
-            'referencia' => $registro->referencia ?? null,
+            'referencia_id' => $registro->referencia_id ?? date('ymdhis'),
+            'referencia' => $registro->referencia ?? 'sem_referencia',
             'filial_id' => $registro->filial_id ?? null,
             'responsavel_id' => $registro->responsavel_id ?? 0,
             'qtd_parcelas' => 1,
@@ -582,6 +585,21 @@ class ContaReceberHelper extends BaseHelper
 
                             $registro->whereIn('pessoas.id', $val);
                         }
+                        break;
+                    case 'filial_id':
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+                        }
+
+                        $val = explode(',', $val);
+
+                        $registro->whereIn('cr.filial_id', $val);
                         break;
                     case 'referencia_id':
                         if (is_string($val)) {
