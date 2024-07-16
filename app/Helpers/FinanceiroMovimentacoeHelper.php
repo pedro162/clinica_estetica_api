@@ -97,6 +97,20 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
             throw new FinanceiroMovimentacoeException('Registro não encontrado');
         }
 
+
+        if($registro->referencia_id > 0&& $registro->referencia == 'conta_recebers'){
+            $registro->data_referencia = CobrancaReceber::find($registro->referencia_id);
+            if($registro->data_referencia){
+                $registro->data_referencia->pessoa;
+                $registro->data_referencia->contaReceberItem;
+            }
+        }
+
+        $registro->caixa;
+        if($registro->user){
+            $registro->user->pessoa;
+        }
+
         return $registro;
     }
 

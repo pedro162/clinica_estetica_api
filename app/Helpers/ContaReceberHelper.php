@@ -399,9 +399,9 @@ class ContaReceberHelper extends BaseHelper
         }
 
         if($registro->referencia_id > 0&& $registro->referencia == 'ordem_servicos'){
-
             $registro->data_referencia = OrdemServico::find($registro->referencia_id);
         }
+        $registro->contaReceberItem;
 
         return $registro;
     }
@@ -523,10 +523,10 @@ class ContaReceberHelper extends BaseHelper
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            $val = explode(',', $val);
-
-                            $registro->whereIn('cr.id', $val);
                         }
+
+                        $val = explode(',', $val);
+                        $registro->whereIn('cr.id', $val);
                         break;
                     case 'nmPessoa':
                     case 'pessoa_name':

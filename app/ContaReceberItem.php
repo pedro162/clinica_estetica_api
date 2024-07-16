@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\ContaReceber;
+use App\FinanceiroMovimentacoe;
 
 class ContaReceberItem extends Model
 {
@@ -46,5 +47,7 @@ class ContaReceberItem extends Model
     	return $this->belongsTo(ContaReceber::class,'conta_receber_id', 'id');
     }
 
-  
+  	public function movimentacao(){
+  		return $this->hasMany(FinanceiroMovimentacoe::class, 'referencia_id', 'id')->where('referencia', 'conta_receber_items');
+  	}
 }
