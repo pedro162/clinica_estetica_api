@@ -16,6 +16,7 @@ use \App\ContaReceberCartao;
 use \App\Helpers\ContaReceberCartaoHelper;
 use \App\Helpers\ContaReceberItemHelper;
 use \App\Pessoa;
+use \App\OrdemServico;
 use \App\Exceptions\CobrancaReceberException;
 use App\Helpers\BaseHelper;
 
@@ -390,6 +391,16 @@ class ContaReceberHelper extends BaseHelper
 
         if ($registro == null) {
             throw new CobrancaReceberException('Registro não encontrado');
+        }
+
+        if($registro->pessoa){
+            $registro->pessoa->logradouro;
+            $registro->pessoa->telefone;
+        }
+
+        if($registro->referencia_id > 0&& $registro->referencia == 'ordem_servicos'){
+
+            $registro->data_referencia = OrdemServico::find($registro->referencia_id);
         }
 
         return $registro;
