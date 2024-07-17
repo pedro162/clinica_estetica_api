@@ -309,10 +309,17 @@ class ServicoController extends Controller
             \DB::beginTransaction();
 
             $consulta = $request->all();
-            //dd($consulta);
+            
+
+            $ordem = $consulta['ordem'] ?? 'id-desc';
+            if (!(isset($consulta['ordem']) && strlen($consulta['ordem']) > 0)) {
+
+                $ordem = $consulta['ordem'] = 'id-desc';
+            }
 
             $parse = [
-
+                'name' => 'serv.name',
+                'id' => 'serv.id',
             ];
 
             $registro = \DB::table('servicos as serv');
@@ -332,10 +339,16 @@ class ServicoController extends Controller
                                 if($val[strlen($val) - 1] == ','){
                                     $val = substr($val, 0, -1);
                                 }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('serv.id', $val);
                             }
+                            $val = explode(',', $val);
+                            $registro->whereIn('serv.id', $val);
+                            
+                            break;
+                        case 'vr_min':
+                            $registro->where('serv.vrServico', '>=' , $val);
+                            break;
+                        case 'vr_max':
+                            $registro->where('serv.vrServico', '<=' , $val);
                             break;
                         case 'nome_item':
                         case 'name':
@@ -405,10 +418,23 @@ class ServicoController extends Controller
 
             }
             //$registro = \App\::where('active', '=', 'yes')->get();
-            $registro = $registro->where('serv.active', '=', 'yes')->get();
+            //$registro = $registro->where('serv.active', '=', 'yes')->get();
 
 
             \DB::commit();
+
+            $ordemArr   = explode('-', $ordem);
+            $oremCampo  = $ordemArr[0];
+            $oremTipo  = $ordemArr[1];
+
+            $usePaginate = $consulta['usePaginate'] ?? 0;
+            $usePaginate = (int) $usePaginate;
+            $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : 10;
+            if ($usePaginate > 0) {
+                $registro   = $registro->where('serv.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+            } else {
+                $registro = $registro->where('serv.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
+            }
 
             if(isset($consulta['to_require']) && $consulta['to_require'] == true){
                 $dataToRequest = [];
