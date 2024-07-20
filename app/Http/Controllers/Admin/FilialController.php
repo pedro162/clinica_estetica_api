@@ -20,72 +20,6 @@ class FilialController extends Controller
 
     public function index(Request $request)
     {
-
-        try {
-            \DB::beginTransaction();
-
-            $consulta = $request->all();
-
-            $campos =  null;
-
-            $registro = Filial::where('active', '=', 'yes')
-            ->join('pessoas', function ($join) {
-                $join->on('pessoas.id', '=', 'filials.pessoa_id');
-            });
-
-            if (is_array($consulta) && count($consulta) > 0) {
-                foreach ($consulta as $key => $val) {
-
-                    switch (trim($key)) {
-                        case 'id':
-                            if (is_string($val)) {
-
-                                if ($val[0] == ',') {
-                                    $val = substr($val, 1);
-                                }
-                                if ($val[strlen($val) - 1] == ',') {
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-
-                                $registro->whereIn('id', $val);
-                            }
-                            break;
-                        case 'name':
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('name', 'like', '%' . $val . '%');
-                            break;
-                    }
-                }
-            }
-
-            $registro = $registro->get();
-
-            return view('admin.filial.index', compact('registro', 'consulta'));
-
-            \DB::commit();
-        } catch (FilialException $e) {
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-
-        } catch (\Exception $e) {
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
-        }
     }
 
     public function json(Request $request)
@@ -95,13 +29,13 @@ class FilialController extends Controller
             \DB::beginTransaction();
 
             $consulta = $request->all();
-            
+
 
             $objFilialHelper    = new FilialHelper();
             $registro           = $objFilialHelper->json($consulta);
             if (!$registro) {
                 throw new PaisException('Registro não identifiado');
-            }            
+            }
 
             \DB::commit();
 
@@ -123,7 +57,6 @@ class FilialController extends Controller
 
     public function create(Request $request, $idAssistente)
     {
-        
     }
 
 
@@ -180,7 +113,6 @@ class FilialController extends Controller
      */
     public function show($id)
     {
-        
     }
 
 

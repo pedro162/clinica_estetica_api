@@ -47,69 +47,6 @@ class PessoaController extends Controller
 
     public function index(Request $request)
     {
-
-        try {
-            \DB::beginTransaction();
-
-            $consulta = $request->all();
-
-            $campos =  null;
-
-            $registro = Pessoa::where('active', '=', 'yes');
-
-            if (is_array($consulta) && count($consulta) > 0) {
-                foreach ($consulta as $key => $val) {
-
-                    switch (trim($key)) {
-                        case 'id':
-                            if (is_string($val)) {
-
-                                if ($val[0] == ',') {
-                                    $val = substr($val, 1);
-                                }
-                                if ($val[strlen($val) - 1] == ',') {
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-
-                                $registro->whereIn('id', $val);
-                            }
-                            break;
-                        case 'name':
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('name', 'like', '%' . $val . '%');
-                            break;
-                    }
-                }
-            }
-
-            $registro = $registro->get();
-
-            return view('admin.pessoa.index', compact('registro', 'consulta'));
-
-            \DB::commit();
-        } catch (PessoaException $e) {
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-
-        } catch (\Exception $e) {
-            \DB::rollback();
-
-            $msg = $e->getMessage();
-            return view('layouts._admin._error', compact('msg'));
-
-            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
-        }
     }
 
     public function json(Request $request)
@@ -120,77 +57,8 @@ class PessoaController extends Controller
 
             $consulta = $request->all();
 
-            $campos =  null;
-
-            $registro = Pessoa::where('active', '=', 'yes');
-
-            if (is_array($consulta) && count($consulta) > 0) {
-                foreach ($consulta as $key => $val) {
-
-                    switch (trim($key)) {
-                        case 'id':
-                            if (is_string($val)) {
-
-                                if ($val[0] == ',') {
-                                    $val = substr($val, 1);
-                                }
-                                if ($val[strlen($val) - 1] == ',') {
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-
-                                $registro->whereIn('id', $val);
-                            }
-                            break;
-                        case 'name':
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('name', 'like', '%' . $val . '%');
-                            break;
-
-                        case 'description_to_search':
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('name', 'like', '%' . $val . '%');
-                            break;
-                        case 'codigo_to_search':
-                            if (is_string($val)) {
-
-                                if ($val[0] == ',') {
-                                    $val = substr($val, 1);
-                                }
-                                if ($val[strlen($val) - 1] == ',') {
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-
-                                $registro->whereIn('id', $val);
-                            }
-                            break;
-                    }
-                }
-            } //
-
-            $registro = $registro->get();
-            if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
-                $dataToRequest = [];
-                foreach ($registro as $reg) {
-                    $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
-                }
-
-                $registro = $dataToRequest;
-            }
-
+            $objPessHelper = new PessoaHelper();
+            $registro = $objPessHelper->json($consulta);
             \DB::commit();
 
             return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
