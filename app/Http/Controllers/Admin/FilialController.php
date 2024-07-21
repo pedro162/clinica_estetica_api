@@ -29,8 +29,6 @@ class FilialController extends Controller
             \DB::beginTransaction();
 
             $consulta = $request->all();
-
-
             $objFilialHelper    = new FilialHelper();
             $registro           = $objFilialHelper->json($consulta);
             if (!$registro) {

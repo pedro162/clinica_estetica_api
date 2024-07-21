@@ -17,199 +17,194 @@ class ProfissionalController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-   
+
     public function json(Request $request)
     {
 
         try {
             \DB::beginTransaction();
-            
+
             $consulta = $request->all();
-            
-            if(! isset($consulta['ordem'])){
 
-                $consulta['ordem'] =  'id-desc';
+            $ordem = $consulta['ordem'] ?? 'id-desc';
+            if (!(isset($consulta['ordem']) && strlen($consulta['ordem']) > 0)) {
+                $ordem = $consulta['ordem'] = 'id-desc';
             }
-            
+
             $campos =  null;
-
-            //$registro = Profissional::where('active', '=', 'yes');
-
             $parse = [
-                'marca_profissionals'=>'marca.name',
-                'codigo_profissionals'=>'profissionals.id',
-                'id'=>'profissionals.id',
-                'nome_profissionals'=>'pessoas.name',
-                'name'=>'pessoas.name',
+                'marca_profissionals' => 'marca.name',
+                'codigo_profissionals' => 'profissionals.id',
+                'id' => 'profissionals.id',
+                'nome_profissionals' => 'pessoas.name',
+                'name' => 'pessoas.name',
 
             ];
 
+            $registro = \DB::table('profissionals')->join('pessoas', function ($join) {
 
-            $registro = \DB::table('profissionals')->join('pessoas', function($join){
-                
                 $join->on('profissionals.pessoa_id', '=', 'pessoas.id');
-
-            })->leftJoin('espec_prof', function($join){
+            })->leftJoin('espec_prof', function ($join) {
                 $join->on('espec_prof.profissional_id', '=', 'profissionals.id');
-            })->leftJoin('especialidades as esp', function($join){
+            })->leftJoin('especialidades as esp', function ($join) {
                 $join->on('esp.id', '=', 'espec_prof.especialidade_id');
             });
             //name_especialidade
             $campos =  null;
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('profissionals.id', $val);
                             }
                             break;
                         case 'status':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('profissionals.status', $val);
                             }
                             break;
                         case 'name':
                         case 'name_pessoa':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
-                                
-                                $registro->where('pessoas.name', 'like' , '%'.$val.'%');
+
+                                $registro->where('pessoas.name', 'like', '%' . $val . '%');
                             }
                             break;
-                        
-                        
+
+
                         case 'description_to_search':
-                            if($val[0] == ','){
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('name', 'like' , '%'.$val.'%');
-                           
+
+                            $registro->where('name', 'like', '%' . $val . '%');
+
                             break;
                         case 'codigo_to_search':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('profissionals.id', $val);
                             }
                             break;
 
                         case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                    $registro->limit($val);
-                                }
-                                break;
+                            $val = (int) $val;
+                            if (is_integer($val) && $val > 0) {
+
+                                $registro->limit($val);
+                            }
+                            break;
                         case 'ordem':
 
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
 
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
 
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
+                            $val = explode(',', $val);
+                            for ($i = 0; !($i == count($val)); $i++) {
+                                $atual = explode('-', $val[$i]);
+                                if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                    $parsed = $parse[trim($atual[0])];
+
+                                    if ($parsed) {
+
+                                        $registro->orderBy($parsed, $atual[1]);
                                     }
-                                    
-                                    
                                 }
+                            }
 
-                                break;
-
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    $campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
                             break;
 
+                        case 'campos':
+                            if (is_array($val) && count($val) > 0) {
+                                $campos = $this->montaCamposConsulta($registro, $val);
+                            }
+                            break;
                     }
                 }
             }
-            if($campos){
+            if ($campos) {
                 $registro->select($campos);
-
-            }else{
+            } else {
                 $registro->select('profissionals.id', 'profissionals.filial_id', 'profissionals.status', 'profissionals.ponto_obrigatorio', 'pessoas.name as name_pessoa', 'pessoas.id as pessoa_id', 'pessoas.name_opcional', 'pessoas.documento', 'pessoas.documento_complementar', 'pessoas.nascimento_fundacao', 'pessoas.sexo', 'pessoas.email');
+            }
+            $ordemArr   = explode('-', $ordem);
 
+            $oremCampo      = $ordemArr[0];
+            $oremTipo       = $ordemArr[1];
+            $usePaginate    = $consulta['usePaginate'] ?? 0;
+            $usePaginate    = (int) $usePaginate;
+            $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : 10;
+            $usePaginate    = (int) $usePaginate;
+            if ($usePaginate > 0) {
+                $registro   = $registro->where('profissionals.active', '=', 'yes')
+                    ->where('pessoas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+            } else {
+                $registro   = $registro->where('profissionals.active', '=', 'yes')
+                    ->where('pessoas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
             }
 
-            //$registro = \App\Produto::where('active', '=', 'yes')->get();
-            $registro = $registro->where('profissionals.active', '=', 'yes')
-                ->where('pessoas.active', '=', 'yes')->get();
-
-            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
+            if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
                 $dataToRequest = [];
-                foreach($registro as $reg){
-                    $dataToRequest[] = ['label'=>$reg->name_pessoa, 'value'=>$reg->id];
+                foreach ($registro as $reg) {
+                    $dataToRequest[] = ['label' => $reg->name_pessoa, 'value' => $reg->id];
                 }
-
                 $registro = $dataToRequest;
             }
-                
 
             \DB::commit();
-            
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
-        }catch(ProfissionalException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (ProfissionalException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
-
     }
 
     /**
@@ -221,7 +216,7 @@ class ProfissionalController extends Controller
     public function store(Request $request)
     {
 
-        try{
+        try {
 
 
             $validator = $this->validaRequest($request);
@@ -239,17 +234,16 @@ class ProfissionalController extends Controller
             $dadosEvento['filial_id']           = $dados['filial_id'];
             $result = Profissional::create($dadosEvento);
 
-            if(! $result){
+            if (!$result) {
 
                 throw new ProfissionalException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o supote.');
-
             }
 
-            if(isset($dados['especialidade_id']) && $dados['especialidade_id'] > 0){
-                $especialidade   = Especialidade::where('active', '=', 'yes')->where('id','=',$dados['especialidade_id'])->first();
+            if (isset($dados['especialidade_id']) && $dados['especialidade_id'] > 0) {
+                $especialidade   = Especialidade::where('active', '=', 'yes')->where('id', '=', $dados['especialidade_id'])->first();
 
-                if(! $especialidade){
-                    throw new ProfissionalException('Não foi possível identificar a especialidade informada. Tente novamente ou entre em contato com o supote.'); 
+                if (!$especialidade) {
+                    throw new ProfissionalException('Não foi possível identificar a especialidade informada. Tente novamente ou entre em contato com o supote.');
                 }
 
                 $dadosEvento                        = [];
@@ -265,36 +259,34 @@ class ProfissionalController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$result, 'class'=>'sucess'], 200);
-
-
-        }catch (ProfissionalException $th) {
+            return response()->json(['mensagem' => $result, 'class' => 'sucess'], 200);
+        } catch (ProfissionalException $th) {
 
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor: '.$th->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $th->getMessage(), 'class' => 'warning'], 500);
             //throw $th;
         }
     }
 
-    
+
 
     public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             \DB::beginTransaction();
-            
-            if($id <= 0){
+
+            if ($id <= 0) {
 
                 throw new ProfissionalException('Parâmetro inválido. Entre em contato com o supote.');
             }
@@ -302,29 +294,27 @@ class ProfissionalController extends Controller
             $registro = null;
 
             $registro = Profissional::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
-            if($registro == null){
+            if ($registro == null) {
 
                 throw new ProfissionalException('Registro não encontrado.');
             }
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-
-        }catch(ProfissionalException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (ProfissionalException $e) {
             \DB::rollback();
 
             //$msg = $e->getMessage();
             //return view('layouts._admin._error', compact('msg'));
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
 
@@ -334,44 +324,39 @@ class ProfissionalController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    
+
     public function edit(Request $request, $id, $idAssistente)
     {
 
         try {
             $dadosRequest = $request->all();
 
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new ProfissionalException('Parâmetro ínválido');
             }
 
             \DB::beginTransaction();
 
             $registro = Profissional::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
-            if(! $registro){
+            if (!$registro) {
                 throw new ProfissionalException('Registro não encontrado');
-                
             }
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-
-
-        }catch(ProfissionalException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (ProfissionalException $e) {
 
             \DB::rollback();
-            
-             return response()->json(['errors'=>['error'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
 
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 400);
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
-
     }
 
     /**
@@ -383,8 +368,8 @@ class ProfissionalController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try{
-                        
+        try {
+
             $this->validaRequest($request);
 
             \DB::beginTransaction();
@@ -393,24 +378,24 @@ class ProfissionalController extends Controller
 
             $user_id    = \Auth::User()->id;
             $erros      = [];
-            
+
             $dados = $request->all();
- 
+
             $dadosEvento                        = [];
             $dadosEvento['user_update_id']      = $user_id;
-            
+
             $profissional = Profissional::where('id', '=', $id)->where('active', '=', 'yes')->first();
-            if(! $profissional){
+            if (!$profissional) {
                 throw new ProfissionalException('Evento não identificado');
             }
 
             $profissional->update($dadosEvento);
 
-            if(isset($dados['especialidade_id']) && $dados['especialidade_id'] > 0){
-                $especialidade   = Especialidade::where('active', '=', 'yes')->where('id','=',$dados['especialidade_id'])->first();
+            if (isset($dados['especialidade_id']) && $dados['especialidade_id'] > 0) {
+                $especialidade   = Especialidade::where('active', '=', 'yes')->where('id', '=', $dados['especialidade_id'])->first();
 
-                if(! $especialidade){
-                    throw new ProfissionalException('Não foi possível identificar a especialidade informada. Tente novamente ou entre em contato com o supote.'); 
+                if (!$especialidade) {
+                    throw new ProfissionalException('Não foi possível identificar a especialidade informada. Tente novamente ou entre em contato com o supote.');
                 }
 
                 $profissional->removeEspecialidade($especialidade);
@@ -427,19 +412,18 @@ class ProfissionalController extends Controller
             }
 
             \DB::commit();
-            return response()->json(['mensagem'=>$profissional, 'class' => 'success'], 200);
-
-        }catch(ProfissionalException $e){
+            return response()->json(['mensagem' => $profissional, 'class' => 'success'], 200);
+        } catch (ProfissionalException $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
 
             //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
@@ -453,42 +437,40 @@ class ProfissionalController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
-            if($id <= 0){
+            if ($id <= 0) {
 
                 // \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
 
                 //return redirect()->route('pessoa.index');
-                return response()->json(['mensagem'=>'Erro ao deletar registro', 'class'=>'warning'], 400);
-
+                return response()->json(['mensagem' => 'Erro ao deletar registro', 'class' => 'warning'], 400);
             }
 
             \DB::beginTransaction();
 
             $eventoAgenda = Profissional::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
-            if(! $eventoAgenda){
+                ->where('id', '=', $id)->first();
+            if (!$eventoAgenda) {
                 throw new ProfissionalException('Registro não encontrado');
             }
 
-            $eventoAgenda->update(['active'=>'no']);
+            $eventoAgenda->update(['active' => 'no']);
             $eventoAgenda->delete();
 
             \DB::commit();
-            return response()->json(['mensagem'=>'Registro atulizado com sucesso', 'class'=>'success']);
-
-        }catch(ProfissionalException $e){
+            return response()->json(['mensagem' => 'Registro atulizado com sucesso', 'class' => 'success']);
+        } catch (ProfissionalException $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
 
             //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
@@ -496,20 +478,20 @@ class ProfissionalController extends Controller
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'pessoa_id'=> 'required|min:1',
+        $validator = Validator::make($request->all(), [
+            'pessoa_id' => 'required|min:1',
         ], [
             'pessoa_id.required' => 'O campo "PROFISSIONAL" é obrigatório.',
             'pessoa_id.min' => 'O "PROFISSIONAL" deve ser maior ou igual a :min.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
-                $msg .= $mensagem.'<br/>';
+            foreach ($errors->all() as $mensagem) {
+                $msg .= $mensagem . '<br/>';
             }
-            
+
             throw new ProfissionalException($msg);
         }
 

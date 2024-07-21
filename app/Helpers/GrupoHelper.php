@@ -121,9 +121,6 @@ class GrupoHelper extends BaseHelper
             $registro->select('grupos.*');
         }
 
-        //$registro = $registro->where('grupos.active', '=', 'yes')->get();
-
-        //$registro = \App\::where('active', '=', 'yes')->get();
         $ordemArr   = explode('-', $ordem);
 
         $oremCampo      = $ordemArr[0];

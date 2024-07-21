@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Exceptions\EspecialidadeException;
 use Illuminate\Support\Facades\Validator;
 use App\Especialidade;
+use \App\Helpers\EspecialidadeHelper;
 
 class EspecialidadeController extends Controller
 {
@@ -15,122 +16,30 @@ class EspecialidadeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-   
+
     public function json(Request $request)
     {
 
         try {
             \DB::beginTransaction();
-            
+
             $consulta = $request->all();
 
-            if(! isset($consulta['ordem'])){
-                $consulta['ordem'] = 'id-desc';
+            $objEspecialidadeHelper = new EspecialidadeHelper();
+            $registro = $objEspecialidadeHelper->json($consulta);
+            if (!$registro) {
+                throw new EspecialidadeException('Registro não identifiado');
             }
-
-            $parse = [
-               
-                'id'=>'especialidades.id',
-
-            ];
-
-
-            $ordem = $consulta['ordem'] ?? 'id-desc';
-
-
-            $campos =  null;
-
-            $registro = Especialidade::where('active', '=', 'yes');
-
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
-                        case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-                                $val = explode(',', $val);
-                                
-                                $registro->whereIn('id', $val);
-                            }
-                            break;
-                        case 'name':
-                            if($val[0] == ','){
-                                $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
-                                $val = substr($val, 0, -1);
-                            }
-                            
-                            $registro->where('name', 'like' , '%'.$val.'%');
-                            break;
-                        case 'limite':
-                            $val = (int) $val;
-                            if(is_integer($val) && $val > 0){
-                                     
-                                $registro->limit($val);
-                            }
-                            break;
-                         case 'ordem':
- 
-                                 
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
-
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
-                                    }
-                                     
-                                     
-                                }
-
-                            break;
-                    }
-                }
-            }
-
-            $registro = $registro->get();
-            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
-                $dataToRequest = [];
-                foreach($registro as $reg){
-                    $dataToRequest[] = ['label'=>$reg->name, 'value'=>$reg->id];
-                }
-
-                $registro = $dataToRequest;
-            }
-            
             \DB::commit();
-            
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
 
-        }catch(EspecialidadeException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (EspecialidadeException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage()], 404);
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
-
     }
 
     /**
@@ -141,91 +50,55 @@ class EspecialidadeController extends Controller
      */
     public function store(Request $request)
     {
-
-        try{
-
-
+        try {
             $validator = $this->validaRequest($request);
 
-            $registro = null;
             \DB::beginTransaction();
 
             $dados = $request->all();
-            $user_id = \Auth::User()->id;
-
-            $dadosEvento                = $request->only('name');
-            $dadosEvento['user_id']     = $user_id;
-            $dadosEvento['active']      = 'yes';
-            $result = Especialidade::create($dadosEvento);
-
-            if(! $result){
-
-                throw new EspecialidadeException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o supote.');
-
-            }
+            $objEspecialidadeHelper = new EspecialidadeHelper();
+            $result = $objEspecialidadeHelper->store($dados);
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$result, 'class'=>'sucess'], 200);
-
-
-        }catch (EspecialidadeException $th) {
-
+            return response()->json(['mensagem' => $result, 'class' => 'sucess'], 200);
+        } catch (EspecialidadeException $th) {
             \DB::rollback();
-
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
-
-            //throw $th;
+            //return response()->json(['mensagem' => $th->getMessage() . ' ' . $th->getLine() . ' ' . $th->getFile()], 500);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor: '.$th->getMessage(), 'class'=>'warning'], 500);
-            //throw $th;
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $th->getMessage() . ' ' . $th->getLine() . ' ' . $th->getFile(), 'class' => 'warning'], 500);
         }
     }
 
-    
+
 
     public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             \DB::beginTransaction();
-            
-            if($id <= 0){
 
-                throw new EspecialidadeException('Parâmetro inválido. Entre em contato com o supote.');
-            }
-
-            $registro = null;
-
-            $registro = Especialidade::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
-
-            if($registro == null){
-
-                throw new EspecialidadeException('Registro não encontrado.');
-            }
+            $dados = $request->all();
+            $objEspecialidadeHelper = new EspecialidadeHelper();
+            $registro = $objEspecialidadeHelper->info($dados, $id);
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-
-        }catch(EspecialidadeException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (EspecialidadeException $th) {
+            \DB::rollback();
+            //return response()->json(['mensagem' => $th->getMessage() . ' ' . $th->getLine() . ' ' . $th->getFile()], 500);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+        } catch (\Exception $th) {
             \DB::rollback();
 
-            //$msg = $e->getMessage();
-            //return view('layouts._admin._error', compact('msg'));
-
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
-    
-        }catch(\Exception $e){
-            \DB::rollback();
-
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $th->getMessage() . ' ' . $th->getLine() . ' ' . $th->getFile(), 'class' => 'warning'], 500);
         }
     }
 
@@ -235,44 +108,30 @@ class EspecialidadeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    
+
     public function edit(Request $request, $id, $idAssistente)
     {
 
         try {
-            $dadosRequest = $request->all();
-
-            if($id <= 0){
-                throw new EspecialidadeException('Parâmetro ínválido');
-            }
 
             \DB::beginTransaction();
 
-            $registro = Especialidade::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
-
-            if(! $registro){
-                throw new EspecialidadeException('Registro não encontrado');
-                
-            }
+            $dados = $request->all();
+            $objEspecialidadeHelper = new EspecialidadeHelper();
+            $registro = $objEspecialidadeHelper->edit($dados, $id);
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-
-
-        }catch(EspecialidadeException $e){
-
+            return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+        } catch (EspecialidadeException $th) {
             \DB::rollback();
-            
-             return response()->json(['errors'=>['error'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
-
-        }catch(\Exception $e){
+            //return response()->json(['mensagem' => $th->getMessage() . ' ' . $th->getLine() . ' ' . $th->getFile()], 500);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+        } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $th->getMessage() . ' ' . $th->getLine() . ' ' . $th->getFile(), 'class' => 'warning'], 500);
         }
-
     }
 
     /**
@@ -284,45 +143,26 @@ class EspecialidadeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try{
-                        
+        try {
+
             $this->validaRequest($request);
 
             \DB::beginTransaction();
 
-
-
-            $user_id    = \Auth::User()->id;
-            $erros      = [];
-            
             $dados = $request->all();
-
-            $dadosEvento                        = $request->only('name');   
-            //$dadosEvento['user_update_id']      = $user_id;
-            
-            $eventoAgenda = Especialidade::where('id', '=', $id)->where('active', '=', 'yes')->first();
-            if(! $eventoAgenda){
-                throw new EspecialidadeException('Evento não identificado');
-            }
-
-            $eventoAgenda->update($dadosEvento);
+            $objEspecialidadeHelper = new EspecialidadeHelper();
+            $registro = $objEspecialidadeHelper->update($dados, $id);
 
             \DB::commit();
-            return response()->json(['mensagem'=>$eventoAgenda, 'class' => 'success'], 200);
-
-        }catch(EspecialidadeException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+        } catch (EspecialidadeException $th) {
+            \DB::rollback();
+            //return response()->json(['mensagem' => $th->getMessage() . ' ' . $th->getLine() . ' ' . $th->getFile()], 500);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+        } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 400);
-
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
-            \DB::rollback();
-
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
-
-            //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $th->getMessage() . ' ' . $th->getLine() . ' ' . $th->getFile(), 'class' => 'warning'], 500);
         }
     }
 
@@ -334,42 +174,26 @@ class EspecialidadeController extends Controller
      */
     public function destroy($id)
     {
-        try{
-
-            if($id <= 0){
-
-                // \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
-
-                //return redirect()->route('pessoa.index');
-                return response()->json(['mensagem'=>'Erro ao deletar registro', 'class'=>'warning'], 400);
-
-            }
+        try {
 
             \DB::beginTransaction();
 
-            $eventoAgenda = Especialidade::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
-            if(! $eventoAgenda){
-                throw new EspecialidadeException('Registro não encontrado');
-            }
-
-            $eventoAgenda->update(['active'=>'no']);
-            $eventoAgenda->delete();
+            $objEspecialidadeHelper = new EspecialidadeHelper();
+            $registro = $objEspecialidadeHelper->destroy($id);
 
             \DB::commit();
-            return response()->json(['mensagem'=>'Registro atulizado com sucesso', 'class'=>'success']);
-
-        }catch(EspecialidadeException $e){
+            return response()->json(['mensagem' => 'Registro atulizado com sucesso', 'class' => 'success']);
+        } catch (EspecialidadeException $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
 
             //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
@@ -377,21 +201,21 @@ class EspecialidadeController extends Controller
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'name'=> 'required|max:255|min:2',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255|min:2',
         ], [
             'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
             'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
             'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
-                $msg .= $mensagem.'<br/>';
+            foreach ($errors->all() as $mensagem) {
+                $msg .= $mensagem . '<br/>';
             }
-            
+
             throw new EspecialidadeException($msg);
         }
 
