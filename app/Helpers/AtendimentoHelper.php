@@ -34,6 +34,7 @@ use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 
 class AtendimentoHelper extends BaseHelper
 {
+    const USE_NOTIFICATION_SERVICE = FALSE;
 
     public function store(array $dados)
     {
@@ -145,21 +146,12 @@ class AtendimentoHelper extends BaseHelper
         }
 
         //-------------------------------------------
+        if (self::USE_NOTIFICATION_SERVICE) {
+            $notificationResponse = $this->createNotificationAppointment($newAppointment);
 
-        /* $objRepo = new EloquentNotificationRepository();
-        $objCreatHandler = new CreateNotificationHandler($objRepo);
-        $objServiceNotification = new NotificationApplicationService($objCreatHandler);
-
-        $sender = new WhatsAppOfficialApi();
-        $notification = new Notification();
-        $notification->setTargetContactAddress(new NotificationTargetContactAddress('5598984257623'));
-        $notification->setTargetContactName(new NotificationTargetContactName($registro->pessoa->name));
-        $objServiceNotification->sender($sender);
-        $response = $objServiceNotification->sendNotification($notification); */
-        $notificationResponse = $this->createNotificationAppointment($newAppointment);
-
-        if (!$notificationResponse) {
-            throw new AtendimentoException('Was not possible to create the appointment notification.');
+            if (!$notificationResponse) {
+                throw new AtendimentoException('Was not possible to create the appointment notification.');
+            }
         }
         return $registro;
     }
