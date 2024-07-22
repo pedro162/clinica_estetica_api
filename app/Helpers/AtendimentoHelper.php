@@ -34,7 +34,7 @@ use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 
 class AtendimentoHelper extends BaseHelper
 {
-    const USE_NOTIFICATION_SERVICE = FALSE;
+    const USE_NOTIFICATION_SERVICE = TRUE;
 
     public function store(array $dados)
     {
@@ -111,7 +111,7 @@ class AtendimentoHelper extends BaseHelper
             ->appointmentProfessionalId($profissional->id)
             ->appointmentBranchId($filial->id)
             ->appointmentName($pessoas->name)
-            ->appointmentNickname($dados['name'])
+            ->appointmentNickname($dados['name'] ?? $pessoas->name)
             ->appointmentReminder($dados['historico'])
             ->appointmentPriority($dados['prioridade'])
             ->appointmentType($dados['tipo'] ?? 'consulta')
