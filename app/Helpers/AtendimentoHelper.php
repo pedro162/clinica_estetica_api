@@ -34,7 +34,7 @@ use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 
 class AtendimentoHelper extends BaseHelper
 {
-    const USE_NOTIFICATION_SERVICE = TRUE;
+    const USE_NOTIFICATION_SERVICE = FALSE;
 
     public function store(array $dados)
     {

@@ -83,14 +83,14 @@ return [
             ]) : [],
         ],
 
-        'mysql' => [
+        /*'mysql' => [//---PRODUCTION
             'driver' => 'mysql',
             'url' => env('DATABASE_URL_'),
-            'host' => env('DB_HOST_', 'database-1.chggya42a5ow.us-east-2.rds.amazonaws.com'), //127.0.0.1
+            'host' => env('DB_HOST_', 'database-1.chggya42a5ow.us-east-2.rds.amazonaws.com'),//127.0.0.1
             'port' => env('DB_PORT_', '3306'),
-            'database' => env('DB_DATABASE_', 'clinida_estetica'), //forge,
-            'username' => env('DB_USERNAME_', 'admin'), //forge
-            'password' => env('DB_PASSWORD_', 'pedro0000'), //''
+            'database' => env('DB_DATABASE_', 'clinida_estetica'),//forge,
+            'username' => env('DB_USERNAME_', 'admin'),//forge
+            'password' => env('DB_PASSWORD_', 'pedro0000'),//''
             'unix_socket' => env('DB_SOCKET_', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -101,8 +101,8 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
-        ],
-        /* 'mysql' => [
+        ],*/
+        'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL_'),
             'host' => env('DB_HOST', 'database-1.chggya42a5ow.us-east-2.rds.amazonaws.com'), //127.0.0.1
@@ -120,7 +120,7 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
-        ], */
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',
