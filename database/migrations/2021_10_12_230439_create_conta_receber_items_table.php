@@ -15,7 +15,7 @@ class CreateContaReceberItemsTable extends Migration
     {
         Schema::create('conta_receber_items', function (Blueprint $table) {
             $table->id();
-            
+
             $table->string('documento')->nullable()->default(null);
             $table->date('dtPagamento')->nullable()->default(null);
             $table->date('dtBaixa')->nullable()->default(null);
@@ -36,15 +36,15 @@ class CreateContaReceberItemsTable extends Migration
             $table->foreign('conta_receber_id')->references('id')->on('conta_recebers')->onUpdate('cascade')->onDelete('cascade');*/
             $table->bigInteger('pessoa_baixa_id')->unsigned()->nullable()->default(null);
             $table->bigInteger('pessoa_estorno_id')->unsigned()->nullable()->default(null);
-            $table->bigInteger('pessoa_devolucao_id')->unsigned()->nullable()->default(null);  
+            $table->bigInteger('pessoa_devolucao_id')->unsigned()->nullable()->default(null);
 
-            $table->bigInteger('forma_pagamentos_id')->unsigned();
+            $table->bigInteger('forma_pagamentos_id')->unsigned()->nullable()->default(null);
             $table->foreign('forma_pagamentos_id')->references('id')->on('forma_pagamentos')->onUpdate('cascade')->onDelete('cascade');
-            
+
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);  
-            $table->enum('active',['yes', 'no'])->default('no');
+            $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
+            $table->enum('active', ['yes', 'no'])->default('no');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -14,8 +14,8 @@ class CreatePessoaFormularioRespostasAddColumns01Table extends Migration
     public function up()
     {
         Schema::table('pessoa_formulario_respostas', function (Blueprint $table) {
+            $table->bigInteger('form_item_id')->unsigned()->nullable()->default(null);
             $table->foreign('form_item_id')->references('id')->on('formulario_items')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('form_item_id')->unsigned();
         });
     }
 

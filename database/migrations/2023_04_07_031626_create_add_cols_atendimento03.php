@@ -14,8 +14,8 @@ class CreateAddColsAtendimento03 extends Migration
     public function up()
     {
         Schema::table('atendimentos', function (Blueprint $table) {
-            
-            $table->bigInteger('profissional_id')->unsigned();
+
+            $table->bigInteger('profissional_id')->unsigned()->nullable()->default(null);
             $table->foreign('profissional_id')->references('id')->on('profissionals')->onDelete('cascade')->onUpdate('cascade');
         });
     }

@@ -10,7 +10,7 @@ use App\Domain\Http\ValueObjects\HttpHeader;
 use App\Domain\Http\ValueObjects\HttpUrl;
 use App\Domain\Http\Interfaces\HttpInterface;
 
-class Http extends HttpInterface
+class Http
 {
     protected HttpId $id;
     protected HttpCode $httpCode;

@@ -14,17 +14,17 @@ class CreateContaReceberItemsCaixaTable extends Migration
     public function up()
     {
         Schema::table('conta_receber_items', function (Blueprint $table) {
-            $table->bigInteger('caixa_id')->unsigned()->nullable()->default(null);  
-            $table->enum('tpBaixa',['system', 'user'])->default('user');
+            $table->bigInteger('caixa_id')->unsigned()->nullable()->default(null);
+            $table->enum('tpBaixa', ['system', 'user'])->default('user');
             $table->string('rashBaixa')->nullable()->default(null);
             //$table->id();
             //$table->timestamps();
         });
 
-        Schema::table('conta_recebers', function (Blueprint $table) {            
-            $table->bigInteger('responsavel_id')->unsigned();
-            $table->foreign('responsavel_id')->references('id')->on('pessoas')->onDelete('cascade')->onUpdate('cascade');    
-            $table->enum('importacao_dados',['yes', 'no'])->default('no');
+        Schema::table('conta_recebers', function (Blueprint $table) {
+            $table->bigInteger('responsavel_id')->unsigned()->nullable()->default(null);
+            $table->foreign('responsavel_id')->references('id')->on('pessoas')->onDelete('cascade')->onUpdate('cascade');
+            $table->enum('importacao_dados', ['yes', 'no'])->default('no');
         });
     }
 

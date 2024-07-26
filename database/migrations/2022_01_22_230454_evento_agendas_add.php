@@ -13,7 +13,7 @@ class EventoAgendasAdd extends Migration
      */
     public function up()
     {
-         Schema::table('evento_agendas', function (Blueprint $table) {  
+        Schema::table('evento_agendas', function (Blueprint $table) {
 
             $table->string('descricao')->nullable()->default(null);
             $table->string('periodo')->nullable()->default(null);
@@ -21,13 +21,13 @@ class EventoAgendasAdd extends Migration
             $table->date('dt_fim')->nullable()->default(null);
             $table->time('hr_inicio')->nullable()->default(null);
             $table->time('hr_fim')->nullable()->default(null);
-            $table->bigInteger('profissional_id')->unsigned();
+            $table->bigInteger('profissional_id')->unsigned()->nullable()->default(null);
             $table->foreign('profissional_id')->references('id')->on('profissionals')->onUpdate('cascade')->onDelete('cascade');
-           
-            $table->bigInteger('categoria_evento_id')->unsigned();
-            $table->foreign('categoria_evento_id')->references('id')->on('categoria_eventos')->onUpdate('cascade')->onDelete('cascade');           
-            $table->enum('recorrente',['yes', 'no'])->default('no');
-            $table->enum('nivel',['baixo', 'medio', 'auto', 'urgente'])->default('baixo');
+
+            $table->bigInteger('categoria_evento_id')->unsigned()->nullable()->default(null);
+            $table->foreign('categoria_evento_id')->references('id')->on('categoria_eventos')->onUpdate('cascade')->onDelete('cascade');
+            $table->enum('recorrente', ['yes', 'no'])->default('no');
+            $table->enum('nivel', ['baixo', 'medio', 'auto', 'urgente'])->default('baixo');
         });
     }
 
@@ -38,7 +38,7 @@ class EventoAgendasAdd extends Migration
      */
     public function down()
     {
-        Schema::table('evento_agendas', function($table) {
+        Schema::table('evento_agendas', function ($table) {
             $table->dropColumn('descricao');
             $table->dropColumn('periodo');
             $table->dropColumn('dt_inicio');
@@ -49,6 +49,6 @@ class EventoAgendasAdd extends Migration
             $table->dropColumn('categoria_evento_id');
             $table->dropColumn('recorrente');
             $table->dropColumn('nivel');
-       });
+        });
     }
 }

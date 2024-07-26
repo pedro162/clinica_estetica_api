@@ -12,6 +12,7 @@ use App\Domain\Notification\Entities\Notification;
 use App\Domain\Notification\ValueObjects\NotificationMessage;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
+use App\Domain\Notification\ValueObjects\NotificationTemplateId;
 use App\Domain\Template\Entities\WhatsAppTemplate;
 use App\Domain\Template\ValueObjects\TemplateId;
 use App\Domain\Template\ValueObjects\TemplateLanguage;
@@ -48,6 +49,7 @@ class NotificationServiceTest extends TestCase
     {
         parent::setUp();
         //Artisan::call('migrate', ['--force']);
+        //Artisan::call('migrate');
 
         $objSetup = new SetupTest();
         $objSetup->settingUpUser();
@@ -202,18 +204,19 @@ class NotificationServiceTest extends TestCase
         $this->assertTrue($response, 'Was not possible to send the message');
     }
 
-    /**
-     * Attempt to create a notification using the DDD Service class resource
-     *@return void
-     */
-    /* public function testCreateNaturalNotificationUsingServiceNotificationWithUseAnUrl()
+    public function testSendWhatsAppOfficialApiTextNotification()
     {
-        $response = $this->notificationApplicationService->createNotification(0, 'Pedro', 'aguiar', '61224450370', '', 'm', '');
+        $sender = new WhatsAppOfficialApi();
 
-        $idNotification = (string) $response->getId();
-        $idNotification = (int) $idNotification;
-        $this->assertGreaterThan(0, $idNotification, "it was not possible to create a natural notification");
-    } */
+        $notification = new Notification();
+        $notification->setTemplateId(new NotificationTemplateId('0'));
+        $notification->setTargetContactAddress(new NotificationTargetContactAddress('5598984257623'));
+        $notification->setTargetContactName(new NotificationTargetContactName('Pedro'));
+        $notification->setMessage(new NotificationMessage('Hello dear client'));
+        $this->notificationApplicationService->sender($sender);
+        $response = $this->notificationApplicationService->sendNotification($notification);
+        $this->assertTrue($response);
+    }
 
     private function testNotificationApplicationServiceBootstrap()
     {
@@ -227,11 +230,4 @@ class NotificationServiceTest extends TestCase
         $objServiceNotification = new AppointmentApplicationService($objCreateHandler);
         $this->appointmentApplicationService = $objServiceNotification;
     }
-
-    /* private function settingUpUser(): void
-    {
-        if (!User::where('email', '=', 'admin@gmail.com')->first()) {
-            User::create(['name' => 'admin', 'email' => 'admin@gmail.com',  'password' => bcrypt(123456)]);
-        }
-    } */
 }

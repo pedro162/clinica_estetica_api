@@ -14,8 +14,8 @@ class CreateAddColsAtendimento02 extends Migration
     public function up()
     {
         Schema::table('atendimentos', function (Blueprint $table) {
-            $table->enum('prioridade',['baixa', 'normal', 'media', 'alta', 'urgente'])->default('baixa');
-            $table->bigInteger('filial_id')->unsigned();
+            $table->enum('prioridade', ['baixa', 'normal', 'media', 'alta', 'urgente'])->default('baixa');
+            $table->bigInteger('filial_id')->unsigned()->nullable()->default(null);
             $table->foreign('filial_id')->references('id')->on('filials')->onUpdate('cascade')->onDelete('cascade');
         });
     }

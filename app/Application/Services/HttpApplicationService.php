@@ -17,18 +17,8 @@ class HttpApplicationService
     }
 
     public function createHttp(
-        string $httpId = '',
-        string $httpName = '',
-        string $httpOptionalName = '',
-        string $httpDocument = '',
-        string $httpExtraDocument = '',
-        string $httpSex = '',
-        string $httpEmail = ''
+        CreateHttpCommand $command
     ): ?Http {
-
-        $command = new CreateHttpCommand();
-
-        $command->httpId($httpId);
 
         return $this->createHttpHandler->handler($command);
     }

@@ -14,7 +14,7 @@ class CreateCentroCustoCategoriaTable extends Migration
     public function up()
     {
         Schema::table('centro_custos', function (Blueprint $table) {
-            $table->bigInteger('categoria_id')->unsigned();
+            $table->bigInteger('categoria_id')->unsigned()->nullable()->default(null);
             $table->foreign('categoria_id')->references('id')->on('cateoria_centro_custos')->onUpdate('cascade')->onDelete('cascade');
         });
     }

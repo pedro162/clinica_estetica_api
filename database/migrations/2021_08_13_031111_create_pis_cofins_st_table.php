@@ -14,7 +14,7 @@ class CreatePisCofinsStTable extends Migration
     public function up()
     {
         Schema::table('pis_cofins', function (Blueprint $table) {
-            $table->string('st');
+            $table->string('st')->nullable()->default(null);
         });
     }
 

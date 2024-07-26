@@ -14,7 +14,7 @@ class CreateAddColsFormTable extends Migration
     public function up()
     {
         Schema::table('formulario_grupos', function (Blueprint $table) {
-            $table->bigInteger('formulario_id')->unsigned();
+            $table->bigInteger('formulario_id')->unsigned()->nullable()->default(null);
             $table->foreign('formulario_id')->references('id')->on('formularios')->onUpdate('cascade')->onDelete('cascade');
         });
     }

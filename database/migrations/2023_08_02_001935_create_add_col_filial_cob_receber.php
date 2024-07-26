@@ -14,16 +14,15 @@ class CreateAddColFilialCobReceber extends Migration
     public function up()
     {
         Schema::table('conta_recebers', function (Blueprint $table) {
-            $table->bigInteger('filial_id')->unsigned();
+            $table->bigInteger('filial_id')->unsigned()->nullable()->default(null);
             $table->foreign('filial_id')->references('id')->on('filials')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('forma_pagamento_id')->unsigned();
+            $table->bigInteger('forma_pagamento_id')->unsigned()->nullable()->default(null);
             $table->foreign('forma_pagamento_id')->references('id')->on('forma_pagamentos')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('plano_pagamento_id')->unsigned();
+            $table->bigInteger('plano_pagamento_id')->unsigned()->nullable()->default(null);
             $table->foreign('plano_pagamento_id')->references('id')->on('plano_pagamentos')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('operador_financeiro_id')->unsigned();
+            $table->bigInteger('operador_financeiro_id')->unsigned()->nullable()->default(null);
             $table->foreign('operador_financeiro_id')->references('id')->on('operador_financeiros')->onUpdate('cascade')->onDelete('cascade');
-            $table->enum('status',['aberto', 'pago', 'pago_parcial', 'devolvido'])->default('aberto');
-            
+            $table->enum('status', ['aberto', 'pago', 'pago_parcial', 'devolvido'])->default('aberto');
         });
     }
 
@@ -41,10 +40,11 @@ class CreateAddColFilialCobReceber extends Migration
             $table->dropForeign('conta_recebers_plano_pagamento_id_foreign');
             $table->dropForeign('conta_recebers_operador_financeiro_id_foreign');
 
-            $table->dropColumn(['filial_id','forma_pagamento_id',
+            $table->dropColumn([
+                'filial_id', 'forma_pagamento_id',
                 'plano_pagamento_id', 'operador_financeiro_id',
                 'status'
-                
+
             ]);
         });
     }

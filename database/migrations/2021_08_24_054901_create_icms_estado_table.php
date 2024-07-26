@@ -14,9 +14,8 @@ class CreateIcmsEstadoTable extends Migration
     public function up()
     {
         Schema::table('icms', function (Blueprint $table) {
-            $table->bigInteger('estados_id')->unsigned();
+            $table->bigInteger('estados_id')->unsigned()->nullable()->default(null);
             $table->foreign('estados_id')->references('id')->on('estadoss')->onUpdate('cascade')->onDelete('cascade');
-
         });
     }
 

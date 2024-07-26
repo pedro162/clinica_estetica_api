@@ -14,7 +14,7 @@ class ProfissionalAdd extends Migration
     public function up()
     {
 
-        Schema::table('profissionals', function (Blueprint $table) {  
+        Schema::table('profissionals', function (Blueprint $table) {
             $table->decimal('vr_salario', 10, 2)->default(0);
             $table->string('titulo_eleitor')->nullable()->default(null);
             $table->string('zona_eleitor')->nullable()->default(null);
@@ -30,12 +30,11 @@ class ProfissionalAdd extends Migration
             $table->enum('grau_instrucao', ['fundamental', 'medio', 'superior'])->default('fundamental');
             $table->enum('status', ['admitido', 'demitido'])->default('admitido');
             $table->enum('tipo_contrato', ['aprendiz', 'efetivo', 'pj'])->default('efetivo');
-            $table->bigInteger('filial_id')->unsigned();
+            $table->bigInteger('filial_id')->unsigned()->nullable()->default(null);
             $table->foreign('filial_id')->references('id')->on('filials')->onUpdate('cascade')->onDelete('cascade');
             $table->bigInteger('uf_cnh_id')->unsigned()->nullable()->default(null);
             $table->foreign('uf_cnh_id')->references('id')->on('estadoss')->onUpdate('cascade')->onDelete('cascade');
         });
-            
     }
 
     /**
@@ -45,7 +44,7 @@ class ProfissionalAdd extends Migration
      */
     public function down()
     {
-        Schema::table('profissionals', function($table) {
+        Schema::table('profissionals', function ($table) {
             $table->dropColumn('vr_salario');
             $table->dropColumn('titulo_eleitor');
             $table->dropColumn('zona_eleitor');
@@ -63,6 +62,6 @@ class ProfissionalAdd extends Migration
             $table->dropColumn('tipo_contrato');
             $table->dropColumn('filial_id');
             $table->dropColumn('uf_cnh_id');
-       });
+        });
     }
 }

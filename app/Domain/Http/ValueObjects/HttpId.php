@@ -6,15 +6,6 @@ class HttpId
 {
     private string $value;
 
-    /*
-        httpId
-        httpCode
-        httpDataRequest
-        httpUrl
-        httpHeader
-        httpBody
-    */
-
     public function __construct(string $value)
     {
         if (!(isset($value) && strlen(trim($value)) > 0)) {

@@ -16,7 +16,7 @@ class CreateAddColsAtendimento extends Migration
         Schema::table('atendimentos', function (Blueprint $table) {
             $table->date('dt_inicio')->nullable()->default(null);
             $table->time('hr_inicio')->nullable()->default(null);
-            $table->enum('status',['remarcado', 'finalizado', 'cancelado', 'pendente'])->default('pendente');
+            $table->enum('status', ['remarcado', 'finalizado', 'cancelado', 'pendente'])->default('pendente');
             $table->dropForeign('atendimentos_evento_agenda_id_foreign');
             $table->dropColumn('evento_agenda_id');
         });

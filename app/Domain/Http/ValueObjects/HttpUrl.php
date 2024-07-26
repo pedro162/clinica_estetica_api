@@ -1,4 +1,3 @@
-HttpUrl
 <?php
 
 namespace App\Domain\Http\ValueObjects;

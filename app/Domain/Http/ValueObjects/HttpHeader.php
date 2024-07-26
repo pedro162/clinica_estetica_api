@@ -1,4 +1,3 @@
-Header
 <?php
 
 namespace App\Domain\Http\ValueObjects;
