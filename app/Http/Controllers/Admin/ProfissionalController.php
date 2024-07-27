@@ -119,10 +119,10 @@ class ProfissionalController extends Controller
                                 if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
-                                $val = explode(',', $val);
-
-                                $registro->whereIn('profissionals.id', $val);
                             }
+                            $val = explode(',', $val);
+
+                            $registro->whereIn('profissionals.id', $val);
                             break;
 
                         case 'limite':

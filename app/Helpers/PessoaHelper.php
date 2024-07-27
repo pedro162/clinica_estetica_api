@@ -109,10 +109,10 @@ class PessoaHelper extends BaseHelper
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            $val = explode(',', $val);
-
-                            $registro->whereIn('id', $val);
                         }
+                        $val = explode(',', $val);
+
+                        $registro->whereIn('id', $val);
                         break;
                 }
             }
