@@ -45,8 +45,8 @@ class AddTenantIdToAllTables extends Migration
             Schema::table($tableName, function (Blueprint $table) use ($tableName) {
                 // Remova a coluna tenant_id se ela existir
                 if (Schema::hasColumn($tableName, 'tenant_id')) {
-                    $table->dropColumn('tenant_id');
-                    $table->dropForeign(['tenant_id']);
+                    $table->dropIndex('parametros_tenant_id_index');
+                    $table->dropColumn(['tenant_id']);
                 }
             });
         }
