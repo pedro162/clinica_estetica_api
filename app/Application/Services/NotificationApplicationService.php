@@ -7,6 +7,8 @@ use App\Application\Commands\CreateNotificationVariableCommand;
 use App\Application\Commands\CreateTemplateCommand;
 use App\Application\Handlers\CreateNotificationHandler;
 use App\Application\Handlers\CreateNotificationVariableHandler;
+use App\Application\Handlers\DeleteNotificationHandler;
+use App\Application\Handlers\FindNotificationByIdHandler;
 use App\Domain\Appointment\Entities\Appointment;
 use App\Domain\Factories\TemplateFactory;
 use App\Domain\Notification\Entities\Notification;
@@ -43,6 +45,8 @@ class NotificationApplicationService
 {
     private NotificationInterface $sender;
     private CreateNotificationHandler $createNotificationHandler;
+    private DeleteNotificationHandler $deleteNotificationHandler;
+    private FindNotificationByIdHandler $findNotificationByIdnHandler;
     private TemplateRepositoryInterface $templateRepository;
     private TemplateVariableRepositoryInterface $templateVariableRepository;
     private NotificationVariableRepositoryInterface $notificationVariableRepository;
@@ -72,6 +76,17 @@ class NotificationApplicationService
     public function createNotificationVariableHandler(CreateNotificationVariableHandler $createNotificationVariableHandler): NotificationApplicationService
     {
         $this->createNotificationVariableHandler = $createNotificationVariableHandler;
+        return $this;
+    }
+    public function deleteNotificationHandler(DeleteNotificationHandler $deleteNotificationHandler): NotificationApplicationService
+    {
+        $this->deleteNotificationHandler = $deleteNotificationHandler;
+        return $this;
+    }
+
+    public function findNotificationByIdHandler(FindNotificationByIdHandler $findNotificationByIdnHandler): NotificationApplicationService
+    {
+        $this->findNotificationByIdnHandler = $findNotificationByIdnHandler;
         return $this;
     }
 
@@ -273,5 +288,17 @@ class NotificationApplicationService
         CreateNotificationCommand $command
     ): ?Notification {
         return $this->createNotificationHandler->handler($command);
+    }
+
+    public function delete(
+        CreateNotificationCommand $command
+    ): ?Notification {
+        return $this->createNotificationHandler->handler($command);
+    }
+
+    public function findById(
+        CreateNotificationCommand $command
+    ): ?Notification {
+        return $this->findNotificationByIdnHandler->handler($command);
     }
 }

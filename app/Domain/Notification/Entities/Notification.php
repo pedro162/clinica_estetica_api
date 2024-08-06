@@ -11,6 +11,7 @@ use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\Notification\ValueObjects\NotificationTemplateId;
 use App\Domain\Notification\ValueObjects\NotificationSentDate;
 use App\Domain\Notification\ValueObjects\NotificationShippingState;
+use App\Domain\Notification\ValueObjects\NotificationTenantId;
 use App\Domain\NotificationVariable\Entities\NotificationVariable;
 use App\Domain\Template\Entities\Template;
 
@@ -24,6 +25,7 @@ class Notification
     protected notificationTargetContactName $target_contact_name;
     protected notificationOriginContactAddress $origin_contact_address;
     protected NotificationTemplateId $template_id;
+    protected NotificationTenantId $tenant_id;
     protected NotificationShippingState $shipping_state;
     protected Template $template;
     protected array $variables;
@@ -131,6 +133,18 @@ class Notification
     public function getSentDate(): NotificationSentDate
     {
         return $this->sent_date;
+    }
+
+
+    public function setTenantId(NotificationTenantId $tenant_id): Notification
+    {
+        $this->tenant_id = $tenant_id;
+        return $this;
+    }
+
+    public function getTenantId(): NotificationTenantId
+    {
+        return $this->tenant_id;
     }
 
     public function getTemplate(): Template

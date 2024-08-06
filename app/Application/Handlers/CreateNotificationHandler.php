@@ -19,6 +19,7 @@ use App\Domain\Notification\ValueObjects\NotificationShippingState;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\Notification\ValueObjects\NotificationTemplateId;
+use App\Domain\Notification\ValueObjects\NotificationTenantId;
 use App\Domain\Notification\ValueObjects\NotificationTitle;
 
 class CreateNotificationHandler

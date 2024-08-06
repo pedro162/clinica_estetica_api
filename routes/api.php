@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
 	$user = $request->user();
-	if($user){
+	if ($user) {
 		$user->pessoa;
 	}
 	return $user;
@@ -668,7 +668,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/ordem/servico/cobranca/info/{id}', ['as' => 'ordem.servico.cobranca.info', 'uses' => 'Admin\OrdemServicoCobrancaController@info']);
 	Route::get('/ordem/servico/cobranca/destroy/{id}', ['as' => 'ordem.servico.cobranca.destroy', 'uses' => 'Admin\OrdemServicoCobrancaController@destroy']);
 
-
 	Route::get('/motivo/cancelamento/ordem/servico/json', ['as' => 'motivo.cancelamento.ordem.servico.json', 'uses' => 'Admin\MotivoCancelamentoOrdemServicoController@json']);
 	Route::post('/motivo/cancelamento/ordem/servico/json', ['as' => 'motivo.cancelamento.ordem.servico.json', 'uses' => 'Admin\MotivoCancelamentoOrdemServicoController@json']);
 	Route::post('/motivo/cancelamento/ordem/servico/store', ['as' => 'motivo.cancelamento.ordem.servico.store', 'uses' => 'Admin\MotivoCancelamentoOrdemServicoController@store']);
@@ -679,6 +678,17 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/motivo/cancelamento/ordem/servico/info/{id}', ['as' => 'motivo.cancelamento.ordem.servico.info', 'uses' => 'Admin\MotivoCancelamentoOrdemServicoController@info']);
 	Route::get('/motivo/cancelamento/ordem/servico/destroy/{id}', ['as' => 'motivo.cancelamento.ordem.servico.destroy', 'uses' => 'Admin\MotivoCancelamentoOrdemServicoController@destroy']);
 
+	Route::get('/notification/json', ['as' => 'notification.json', 'uses' => 'Admin\NotificationController@json']);
+	Route::post('/notification/json', ['as' => 'notification.json', 'uses' => 'Admin\NotificationController@json']);
+	Route::post('/notification/store', ['as' => 'notification.store', 'uses' => 'Admin\NotificationController@store']);
+	Route::get('/notification/edit/{id}', ['as' => 'notification.edit', 'uses' => 'Admin\NotificationController@edit']);
+	Route::post('/notification/edit/{id}', ['as' => 'notification.edit', 'uses' => 'Admin\NotificationController@edit']);
+	Route::put('/notification/update/{id}', ['as' => 'notification.update', 'uses' => 'Admin\NotificationController@update']);
+	Route::get('/notification/info/{id}', ['as' => 'notification.info', 'uses' => 'Admin\NotificationController@info']);
+	Route::post('/notification/info/{id}', ['as' => 'notification.info', 'uses' => 'Admin\NotificationController@info']);
+	Route::get('/notification/destroy/{id}', ['as' => 'notification.destroy', 'uses' => 'Admin\NotificationController@destroy']);
+	Route::post('/notification/email/store', ['as' => 'notification.email.store', 'uses' => 'Admin\NotificationController@emailStore']);
+	Route::post('/notification/whatsapp/store', ['as' => 'notification.whatsapp.store', 'uses' => 'Admin\NotificationController@whatsAppStore']);
 
 	Route::get('/widget/faturamento/liquidez/mes_ano/json/{widget?}', ['as' => 'widget.faturamento.liquidez.mes_ano.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoMesAnoWidgetJson']);
 	Route::post('/widget/faturamento/liquidez/mes_ano/json/{widget?}', ['as' => 'widget.faturamento.liquidez.mes_ano.json', 'uses' => 'Admin\WidgetController@faturamentoLiquidezAgrupadoMesAnoWidgetJson']);
@@ -691,7 +701,4 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::get('/widget/atendimento/qtd/json/{widget?}', ['as' => 'widget.atendimento.qtd.json', 'uses' => 'Admin\WidgetController@atendimentosPorTipoWidgetJson']);
 	Route::post('/widget/atendimento/qtd/json/{widget?}', ['as' => 'widget.atendimento.qtd.json', 'uses' => 'Admin\WidgetController@atendimentosPorTipoWidgetJson']);
-	
-	
-	
 });

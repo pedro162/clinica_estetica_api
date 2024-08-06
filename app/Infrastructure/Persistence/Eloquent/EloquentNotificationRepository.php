@@ -16,6 +16,7 @@ use App\Domain\Notification\ValueObjects\NotificationShippingState;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\Notification\ValueObjects\NotificationTemplateId;
+use App\Domain\Notification\ValueObjects\NotificationTenantId;
 use App\Domain\Notification\ValueObjects\NotificationTitle;
 use Illuminate\Support\Facades\DB;
 use App\Notification as NotificationModel;
@@ -26,22 +27,17 @@ class EloquentNotificationRepository implements NotificationRepositoryInterface
     public function save(Notification $notification): ?Notification
     {
 
-        /**'title',
-        'message',
-        'origin_contact_address',
-        'target_contact_address',
-        'target_contact_name',
-        'template_id',
-        'shipping_state',
-        'sent_date',
-        'user_id',
-        'user_update_id',
-        'active', */
         //Todo
         //Implement an object model instance and save or update within database, after that, return the object notification implementation
         $notificationId = (string) $notification->getId();
         $notificationId = (int) $notificationId;
         $userId   = User::first()->id;
+        $tenantId   = User::first()->tenant_id;
+        $templateId =  (string) $notification->getTemplateId();
+        $templateId = (int) $templateId;
+
+        if (!$templateId > 0) $templateId = null;
+
         if ($notificationId > 0) {
             //update
             $notificationMomel = NotificationModel::where('id', '=', $notificationId)->first();
@@ -51,9 +47,10 @@ class EloquentNotificationRepository implements NotificationRepositoryInterface
                 'origin_contact_address' => (string) $notification->getOriginContactAddress(),
                 'target_contact_address' => (string) $notification->getTargetContactAddress(),
                 'target_contact_name' => (string) $notification->getTargetContactName(),
-                'template_id' => (string) $notification->getTemplateId(),
+                'template_id' => $templateId,
                 'shipping_state' => (string) $notification->getShippingState(),
-                'sent_date' => (string) $notification->getSentDate(),
+                'tenant_id' => (string) $notification->getTenantId(),
+                'sent_date' => (string) $tenantId,
                 'user_id' => (string) $userId,
                 'user_update_id' => null,
                 'active' => 'yes',
@@ -66,9 +63,10 @@ class EloquentNotificationRepository implements NotificationRepositoryInterface
                 'origin_contact_address' => (string) $notification->getOriginContactAddress(),
                 'target_contact_address' => (string) $notification->getTargetContactAddress(),
                 'target_contact_name' => (string) $notification->getTargetContactName(),
-                'template_id' => (string) $notification->getTemplateId(),
+                'template_id' => $templateId,
                 'shipping_state' => (string) $notification->getShippingState(),
                 'sent_date' => (string) $notification->getSentDate(),
+                'tenant_id' => (string) $tenantId,
                 'user_id' => (string) $userId,
                 'user_update_id' => null,
                 'active' => 'yes'
@@ -78,18 +76,36 @@ class EloquentNotificationRepository implements NotificationRepositoryInterface
 
         return $this->findById($notification->getId());
     }
+
+    public function delete(Notification $notification)
+    {
+        $notificationId = (string) $notification->getId();
+        $notificationId = (int) $notificationId;
+        $userId   = User::first()->id;
+        $tenantId   = User::first()->tenant_id;
+        $notificationMomel = NotificationModel::where('tenant_id', '=', $tenantId)->where('id', '=', $notificationId)->first();
+        if ($notificationMomel) {
+            $notificationMomel->updated([
+                'active' => 'no',
+            ]);
+            $notificationMomel->delete();
+        }
+    }
+
     public function findById(NotificationId $id): ?Notification
     {
-        $notification = DB::table('notifications')->where('id', '=', (string)$id)->first();
+        $tenantId   = User::first()->tenant_id;
+        $notification = DB::table('notifications')->where('tenant_id', '=', $tenantId)->where('id', '=', (string)$id)->first();
         if ($notification) {
             $objNotification =  new Notification();
             $objNotification->setId(new NotificationId($notification->id))
                 ->setTitle(new NotificationTitle($notification->title))
                 ->setMessage(new NotificationMessage($notification->message))
-                ->setTemplateId(new NotificationTemplateId($notification->template_id))
+                ->setTemplateId(new NotificationTemplateId($notification->template_id > 0 ? $notification->template_id : 0))
                 ->setTargetContactAddress(new NotificationTargetContactAddress($notification->target_contact_address))
                 ->setTargetContactName(new NotificationTargetContactName($notification->target_contact_name))
                 ->setOriginContactAddress(new NotificationOriginContactAddress($notification->origin_contact_address))
+                ->setTenantId(new NotificationTenantId($notification->tenant_id))
                 ->setSentDate(new NotificationSentDate($notification->sent_date))
                 ->setShippingState(new NotificationShippingState($notification->shipping_state));
             return $objNotification;

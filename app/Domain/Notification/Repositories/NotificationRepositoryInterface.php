@@ -9,4 +9,5 @@ interface NotificationRepositoryInterface
 {
     public function save(Notification $task): ?Notification;
     public function findById(NotificationId $id): ?Notification;
+    public function delete(Notification $task);
 }

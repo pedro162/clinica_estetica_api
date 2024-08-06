@@ -14,17 +14,7 @@ class CreateNotificationCommand
     protected string $notificationTargetContactName;
     protected string $notificationShippingState;
     protected string $notificationOriginContactAddress;
-    /**'title',
-    'message',
-    'origin_contact_address',
-    'target_contact_address',
-    'target_contact_name',
-    'template_id',
-    'shipping_state',
-    'sent_date',
-    'user_id',
-    'user_update_id',
-    'active', */
+    protected string $notificationTenantId;
 
     public function notificationId(string $notificationId): CreateNotificationCommand
     {
@@ -80,6 +70,12 @@ class CreateNotificationCommand
         return $this;
     }
 
+    public function notificationTenantId(string $notificationTenantId): CreateNotificationCommand
+    {
+        $this->notificationTenantId = $notificationTenantId;
+        return $this;
+    }
+
     public function getNotificationId(): ?string
     {
         return $this->notificationId;
@@ -122,5 +118,10 @@ class CreateNotificationCommand
     public function getNotificationShippingState(): ?string
     {
         return $this->notificationShippingState;
+    }
+
+    public function getNotificationTenantId(): ?string
+    {
+        return $this->notificationTenantId;
     }
 }

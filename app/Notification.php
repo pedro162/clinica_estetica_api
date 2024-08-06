@@ -17,10 +17,13 @@ class Notification extends Model
         'target_contact_address',
         'target_contact_name',
         'template_id',
+        'tenant_id',
         'shipping_state',
         'sent_date',
         'user_id',
         'user_update_id',
         'active',
+        'type',
+        'filial_id',
     ];
 }
