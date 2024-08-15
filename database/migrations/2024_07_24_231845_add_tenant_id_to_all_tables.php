@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 class AddTenantIdToAllTables extends Migration
 {
@@ -12,8 +13,8 @@ class AddTenantIdToAllTables extends Migration
         // Obtenha todas as tabelas do banco de dados
         $tables = DB::select('SHOW TABLES');
 
-        foreach ($tables as $table) {
-            $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
+        foreach ($tables as $table) { //env('DB_DATABASE')
+            $tableName = $table->{'Tables_in_' . Config::get('database.connections.mysql.database')};
 
             // Ignore as tabelas que não são relevantes
             if (in_array($tableName, ['migrations', 'password_resets', 'failed_jobs', 'personal_access_tokens', 'simple_tenant_databases'])) {
