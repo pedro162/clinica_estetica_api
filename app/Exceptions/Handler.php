@@ -59,8 +59,8 @@ class Handler extends ExceptionHandler
         if ($request->expectsJson()) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }
-
+        return response()->json(['error' => 'Unauthenticated.'], 401);
         // Customize where to redirect or simply abort with a 401 status
-        return abort(401, 'Unauthenticated');
+        //return abort(401, 'Unauthenticated');
     }
 }
