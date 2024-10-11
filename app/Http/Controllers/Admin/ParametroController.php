@@ -2,37 +2,31 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\ParametroException;
+use App\Helpers\ParametroHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Exceptions\CaixaException;
-use App\Caixa;
-use Illuminate\Support\Facades\Validator;
-use App\Helpers\ParametroHelper;
 
-class CaixaController extends Controller
+class ParametroController extends Controller
 {
-
     public function json(Request $request)
     {
         try {
             \DB::beginTransaction();
 
             $data = $request->all();
-
-            $objParametroHelper = new ParametroHelper();
-
-            $registro = $objParametroHelper->json($data);
+            $objParameter = new ParametroHelper();
+            $registro = $objParameter->json($data);
 
             \DB::commit();
 
             return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 201);
-        } catch (CaixaException $e) {
+        } catch (ParametroException $e) {
             \DB::rollback();
 
             return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
         } catch (\Exception $e) {
             \DB::rollback();
-
             return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
         }
     }
@@ -52,27 +46,16 @@ class CaixaController extends Controller
             \DB::beginTransaction();
 
             $dados = $request->all();
-
-            $dadosRequest = [];
-
-            $dadosRequest['name']                   = $dados['name'];
-            $dadosRequest['type']                   = $dados['type'];
-            $dadosRequest['vrMin']                  = $dados['vrMin'];
-            $dadosRequest['vrMax']                  = $dados['vrMax'];
-            $dadosRequest['status_abertura']        = $dados['status_abertura'] ?? 'close';
-            $dadosRequest['status_bloqueio']        = $dados['status_bloqueio'];
-            $dadosRequest['aceita_transferencia']   = $dados['aceita_transferencia'];
-            $dadosRequest['user_id']                = \Auth::User()->id;
-            $dadosRequest['active']                 = 'yes';
-            $registro = Caixa::create($dadosRequest);
+            $objParameter = new ParametroHelper();
+            $registro = $objParameter->save($dados)->build();
             \DB::commit();
 
             if ($registro) {
                 return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
             } else {
-                throw new CaixaException('Erro ao cadastrar');
+                throw new ParametroException('Erro ao cadastrar');
             }
-        } catch (CaixaException $e) {
+        } catch (ParametroException $e) {
             \DB::rollback();
             return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 400);
         } catch (\Exception $e) {
@@ -91,31 +74,19 @@ class CaixaController extends Controller
     public function update(Request $request, $id)
     {
         try {
-
-
             $this->validaRequest($request);
 
             \DB::beginTransaction();
 
             $dados = $request->all();
 
-            $dadosRequest = [];
-            $dadosRequest['user_update_id']         = \Auth::User()->id;
-            $dadosRequest['name']                   = $dados['name'];
-            $dadosRequest['type']                   = $dados['type'];
-            $dadosRequest['vrMin']                  = $dados['vrMin'];
-            $dadosRequest['vrMax']                  = $dados['vrMax'];
-            // $dadosRequest['status_abertura']        = $dados['status_abertura'];
-            $dadosRequest['status_bloqueio']        = $dados['status_bloqueio'];
-            $dadosRequest['aceita_transferencia']   = $dados['aceita_transferencia'];
-
-            $caixa = Caixa::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            $caixa->update($dadosRequest);
+            $objParameter = new ParametroHelper();
+            $registro = $objParameter->update($dados)->build();
 
             \DB::commit();
 
-            return response()->json(['mensagem' => $caixa, 'class' => 'sucess'], 200);
-        } catch (CaixaException $th) {
+            return response()->json(['mensagem' => [], 'class' => 'sucess'], 200);
+        } catch (ParametroException $th) {
 
             \DB::rollback();
 
@@ -145,7 +116,7 @@ class CaixaController extends Controller
             $dadosRequest['active']             = 'no';
             $bairro = Caixa::where('active', '=', 'yes')->where('id', '=', $id)->first();
             if ($bairro->vrSaldo == 0) {
-                throw new CaixaException('Este caixa ainda possui saldo.');
+                throw new ParametroException('Este caixa ainda possui saldo.');
             }
             $bairro->update($dadosRequest);
             $bairro->delete();
@@ -153,7 +124,7 @@ class CaixaController extends Controller
             \DB::commit();
 
             return response()->json(['mensagem' => [], 'class' => 'sucess'], 200);
-        } catch (CaixaException $th) {
+        } catch (ParametroException $th) {
 
             \DB::rollback();
 
@@ -188,7 +159,7 @@ class CaixaController extends Controller
                 $msg .= $mensagem . '<br/>';
             }
 
-            throw new CaixaException($msg);
+            throw new ParametroException($msg);
         }
 
         return true;

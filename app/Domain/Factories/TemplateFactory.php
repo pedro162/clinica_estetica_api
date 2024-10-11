@@ -23,7 +23,6 @@ class TemplateFactory
                 $objTemplate->setTitle(new TemplateTitle($command->getTemplateTitle()));
 
                 return $objTemplate;
-                // Adicione outros casos conforme necessário
             default:
                 throw new \Exception("Template type not available.");
         }

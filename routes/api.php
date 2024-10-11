@@ -701,4 +701,14 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::get('/widget/atendimento/qtd/json/{widget?}', ['as' => 'widget.atendimento.qtd.json', 'uses' => 'Admin\WidgetController@atendimentosPorTipoWidgetJson']);
 	Route::post('/widget/atendimento/qtd/json/{widget?}', ['as' => 'widget.atendimento.qtd.json', 'uses' => 'Admin\WidgetController@atendimentosPorTipoWidgetJson']);
+
+	Route::get('/parametro/json', ['as' => 'parametro.json', 'uses' => 'Admin\ParametroController@json']);
+	Route::post('/parametro/json', ['as' => 'parametro.json', 'uses' => 'Admin\ParametroController@json']);
+	Route::post('/parametro/store', ['as' => 'parametro.store', 'uses' => 'Admin\ParametroController@store']);
+	Route::get('/parametro/edit/{id}', ['as' => 'parametro.edit', 'uses' => 'Admin\ParametroController@edit']);
+	Route::post('/parametro/edit/{id}', ['as' => 'parametro.edit', 'uses' => 'Admin\ParametroController@edit']);
+	Route::put('/parametro/update/{id}', ['as' => 'parametro.update', 'uses' => 'Admin\ParametroController@update']);
+	Route::get('/parametro/info/{id}', ['as' => 'parametro.info', 'uses' => 'Admin\ParametroController@info']);
+	Route::post('/parametro/info/{id}', ['as' => 'parametro.info', 'uses' => 'Admin\ParametroController@info']);
+	Route::get('/parametro/destroy/{id}', ['as' => 'parametro.destroy', 'uses' => 'Admin\ParametroController@destroy']);
 });

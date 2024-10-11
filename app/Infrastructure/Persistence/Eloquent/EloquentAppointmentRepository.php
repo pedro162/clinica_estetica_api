@@ -34,8 +34,6 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {
     public function save(Appointment $appointment): ?Appointment
     {
-        //Todo
-        //Implement an object model instance and save or update within database, after that, return the object appointment implementation
         $appointmentId = (string) $appointment->getId();
         $appointmentId = (int) $appointmentId;
         $userId   = User::first()->id;
