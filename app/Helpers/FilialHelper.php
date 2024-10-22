@@ -102,15 +102,6 @@ class FilialHelper extends BaseHelper
                 $join->on('p.id', '=', 'fl.pessoa_id');
             });
 
-
-        /*$registro->join('cidades', function($join){
-            
-            $join->on('cidades.id', '=', 'bairros.cidade_id');
-
-        });
-        
-         */
-
         if (is_array($consulta) && count($consulta) > 0) {
             foreach ($consulta as $key => $val) {
 
