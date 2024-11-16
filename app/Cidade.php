@@ -9,7 +9,7 @@ use App\Bairro;
 class Cidade extends Model
 {
     protected $table = "cidades";
-    protected $primaryKey="id";
+    protected $primaryKey = "id";
     protected $fillable = [
         'id',
         'nmCidade',
@@ -18,7 +18,8 @@ class Cidade extends Model
         'estado_id',
         'user_id',
         'user_update_id',
-        'active'
+        'active',
+        'tenant_id'
     ];
 
     public function estado()
