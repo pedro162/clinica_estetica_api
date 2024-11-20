@@ -711,6 +711,3 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/parametro/info/{id}', ['as' => 'parametro.info', 'uses' => 'Admin\ParametroController@info']);
 	Route::get('/parametro/destroy/{id}', ['as' => 'parametro.destroy', 'uses' => 'Admin\ParametroController@destroy']);
 });
-
-Route::get('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
-Route::post('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
