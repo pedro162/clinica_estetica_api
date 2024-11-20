@@ -13,6 +13,7 @@ use App\Domain\City\ValueObjects\CityIsDefault;
 use App\Domain\City\ValueObjects\CityName;
 use App\Domain\City\ValueObjects\CityTenantId;
 use App\Domain\City\ValueObjects\CityTitle;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 class GetAllCityHandler
@@ -26,6 +27,6 @@ class GetAllCityHandler
 
     public function handler(array $data = []): ?Collection
     {
-        return $this->repository->getAll();
+        return collect($this->repository->getAll($data)['registro']) ?? null;
     }
 }

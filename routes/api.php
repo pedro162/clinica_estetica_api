@@ -85,7 +85,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/marca/head/{id_assistente?}', ['as' => 'marca.head', 'uses' => 'Admin\MarcaController@head']);
 	Route::get('/marca/destroy/{id}/{id_assistente?}', ['as' => 'marca.destroy', 'uses' => 'Admin\MarcaController@destroy']);
 
-
 	Route::get('/categoria/index/{id_assistente?}', ['as' => 'categoria.index', 'uses' => 'Admin\CategoriaController@index']);
 	Route::post('/categoria/index/{id_assistente?}', ['as' => 'categoria.index', 'uses' => 'Admin\CategoriaController@index']);
 	Route::get('/categoria/create/{id_assistente?}', ['as' => 'categoria.create', 'uses' => 'Admin\CategoriaController@create']);
@@ -408,10 +407,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/estado/destroy/{id}/{id_assistente?}', ['as' => 'estado.destroy', 'uses' => 'Admin\EstadoController@destroy']);
 	Route::post('/estado/destroy/{id}/{id_assistente?}', ['as' => 'estado.destroy', 'uses' => 'Admin\EstadoController@destroy']);
 
-	Route::get('/cidade/index/{id_assistente?}', ['as' => 'cidade.index', 'uses' => 'Admin\CidadeController@index']);
-	Route::post('/cidade/index/{id_assistente?}', ['as' => 'cidade.index', 'uses' => 'Admin\CidadeController@index']);
-	Route::get('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\CidadeController@json']);
-	Route::post('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\CidadeController@json']);
+	Route::get('/cidade/index/{id_assistente?}', ['as' => 'cidade.index', 'uses' => 'Admin\V1\City\CityController@index']);
+	Route::post('/cidade/index/{id_assistente?}', ['as' => 'cidade.index', 'uses' => 'Admin\V1\City\CityController@index']);
+	Route::get('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
+	Route::post('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
 	Route::get('/cidade/create/{id_assistente?}', ['as' => 'cidade.create', 'uses' => 'Admin\CidadeController@create']);
 	Route::post('/cidade/create/{id_assistente?}', ['as' => 'cidade.create', 'uses' => 'Admin\CidadeController@create']);
 	Route::post('/cidade/store/{id_assistente?}', ['as' => 'cidade.store', 'uses' => 'Admin\CidadeController@store']);
@@ -712,3 +711,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/parametro/info/{id}', ['as' => 'parametro.info', 'uses' => 'Admin\ParametroController@info']);
 	Route::get('/parametro/destroy/{id}', ['as' => 'parametro.destroy', 'uses' => 'Admin\ParametroController@destroy']);
 });
+
+Route::get('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
+Route::post('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);

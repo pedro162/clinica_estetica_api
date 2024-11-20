@@ -196,8 +196,8 @@ class CityRepository implements CityRepositoryInterface
             $registro   = $registro->where('cidades.active', '=', 'yes')
                 ->where('estadoss.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
         } else {
-            $registro = $registro->where('cidades.active', '=', 'yes')
-                ->where('estadoss.active', '=', 'yes')->get();
+            $registro   = $registro->where('cidades.active', '=', 'yes')
+                ->where('estadoss.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
         }
 
         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {

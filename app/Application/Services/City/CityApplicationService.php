@@ -6,13 +6,20 @@ use App\Application\Commands\City\CreateCityCommand;
 use App\Application\Handlers\City\CreateCityHandler;
 use App\Application\Handlers\City\GetAllCityHandler;
 use App\Domain\City\Entities\City;
+use Illuminate\Support\Collection;
 
 class CityApplicationService implements CityApplicationServiceInterface
 {
+    private CreateCityHandler $createCityHandler;
+    protected GetAllCityHandler $getAllCityHandler;
+
     public function __construct(
-        private CreateCityHandler $createCityHandler,
-        protected GetAllCityHandler $getAllCityHandler
-    ) {}
+        CreateCityHandler $createCityHandler,
+        GetAllCityHandler $getAllCityHandler
+    ) {
+        $this->createCityHandler = $createCityHandler;
+        $this->getAllCityHandler = $getAllCityHandler;
+    }
 
     public function store(
         CreateCityCommand $command
@@ -28,8 +35,8 @@ class CityApplicationService implements CityApplicationServiceInterface
         return $this->createCityHandler->handler($command);
     }
 
-    public function getAll(array $data = []): ?array
+    public function getAll(array $data = []): ?Collection
     {
-        return $this->getAllCityHandler->handler();
+        return $this->getAllCityHandler->handler($data);
     }
 }

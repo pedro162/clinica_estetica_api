@@ -4,6 +4,7 @@ namespace App\Application\Services\City;
 
 use App\Application\Commands\City\CreateCityCommand;
 use App\Domain\City\Entities\City;
+use Illuminate\Support\Collection;
 
 interface CityApplicationServiceInterface
 {
@@ -15,5 +16,5 @@ interface CityApplicationServiceInterface
         CreateCityCommand $command
     ): ?City;
 
-    public function getAll(array $data = []): ?array;
+    public function getAll(array $data = []): ?Collection;
 }

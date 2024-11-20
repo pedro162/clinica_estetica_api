@@ -7,24 +7,31 @@ use App\Application\Services\City\CityApplicationServiceInterface;
 use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\City\CreateCityRequest;
+use App\Http\Requests\V1\City\GetAllCityRequest;
 use App\Http\Requests\V1\City\ShowCityRequest;
 use App\Http\Requests\V1\City\StoreCityRequest;
+use App\Http\Resources\V1\City\CityCollection;
 use App\Http\Resources\V1\City\CityResource;
 use Illuminate\Http\Request;
 
 class CityController extends Controller
 {
-    public function __construct(protected CityApplicationServiceInterface $service) {}
+    protected CityApplicationServiceInterface $service;
+
+    public function __construct(CityApplicationServiceInterface $service)
+    {
+        $this->service = $service;
+    }
 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(GetAllCityRequest $request)
     {
-        $data = $this->service->getAll();
-        return ApiResponseClass::sendRequest(CityResource::collection($data), '', 200);
+        $data = $this->service->getAll($request->all());
+        return ApiResponseClass::sendRequest(new CityCollection($data), '', 200);
     }
 
     /**

@@ -15,10 +15,12 @@ use \App\Caixa;
 use \App\Exceptions\CobrancaReceberException;
 use App\Helpers\BaseHelper;
 
-class CaixaHelper extends BaseHelper{
+class CaixaHelper extends BaseHelper
+{
 
-    
-    public function atualizar(array $dados, int $id){
+
+    public function atualizar(array $dados, int $id)
+    {
 
         $id             = $id ?? $dados['id'];
         $callBack       = $dados['callBack'] ?? '';
@@ -35,33 +37,34 @@ class CaixaHelper extends BaseHelper{
         $registro = Caixa::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
-        if(! $registro){
+        if (! $registro) {
             throw new CobrancaReceberException('Registro não identificao. Tente novamente ou entre em contato com o suporte.');
         }
-
     }
 
-    public function getSaldoCaixa(int $id){
-    	
-    	if(! (isset($id) && $id > 0)) {
+    public function getSaldoCaixa(int $id)
+    {
+
+        if (! (isset($id) && $id > 0)) {
             throw new CobrancaReceberException('Parâmetro ínválido');
         }
 
         $registro = Caixa::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
-        if(! $registro){
+        if (! $registro) {
             throw new CobrancaReceberException('Registro não identificao. Tente novamente ou entre em contato com o suporte.');
         }
 
         return $registro->vrSaldo;
     }
 
-    public function getCaixa(int $id){
-    	$registro = Caixa::where('active', '=', 'yes')
+    public function getCaixa(int $id)
+    {
+        $registro = Caixa::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
-         return $registro;
+        return $registro;
     }
 
     public function json(array $consulta)
@@ -70,114 +73,109 @@ class CaixaHelper extends BaseHelper{
         if (!isset($consulta['ordem'])) {
             $consulta['ordem'] =  'id-desc';
         }
-        $ordem      = $consulta['ordem'] ?? 'id-desc'; 
+        $ordem      = $consulta['ordem'] ?? 'id-desc';
 
         $campos =  null;
         $parse = [
-            'caixa_name'=>'caixas.name',
-            'name_caixa'=>'caixas.name'
+            'caixa_name' => 'caixas.name',
+            'name_caixa' => 'caixas.name'
 
         ];
 
         $registro = \DB::table('caixas');
-        if(is_array($consulta) && count($consulta) > 0){
-            foreach($consulta as $key=>$val){
-                
-                switch(trim($key)){
+        if (is_array($consulta) && count($consulta) > 0) {
+            foreach ($consulta as $key => $val) {
+
+                switch (trim($key)) {
                     case 'id':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
                             $val = explode(',', $val);
-                            
+
                             $registro->whereIn('caixas.id', $val);
                         }
                         break;
                     case 'name':
                     case 'caixa_name':
                     case 'name_caixa':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('caixas.name', 'like' , '%'.$val.'%');
+
+                            $registro->where('caixas.name', 'like', '%' . $val . '%');
                         }
                         break;
                     case 'caixa_id':
-                        if(is_string($val)){
-                            
-                            if($val[0] == ','){
+                        if (is_string($val)) {
+
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('caixas.id', '=' , ''.$val.'');
+
+                            $registro->where('caixas.id', '=', '' . $val . '');
                         }
                         break;
                     case 'limite':
-                            $val = (int) $val;
-                            if(is_integer($val) && $val > 0){
-                                    
-                               $registro->limit($val);
-                            }
+                        $val = (int) $val;
+                        if (is_integer($val) && $val > 0) {
+
+                            $registro->limit($val);
+                        }
                         break;
                     case 'ordem':
 
-                            
-                            if($val[0] == ','){
-                                $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
-                                $val = substr($val, 0, -1);
-                            }
 
-                            $val = explode(',', $val);
-                            for($i= 0; !($i == count($val)); $i++) {
-                                $atual = explode('-', $val[$i]);
-                                if(array_key_exists(trim($atual[0]), $parse)){
+                        if ($val[0] == ',') {
+                            $val = substr($val, 1);
+                        }
+                        if ($val[strlen($val) - 1] == ',') {
+                            $val = substr($val, 0, -1);
+                        }
 
-                                    $parsed = $parse[trim($atual[0])];
-                                    
-                                    if($parsed){
-                                       
-                                        $registro->orderBy($parsed,$atual[1]);
-                                    }
+                        $val = explode(',', $val);
+                        for ($i = 0; !($i == count($val)); $i++) {
+                            $atual = explode('-', $val[$i]);
+                            if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                $parsed = $parse[trim($atual[0])];
+
+                                if ($parsed) {
+
+                                    $registro->orderBy($parsed, $atual[1]);
                                 }
-                                
-                                
                             }
+                        }
 
-                            break;
-
-                    case'campos':
-                            if(is_array($val) && count($val) > 0){
-                                //$campos = $this->montaCamposConsulta($registro, $val);
-                                
-                            }
                         break;
 
+                    case 'campos':
+                        if (is_array($val) && count($val) > 0) {
+                            //$campos = $this->montaCamposConsulta($registro, $val);
+
+                        }
+                        break;
                 }
             }
         }
-        if($campos){
+        if ($campos) {
             $registro->select($campos);
-        }else{
+        } else {
             $registro->select('caixas.*');
-
         }
-       
 
         //----
         $ordemArr   = explode('-', $ordem);
@@ -201,9 +199,7 @@ class CaixaHelper extends BaseHelper{
 
             $registro = $dataToRequest;
         }
-        //---
 
         return  $registro;
-
     }
 }
