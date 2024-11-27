@@ -413,7 +413,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
 	Route::get('/cidade/create/{id_assistente?}', ['as' => 'cidade.create', 'uses' => 'Admin\CidadeController@create']);
 	Route::post('/cidade/create/{id_assistente?}', ['as' => 'cidade.create', 'uses' => 'Admin\CidadeController@create']);
-	Route::post('/cidade/store/{id_assistente?}', ['as' => 'cidade.store', 'uses' => 'Admin\CidadeController@store']);
+	Route::post('/cidade/store/{id_assistente?}', ['as' => 'cidade.store', 'uses' => 'Admin\V1\City\CityController@store']);
 	Route::get('/cidade/edit/{id}/{id_assistente?}', ['as' => 'cidade.edit', 'uses' => 'Admin\CidadeController@edit']);
 	Route::post('/cidade/edit/{id}/{id_assistente?}', ['as' => 'cidade.edit', 'uses' => 'Admin\CidadeController@edit']);
 	Route::put('/cidade/update/{id}/{id_assistente?}', ['as' => 'cidade.update', 'uses' => 'Admin\CidadeController@update']);

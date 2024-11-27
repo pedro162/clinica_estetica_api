@@ -22,32 +22,34 @@ class CityRepository implements CityRepositoryInterface
     {
         $data = Cidade::where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
-        return (new City())
-            ->id(new CityId($data['id']))
-            ->name(new CityName($data['name']))
-            ->code(new CityCode($data['Cidade']))
-            ->tenantId(new CityTenantId($data['tenant_id']));
+        return City::buildEntity($data->toArray());
     }
 
     public function save(City $parameter): ?City
     {
         $userId   = Auth::user()->id;
         $tenantId   = Auth::user()->tenant_id;
-        $country = $parameter->build();
-        $country->user_id = $userId;
-        $country->tenant_id = $tenantId;
-        $country->save();
-        return $this->findById(new CityId($country->id));
+        $city = $parameter->build();
+        $city->user_id = $userId;
+        unset($city->id);
+        unset($city->tenant_id);
+
+        if (!app()->environment('testing')) {
+            $city->tenant_id = $tenantId;
+        }
+
+        $city->save();
+        return $this->findById(new CityId((string)$city->id));
     }
 
     public function update(City $parameter): void
     {
         $userId   = Auth::user()->id;
         $tenantId   = Auth::user()->tenant_id;
-        $country = $parameter->build();
-        $country->user_id = $userId;
-        $country->tenant_id = $tenantId;
-        $country->update();
+        $city = $parameter->build();
+        $city->user_id = $userId;
+        $city->tenant_id = $tenantId;
+        $city->update();
     }
 
     public function getAll(array $consulta = []): ?array

@@ -8,7 +8,7 @@ use App\Icms;
 
 class Estado extends Model
 {
-    protected $table="estadoss";
+    protected $table = "estadoss";
     protected $primaryKey = 'id';
     protected $fillable = [
         'nmEStado',
@@ -19,7 +19,6 @@ class Estado extends Model
         'user_id',
         'user_update_id',
         'active',
-
     ];
 
     public function pais()

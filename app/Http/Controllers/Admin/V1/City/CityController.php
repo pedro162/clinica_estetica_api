@@ -35,24 +35,14 @@ class CityController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\V1\City\StoreCityRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreCityRequest $request)
     {
-        $data = $this->service->store(CreateCityCommand::build($request->validate()));
+        $data = $this->service->store(CreateCityCommand::build($request->validated()));
         return ApiResponseClass::sendRequest(new CityResource($data), 'City Created Successful', 201);
     }
 

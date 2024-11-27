@@ -5,6 +5,7 @@ namespace App\Application\Services\City;
 use App\Application\Commands\City\CreateCityCommand;
 use App\Application\Handlers\City\CreateCityHandler;
 use App\Application\Handlers\City\GetAllCityHandler;
+use App\Cidade;
 use App\Domain\City\Entities\City;
 use Illuminate\Support\Collection;
 
@@ -23,8 +24,7 @@ class CityApplicationService implements CityApplicationServiceInterface
 
     public function store(
         CreateCityCommand $command
-    ): ?City {
-
+    ): ?Cidade {
         return $this->createCityHandler->handler($command);
     }
 
