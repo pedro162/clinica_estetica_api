@@ -18,14 +18,13 @@ class CityRepository implements CityRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;
 
-    public function findById(CityId $id): ?City
+    public function findById(CityId $id): ?Cidade
     {
-        $data = Cidade::where('active', '=', 'yes')
+        return Cidade::where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
-        return City::buildEntity($data->toArray());
     }
 
-    public function save(City $parameter): ?City
+    public function save(City $parameter): ?Cidade
     {
         $userId   = Auth::user()->id;
         $tenantId   = Auth::user()->tenant_id;
@@ -48,8 +47,13 @@ class CityRepository implements CityRepositoryInterface
         $tenantId   = Auth::user()->tenant_id;
         $city = $parameter->build();
         $city->user_id = $userId;
-        $city->tenant_id = $tenantId;
-        $city->update();
+        unset($city->tenant_id);
+
+        if (!app()->environment('testing')) {
+            $city->tenant_id = $tenantId;
+        }
+
+        Cidade::find($city->id)->update($city->toArray());
     }
 
     public function getAll(array $consulta = []): ?array

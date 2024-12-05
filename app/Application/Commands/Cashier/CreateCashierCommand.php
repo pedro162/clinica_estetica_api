@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Application\Commands\City;
+namespace App\Application\Commands\Cashier;
 
-class CreateCityCommand
+class CreateCashierCommand
 {
 
     protected string $id;
@@ -15,55 +15,55 @@ class CreateCityCommand
     protected string $active;
     protected string $slug;
 
-    public function id(string $id): CreateCityCommand
+    public function id(string $id): CreateCashierCommand
     {
         $this->id = $id;
         return $this;
     }
 
-    public function tenantId(string $tenantId): CreateCityCommand
+    public function tenantId(string $tenantId): CreateCashierCommand
     {
         $this->tenantId = $tenantId;
         return $this;
     }
 
-    public function name(string $name): CreateCityCommand
+    public function name(string $name): CreateCashierCommand
     {
         $this->name = $name;
         return $this;
     }
 
-    public function code(string $code): CreateCityCommand
+    public function code(string $code): CreateCashierCommand
     {
         $this->code = $code;
         return $this;
     }
 
-    public function userId(string $userId): CreateCityCommand
+    public function userId(string $userId): CreateCashierCommand
     {
         $this->userId = $userId;
         return $this;
     }
 
-    public function userUpdateId(string $userUpdateId): CreateCityCommand
+    public function userUpdateId(string $userUpdateId): CreateCashierCommand
     {
         $this->userUpdateId = $userUpdateId;
         return $this;
     }
 
-    public function active(string $active): CreateCityCommand
+    public function active(string $active): CreateCashierCommand
     {
         $this->active = $active;
         return $this;
     }
 
-    public function stateId(string $stateId): CreateCityCommand
+    public function stateId(string $stateId): CreateCashierCommand
     {
         $this->stateId = $stateId;
         return $this;
     }
 
-    public function slug(string $slug): CreateCityCommand
+    public function slug(string $slug): CreateCashierCommand
     {
         $this->slug = $slug;
         return $this;
@@ -114,7 +114,7 @@ class CreateCityCommand
         return $this->slug ?? null;
     }
 
-    public static function build(array $data): CreateCityCommand
+    public static function build(array $data): CreateCashierCommand
     {
         $entity = (new self)
             ->id((string)($data['id'] ?? 0))

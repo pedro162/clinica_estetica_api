@@ -13,9 +13,13 @@ interface CityApplicationServiceInterface
         CreateCityCommand $command
     ): ?Cidade;
 
+    public function findById(
+        CreateCityCommand $command
+    ): ?Cidade;
+
     public function update(
         CreateCityCommand $command
-    ): ?City;
+    ): void;
 
     public function getAll(array $data = []): ?Collection;
 }

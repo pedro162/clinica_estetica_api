@@ -5,15 +5,49 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Eloquent\Cashier;
 
 use App\Caixa;
+use App\Domain\Cashier\Entities\Cashier;
+use App\Domain\Cashier\ValueObjects\CashierId;
 
 class CashierRepository
 {
     protected const ITENS_PER_PAGE = 10;
 
-    public function findById(string $id)
+    public function findById(CashierId $id)
     {
         return Caixa::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+            ->where('id', '=', (string)$id)->first();
+    }
+
+    public function save(Cashier $parameter): ?Caixa
+    {
+        $userId   = Auth::user()->id;
+        $tenantId   = Auth::user()->tenant_id;
+        $entity = $parameter->build();
+        $entity->user_id = $userId;
+        unset($entity->id);
+        unset($entity->tenant_id);
+
+        if (!app()->environment('testing')) {
+            $entity->tenant_id = $tenantId;
+        }
+
+        $entity->save();
+        return $this->findById(new CashierId((string)$entity->id));
+    }
+
+    public function update(Cashier $parameter): void
+    {
+        $userId   = Auth::user()->id;
+        $tenantId   = Auth::user()->tenant_id;
+        $entity = $parameter->build();
+        $entity->user_id = $userId;
+        unset($entity->tenant_id);
+
+        if (!app()->environment('testing')) {
+            $entity->tenant_id = $tenantId;
+        }
+
+        Caixa::find($entity->id)->update($entity->toArray());
     }
 
     public function getAll(array $consulta)

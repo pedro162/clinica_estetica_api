@@ -27,9 +27,8 @@ class CreateCityHandler
 
     public function handler(CreateCityCommand $command): ?Cidade
     {
+        $entity = City::buildEntity($command->getDataProperties());
 
-        $template = City::buildEntity($command->getDataProperties());
-
-        return $this->repository->save($template)->build();
+        return $this->repository->save($entity);
     }
 }

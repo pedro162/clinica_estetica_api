@@ -3,6 +3,7 @@
 namespace App\Application\Handlers\City;
 
 use App\Application\Commands\City\CreateCityCommand;
+use App\Cidade;
 use App\Domain\City\Entities\City;
 use App\Domain\City\Repositories\CityRepositoryInterface;;
 
@@ -14,7 +15,7 @@ use App\Domain\City\ValueObjects\CityName;
 use App\Domain\City\ValueObjects\CityTenantId;
 use App\Domain\City\ValueObjects\CityTitle;
 
-class UpdateCityHandler
+class GetCityByIdHandler
 {
     private CityRepositoryInterface $repository;
 
@@ -23,9 +24,8 @@ class UpdateCityHandler
         $this->repository = $repository;
     }
 
-    public function handler(CreateCityCommand $command): void
+    public function handler(CreateCityCommand $command): ?Cidade
     {
-        $entity = City::buildEntity($command->getDataProperties());
-        $this->repository->update($entity);
+        return $this->repository->findById(new CityId($command->getId()));
     }
 }

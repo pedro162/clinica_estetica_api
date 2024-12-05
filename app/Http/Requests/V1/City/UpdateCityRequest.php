@@ -24,7 +24,10 @@ class UpdateCityRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'nmCidade' => 'required|max:255|min:2',
+            'cdCidade' => 'required|max:100',
+            'sigla' => 'max:100|min:2',
+            'estado_id' => 'required|min:1'
         ];
     }
 }

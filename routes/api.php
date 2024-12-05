@@ -411,14 +411,12 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/cidade/index/{id_assistente?}', ['as' => 'cidade.index', 'uses' => 'Admin\V1\City\CityController@index']);
 	Route::get('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
 	Route::post('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
-	Route::get('/cidade/create/{id_assistente?}', ['as' => 'cidade.create', 'uses' => 'Admin\CidadeController@create']);
-	Route::post('/cidade/create/{id_assistente?}', ['as' => 'cidade.create', 'uses' => 'Admin\CidadeController@create']);
 	Route::post('/cidade/store/{id_assistente?}', ['as' => 'cidade.store', 'uses' => 'Admin\V1\City\CityController@store']);
 	Route::get('/cidade/edit/{id}/{id_assistente?}', ['as' => 'cidade.edit', 'uses' => 'Admin\CidadeController@edit']);
 	Route::post('/cidade/edit/{id}/{id_assistente?}', ['as' => 'cidade.edit', 'uses' => 'Admin\CidadeController@edit']);
-	Route::put('/cidade/update/{id}/{id_assistente?}', ['as' => 'cidade.update', 'uses' => 'Admin\CidadeController@update']);
-	Route::get('/cidade/show/{id}/{id_assistente?}', ['as' => 'cidade.show', 'uses' => 'Admin\CidadeController@show']);
-	Route::post('/cidade/show/{id}/{id_assistente?}', ['as' => 'cidade.show', 'uses' => 'Admin\CidadeController@show']);
+	Route::put('/cidade/update/{id}/{id_assistente?}', ['as' => 'cidade.update', 'uses' => 'Admin\V1\City\CityController@update']);
+	Route::get('/cidade/show/{id}/{id_assistente?}', ['as' => 'cidade.show', 'uses' => 'Admin\V1\City\CityController@show']);
+	Route::post('/cidade/show/{id}/{id_assistente?}', ['as' => 'cidade.show', 'uses' => 'Admin\V1\City\CityController@show']);
 	Route::get('/cidade/info/{id}/{id_assistente?}', ['as' => 'cidade.info', 'uses' => 'Admin\CidadeController@info']);
 	Route::post('/cidade/info/{id}/{id_assistente?}', ['as' => 'cidade.info', 'uses' => 'Admin\CidadeController@info']);
 	Route::get('/cidade/head/{id_assistente?}', ['as' => 'cidade.head', 'uses' => 'Admin\CidadeController@head']);

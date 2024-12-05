@@ -2,10 +2,13 @@
 
 namespace Tests\Feature\City;
 
+use App\Domain\City\Entities\City;
 use App\Estado;
 use App\User;
+use App\Cidade;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
@@ -54,5 +57,44 @@ class CityTest extends TestCase
                     'sigla' => 'TS'
                 ]
             ])->assertJsonPath('data.sigla', 'TS');
+    }
+
+    public function testUpdateACity()
+    {
+        $city = factory(Cidade::class)->create();
+
+        $response = $this->putJson(route('cidade.update', ['id' => $city->id]), [
+            'nmCidade' => 'Updated city',
+            'cdCidade' => '123',
+            'sigla' => 'TS',
+            'estado_id' => $city->estado_id
+        ]);
+
+        $response->dump();
+        $response->assertStatus(204);
+
+        $this->assertDatabaseHas($city->getTable(), [
+            'nmCidade' => 'Updated city',
+            'cdCidade' => '123',
+            'sigla' => 'TS',
+            'estado_id' => $city->estado_id
+        ]);
+    }
+
+    public function testGetACityById()
+    {
+        $city = factory(Cidade::class)->create();
+
+        $response = $this->getJson(route('cidade.show', ['id' => $city->id]));
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonStructure([
+                'data',
+                'success'
+            ])->assertJsonPath('data.id', $city->id);
+
+        $this->assertDatabaseHas($city->getTable(), [
+            'id' => $city->id
+        ]);
     }
 }

@@ -10,8 +10,10 @@ use App\Http\Requests\V1\City\CreateCityRequest;
 use App\Http\Requests\V1\City\GetAllCityRequest;
 use App\Http\Requests\V1\City\ShowCityRequest;
 use App\Http\Requests\V1\City\StoreCityRequest;
+use App\Http\Requests\V1\City\UpdateCityRequest;
 use App\Http\Resources\V1\City\CityCollection;
 use App\Http\Resources\V1\City\CityResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CityController extends Controller
@@ -50,12 +52,13 @@ class CityController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Requests\V1\City\ShowCityRequest
      */
     public function show(ShowCityRequest $request, $id)
     {
-        //$data = $this->service->find(CreateCityCommand::build(['id'=>$id]));
-        //return ApiResponseClass::sendRequest(new CityResource($data), '', 200);
+        $request->validated();
+        $data = $this->service->findById(CreateCityCommand::build(['id' => $id]));
+        return ApiResponseClass::sendRequest(new CityResource($data), '', 200);
     }
 
     /**
@@ -72,13 +75,16 @@ class CityController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\V1\City\UpdateCityRequest $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCityRequest $request, $id)
     {
-        //
+        $data = $request->validated();
+        $data['id'] = $id;
+        $data = $this->service->update(CreateCityCommand::build($data));
+        return response()->noContent();
     }
 
     /**
