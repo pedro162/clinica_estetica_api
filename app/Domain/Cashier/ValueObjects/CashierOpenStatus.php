@@ -2,15 +2,18 @@
 
 namespace App\Domain\Cashier\ValueObjects;
 
-class CashierName
+class CashierOpenStatus
 {
     private string $value;
 
     public function __construct(string $value)
     {
-        if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("The cashier name cannot be empty");
+        if (!empty($value)) {
+            if (!in_array($value, ['open', 'close'])) {
+                throw new \InvalidArgumentException("The Cashier type is invalid. It should be either (open, close)");
+            }
         }
+
         $this->value = $value;
     }
 

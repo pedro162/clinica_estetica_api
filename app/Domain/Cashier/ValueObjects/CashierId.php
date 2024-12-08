@@ -8,9 +8,10 @@ class CashierId
 
     public function __construct(string $value)
     {
-        if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("Cashier ID cannot be empty");
+        if ((int) $value < 0) {
+            throw new \InvalidArgumentException("The cashier ID cannot be empty");
         }
+
         $this->value = $value;
     }
 

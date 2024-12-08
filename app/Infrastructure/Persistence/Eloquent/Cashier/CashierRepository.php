@@ -6,13 +6,15 @@ namespace App\Infrastructure\Persistence\Eloquent\Cashier;
 
 use App\Caixa;
 use App\Domain\Cashier\Entities\Cashier;
+use App\Domain\Cashier\Repositories\CashierRepositoryInterface;
 use App\Domain\Cashier\ValueObjects\CashierId;
+use Illuminate\Support\Facades\Auth;;
 
-class CashierRepository
+class CashierRepository implements CashierRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;
 
-    public function findById(CashierId $id)
+    public function findById(CashierId $id): ?Caixa
     {
         return Caixa::where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
@@ -29,6 +31,8 @@ class CashierRepository
 
         if (!app()->environment('testing')) {
             $entity->tenant_id = $tenantId;
+        } else {
+            unset($entity->filial_id);
         }
 
         $entity->save();
@@ -47,16 +51,23 @@ class CashierRepository
             $entity->tenant_id = $tenantId;
         }
 
-        Caixa::find($entity->id)->update($entity->toArray());
-    }
+        $data = $entity->toArray();
 
-    public function getAll(array $consulta)
-    {
-        if (!isset($consulta['ordem'])) {
-            $consulta['ordem'] =  'id-desc';
+        if (app()->environment('testing')) {
+            unset($entity->filial_id);
+            unset($data['filial_id']);
         }
 
-        $ordem      = $consulta['ordem'] ?? 'id-desc';
+        Caixa::find($entity->id)->update($data);
+    }
+
+    public function getAll(array $filter = []): ?array
+    {
+        if (!isset($filter['ordem'])) {
+            $filter['ordem'] =  'id-desc';
+        }
+
+        $ordem      = $filter['ordem'] ?? 'id-desc';
         $campos =  null;
         $parse = [
             'caixa_name' => 'caixas.name',
@@ -65,8 +76,9 @@ class CashierRepository
         ];
 
         $registro = \DB::table('caixas');
-        if (is_array($consulta) && count($consulta) > 0) {
-            foreach ($consulta as $key => $val) {
+
+        if (is_array($filter) && count($filter) > 0) {
+            foreach ($filter as $key => $val) {
 
                 switch (trim($key)) {
                     case 'id':
@@ -163,9 +175,9 @@ class CashierRepository
         $oremCampo  = $ordemArr[0];
         $oremTipo  = $ordemArr[1];
 
-        $usePaginate = $consulta['usePaginate'] ?? 0;
+        $usePaginate = $filter['usePaginate'] ?? 0;
         $usePaginate = (int) $usePaginate;
-        $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::ITENS_PER_PAGE;
+        $nrItensPerPage = isset($filter['nr_itens_per_page']) && $filter['nr_itens_per_page'] > 0 ? $filter['nr_itens_per_page'] : self::ITENS_PER_PAGE;
 
         if ($usePaginate > 0) {
             $registro   = $registro->where('caixas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
@@ -173,7 +185,7 @@ class CashierRepository
             $registro = $registro->where('caixas.active', '=', 'yes')->get();
         }
 
-        if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
+        if (isset($filter['to_require']) && $filter['to_require'] == true) {
             $dataToRequest = [];
 
             foreach ($registro as $reg) {
@@ -183,6 +195,6 @@ class CashierRepository
             $registro = $dataToRequest;
         }
 
-        return  $registro;
+        return  ['registro' => $registro];
     }
 }

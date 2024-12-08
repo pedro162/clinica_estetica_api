@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\BaseEntity;
+namespace App\Domain\BaseEntity\Entities;
 
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;

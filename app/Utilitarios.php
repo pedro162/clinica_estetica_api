@@ -2,9 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Utilitarios extends Model
+class Utilitarios
 {
     public static function loadEnderecoApi($cep)
     {

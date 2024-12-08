@@ -2,15 +2,16 @@
 
 namespace App\Domain\Cashier\ValueObjects;
 
-class CashierName
+class CashierBalance
 {
     private string $value;
 
     public function __construct(string $value)
     {
-        if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("The cashier name cannot be empty");
+        if ($value < 0) {
+            throw new \InvalidArgumentException("The cashier balance value cannot be empty");
         }
+
         $this->value = $value;
     }
 
