@@ -30,13 +30,7 @@ class ContaReceberHelper extends BaseHelper
         $objFormaPagamento      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
         $objPlanoPagamento      = $objFormaPagamento->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
         $objOperadorFinanceiro  = $objFormaPagamento->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
-        //$objPrazo               = $objFormaPagamento->prazoPagamento()->where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
         $objPessoa              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
-
-
-        //tipo_pagamento
-
-
 
         $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);
 
@@ -47,10 +41,6 @@ class ContaReceberHelper extends BaseHelper
         if (!$objFormaPagamento) {
             $erros[] = 'A forma de pagamento de código nº ' . $idFormaPagamento . ' não foi identificada.';
         }
-
-        /* if(! $objPrazo){
-            throw new CobrancaReceberException('O prazo de pagamento de código nº '.$idPlanoPagamento.' não foi identificado.');
-        } */
 
         if (!$objPlanoPagamento) {
             $erros[] = 'O plano de pagamento de código nº ' . $idPlanoPagamento . ' não foi identificado.';
@@ -74,13 +64,7 @@ class ContaReceberHelper extends BaseHelper
         $objFormaPagamento      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
         $objPlanoPagamento      = $objFormaPagamento->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
         $objOperadorFinanceiro  = $objFormaPagamento->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
-        //$objPrazo               = $objFormaPagamento->prazoPagamento()->where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
         $objPessoa              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
-
-
-        //tipo_pagamento
-
-
 
         $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);
         $erros = $this->validaGerCobranca($idPessoa, $vrCobranca, $idFormaPagamento, $idPlanoPagamento, $idOperadorFinanceiro, $dados);
@@ -94,7 +78,6 @@ class ContaReceberHelper extends BaseHelper
         $qtdDiasIntervalo   = $objPlanoPagamento->qtdDiasIntervaloParcelas ?? 0;
         $qtdDiasPriParcela  = $objPlanoPagamento->qtd_dias_pri_parcela ?? 0;
         $vrParcelaBase      = $vrCobranca / $qtdParcela;
-        $vrParcelaBase      = number_format($vrParcelaBase, 2, '.', ',');
         $vrParcelaBase      = (float) $vrParcelaBase;
 
         $objDtVencimento = new \DateTime();
@@ -104,7 +87,7 @@ class ContaReceberHelper extends BaseHelper
         }
 
         $vrTotalParelasGeradas = 0;
-        
+
         $idReferenciaPadrao = date('ymdhis');
         $reFerenciaPadrao = 'sem_referencia';
 
@@ -135,7 +118,7 @@ class ContaReceberHelper extends BaseHelper
                 'operador_financeiro_id' => $objOperadorFinanceiro->id ?? 0,
                 'status' => 'aberto',
 
-            ]; //responsavel_id
+            ];
 
             if ($qtdDiasIntervalo > 0) {
 
@@ -172,10 +155,6 @@ class ContaReceberHelper extends BaseHelper
 
             if (isset($dados['documento']) && strlen(trim($dados['documento'])) >= 3) {
                 $statusCobCartao    = 'pago';
-                //$dtPagamento        = date('Y-m-d H:i:s');
-                //$dtBaixa            = date('Y-m-d H:i:s');
-                //$randId             = rand(111111111, 999999999);
-                //$rashbaixa          = $objPessoa->id.''.$randId.''.date('ymdhis');
             }
 
             $dataParcela = [
@@ -208,11 +187,11 @@ class ContaReceberHelper extends BaseHelper
             ];
 
             $objCobReceber = ContaReceber::create($dataParcela);
+
             if (!$objCobReceber) {
                 throw new CobrancaReceberException('Não foi possível gerar os contas a receber.Tente novamente ou entre em contato com o suporte.');
             }
 
-            //---- Salvo os itens da baixa----------------------------------------------
             if ($statusCobCartao == 'pago') {
 
                 $objCobReceberItemHelp = new ContaReceberItemHelper();
@@ -244,7 +223,6 @@ class ContaReceberHelper extends BaseHelper
                 $dataCartoes = $responseHelper['data_cob_receber_cartoes'] ??  [];
             }
 
-
             $datacobReceberObjArr['data_cob_receber'][]         = $objCobReceber;
             $datacobReceberObjArr['data_cob_receber_cartoes'][] = $dataCartoes;
         } else {
@@ -252,6 +230,7 @@ class ContaReceberHelper extends BaseHelper
             if (is_array($dataParcelas) && count($dataParcelas) > 0) {
                 foreach ($dataParcelas as $key => $val) {
                     $objCobReceber = ContaReceber::create($val);
+
                     if (!$objCobReceber) {
                         throw new CobrancaReceberException('Não foi possível gerar os contas a receber.Tente novamente ou entre em contato com o suporte.');
                     }
@@ -364,6 +343,7 @@ class ContaReceberHelper extends BaseHelper
         $dadosRequest['active']                     =  'yes';
 
         $registro = CobrancaReceber::where('active', '=', 'yes')->where('id', '=', $id)->first();
+
         if (!$registro) {
             throw new CobrancaReceberException('Registro não identificado');
         }
@@ -393,12 +373,12 @@ class ContaReceberHelper extends BaseHelper
             throw new CobrancaReceberException('Registro não encontrado');
         }
 
-        if($registro->pessoa){
+        if ($registro->pessoa) {
             $registro->pessoa->logradouro;
             $registro->pessoa->telefone;
         }
 
-        if($registro->referencia_id > 0&& $registro->referencia == 'ordem_servicos'){
+        if ($registro->referencia_id > 0 && $registro->referencia == 'ordem_servicos') {
             $registro->data_referencia = OrdemServico::find($registro->referencia_id);
         }
         $registro->contaReceberItem;
@@ -477,7 +457,7 @@ class ContaReceberHelper extends BaseHelper
         if (!isset($consulta['ordem'])) {
             $consulta['ordem'] =  'id-desc';
         }
-        $ordem      = $consulta['ordem'] ?? 'id-desc'; 
+        $ordem      = $consulta['ordem'] ?? 'id-desc';
 
         $campos =  $data['campos'] ?? [];
         $parse = [
@@ -542,7 +522,7 @@ class ContaReceberHelper extends BaseHelper
 
                             $registro->where('pessoas.name', 'like', '%' . $val . '%');
                         }
-                        break;//
+                        break; //
                     case 'vencido':
 
                         if (is_string($val)) {
@@ -559,7 +539,7 @@ class ContaReceberHelper extends BaseHelper
                     case 'dt_exercicio':
                         $tpExercicio = 'dtVencimento';
 
-                        if(isset($consulta['tp_exercicio'])){
+                        if (isset($consulta['tp_exercicio'])) {
                             switch ($consulta['tp_exercicio']) {
                                 case 'created_at':
                                 case 'criacao':
@@ -568,7 +548,7 @@ class ContaReceberHelper extends BaseHelper
                                 case 'vencimento':
                                     $tpExercicio = 'dtVencimento';
                                     break;
-                                
+
                                 default:
                                     $tpExercicio = 'dtVencimento';
                                     break;
@@ -577,8 +557,8 @@ class ContaReceberHelper extends BaseHelper
                         }
                         if (is_string($val) && strpos($val, ',') > -1) {
                             $val = explode(',', $val);
-                            $registro->where('cr.'.$tpExercicio, '>=', date($val[0]));
-                            $registro->where('cr.'.$tpExercicio, '<=', date($val[1]));
+                            $registro->where('cr.' . $tpExercicio, '>=', date($val[0]));
+                            $registro->where('cr.' . $tpExercicio, '<=', date($val[1]));
                         }
 
                         break;
@@ -718,7 +698,7 @@ class ContaReceberHelper extends BaseHelper
             $registro->select('cr.*', \DB::raw('(IFNULL(cr.vrLiquido, 0) - (IFNULL(cr.vrPago, 0) + IFNULL(cr.vrDevolvido, 0)))  vrAberto'), \DB::raw($sqlDsReferencia), 'fp.cdCobrancaTipo', 'fp.name as name_cob_tp', 'pessoas.name', 'pesfl.name as name_filial');
         }
 
-        
+
         //----
         $ordemArr   = explode('-', $ordem);
         $oremCampo  = $ordemArr[0];
@@ -729,10 +709,10 @@ class ContaReceberHelper extends BaseHelper
         $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::PAGINACAO_ITENS_POR_PAGINA_PADRAO;
         if ($usePaginate > 0) {
             $registro   = $registro->where('cr.active', '=', 'yes')
-            ->where('pessoas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+                ->where('pessoas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
         } else {
             $registro = $registro->where('cr.active', '=', 'yes')
-            ->where('pessoas.active', '=', 'yes')->get();
+                ->where('pessoas.active', '=', 'yes')->get();
         }
 
         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {

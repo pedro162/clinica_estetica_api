@@ -412,17 +412,13 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
 	Route::post('/cidade/json/{id_assistente?}', ['as' => 'cidade.json', 'uses' => 'Admin\V1\City\CityController@index']);
 	Route::post('/cidade/store/{id_assistente?}', ['as' => 'cidade.store', 'uses' => 'Admin\V1\City\CityController@store']);
-	Route::get('/cidade/edit/{id}/{id_assistente?}', ['as' => 'cidade.edit', 'uses' => 'Admin\CidadeController@edit']);
-	Route::post('/cidade/edit/{id}/{id_assistente?}', ['as' => 'cidade.edit', 'uses' => 'Admin\CidadeController@edit']);
 	Route::put('/cidade/update/{id}/{id_assistente?}', ['as' => 'cidade.update', 'uses' => 'Admin\V1\City\CityController@update']);
 	Route::get('/cidade/show/{id}/{id_assistente?}', ['as' => 'cidade.show', 'uses' => 'Admin\V1\City\CityController@show']);
 	Route::post('/cidade/show/{id}/{id_assistente?}', ['as' => 'cidade.show', 'uses' => 'Admin\V1\City\CityController@show']);
-	Route::get('/cidade/info/{id}/{id_assistente?}', ['as' => 'cidade.info', 'uses' => 'Admin\CidadeController@info']);
-	Route::post('/cidade/info/{id}/{id_assistente?}', ['as' => 'cidade.info', 'uses' => 'Admin\CidadeController@info']);
-	Route::get('/cidade/head/{id_assistente?}', ['as' => 'cidade.head', 'uses' => 'Admin\CidadeController@head']);
-	Route::post('/cidade/head/{id_assistente?}', ['as' => 'cidade.head', 'uses' => 'Admin\CidadeController@head']);
-	Route::get('/cidade/destroy/{id}/{id_assistente?}', ['as' => 'cidade.destroy', 'uses' => 'Admin\CidadeController@destroy']);
-	Route::post('/cidade/destroy/{id}/{id_assistente?}', ['as' => 'cidade.destroy', 'uses' => 'Admin\CidadeController@destroy']);
+	Route::get('/cidade/info/{id}/{id_assistente?}', ['as' => 'cidade.info', 'uses' => 'Admin\V1\City\CityController@show']);
+	Route::post('/cidade/info/{id}/{id_assistente?}', ['as' => 'cidade.info', 'uses' => 'Admin\V1\City\CityController@show']);
+	Route::get('/cidade/destroy/{id}/{id_assistente?}', ['as' => 'cidade.destroy', 'uses' => 'Admin\V1\City\CityController@destroy']);
+	Route::post('/cidade/destroy/{id}/{id_assistente?}', ['as' => 'cidade.destroy', 'uses' => 'Admin\V1\City\CityController@destroy']);
 
 	Route::get('/bairro/index/{id_assistente?}', ['as' => 'bairro.index', 'uses' => 'Admin\BairroController@index']);
 	Route::post('/bairro/index/{id_assistente?}', ['as' => 'bairro.index', 'uses' => 'Admin\BairroController@index']);
@@ -472,6 +468,20 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\CobrancaReceberController@destroy']);
 	Route::put('/receber/baixar/{id}/{id_assistente?}', ['as' => 'receber.baixar', 'uses' => 'Admin\CobrancaReceberController@baixar']);
 
+	Route::get('/receber/item/index/{id_assistente?}', ['as' => 'receber.item.index', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@index']);
+	Route::post('/receber/item/index/{id_assistente?}', ['as' => 'receber.item.index', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@index']);
+	Route::get('/receber/item/json/{id_assistente?}', ['as' => 'receber.item.json', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@index']);
+	Route::post('/receber/item/json/{id_assistente?}', ['as' => 'receber.item.json', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@index']);
+	Route::post('/receber/item/store/{id_assistente?}', ['as' => 'receber.item.store', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@store']);
+	Route::put('/receber/item/update/{id}/{id_assistente?}', ['as' => 'receber.item.update', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@update']);
+	Route::get('/receber/item/show/{id}/{id_assistente?}', ['as' => 'receber.item.show', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@show']);
+	Route::post('/receber/item/show/{id}/{id_assistente?}', ['as' => 'receber.item.show', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@show']);
+	Route::get('/receber/item/info/{id}/{id_assistente?}', ['as' => 'receber.item.info', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@show']);
+	Route::post('/receber/item/info/{id}/{id_assistente?}', ['as' => 'receber.item.info', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@show']);
+	Route::get('/receber/item/destroy/{id}/{id_assistente?}', ['as' => 'receber.item.destroy', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@destroy']);
+	Route::post('/receber/item/destroy/{id}/{id_assistente?}', ['as' => 'receber.item.destroy', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@destroy']);
+	Route::put('/receber/item/baixar/{id}/{id_assistente?}', ['as' => 'receber.item.baixar', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@baixar']);
+
 	Route::get('/financeiro/movimentacoes/index/{id_assistente?}', ['as' => 'financeiro.movimentacoes.index', 'uses' => 'Admin\MovimentacoesFinanceirasController@index']);
 	Route::post('/financeiro/movimentacoes/index/{id_assistente?}', ['as' => 'financeiro.movimentacoes.index', 'uses' => 'Admin\MovimentacoesFinanceirasController@index']);
 	Route::get('/financeiro/movimentacoes/json/{id_assistente?}', ['as' => 'financeiro.movimentacoes.json', 'uses' => 'Admin\MovimentacoesFinanceirasController@json']);
@@ -493,8 +503,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::get('/caixa/index/{id_assistente?}', ['as' => 'caixa.index', 'uses' => 'Admin\V1\Cashier\CashierController@index']);
 	Route::post('/caixa/index/{id_assistente?}', ['as' => 'caixa.index', 'uses' => 'Admin\V1\Cashier\CashierController@index']);
-	Route::get('/caixa/json/{id_assistente?}', ['as' => 'caixa.json', 'uses' => 'Admin\V1\Cashier\CashierController@json']);
-	Route::post('/caixa/json/{id_assistente?}', ['as' => 'caixa.json', 'uses' => 'Admin\V1\Cashier\CashierController@json']);
+	Route::get('/caixa/json/{id_assistente?}', ['as' => 'caixa.json', 'uses' => 'Admin\V1\Cashier\CashierController@index']);
+	Route::post('/caixa/json/{id_assistente?}', ['as' => 'caixa.json', 'uses' => 'Admin\V1\Cashier\CashierController@index']);
 	Route::get('/caixa/create/{id_assistente?}', ['as' => 'caixa.create', 'uses' => 'Admin\V1\Cashier\CashierController@create']);
 	Route::post('/caixa/create/{id_assistente?}', ['as' => 'caixa.create', 'uses' => 'Admin\V1\Cashier\CashierController@create']);
 	Route::post('/caixa/store/{id_assistente?}', ['as' => 'caixa.store', 'uses' => 'Admin\V1\Cashier\CashierController@store']);
@@ -503,8 +513,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::put('/caixa/update/{id}/{id_assistente?}', ['as' => 'caixa.update', 'uses' => 'Admin\V1\Cashier\CashierController@update']);
 	Route::get('/caixa/show/{id}/{id_assistente?}', ['as' => 'caixa.show', 'uses' => 'Admin\V1\Cashier\CashierController@show']);
 	Route::post('/caixa/show/{id}/{id_assistente?}', ['as' => 'caixa.show', 'uses' => 'Admin\V1\Cashier\CashierController@show']);
-	Route::get('/caixa/info/{id}/{id_assistente?}', ['as' => 'caixa.info', 'uses' => 'Admin\V1\Cashier\CashierController@info']);
-	Route::post('/caixa/info/{id}/{id_assistente?}', ['as' => 'caixa.info', 'uses' => 'Admin\V1\Cashier\CashierController@info']);
+	Route::get('/caixa/info/{id}/{id_assistente?}', ['as' => 'caixa.info', 'uses' => 'Admin\V1\Cashier\CashierController@show']);
+	Route::post('/caixa/show/{id}/{id_assistente?}', ['as' => 'caixa.info', 'uses' => 'Admin\V1\Cashier\CashierController@show']);
 	Route::get('/caixa/head/{id_assistente?}', ['as' => 'caixa.head', 'uses' => 'Admin\V1\Cashier\CashierController@head']);
 	Route::post('/caixa/head/{id_assistente?}', ['as' => 'caixa.head', 'uses' => 'Admin\V1\Cashier\CashierController@head']);
 	Route::get('/caixa/destroy/{id}/{id_assistente?}', ['as' => 'caixa.destroy', 'uses' => 'Admin\V1\Cashier\CashierController@destroy']);
