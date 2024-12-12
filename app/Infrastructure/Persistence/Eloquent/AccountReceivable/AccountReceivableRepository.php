@@ -354,6 +354,7 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
                 }
             }
         }
+
         $sqlDsReferencia = '(
                     CASE 
                         WHEN cr.referencia = "ordem_servicos" THEN "Ordem de serviço"

@@ -34,6 +34,10 @@ class CreateSimpleTenantDatabasesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('simple_tenant_databases');
+        try {
+            Schema::dropIfExists('simple_tenant_databases');
+        } catch (\Illuminate\Database\QueryException $e) {
+            //
+        }
     }
 }

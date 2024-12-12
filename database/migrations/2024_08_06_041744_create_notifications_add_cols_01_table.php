@@ -28,8 +28,8 @@ class CreateNotificationsAddCols01Table extends Migration
     public function down()
     {
         Schema::table('notifications', function (Blueprint $table) {
-            $table->dropIndex('type_index');
-            $table->dropForeign('filials_filial_id_foreign');
+            //$table->dropIndex('type_index');
+            $table->dropForeign('notifications_filial_id_foreign');
             $table->dropColumn((['type']));
         });
     }

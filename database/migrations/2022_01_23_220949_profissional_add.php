@@ -44,24 +44,30 @@ class ProfissionalAdd extends Migration
      */
     public function down()
     {
-        Schema::table('profissionals', function ($table) {
-            $table->dropColumn('vr_salario');
-            $table->dropColumn('titulo_eleitor');
-            $table->dropColumn('zona_eleitor');
-            $table->dropColumn('naturalidade');
-            $table->dropColumn('name_mae');
-            $table->dropColumn('name_conjuge');
-            $table->dropColumn('nr_serie_cnh');
-            $table->dropColumn('name_banco_salario');
-            $table->dropColumn('nr_agencia_banco_salario');
-            $table->dropColumn('nr_conta_banco_salario');
-            $table->dropColumn('ponto_obrigatorio');
-            $table->dropColumn('estado_civil');
-            $table->dropColumn('grau_instrucao');
-            $table->dropColumn('status');
-            $table->dropColumn('tipo_contrato');
-            $table->dropColumn('filial_id');
-            $table->dropColumn('uf_cnh_id');
-        });
+        try {
+            Schema::table('profissionals', function ($table) {
+                $table->dropForeign(['filial_id']);
+                $table->dropForeign(['uf_cnh_id']);
+                $table->dropColumn('vr_salario');
+                $table->dropColumn('titulo_eleitor');
+                $table->dropColumn('zona_eleitor');
+                $table->dropColumn('naturalidade');
+                $table->dropColumn('name_mae');
+                $table->dropColumn('name_conjuge');
+                $table->dropColumn('nr_serie_cnh');
+                $table->dropColumn('name_banco_salario');
+                $table->dropColumn('nr_agencia_banco_salario');
+                $table->dropColumn('nr_conta_banco_salario');
+                $table->dropColumn('ponto_obrigatorio');
+                $table->dropColumn('estado_civil');
+                $table->dropColumn('grau_instrucao');
+                $table->dropColumn('status');
+                $table->dropColumn('tipo_contrato');
+                $table->dropColumn('filial_id');
+                $table->dropColumn('uf_cnh_id');
+            });
+        } catch (\Illuminate\Database\QueryException $e) {
+            //
+        }
     }
 }
