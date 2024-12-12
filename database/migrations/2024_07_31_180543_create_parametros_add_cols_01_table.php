@@ -26,7 +26,7 @@ class CreateParametrosAddCols01Table extends Migration
     public function down()
     {
         Schema::table('parametros', function (Blueprint $table) {
-            $table->dropIndex('key');
+            $table->dropIndex('parametros_key_index');
             $table->dropColumn(['key']);
         });
     }

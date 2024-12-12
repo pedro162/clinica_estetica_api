@@ -35,6 +35,15 @@ class CreateParametrosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('parametros');
+        try {
+            Schema::table('parametros', function (Blueprint $table) {
+                //$table->dropIndex('type_index');
+                $table->dropForeign(['tenant_id', 'user_id']);
+            });
+
+            Schema::dropIfExists('parametros');
+        } catch (\Illuminate\Database\QueryException $e) {
+            //
+        }
     }
 }
