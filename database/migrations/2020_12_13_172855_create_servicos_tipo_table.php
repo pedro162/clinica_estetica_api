@@ -14,7 +14,9 @@ class CreateServicosTipoTable extends Migration
     public function up()
     {
         Schema::table('servicos', function (Blueprint $table) {
-            $table->enum('type', ['mensalidade', 'outros'])->default('outros');
+            if (!Schema::hasColumn('servicos', 'type')) {
+                $table->enum('type', ['mensalidade', 'outros'])->default('outros');
+            }
         });
     }
 
@@ -25,6 +27,8 @@ class CreateServicosTipoTable extends Migration
      */
     public function down()
     {
-       // Schema::dropIfExists('servicos_tipo');
+        Schema::table('servicos', function (Blueprint $table) {
+            $table->dropColumn((['type']));
+        });
     }
 }

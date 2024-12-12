@@ -36,20 +36,25 @@ class AddTenantIdToAllTables extends Migration
         $tables = DB::select('SHOW TABLES');
 
         foreach ($tables as $table) {
-            $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
+            try {
+                $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
 
-            // Ignore as tabelas que não são relevantes
-            if (in_array($tableName, ['migrations', 'password_resets', 'failed_jobs', 'personal_access_tokens', 'simple_tenant_databases'])) {
-                continue;
-            }
-
-            Schema::table($tableName, function (Blueprint $table) use ($tableName) {
-                // Remova a coluna tenant_id se ela existir
-                if (Schema::hasColumn($tableName, 'tenant_id')) {
-                    $table->dropIndex('parametros_tenant_id_index');
-                    $table->dropColumn(['tenant_id']);
+                // Ignore as tabelas que não são relevantes
+                if (in_array($tableName, ['migrations', 'password_resets', 'failed_jobs', 'personal_access_tokens', 'simple_tenant_databases'])) {
+                    continue;
                 }
-            });
+
+                Schema::table($tableName, function (Blueprint $table) use ($tableName) {
+                    // Remova a coluna tenant_id se ela existir
+                    if (Schema::hasColumn($tableName, 'tenant_id')) {
+                        $table->dropForeign(['pessoas_tenant_id_index']);
+                        $table->dropIndex('parametros_tenant_id_index');
+                        $table->dropColumn(['tenant_id']);
+                    }
+                });
+            } catch (\Illuminate\Database\QueryException $e) {
+                //
+            }
         }
     }
 }

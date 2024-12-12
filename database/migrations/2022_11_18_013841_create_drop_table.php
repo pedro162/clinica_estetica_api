@@ -13,12 +13,29 @@ class CreateDropTable extends Migration
      */
     public function up()
     {
-        /* Schema::table('evento_agendas', function (Blueprint $table) {
-            //
-        }); */
+        try {
+            Schema::table('categoria_eventos', function (Blueprint $table) {
+                // Removendo a chave estrangeira de 'user_id'
+                //$table->dropForeign(['user_id']);
+            });
 
-        Schema::dropIfExists('categoria_eventos');
-        Schema::dropIfExists('evento_agendas');
+            Schema::dropIfExists('categoria_eventos');
+        } catch (\Illuminate\Database\QueryException $e) {
+            //
+        }
+
+        try {
+            Schema::table('evento_agendas', function (Blueprint $table) {
+                // Removendo chaves estrangeiras individualmente
+                $table->dropForeign(['user_id']);
+                $table->dropForeign(['profissional_id']);
+                $table->dropForeign(['categoria_evento_id']);
+            });
+
+            Schema::dropIfExists('evento_agendas');
+        } catch (\Illuminate\Database\QueryException $e) {
+            //
+        }
     }
 
     /**

@@ -27,7 +27,7 @@ class CreatePessoaFormularioRespostasAddColumns01Table extends Migration
     public function down()
     {
         Schema::table('pessoa_formulario_respostas', function (Blueprint $table) {
-            $table->dropForeign('formulario_items_form_item_id_foreign');
+            $table->dropForeign('pessoa_formulario_respostas_form_item_id_foreign');
             $table->dropColumn([
                 'form_item_id'
             ]);

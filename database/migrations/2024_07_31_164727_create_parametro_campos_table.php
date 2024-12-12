@@ -47,6 +47,15 @@ class CreateParametroCamposTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('parametro_campos');
+        try {
+
+            Schema::table('parametro_campos', function (Blueprint $table) {
+                $table->dropForeign(['user_id', 'parametro_id', 'tenant_id']);
+            });
+
+            Schema::dropIfExists('parametro_campos');
+        } catch (\Illuminate\Database\QueryException $e) {
+            //
+        }
     }
 }

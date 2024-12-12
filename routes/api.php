@@ -448,8 +448,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/venda/destroy/{id}/{idPessoa}/{id_assistente?}', ['as' => 'venda.destroy', 'uses' => 'Admin\VendaController@destroy']);
 	Route::get('/venda/pdv/{id_assistente?}', ['as' => 'venda.pdv', 'uses' => 'Admin\VendaController@pdv']);
 
-	Route::get('/receber/index/{id_assistente?}', ['as' => 'receber.index', 'uses' => 'Admin\CobrancaReceberController@index']);
-	Route::post('/receber/index/{id_assistente?}', ['as' => 'receber.index', 'uses' => 'Admin\CobrancaReceberController@index']);
+	Route::get('/receber/index/{id_assistente?}', ['as' => 'receber.index', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@index']);
+	Route::post('/receber/index/{id_assistente?}', ['as' => 'receber.index', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@index']);
 	Route::get('/receber/json/{id_assistente?}', ['as' => 'receber.json', 'uses' => 'Admin\CobrancaReceberController@json']);
 	Route::post('/receber/json/{id_assistente?}', ['as' => 'receber.json', 'uses' => 'Admin\CobrancaReceberController@json']);
 	Route::get('/receber/create/{id_assistente?}', ['as' => 'receber.create', 'uses' => 'Admin\CobrancaReceberController@create']);
