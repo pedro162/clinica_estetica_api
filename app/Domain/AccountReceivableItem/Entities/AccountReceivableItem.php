@@ -438,7 +438,7 @@ class AccountReceivableItem extends BaseEntity
             ['keys' => ['clearanceHash'], 'callback' => fn($value) => $entity->clearanceHash(new AccountReceivableItemClearanceHash((string)$value))],
             ['keys' => ['cashboxId'], 'callback' => fn($value) => $entity->cashboxId(new AccountReceivableItemCashboxId((string)$value))],
             ['keys' => ['refundPersonId'], 'callback' => fn($value) => $entity->refundPersonId(new AccountReceivableItemRefundPersonId((string)$value))],
-            ['keys' => ['reversalPersonId'], 'callback' => fn($value) => $entity->reversalPersonId(new reversalPersonId((string)$value))],
+            ['keys' => ['reversalPersonId'], 'callback' => fn($value) => $entity->reversalPersonId(new AccountReceivableItemReversalPersonId((string)$value))],
             ['keys' => ['reversalDescription'], 'callback' => fn($value) => $entity->reversalDescription(new AccountReceivableItemReversalDescription((string)$value))],
         ];
 
