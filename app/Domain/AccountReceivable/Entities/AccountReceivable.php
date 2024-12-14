@@ -2,7 +2,7 @@
 
 namespace App\Domain\AccountReceivable\Entities;
 
-use App\Caixa;
+use App\ContaReceber;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
@@ -95,7 +95,7 @@ class AccountReceivable extends BaseEntity
         return $entity;
     }
 
-    public function build(): Caixa
+    public function build(): ContaReceber
     {
         $data = [
             'id' => isset($this->id) ? (string)$this->id : null,
@@ -108,6 +108,10 @@ class AccountReceivable extends BaseEntity
             'user_update_id' => isset($this->userUpdateId) ? (string)$this->userUpdateId : null,
         ];
 
-        return new Caixa($data);
+        $data = array_filter($data, function ($value) {
+            return $value !== null;
+        });
+
+        return new ContaReceber($data);
     }
 }
