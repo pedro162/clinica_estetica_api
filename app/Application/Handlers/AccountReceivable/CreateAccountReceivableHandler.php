@@ -3,7 +3,7 @@
 namespace App\Application\Handlers\AccountReceivable;
 
 use App\Application\Commands\AccountReceivable\CreateAccountReceivableCommand;
-use App\Caixa;
+use App\ContaReceber;
 use App\Domain\AccountReceivable\Entities\AccountReceivable;
 use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;;
 
@@ -16,7 +16,7 @@ class CreateAccountReceivableHandler
         $this->repository = $repository;
     }
 
-    public function handler(CreateAccountReceivableCommand $command): ?Caixa
+    public function handler(CreateAccountReceivableCommand $command): ?ContaReceber
     {
         $entity = AccountReceivable::buildEntity($command->getDataProperties());
 

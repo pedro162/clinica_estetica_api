@@ -34,31 +34,29 @@ class AccountReceivableTest extends TestCase
     }
     public function testCrateANewAccountReceivable()
     {
-        $cashier = factory(ContaReceber::class)->make();
-        $this->postJson(route('receber.store'), $cashier->toArray())
+        $accountReceivable = factory(ContaReceber::class)->make();
+        $this->postJson(route('receber.store'), $accountReceivable->toArray())
             ->assertJsonStructure([
                 'data',
                 'success'
             ])->assertJson([
                 'data' => [
-                    'name' => $cashier->name,
-                    'vrMin' => $cashier->vrMin,
-                    'vrMax' => $cashier->vrMax,
+                    'referencia_id' => $accountReceivable->referencia_id,
                 ]
-            ])->assertJsonPath('data.type', $cashier->type);
+            ])->assertJsonPath('data.type', $accountReceivable->type);
     }
 
     public function testUpdateAAccountReceivable()
     {
-        $cashier = factory(ContaReceber::class)->create();
-        $cashier->name = 'New name';
+        $accountReceivable = factory(ContaReceber::class)->create();
+        $accountReceivable->name = 'New name';
 
-        $response = $this->putJson(route('receber.update', ['id' => $cashier->id]), $cashier->toArray())
+        $response = $this->putJson(route('receber.update', ['id' => $accountReceivable->id]), $accountReceivable->toArray())
             ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
 
-        $this->assertDatabaseHas($cashier->getTable(), [
-            'id' => $cashier->id,
-            'name' => $cashier->name
+        $this->assertDatabaseHas($accountReceivable->getTable(), [
+            'id' => $accountReceivable->id,
+            'name' => $accountReceivable->name
         ]);
     }
 

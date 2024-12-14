@@ -167,6 +167,10 @@ class City
             'user_update_id' => isset($this->userUpdateId) ? (string)$this->userUpdateId : null,
         ];
 
+        $data = array_filter($data, function ($value) {
+            return $value !== null;
+        });
+
         return new Cidade($data);
     }
 }

@@ -89,6 +89,11 @@ class Country
             'user_id' => isset($this->userId) ? (string)$this->userId : null,
             'user_update_id' => isset($this->userUpdateId) ? (string)$this->userUpdateId : null,
         ];
+
+        $data = array_filter($data, function ($value) {
+            return $value !== null;
+        });
+
         return new Pais($data);
     }
 }
