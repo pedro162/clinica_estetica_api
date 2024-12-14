@@ -11,7 +11,7 @@ interface AccountReceivableItemApplicationServiceInterface
 {
     public function store(
         CreateAccountReceivableItemCommand $command
-    ): ?ContaReceberItem;
+    ): ?Collection;
 
     public function findById(
         CreateAccountReceivableItemCommand $command
