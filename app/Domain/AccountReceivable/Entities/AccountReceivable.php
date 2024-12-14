@@ -331,55 +331,47 @@ class AccountReceivable extends BaseEntity
 
     public static function buildEntity(array $data): AccountReceivable
     {
-        $tenantId = $data['tenant_id'] ?? $data['tenantId'] ?? 0;
-        $tenantId = (string) (!empty($tenantId) ? $tenantId : 0);
+        $entity = (new self());
 
-        $userId = $data['user_id'] ?? $data['userId'] ?? 0;
-        $userId = (string) (!empty($userId) ? $userId : 0);
+        $mapping = [
+            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new AccountReceivableId($value))],
+            ['keys' => ['descricao', 'desciption'], 'callback' => fn($value) => $entity->desciption(new AccountReceivableDescription((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId($value))],
+            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId($value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId($value))],
+            ['keys' => ['status'], 'callback' => fn($value) => $entity->status(new AccountReceivableStatus((string)$value))],
+            ['keys' => ['branchId', 'branch_id'], 'callback' => fn($value) => $entity->branchId(new AccountReceivableBranchId((string)$value))],
+            ['keys' => ['document'], 'callback' => fn($value) => $entity->document(new AccountReceivableDocument((string)$value))],
+            ['keys' => ['originalDueDate'], 'callback' => fn($value) => $entity->originalDueDate(new AccountReceivableOriginalDueDate((string)$value))],
+            ['keys' => ['dueDate'], 'callback' => fn($value) => $entity->dueDate(new AccountReceivableDueDate((string)$value))],
+            ['keys' => ['grossValue'], 'callback' => fn($value) => $entity->grossValue(new AccountReceivableGrossValue((string)$value))],
+            ['keys' => ['netValue'], 'callback' => fn($value) => $entity->netValue(new AccountReceivableNetValue((string)$value))],
+            ['keys' => ['returnedValue'], 'callback' => fn($value) => $entity->returnedValue(new AccountReceivableReturnedValue((string)$value))],
+            ['keys' => ['paidValue'], 'callback' => fn($value) => $entity->paidValue(new AccountReceivablePaidValue((string)$value))],
+            ['keys' => ['feeValue'], 'callback' => fn($value) => $entity->feeValue(new AccountReceivableFeeValue((string)$value))],
+            ['keys' => ['discountValue'], 'callback' => fn($value) => $entity->discountValue(new AccountReceivableDiscountValue((string)$value))],
+            ['keys' => ['interestValue'], 'callback' => fn($value) => $entity->interestValue(new AccountReceivableInterestValue((string)$value))],
+            ['keys' => ['isImportedData'], 'callback' => fn($value) => $entity->isImportedData(new AccountReceivableIsImportedData((string)$value))],
+            ['keys' => ['paymentMethodId'], 'callback' => fn($value) => $entity->paymentMethodId(new AccountReceivablePaymentMethodId((string)$value))],
+            ['keys' => ['paymentPlanId'], 'callback' => fn($value) => $entity->paymentPlanId(new AccountReceivablePaymentPlanId((string)$value))],
+            ['keys' => ['financialOperatorId'], 'callback' => fn($value) => $entity->financialOperatorId(new AccountReceivableFinancialOperatorId((string)$value))],
+            ['keys' => ['paymentDate'], 'callback' => fn($value) => $entity->paymentDate(new AccountReceivablePaymentDate((string)$value))],
+            ['keys' => ['clearanceDate'], 'callback' => fn($value) => $entity->clearanceDate(new AccountReceivableClearanceDate((string)$value))],
+            ['keys' => ['receivableAccountId'], 'callback' => fn($value) => $entity->receivableAccountId(new AccountReceivableReceivableAccountId((string)$value))],
+            ['keys' => ['clearancePersonId'], 'callback' => fn($value) => $entity->clearancePersonId(new AccountReceivableClearancePersonId((string)$value))],
+            ['keys' => ['clearanceType'], 'callback' => fn($value) => $entity->clearanceType(new AccountReceivableClearanceType((string)$value))],
+            ['keys' => ['responsibleId'], 'callback' => fn($value) => $entity->responsibleId(new AccountReceivableResponsibleId((string)$value))],
+        ];
 
-        $userUpdateId = $data['user_update_id'] ?? $data['userUpdateId'] ?? 0;
-        $userUpdateId = (string) (!empty($userUpdateId) ? $userUpdateId : 0);
-
-        $stateId = $data['state_id'] ?? $data['stateId'] ?? 0;
-        $stateId = (string) (!empty($stateId) ? $stateId : 0);
-
-        $id = $data['city_id'] ?? $data['id'] ?? 0;
-        $id = (string) (!empty($id) ? $id : 0);
-
-        $status = $data['status'] ?? $data['status_bloqueio'] ?? '';
-        $branchId = (string) ($data['branchId'] ?? $data['filial_id'] ?? 0);
-
-        $entity = (new self())
-            ->id(new AccountReceivableId($id))
-            ->desciption(new AccountReceivableDescription((string)($data['descricao'] ?? $data['desciption'] ?? '')))
-            ->tenantId(new BaseEntityTenantId($tenantId))
-            ->active(((string)($data['active'] ?? '')))
-            ->userId(new BaseEntityUserId($userId))
-            ->userUpdateId(new BaseEntityUserId($userUpdateId))
-            ->status(new AccountReceivableStatus((string) $status))
-            ->branchId(new AccountReceivableBranchId($branchId))
-            ->branchId(new AccountReceivableBranchId((string)($data['branchId'] ?? '')))
-            ->document(new AccountReceivableDocument((string)($data['document'] ?? '')))
-            ->originalDueDate(new AccountReceivableOriginalDueDate((string)($data['originalDueDate'] ?? '')))
-            ->dueDate(new AccountReceivableDueDate((string)($data['dueDate'] ?? '')))
-            ->grossValue(new AccountReceivableGrossValue((string)($data['grossValue'] ?? '')))
-            ->netValue(new AccountReceivableNetValue((string)($data['netValue'] ?? '')))
-            ->returnedValue(new AccountReceivableReturnedValue((string)($data['returnedValue'] ?? '')))
-            ->paidValue(new AccountReceivablePaidValue((string)($data['paidValue'] ?? '')))
-            ->feeValue(new AccountReceivableFeeValue((string)($data['feeValue'] ?? '')))
-            ->discountValue(new AccountReceivableDiscountValue((string)($data['discountValue'] ?? '')))
-            ->interestValue(new AccountReceivableInterestValue((string)($data['interestValue'] ?? '')))
-            ->isImportedData(new AccountReceivableIsImportedData((string)($data['isImportedData'] ?? '')))
-            ->paymentMethodId(new AccountReceivablePaymentMethodId((string)($data['paymentMethodId'] ?? '')))
-            ->paymentPlanId(new AccountReceivablePaymentPlanId((string)($data['paymentPlanId'] ?? '')))
-            ->financialOperatorId(new AccountReceivableFinancialOperatorId((string)($data['financialOperatorId'] ?? '')))
-            ->tenantId(new AccountReceivableTenantId((string)($data['tenantId'] ?? '')))
-            ->paymentDate(new AccountReceivablePaymentDate((string)($data['paymentDate'] ?? '')))
-            ->clearanceDate(new AccountReceivableClearanceDate((string)($data['clearanceDate'] ?? '')))
-            ->receivableAccountId(new AccountReceivableReceivableAccountId((string)($data['receivableAccountId'] ?? '')))
-            ->clearancePersonId(new AccountReceivableClearancePersonId((string)($data['clearancePersonId'] ?? '')))
-            ->clearanceType(new AccountReceivableClearanceType((string)($data['clearanceType'] ?? '')))
-            ->responsibleId(new AccountReceivableResponsibleId((string)($data['responsibleId'] ?? '')));
+        foreach ($mapping as $map) {
+            foreach ($map['keys'] as $key) {
+                if (isset($data[$key])) {
+                    $map['callback']($data[$key]);
+                    break;
+                }
+            }
+        }
 
         return $entity;
     }
