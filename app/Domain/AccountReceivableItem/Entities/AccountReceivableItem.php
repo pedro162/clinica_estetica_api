@@ -430,7 +430,31 @@ class AccountReceivableItem extends BaseEntity
             ->userId(new BaseEntityUserId($userId))
             ->userUpdateId(new BaseEntityUserId($userUpdateId))
             ->status(new AccountReceivableItemStatus((string) $status))
-            ->branchId(new AccountReceivableItemBranchId($branchId));
+            ->branchId(new AccountReceivableItemBranchId($branchId))
+            ->originalDueDate(new AccountReceivableItemOriginalDueDate((string)($data['originalDueDate'] ?? '')))
+            ->dueDate(new AccountReceivableItemDueDate((string)($data['dueDate'] ?? '')))
+            ->grossValue(new AccountReceivableItemGrossValue((string)($data['grossValue'] ?? '')))
+            ->netValue(new AccountReceivableItemNetValue((string)($data['netValue'] ?? '')))
+            ->returnedValue(new AccountReceivableItemReturnedValue((string)($data['returnedValue'] ?? '')))
+            ->paidValue(new AccountReceivableItemPaidValue((string)($data['paidValue'] ?? '')))
+            ->feeValue(new AccountReceivableItemFeeValue((string)($data['feeValue'] ?? '')))
+            ->discountValue(new AccountReceivableItemDiscountValue((string)($data['discountValue'] ?? '')))
+            ->interestValue(new AccountReceivableItemInterestValue((string)($data['interestValue'] ?? '')))
+            ->isImportedData(new AccountReceivableItemIsImportedData((string)($data['isImportedData'] ?? '')))
+            ->paymentMethodId(new AccountReceivableItemPaymentMethodId((string)($data['paymentMethodId'] ?? '')))
+            ->paymentPlanId(new AccountReceivableItemPaymentPlanId((string)($data['paymentPlanId'] ?? '')))
+            ->financialOperatorId(new AccountReceivableItemFinancialOperatorId((string)($data['financialOperatorId'] ?? '')))
+            ->paymentDate(new AccountReceivableItemPaymentDate((string)($data['paymentDate'] ?? '')))
+            ->clearanceDate(new AccountReceivableItemClearanceDate((string)($data['clearanceDate'] ?? '')))
+            ->receivableAccountId(new AccountReceivableItemReceivableAccountId((string)($data['receivableAccountId'] ?? '')))
+            ->clearancePersonId(new AccountReceivableItemClearancePersonId((string)($data['clearancePersonId'] ?? '')))
+            ->clearanceType(new AccountReceivableItemClearanceType((string)($data['clearanceType'] ?? '')))
+            ->responsibleId(new AccountReceivableItemResponsibleId((string)($data['responsibleId'] ?? '')))
+            ->clearanceHash(new AccountReceivableItemClearanceHash((string)($data['clearanceHash'] ?? '')))
+            ->cashboxId(new AccountReceivableItemCashboxId((string)($data['cashboxId'] ?? '')))
+            ->refundPersonId(new AccountReceivableItemRefundPersonId((string)($data['refundPersonId'] ?? '')))
+            ->reversalPersonId(new AccountReceivableItemReversalPersonId((string)($data['reversalPersonId'] ?? '')))
+            ->reversalDescription(new AccountReceivableItemReversalDescription((string)($data['reversalDescription'] ?? '')));
 
         return $entity;
     }
@@ -439,13 +463,37 @@ class AccountReceivableItem extends BaseEntity
     {
         $data = [
             'id' => isset($this->id) ? (string)$this->id : null,
-            'branchId' => isset($this->branchId) ? (string)$this->branchId : null,
             'desciption' => isset($this->desciption) ? (string)$this->desciption : null,
-            'status_bloqueio' => isset($this->status) ? (string)$this->status : null,
-            'tenant_id' => isset($this->tenantId) ? (string)$this->tenantId : null,
+            'tenantId' => isset($this->tenantId) ? (string)$this->tenantId : null,
             'active' => isset($this->active) ? (string)$this->active : null,
-            'user_id' => isset($this->userId) ? (string)$this->userId : null,
-            'user_update_id' => isset($this->userUpdateId) ? (string)$this->userUpdateId : null,
+            'userId' => isset($this->userId) ? (string)$this->userId : null,
+            'userUpdateId' => isset($this->userUpdateId) ? (string)$this->userUpdateId : null,
+            'status' => isset($this->status) ? (string)$this->status : null,
+            'branchId' => isset($this->branchId) ? (string)$this->branchId : null,
+            'originalDueDate' => isset($this->originalDueDate) ? (string)$this->originalDueDate : null,
+            'dueDate' => isset($this->dueDate) ? (string)$this->dueDate : null,
+            'grossValue' => isset($this->grossValue) ? (string)$this->grossValue : null,
+            'netValue' => isset($this->netValue) ? (string)$this->netValue : null,
+            'returnedValue' => isset($this->returnedValue) ? (string)$this->returnedValue : null,
+            'paidValue' => isset($this->paidValue) ? (string)$this->paidValue : null,
+            'feeValue' => isset($this->feeValue) ? (string)$this->feeValue : null,
+            'discountValue' => isset($this->discountValue) ? (string)$this->discountValue : null,
+            'interestValue' => isset($this->interestValue) ? (string)$this->interestValue : null,
+            'isImportedData' => isset($this->isImportedData) ? (string)$this->isImportedData : null,
+            'paymentMethodId' => isset($this->paymentMethodId) ? (string)$this->paymentMethodId : null,
+            'paymentPlanId' => isset($this->paymentPlanId) ? (string)$this->paymentPlanId : null,
+            'financialOperatorId' => isset($this->financialOperatorId) ? (string)$this->financialOperatorId : null,
+            'paymentDate' => isset($this->paymentDate) ? (string)$this->paymentDate : null,
+            'clearanceDate' => isset($this->clearanceDate) ? (string)$this->clearanceDate : null,
+            'receivableAccountId' => isset($this->receivableAccountId) ? (string)$this->receivableAccountId : null,
+            'clearancePersonId' => isset($this->clearancePersonId) ? (string)$this->clearancePersonId : null,
+            'clearanceType' => isset($this->clearanceType) ? (string)$this->clearanceType : null,
+            'responsibleId' => isset($this->responsibleId) ? (string)$this->responsibleId : null,
+            'clearanceHash' => isset($this->clearanceHash) ? (string)$this->clearanceHash : null,
+            'cashboxId' => isset($this->cashboxId) ? (string)$this->cashboxId : null,
+            'refundPersonId' => isset($this->refundPersonId) ? (string)$this->refundPersonId : null,
+            'reversalPersonId' => isset($this->reversalPersonId) ? (string)$this->reversalPersonId : null,
+            'reversalDescription' => isset($this->reversalDescription) ? (string)$this->reversalDescription : null,
         ];
 
         $data = array_filter($data, function ($value) {
