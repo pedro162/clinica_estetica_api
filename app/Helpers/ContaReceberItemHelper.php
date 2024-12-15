@@ -30,20 +30,29 @@ use App\Validators\AccountReceivable\AccountReceivableValidator;
 class ContaReceberItemHelper
 {
     protected GetAllAccountReceivableHandler $getAllAccountReceivableHandler;
+    protected GetAllAccountReceivableItemHandler $getAllAccountReceivableItemHandler;
     protected UpdateAccountReceivableHandler $updateAccountReceivableHandler;
+    protected UpdateAccountReceivableItemHandler $updateAccountReceivableItemHandler;
     protected GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler;
+    protected GetAccountReceivableItemByIdHandler $getAccountReceivableItemByIdHandler;
     protected AccountReceivableValidator $accountReceivableValidator;
     protected CreateAccountReceivableItemHandler $createAccountReceivableItemHandler;
 
     public function __construct(
+        GetAllAccountReceivableHandler $getAllAccountReceivableHandler,
         GetAllAccountReceivableItemHandler $getAllAccountReceivableItemHandler,
         UpdateAccountReceivableItemHandler $updateAccountReceivableItemHandler,
         GetAccountReceivableItemByIdHandler $getAccountReceivableItemByIdHandler,
-        CreateAccountReceivableItemHandler $createAccountReceivableItemHandler
+        GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler,
+        CreateAccountReceivableItemHandler $createAccountReceivableItemHandler,
+        UpdateAccountReceivableHandler $updateAccountReceivableHandler
     ) {
-        $this->getAllAccountReceivableHandler = $getAllAccountReceivableItemHandler;
-        $this->updateAccountReceivableHandler = $updateAccountReceivableItemHandler;
-        $this->getAccountReceivableByIdHandler = $getAccountReceivableItemByIdHandler;
+        $this->getAllAccountReceivableItemHandler = $getAllAccountReceivableItemHandler;
+        $this->getAllAccountReceivableHandler = $getAllAccountReceivableHandler;
+        $this->updateAccountReceivableHandler = $updateAccountReceivableHandler;
+        $this->updateAccountReceivableItemHandler = $updateAccountReceivableItemHandler;
+        $this->getAccountReceivableByIdHandler = $getAccountReceivableByIdHandler;
+        $this->getAccountReceivableItemByIdHandler = $getAccountReceivableItemByIdHandler;
         $this->createAccountReceivableItemHandler = $createAccountReceivableItemHandler;
     }
 

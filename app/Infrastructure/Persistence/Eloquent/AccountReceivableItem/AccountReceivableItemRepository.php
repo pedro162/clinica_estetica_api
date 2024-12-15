@@ -81,22 +81,10 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
             'name' => 'pessoas.name',
         ];
 
-        $registro = \DB::table('conta_receber_items as cr');
-        $registro->join('pessoas', function ($join) {
-            $join->on('pessoas.id', '=', 'cr.pessoa_id');
-        })->join('forma_pagamentos as fp', function ($join) {
-            $join->on('fp.id', '=', 'cr.forma_pagamento_id');
-        });
-
-        if (isset($data['com_ordem_servico'])) {
-            $registro->leftJoin('ordem_servicos as os', function ($join) {
-                $join->on('os.id', '=', 'cr.referencia_id')->on('cr.referencia', '=',  \DB::raw('"ordem_servicos"'));
-            })->join('profissionals as prof', function ($join) {
-                $join->on('prof.id', '=', 'os.profissional_id');
-            })->join('pessoas as pprof', function ($join) {
-                $join->on('pprof.id', '=', 'prof.pessoa_id');
+        $registro = \DB::table('conta_receber_items as cr')
+            ->join('forma_pagamentos as fp', function ($join) {
+                $join->on('fp.id', '=', 'cr.forma_pagamentos_id');
             });
-        }
 
         if (is_array($consulta) && count($consulta) > 0) {
             foreach ($consulta as $key => $val) {
@@ -115,34 +103,6 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
 
                         $val = explode(',', $val);
                         $registro->whereIn('cr.id', $val);
-                        break;
-                    case 'nmPessoa':
-                    case 'pessoa_name':
-                    case 'name_pessoa':
-                        if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('pessoas.name', 'like', '%' . $val . '%');
-                        }
-                        break;
-                    case 'vencido':
-
-                        if (is_string($val)) {
-                            $registro->whereIn('cr.status', ['aberto']);
-
-                            if (trim($val) == 'yes') {
-                                $registro->where('cr.dtVencimento', '<', date('Y-m-d'));
-                            } elseif (trim($val) == 'no') {
-                                $registro->where('cr.dtVencimento', '>=', date('Y-m-d'));
-                            }
-                        }
-
                         break;
                     case 'dt_exercicio':
                         $tpExercicio = 'dtVencimento';
@@ -169,51 +129,6 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
                             $registro->where('cr.' . $tpExercicio, '<=', date($val[1]));
                         }
 
-                        break;
-
-                    case 'pessoa_id':
-                        if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-                            $val = explode(',', $val);
-
-                            $registro->whereIn('pessoas.id', $val);
-                        }
-                        break;
-                    case 'referencia_id':
-                        if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-                        }
-
-                        $val = explode(',', $val);
-
-                        $registro->whereIn('cr.referencia_id', $val);
-                        break;
-
-                    case 'referencia':
-                        if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-                            $val = explode(',', $val);
-
-                            $registro->whereIn('cr.referencia', $val);
-                        }
                         break;
                     case 'status':
                         if (is_string($val)) {
@@ -277,18 +192,11 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
                 }
             }
         }
-        $sqlDsReferencia = '(
-                    CASE 
-                        WHEN cr.referencia = "ordem_servicos" THEN "Ordem de serviço"
-                        ELSE "Referência não mapeada"
-                    END
-                )
-                as dsReferencia
-            ';
+
         if ($campos) {
             $registro->select($campos);
         } else {
-            $registro->select('cr.*', \DB::raw('(IFNULL(cr.vrLiquido, 0) - (IFNULL(cr.vrPago, 0) + IFNULL(cr.vrDevolvido, 0)))  vrAberto'), \DB::raw($sqlDsReferencia), 'fp.cdCobrancaTipo', 'fp.name as name_cob_tp', 'pessoas.name');
+            $registro->select('cr.*', \DB::raw('(IFNULL(cr.vrLiquido, 0) - (IFNULL(cr.vrPago, 0) + IFNULL(cr.vrDevolvido, 0)))  vrAberto'),  'fp.cdCobrancaTipo');
         }
 
         $ordemArr   = explode('-', $ordem);
@@ -301,10 +209,10 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
 
         if ($usePaginate > 0) {
             $registro   = $registro->where('cr.active', '=', 'yes')
-                ->where('pessoas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+                ->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
         } else {
             $registro = $registro->where('cr.active', '=', 'yes')
-                ->where('pessoas.active', '=', 'yes')->get();
+                ->get();
         }
 
         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
