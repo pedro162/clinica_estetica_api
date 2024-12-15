@@ -8,13 +8,13 @@ use App\FinanceiroMovimentacoe;
 
 class ContaReceberItem extends Model
 {
-    protected $primaryKey = "id";
+	protected $primaryKey = "id";
 
-    protected $table = "conta_receber_items";
+	protected $table = "conta_receber_items";
 
-    protected $fillable = [
-    	'id',
-    	'documento',
+	protected $fillable = [
+		'id',
+		'documento',
 		'dtPagamento',
 		'dtBaixa',
 		'descricao',
@@ -40,14 +40,16 @@ class ContaReceberItem extends Model
 		'caixa_id',
 		'tpBaixa',
 		'rashBaixa',
-    ];
+		'tenant_id',
+	];
 
-    public function contaReceber()
-    {
-    	return $this->belongsTo(ContaReceber::class,'conta_receber_id', 'id');
-    }
+	public function contaReceber()
+	{
+		return $this->belongsTo(ContaReceber::class, 'conta_receber_id', 'id');
+	}
 
-  	public function movimentacao(){
-  		return $this->hasMany(FinanceiroMovimentacoe::class, 'referencia_id', 'id')->where('referencia', 'conta_receber_items');
-  	}
+	public function movimentacao()
+	{
+		return $this->hasMany(FinanceiroMovimentacoe::class, 'referencia_id', 'id')->where('referencia', 'conta_receber_items');
+	}
 }

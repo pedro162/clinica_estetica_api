@@ -31,6 +31,8 @@ class CreateAccountReceivableCommand
     protected string $active;
     protected string $branchId;
     protected string $personId;
+    protected string $reference;
+    protected string $referenceId;
 
     public function id(string $id): CreateAccountReceivableCommand
     {
@@ -41,6 +43,28 @@ class CreateAccountReceivableCommand
     public function getId(): ?string
     {
         return $this->id ?? null;
+    }
+
+    public function reference(string $reference): CreateAccountReceivableCommand
+    {
+        $this->reference = $reference;
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference ?? null;
+    }
+
+    public function referenceId(string $referenceId): CreateAccountReceivableCommand
+    {
+        $this->referenceId = $referenceId;
+        return $this;
+    }
+
+    public function getReferenceId(): ?string
+    {
+        return $this->referenceId ?? null;
     }
 
     public function tenantId(string $tenantId): CreateAccountReceivableCommand
@@ -308,16 +332,16 @@ class CreateAccountReceivableCommand
 
         $entity = (new self)
             ->id((string)($data['id'] ?? 0))
-            ->description((string)($data['description'] ?? ''))
+            ->description((string)($data['description'] ?? $data['descricao'] ?? ''))
             ->tenantId((string)($data['tenantId'] ?? ''))
-            ->userId((string)($data['userId'] ?? ''))
-            ->userUpdateId((string)($data['userId'] ?? ''))
+            ->userId((string)($data['userId'] ?? $data['user_id'] ?? ''))
+            ->userUpdateId((string)($data['userUpdateId'] ?? $data['user_update_id'] ?? ''))
             ->active((string)($data['active'] ?? 'yes'))
             ->branchId((string)($data['filial_id'] ?? $data['branchId'] ?? ''))
             ->document((string) ($data['document'] ?? $data['documento'] ?? ''))
             ->originalDueDate((string) ($data['originalDueDate'] ?? $data['dtVencimentoOriginal'] ?? ''))
             ->dueDate((string) ($data['dueDate'] ?? $data['dtVencimento'] ?? ''))
-            ->grossValue((string) $$grossValue)
+            ->grossValue((string) $grossValue)
             ->netValue((string) $netValue)
             ->returnedValue((string) $returnedValue)
             ->paidValue((string) $paidValue)
@@ -330,14 +354,16 @@ class CreateAccountReceivableCommand
             ->paymentPlanId((string) ($data['paymentPlanId'] ?? $data['plano_pagamento_id'] ?? ''))
             ->financialOperatorId((string) ($data['financialOperatorId'] ?? $data['operador_financeiro_id'] ?? ''))
             ->status((string) ($data['status'] ?? ''))
-            ->personId((string) ($data['personId'] ?? 0));
+            ->personId((string) ($data['personId'] ?? $data['pessoa_id'] ?? 0))
+            ->reference((string) ($data['reference'] ?? $data['referencia'] ?? 0))
+            ->referenceId((string) ($data['referenceId'] ?? $data['referencia_id'] ?? 0));
 
         return $entity;
     }
 
     public function getDataProperties(): array
     {
-        return [
+        $data = [
             'id' => (string)($this->id ?? ''),
             'description' => (string)($this->description ?? ''),
             'tenantId' => (string)($this->tenantId ?? ''),
@@ -367,6 +393,12 @@ class CreateAccountReceivableCommand
             'active' => (string) ($this->active ?? ''),
             'branchId' => (string) ($this->branchId ?? ''),
             'personId' => (string) ($this->personId ?? ''),
+            'reference' => (string) ($this->reference ?? ''),
+            'referenceId' => (string) ($this->referenceId ?? ''),
         ];
+
+        return array_filter($data, function ($value) {
+            return $value !== null && !empty($value);
+        });
     }
 }

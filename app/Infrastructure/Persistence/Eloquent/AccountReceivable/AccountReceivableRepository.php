@@ -36,6 +36,7 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
         }
 
         $entity->save();
+
         return $this->findById(new AccountReceivableId((string)$entity->id));
     }
 

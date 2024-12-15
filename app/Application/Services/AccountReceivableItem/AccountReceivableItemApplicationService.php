@@ -18,6 +18,7 @@ use App\Domain\AccountReceivableItem\Entities\AccountReceivableItem;
 use App\Exceptions\CobrancaReceberException;
 use App\FormaPagamento;
 use App\Helpers\ContaReceberCartaoHelper;
+use App\Helpers\ContaReceberItemHelper;
 use App\Pessoa;
 use App\Utilitarios;
 use App\Validators\AccountReceivable\AccountReceivableValidator;
@@ -32,6 +33,7 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
     protected AccountReceivableValidator $accountReceivableValidator;
     protected GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler;
     protected UpdateAccountReceivableHandler $updateAccountReceivableHandler;
+    protected ContaReceberItemHelper $accountReceivableItemHelper;
 
     public function __construct(
         CreateAccountReceivableItemHandler $createAccountReceivableItemHandler,
@@ -40,7 +42,8 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
         GetAccountReceivableItemByIdHandler $getAccountReceivableItemByIdHandler,
         AccountReceivableValidator $accountReceivableValidator,
         GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler,
-        GetAccountReceivableByIdHandler $updateAccountReceivableHandler,
+        UpdateAccountReceivableHandler $updateAccountReceivableHandler,
+        ContaReceberItemHelper $accountReceivableItemHelper
     ) {
         $this->createAccountReceivableItemHandler = $createAccountReceivableItemHandler;
         $this->getAllAccountReceivableItemHandler = $getAllAccountReceivableItemHandler;
@@ -49,62 +52,35 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
         $this->accountReceivableValidator = $accountReceivableValidator;
         $this->getAccountReceivableByIdHandler = $getAccountReceivableByIdHandler;
         $this->updateAccountReceivableHandler = $updateAccountReceivableHandler;
+        $this->accountReceivableItemHelper = $accountReceivableItemHelper;
     }
 
     public function store(
         CreateAccountReceivableItemCommand $command
     ): ?Collection {
 
-        $propertiesCreateCommand = $command->getDataProperties();
-        $installMents = $this->generateInstallMents(
-            $propertiesCreateCommand
-        );
-
-        $createdRecords = collect();
-        $totalValuePayed = 0;
-
-        foreach ($installMents as $installMent) {
-            $accountReceivableItem = $this->createAccountReceivableItemHandler->handler(
-                CreateAccountReceivableItemCommand::build($installMent)
-            );
-
-            if (!$accountReceivableItem) {
-                throw new CobrancaReceberException('Não foi possível realizar a baixa do contas a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');
-            }
-
-            if ($accountReceivableItem->status == 'pago') {
-                $totalValuePayed += $accountReceivableItem->vrPago;
-            }
-
-            //--- Salvo a carteira de cartões -----------------------------------
-            if ($installMent['bandeira_cartao_id'] > 0) {
-                $objCobCartHelper   = new ContaReceberCartaoHelper();
-                $idBandeira         = $installMent['bandeira_cartao_id'] ?? 1; //Gravar a bandeira do cartão na tabela de cobranças
-                $dataCartoes        = $objCobCartHelper->gerarCarteiraCartao(
-                    $accountReceivableItem->id,
-                    $idBandeira,
-                    [
-                        'status' => 'aberto',
-                        'nr_doc' => $installMent['nr_doc'] ?? $installMent['documento']
-                    ]
-                );
-
-                if (! $dataCartoes) {
-                    throw new CobrancaReceberException('Não foi possível gerar a carteira de cartões. Tente novamente ou entre em contato com o suporte.');
-                }
-            }
-        }
-
-        $accountReceivableObject = $this->getAccountReceivableByIdHandler->handler(
-            CreateAccountReceivableCommand::build(['id' => $propertiesCreateCommand['conta_receber_id']])
-        );
-
-        $this->updateAccountReceivableHandler->handler(
+        $propertiesData = $command->getDataProperties();
+        $accountReceivable = $this->getAccountReceivableByIdHandler->handler(
             CreateAccountReceivableCommand::build([
-                'id' => $accountReceivableObject->id,
-                'vrPago' => $accountReceivableObject->vrPago + $totalValuePayed
+                'id' => $propertiesData['receivableAccountId']
             ])
         );
+
+        $result = $this->accountReceivableItemHelper->gerarCobrancaItem(
+            $accountReceivable,
+            (float) $propertiesData['grossValue'],
+            (int) $propertiesData['paymentMethodId'],
+            (int) $propertiesData['paymentPlanId'],
+            (int) $propertiesData['financialOperatorId'],
+            $propertiesData
+        );
+
+        $resultAccountReceivable = $result['data_cob_receber_item'] ?? [];
+        $createdRecords = collect();
+
+        foreach ($resultAccountReceivable as $accountReceivable) {
+            $createdRecords->push($accountReceivable);
+        }
 
         return $createdRecords;
     }
@@ -130,6 +106,7 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
     protected function accountReceivableParseData(array $data)
     {
         return [
+            ...$data,
             'descricao' => $data['descricao'] ?? "Recita financeira",
             'documento' => $data['documento'] ?? null,
             'dtVencimentoOriginal' => $data['dtVencimentoOriginal'],

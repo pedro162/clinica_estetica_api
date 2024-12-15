@@ -13,6 +13,7 @@ use App\ContaReceber;
 use App\Domain\AccountReceivable\Entities\AccountReceivable;
 use App\Exceptions\CobrancaReceberException;
 use App\FormaPagamento;
+use App\Helpers\ContaReceberHelper;
 use App\Helpers\ContaReceberItemHelper;
 use App\Pessoa;
 use App\Utilitarios;
@@ -27,6 +28,7 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
     protected GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler;
     protected AccountReceivableValidator $accountReceivableValidator;
     private CreateAccountReceivableItemHandler $createAccountReceivableItemHandler;
+    private ContaReceberHelper $accountReceivableHelper;
 
     public function __construct(
         CreateAccountReceivableHandler $createAccountReceivableHandler,
@@ -34,7 +36,8 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
         UpdateAccountReceivableHandler $updateAccountReceivableHandler,
         GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler,
         AccountReceivableValidator $accountReceivableValidator,
-        CreateAccountReceivableItemHandler $createAccountReceivableItemHandler
+        CreateAccountReceivableItemHandler $createAccountReceivableItemHandler,
+        ContaReceberHelper $accountReceivableHelper
     ) {
         $this->createAccountReceivableHandler = $createAccountReceivableHandler;
         $this->getAllAccountReceivableHandler = $getAllAccountReceivableHandler;
@@ -42,36 +45,29 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
         $this->getAccountReceivableByIdHandler = $getAccountReceivableByIdHandler;
         $this->accountReceivableValidator = $accountReceivableValidator;
         $this->createAccountReceivableItemHandler = $createAccountReceivableItemHandler;
+        $this->accountReceivableHelper = $accountReceivableHelper;
     }
 
     public function store(
         CreateAccountReceivableCommand $command
     ): ?Collection {
 
-        $installMents = $this->generateInstallMents(
-            $command->getDataProperties()
+        $propertiesData = $command->getDataProperties();
+
+        $result = $this->accountReceivableHelper->gerarCobranca(
+            (int)$propertiesData['personId'],
+            (float) $propertiesData['grossValue'],
+            (int) $propertiesData['paymentMethodId'],
+            (int) $propertiesData['paymentPlanId'],
+            (int) $propertiesData['financialOperatorId'],
+            $propertiesData
         );
 
+        $resultAccountReceivable = $result['data_cob_receber'] ?? [];
         $createdRecords = collect();
 
-        foreach ($installMents as $installMent) {
-            $accountReceivable = $this->createAccountReceivableHandler->handler(
-                CreateAccountReceivableCommand::build($installMent)
-            );
-
+        foreach ($resultAccountReceivable as $accountReceivable) {
             $createdRecords->push($accountReceivable);
-
-            if ($accountReceivable->status != 'pago') {
-                continue;
-            }
-
-            $accountReceivableItem = $this->createAccountReceivableItemHandler->handler(
-                CreateAccountReceivableItemCommand::build($installMent)
-            );
-
-            if (!$accountReceivableItem) {
-                throw new CobrancaReceberException('Não foi possível realizar a baixa do contas a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');
-            }
         }
 
         return $createdRecords;
@@ -80,7 +76,6 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
     public function update(
         CreateAccountReceivableCommand $command
     ): void {
-
         $this->updateAccountReceivableHandler->handler($command);
     }
 
@@ -123,84 +118,6 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
         ];
     }
 
-    protected function generateInstallMents(array $data = []): array
-    {
-        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $data['forma_pagamento_id'])->first();
-        $paymentPlanObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $data['plano_pagamento_id'])->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $data['plano_pagamento_id'])->first();
-        $operatorFainantialObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $data['operador_financeiro_id'])->first();
-        $objPessoa              = Pessoa::where('active', '=', 'yes')->where('id', '=', $data['pessoa_id'])->first();
-
-        $accountReceivableValue   = Utilitarios::removeMaskMoney($data['vrBruto']);
-        $erros = $this->accountReceivableValidator->validaGerCobranca($data['pessoa_id'], $accountReceivableValue, $data['forma_pagamento_id'], $data['plano_pagamento_id'], $data['operador_financeiro_id'], $data);
-
-        if ((is_array($erros) && count($erros) > 0)) {
-            throw new CobrancaReceberException(implode('<br/>', $erros));
-        }
-
-        $installMentsQuantity = $paymentPlanObject->qtdParcelas ?? 1;;
-        $installMents = [];
-        $quantityDaysGap   = $paymentPlanObject->qtdDiasIntervaloParcelas ?? 0;
-        $quantityOfDaysFirstInstallMent  = $paymentPlanObject->qtd_dias_pri_parcela ?? 0;
-        $installMentBaseValue = $accountReceivableValue / $installMentsQuantity;
-        $installMentBaseValue = (float) $installMentBaseValue;
-
-        $dueDateObject = new \DateTime();
-
-        if ($quantityOfDaysFirstInstallMent > 0) {
-            $dueDateObject->add(new \DateInterval('P' . $quantityOfDaysFirstInstallMent . 'D'));
-        }
-
-        $totalInstallmentsValue = 0;
-        $defaultReferenceId = date('ymdhis');
-        $defaultReference = 'sem_referencia';
-        $status    = 'aberto';
-
-        if (trim($paymentMethodObject->tipo) == 'cartao_credito' || trim($paymentMethodObject->tipo) == 'cartao_debito') {
-            $installMentsQuantity = 0;
-
-            if (isset($data['documento']) && strlen(trim($data['documento'])) >= 3) {
-                $status    = 'pago';
-            }
-        }
-
-        for ($i = 0; !($i == $installMentsQuantity); $i++) {
-            $dueDate = $dueDateObject->format("Y-m-d H:i:s");
-            $installMents[] = $this->accountReceivableParseData([
-                'pessoa_id' => $objPessoa->id,
-                'descricao' => $data['descricao'] ?? "Recita financeira",
-                'documento' => $data['documento'] ?? null,
-                'dtVencimentoOriginal' => $dueDate,
-                'dtVencimento' => $dueDate,
-                'vrBruto' => $installMentBaseValue,
-                'vrLiquido' => $installMentBaseValue,
-                'referencia_id' => $data['referencia_id'] ?? $defaultReferenceId,
-                'referencia' => $data['referencia'] ?? $defaultReference,
-                'filial_id' => $data['filial_id'] ?? null,
-                'responsavel_id' => $data['responsavel_id'] ?? 0,
-                'forma_pagamento_id' => $paymentMethodObject->id,
-                'plano_pagamento_id' => $paymentPlanObject->id,
-                'operador_financeiro_id' => $operatorFainantialObject->id ?? 0,
-                'status' => $status,
-            ]);
-
-            if ($quantityDaysGap > 0) {
-                $dueDateObject->add(new \DateInterval('P' . $quantityDaysGap . 'D'));
-            }
-
-            $totalInstallmentsValue += $installMentBaseValue;
-        }
-
-        $installMentsDiff    = $installMentBaseValue - $totalInstallmentsValue;
-        $installMentsDiffAbs = abs($installMentsDiff);
-
-        if ($installMentsDiffAbs > 0.02 && is_array($installMents) && count($installMents) > 0) {
-            $installMents[0]['vrPago']      += 0;
-            $installMents[0]['vrBruto']     += $installMentsDiff;
-            $installMents[0]['vrLiquido']   += $installMentsDiff;
-        }
-
-        return $installMents;
-    }
 
     public function payOff(array $data, int $id)
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Feature\AccountReceivable;
+namespace Tests\Feature\AccountReceivableItem;
 
-use App\ContaReceber;
+use App\ContaReceberItem;
 use App\FormaPagamento;
 use App\OperadorFinanceiro;
 use App\PlanoPagamento;
@@ -14,7 +14,7 @@ use Laravel\Passport\Passport;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 
-class AccountReceivableTest extends TestCase
+class AccountReceivableItemTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -26,9 +26,9 @@ class AccountReceivableTest extends TestCase
         Passport::actingAs($user);
     }
 
-    public function testGetAllAccountReceivables()
+    public function testGetAllAccountReceivableItems()
     {
-        $response = $this->getJson(route('receber.index'))
+        $response = $this->getJson(route('receber.item.index'))
             ->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonStructure([
                 'data',
@@ -36,9 +36,9 @@ class AccountReceivableTest extends TestCase
             ]);
     }
 
-    public function testCrateANewAccountReceivable()
+    public function testCrateANewAccountReceivableItem()
     {
-        $accountReceivable = factory(ContaReceber::class)->make();
+        $accountReceivable = factory(ContaReceberItem::class)->make();
         $methodOfPayment = factory(FormaPagamento::class)->create();
         $paymentPlanObject = factory(PlanoPagamento::class)->create();
         $financialOperator = factory(OperadorFinanceiro::class)->create();
@@ -50,16 +50,16 @@ class AccountReceivableTest extends TestCase
         $accountReceivable->plano_pagamento_id = $paymentPlanObject->id;
         $accountReceivable->operador_financeiro_id = $financialOperator->id;
 
-        $this->postJson(route('receber.store'), $accountReceivable->toArray())
+        $this->postJson(route('receber.item.store'), $accountReceivable->toArray())
             ->assertJsonStructure([
                 'data',
                 'success'
             ])->assertStatus(JsonResponse::HTTP_CREATED);
     }
 
-    public function testCrateANewAccountReceivablePayed()
+    public function testCrateANewAccountReceivableItemPayed()
     {
-        $accountReceivable = factory(ContaReceber::class)->make();
+        $accountReceivable = factory(ContaReceberItem::class)->make();
         $methodOfPayment = factory(FormaPagamento::class)->create();
         $paymentPlanObject = factory(PlanoPagamento::class)->create();
         $financialOperator = factory(OperadorFinanceiro::class)->create();
@@ -72,20 +72,20 @@ class AccountReceivableTest extends TestCase
         $accountReceivable->operador_financeiro_id = $financialOperator->id;
         $accountReceivable->status = 'pago';
 
-        $this->postJson(route('receber.store'), $accountReceivable->toArray())
+        $this->postJson(route('receber.item.store'), $accountReceivable->toArray())
             ->assertJsonStructure([
                 'data',
                 'success'
             ])->assertStatus(JsonResponse::HTTP_CREATED);
     }
 
-    public function testUpdateAAccountReceivable()
+    public function testUpdateAAccountReceivableItem()
     {
-        $accountReceivable = factory(ContaReceber::class)->create();
+        $accountReceivable = factory(ContaReceberItem::class)->create();
         $accountReceivable->descricao = 'New name';
         $accountReceivable->documento = '123456';
 
-        $response = $this->putJson(route('receber.update', ['id' => $accountReceivable->id]), $accountReceivable->toArray())
+        $response = $this->putJson(route('receber.item.update', ['id' => $accountReceivable->id]), $accountReceivable->toArray())
             ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
 
         $this->assertDatabaseHas($accountReceivable->getTable(), [
@@ -95,11 +95,11 @@ class AccountReceivableTest extends TestCase
         ]);
     }
 
-    public function testGetAAccountReceivableById()
+    public function testGetAAccountReceivableItemById()
     {
-        $accountReceivable = factory(ContaReceber::class)->create();
+        $accountReceivable = factory(ContaReceberItem::class)->create();
 
-        $response = $this->getJson(route('receber.show', ['id' => $accountReceivable->id]));
+        $response = $this->getJson(route('receber.item.show', ['id' => $accountReceivable->id]));
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonStructure([
