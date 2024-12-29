@@ -2,6 +2,13 @@
 
 namespace App\Helpers;
 
+use App\Application\Commands\AccountReceivable\CreateAccountReceivableCommand;
+use App\Application\Handlers\AccountReceivable\CreateAccountReceivableHandler;
+use App\Application\Handlers\AccountReceivable\GetAccountReceivableByIdHandler;
+use App\Application\Handlers\AccountReceivable\GetAllAccountReceivableHandler;
+use App\Application\Handlers\AccountReceivable\UpdateAccountReceivableHandler;
+use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHandler;
+use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -19,35 +26,62 @@ use \App\Pessoa;
 use \App\OrdemServico;
 use \App\Exceptions\CobrancaReceberException;
 use App\Helpers\BaseHelper;
+use App\Validators\AccountReceivable\AccountReceivableValidator;
+use Exception;
 
 class ContaReceberHelper extends BaseHelper
 {
+    private CreateAccountReceivableHandler $createAccountReceivableHandler;
+    protected GetAllAccountReceivableHandler $getAllAccountReceivableHandler;
+    protected UpdateAccountReceivableHandler $updateAccountReceivableHandler;
+    protected GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler;
+    protected AccountReceivableValidator $accountReceivableValidator;
+    private CreateAccountReceivableItemHandler $createAccountReceivableItemHandler;
+    protected ContaReceberItemHelper $accountReceivableItemHelp;
+
+    public function __construct(
+        CreateAccountReceivableHandler $createAccountReceivableHandler,
+        GetAllAccountReceivableHandler $getAllAccountReceivableHandler,
+        UpdateAccountReceivableHandler $updateAccountReceivableHandler,
+        GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler,
+        AccountReceivableValidator $accountReceivableValidator,
+        CreateAccountReceivableItemHandler $createAccountReceivableItemHandler,
+        ContaReceberItemHelper $accountReceivableItemHelp
+    ) {
+        $this->createAccountReceivableHandler = $createAccountReceivableHandler;
+        $this->getAllAccountReceivableHandler = $getAllAccountReceivableHandler;
+        $this->updateAccountReceivableHandler = $updateAccountReceivableHandler;
+        $this->getAccountReceivableByIdHandler = $getAccountReceivableByIdHandler;
+        $this->accountReceivableValidator = $accountReceivableValidator;
+        $this->createAccountReceivableItemHandler = $createAccountReceivableItemHandler;
+        $this->accountReceivableItemHelp = $accountReceivableItemHelp;
+    }
 
     public function validaGerCobranca(int $idPessoa, float $vrCobranca, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = []): array
     {
         $erros = [];
 
-        $objFormaPagamento      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
-        $objPlanoPagamento      = $objFormaPagamento->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
-        $objOperadorFinanceiro  = $objFormaPagamento->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
-        $objPessoa              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
+        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
+        $paymentPlanObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
+        $operatorFainantialObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
+        $personObject              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
 
         $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);
 
-        if (!$objPessoa) {
+        if (!$personObject) {
             $erros[] = 'A pessoa de código nº ' . $idPessoa . ' não foi identificada.';
         }
 
-        if (!$objFormaPagamento) {
+        if (!$paymentMethodObject) {
             $erros[] = 'A forma de pagamento de código nº ' . $idFormaPagamento . ' não foi identificada.';
         }
 
-        if (!$objPlanoPagamento) {
+        if (!$paymentPlanObject) {
             $erros[] = 'O plano de pagamento de código nº ' . $idPlanoPagamento . ' não foi identificado.';
         }
 
-        if (!$objOperadorFinanceiro) {
-            if ($objFormaPagamento->hasOperadorFinanceiro == 'yes') {
+        if (!$operatorFainantialObject) {
+            if ($paymentMethodObject->hasOperadorFinanceiro == 'yes') {
                 $erros[] = 'O operador financeiro de código nº ' . $idOperadorFinanceiro . ' não foi identificado.';
             }
         }
@@ -59,12 +93,39 @@ class ContaReceberHelper extends BaseHelper
         return $erros;
     }
 
+    protected function accountReceivableParseData(array $data)
+    {
+        return [
+            'pessoa_id' => $data['pessoa_id'] ?? null,
+            'descricao' => $data['descricao'] ?? "Recita financeira",
+            'documento' => $data['documento'] ?? null,
+            'dtVencimentoOriginal' => $data['dtVencimentoOriginal'],
+            'dtVencimento' => $data['dtVencimento'] ?? null,
+            'vrPago' => $data['vrPago'] ?? 0,
+            'vrBruto' => $data['vrBruto'] ?? 0,
+            'vrLiquido' => $data['vrLiquido'] ?? 0,
+            'vrDevolvido' => $data['vrDevolvido'] ?? 0,
+            'vrTaxa' => $data['vrTaxa'] ?? 0,
+            'vrDesconto' => $data['vrDesconto'] ?? 0,
+            'vrJuros' => $data['vrJuros'] ?? 0,
+            'importacao_dados' => $data['importacao_dados'] ?? 'no',
+            'referencia_id' => $data['referencia_id'] ?? null,
+            'referencia' => $data['referencia'] ?? null,
+            'filial_id' => $data['filial_id'] ?? null,
+            'responsavel_id' => $data['responsavel_id'] ?? 0,
+            'forma_pagamento_id' => $data['forma_pagamento_id'] ?? null,
+            'plano_pagamento_id' => $data['plano_pagamento_id'] ?? null,
+            'operador_financeiro_id' => $data['operador_financeiro_id'] ?? null,
+            'status' => $data['status'] ?? 'aberto',
+        ];
+    }
+
     public function gerarCobranca(int $idPessoa, float $vrCobranca, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = [])
     {
-        $objFormaPagamento      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
-        $objPlanoPagamento      = $objFormaPagamento->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
-        $objOperadorFinanceiro  = $objFormaPagamento->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
-        $objPessoa              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
+        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
+        $paymentPlanObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
+        $operatorFainantialObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
+        $personObject              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
 
         $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);
         $erros = $this->validaGerCobranca($idPessoa, $vrCobranca, $idFormaPagamento, $idPlanoPagamento, $idOperadorFinanceiro, $dados);
@@ -73,11 +134,11 @@ class ContaReceberHelper extends BaseHelper
             throw new CobrancaReceberException(implode('<br/>', $erros));
         }
 
-        $qtdParcela         = $objPlanoPagamento->qtdParcelas ?? 1;;
-        $dataParcelas       = [];
-        $qtdDiasIntervalo   = $objPlanoPagamento->qtdDiasIntervaloParcelas ?? 0;
-        $qtdDiasPriParcela  = $objPlanoPagamento->qtd_dias_pri_parcela ?? 0;
-        $vrParcelaBase      = $vrCobranca / $qtdParcela;
+        $installMentsQuantity         = $paymentPlanObject->installMentsQuantitys ?? 1;;
+        $installMents       = [];
+        $qtdDiasIntervalo   = $paymentPlanObject->qtdDiasIntervaloParcelas ?? 0;
+        $qtdDiasPriParcela  = $paymentPlanObject->qtd_dias_pri_parcela ?? 0;
+        $vrParcelaBase      = $vrCobranca / $installMentsQuantity;
         $vrParcelaBase      = (float) $vrParcelaBase;
 
         $objDtVencimento = new \DateTime();
@@ -87,55 +148,54 @@ class ContaReceberHelper extends BaseHelper
         }
 
         $vrTotalParelasGeradas = 0;
+        $defaultReferenceId = date('ymdhis');
+        $defaultReference = 'sem_referencia';
+        $status = $dados['status'] ?? 'aberto';
 
-        $idReferenciaPadrao = date('ymdhis');
-        $reFerenciaPadrao = 'sem_referencia';
+        if (trim($paymentMethodObject->tipo) == 'cartao_credito' || trim($paymentMethodObject->tipo) == 'cartao_debito') {
+            $installMentsQuantity = 1;
 
-        for ($i = 0; !($i == $qtdParcela); $i++) {
+            if (isset($data['document']) && strlen(trim($data['document'])) >= 3) {
+                $status    = 'pago';
+            }
+        }
+
+        for ($i = 0; !($i == $installMentsQuantity); $i++) {
             $dtVencimento = $objDtVencimento->format("Y-m-d H:i:s");
-            $dataParcelas[] = [
-                'pessoa_id' => $objPessoa->id,
-                'descricao' => $dados['descricao'] ?? "Recita financeira",
-                'documento' => $dados['documento'] ?? null,
+            $installMents[] = $this->accountReceivableParseData([
+                'pessoa_id' => $personObject->id,
+                'descricao' => $dados['descricao'] ?? $dados['description'] ?? "Recita financeira",
+                'documento' => $dados['documento'] ?? $dados['document'] ?? null,
                 'dtVencimentoOriginal' => $dtVencimento,
                 'dtVencimento' => $dtVencimento,
-                'vrPago' => 0,
                 'vrBruto' => $vrParcelaBase,
                 'vrLiquido' => $vrParcelaBase,
-                'vrDevolvido' => 0,
-                'vrTaxa' => 0,
-                'vrDesconto' => 0,
-                'vrJuros' => 0,
-                'user_id' => \Auth::User()->id,
-                'active' => 'yes',
                 'importacao_dados' => 'no',
-                'referencia_id' => $dados['referencia_id'] ?? $idReferenciaPadrao,
-                'referencia' => $dados['referencia'] ?? $reFerenciaPadrao,
-                'filial_id' => $dados['filial_id'] ?? null,
-                'responsavel_id' => $dados['responsavel_id'] ?? 0,
-                'forma_pagamento_id' => $objFormaPagamento->id,
-                'plano_pagamento_id' => $objPlanoPagamento->id,
-                'operador_financeiro_id' => $objOperadorFinanceiro->id ?? 0,
-                'status' => 'aberto',
+                'referencia_id' => $dados['referencia_id'] ?? $dados['referenceId'] ?? $defaultReferenceId,
+                'referencia' => $dados['referencia'] ?? $dados['reference'] ?? $defaultReference,
+                'filial_id' => $dados['filial_id'] ?? $dados['branchId'] ?? null,
+                'responsavel_id' => $dados['responsavel_id'] ?? $dados['responsibleId'] ?? 0,
+                'forma_pagamento_id' => $paymentMethodObject->id,
+                'plano_pagamento_id' => $paymentPlanObject->id,
+                'operador_financeiro_id' => $operatorFainantialObject->id ?? 0,
+                'status' => $status,
 
-            ];
+            ]);
 
             if ($qtdDiasIntervalo > 0) {
-
                 $objDtVencimento->add(new \DateInterval('P' . $qtdDiasIntervalo . 'D'));
             }
 
             $vrTotalParelasGeradas += $vrParcelaBase;
         }
 
-        $difParcelas    = $vrParcelaBase - $vrTotalParelasGeradas;
-        $difParcelasAbs = abs($difParcelas);
+        $installMentsDiff    = $vrParcelaBase - $vrTotalParelasGeradas;
+        $installMentsDiffAbs = abs($installMentsDiff);
 
-        //-- Tento jogar a diferença das parcela na primeira parcela
-        if ($difParcelasAbs > 0.02 && is_array($dataParcelas) && count($dataParcelas) > 0) {
-            $dataParcelas[0]['vrPago']      += 0;
-            $dataParcelas[0]['vrBruto']     += $difParcelas;
-            $dataParcelas[0]['vrLiquido']   += $difParcelas;
+        if ($installMentsDiffAbs > 0.02 && is_array($installMents) && count($installMents) > 0) {
+            $installMents[0]['vrPago']      += 0;
+            $installMents[0]['vrBruto']     += $installMentsDiff;
+            $installMents[0]['vrLiquido']   += $installMentsDiff;
         }
 
         $datacobReceberObjArr = [
@@ -144,101 +204,53 @@ class ContaReceberHelper extends BaseHelper
             'data_cob_receber_boletos' => [],
         ];
 
-        if (trim($objFormaPagamento->tipo) == 'cartao_credito' || trim($objFormaPagamento->tipo) == 'cartao_debito') {
+        if (is_array($installMents) && count($installMents) > 0) {
+            foreach ($installMents as $key => $val) {
 
-            $dtVencimento = $objDtVencimento->format("Y-m-d H:i:s");
-            $dtPagamento        = null;
-            $dtBaixa            = null;
-            $rashbaixa          = null;
-            $statusCobCartao    = 'pago'; //aberto
-            $dataCartoes        = [];
-
-            if (isset($dados['documento']) && strlen(trim($dados['documento'])) >= 3) {
-                $statusCobCartao    = 'pago';
-            }
-
-            $dataParcela = [
-                'pessoa_id' => $objPessoa->id,
-                'descricao' => $dados['descricao'] ?? "Recita financeira",
-                'documento' => $dados['documento'] ?? null,
-                'dtVencimentoOriginal' => $dtVencimento,
-                'dtVencimento' => $dtVencimento,
-                'vrPago' => 0,
-                'vrBruto' => $vrCobranca,
-                'vrLiquido' => $vrCobranca,
-                'vrDevolvido' => 0,
-                'vrTaxa' => 0,
-                'vrDesconto' => 0,
-                'vrJuros' => 0,
-                'user_id' => \Auth::User()->id,
-                'active' => 'yes',
-                'importacao_dados' => 'no',
-                'referencia_id' => $dados['referencia_id'] ?? null,
-                'referencia' => $dados['referencia'] ?? null,
-                'filial_id' => $dados['filial_id'] ?? null,
-                'responsavel_id' => $dados['responsavel_id'] ?? 0,
-                'qtd_parcelas' => $qtdParcela ?? 1,
-                'nr_parcela' => $qtdParcela ?? 1,
-                'forma_pagamento_id' => $objFormaPagamento->id,
-                'plano_pagamento_id' => $objPlanoPagamento->id,
-                'operador_financeiro_id' => $objOperadorFinanceiro->id ?? 0,
-                'status' => $statusCobCartao,
-
-            ];
-
-            $objCobReceber = ContaReceber::create($dataParcela);
-
-            if (!$objCobReceber) {
-                throw new CobrancaReceberException('Não foi possível gerar os contas a receber.Tente novamente ou entre em contato com o suporte.');
-            }
-
-            if ($statusCobCartao == 'pago') {
-
-                $objCobReceberItemHelp = new ContaReceberItemHelper();
-                $errosEncontrados = $objCobReceberItemHelp->validaGerCobrancaItem(
-                    $objCobReceber,
-                    $vrCobranca,
-                    $objFormaPagamento->id,
-                    $objPlanoPagamento->id,
-                    $objOperadorFinanceiro->id ?? 0,
-                    $dataParcela
+                $accountReceivable = $this->createAccountReceivableHandler->handler(
+                    CreateAccountReceivableCommand::build($val)
                 );
 
-                if (is_array($errosEncontrados) && count($errosEncontrados) > 0) {
-                    throw new CobrancaReceberException(implode('<br/>', $errosEncontrados));
+                if (!$accountReceivable) {
+                    throw new CobrancaReceberException('Não foi possível gerar os contas a receber.Tente novamente ou entre em contato com o suporte.');
                 }
 
-                $responseHelper = $objCobReceberItemHelp->gerarCobrancaItem(
-                    $objCobReceber,
-                    $vrCobranca,
-                    $objFormaPagamento->id,
-                    $objPlanoPagamento->id,
-                    $objOperadorFinanceiro->id ?? 0,
-                    $dataParcela
-                );
+                if ($accountReceivable->status == 'pago') {
+                    $val['qtdParcelas'] = 1;
+                    $errosEncontrados = $this->accountReceivableItemHelp->validaGerCobrancaItem(
+                        $accountReceivable,
+                        (float)$accountReceivable->vrLiquido,
+                        $paymentMethodObject->id,
+                        $paymentPlanObject->id,
+                        $operatorFainantialObject->id ?? 0,
+                        $val,
+                    );
 
-                if (!$responseHelper) {
-                    throw new CobrancaReceberException('Não foi possível realizar a baixa do contas a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');
-                }
-                $dataCartoes = $responseHelper['data_cob_receber_cartoes'] ??  [];
-            }
-
-            $datacobReceberObjArr['data_cob_receber'][]         = $objCobReceber;
-            $datacobReceberObjArr['data_cob_receber_cartoes'][] = $dataCartoes;
-        } else {
-
-            if (is_array($dataParcelas) && count($dataParcelas) > 0) {
-                foreach ($dataParcelas as $key => $val) {
-                    $objCobReceber = ContaReceber::create($val);
-
-                    if (!$objCobReceber) {
-                        throw new CobrancaReceberException('Não foi possível gerar os contas a receber.Tente novamente ou entre em contato com o suporte.');
+                    if (is_array($errosEncontrados) && count($errosEncontrados) > 0) {
+                        throw new CobrancaReceberException(implode('<br/>', $errosEncontrados));
                     }
-                    $datacobReceberObjArr['data_cob_receber'][] = $objCobReceber;
+
+                    $responseHelper = $this->accountReceivableItemHelp->gerarCobrancaItem(
+                        $accountReceivable,
+                        (float)$accountReceivable->vrLiquido,
+                        $paymentMethodObject->id,
+                        $paymentPlanObject->id,
+                        $operatorFainantialObject->id ?? 0,
+                        $val
+                    );
+
+                    if (!$responseHelper) {
+                        throw new CobrancaReceberException('Não foi possível realizar a baixa do contas a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');
+                    }
+
+                    $dataCartoes = $responseHelper['data_cob_receber_cartoes'] ??  [];
+                    $datacobReceberObjArr['data_cob_receber_cartoes'][] = $dataCartoes;
                 }
-            } else {
-                throw new CobrancaReceberException('Não foi possível identificar quantas parcelas deveriam ser geradas. Tente novamente ou entre em contato com o suporte.');
+
+                $datacobReceberObjArr['data_cob_receber'][] = $accountReceivable;
             }
+        } else {
+            throw new CobrancaReceberException('Não foi possível identificar quantas parcelas deveriam ser geradas. Tente novamente ou entre em contato com o suporte.');
         }
 
         return $datacobReceberObjArr;
@@ -298,10 +310,8 @@ class ContaReceberHelper extends BaseHelper
 
         ];
 
-        $objCobReceberItemHelp = new ContaReceberItemHelper();
-
-        //contaRecebrItem
-        $dataResponse = $objCobReceberItemHelp->gerarCobrancaItem(
+        $accountReceivableItemHelp = new ContaReceberItemHelper();
+        $dataResponse = $accountReceivableItemHelp->gerarCobrancaItem(
             $registro,
             $vrCobranca,
             $registro->formaPagamento->id,
@@ -319,14 +329,12 @@ class ContaReceberHelper extends BaseHelper
             throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
         }
 
-
-
         foreach ($dataItens as $key => $contaRecebrItem) {
             if (!($contaRecebrItem)) {
                 throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
             }
-            $objCobReceberItemHelp = new ContaReceberItemHelper();
-            $objCobReceberItemHelp->baixar($dados, $contaRecebrItem->id);
+            $accountReceivableItemHelp = new ContaReceberItemHelper();
+            $accountReceivableItemHelp->baixar($dados, $contaRecebrItem->id);
         }
 
 
@@ -403,8 +411,6 @@ class ContaReceberHelper extends BaseHelper
         ];
 
         $data['raw_grop_by'] = "{$rawSqlFilial},{$rawSqlYear},{$rawSqlMes}";
-
-
 
         return $this->json($data);
     }

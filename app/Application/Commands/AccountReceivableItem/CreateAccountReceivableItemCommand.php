@@ -38,6 +38,7 @@ class CreateAccountReceivableItemCommand
     protected string $clearancePersonId;
     protected string $refundPersonId;
     protected string $cashboxId;
+    protected string $accountReceivableId;
     protected string $clearanceType;
     protected string $clearanceHash;
 
@@ -50,6 +51,17 @@ class CreateAccountReceivableItemCommand
     public function getId(): ?string
     {
         return $this->id ?? null;
+    }
+
+    public function accountReceivableId(string $accountReceivableId): CreateAccountReceivableItemCommand
+    {
+        $this->accountReceivableId = $accountReceivableId;
+        return $this;
+    }
+
+    public function getAccountReceivableId(): ?string
+    {
+        return $this->accountReceivableId ?? null;
     }
 
     public function tenantId(string $tenantId): CreateAccountReceivableItemCommand
@@ -435,7 +447,7 @@ class CreateAccountReceivableItemCommand
             ->cashboxId((string) ($data['cashboxId'] ?? $data['caixa_id'] ?? ''))
             ->clearanceType((string) ($data['clearanceType'] ?? $data['tpBaixa'] ?? ''))
             ->clearanceHash((string) ($data['clearanceHash'] ?? $data['rashBaixa'] ?? ''))
-            ->grossValue((string) $$grossValue)
+            ->grossValue((string) $grossValue)
             ->netValue((string) $netValue)
             ->returnedValue((string) $returnedValue)
             ->paidValue((string) $paidValue)
@@ -444,7 +456,7 @@ class CreateAccountReceivableItemCommand
             ->interestValue((string) $interestValue)
             ->responsibleId((string) ($data['responsibleId'] ?? $data['responsavel_id'] ?? ''))
             ->isImportedData((string) ($data['isImportedData'] ?? $data['importacao_dados'] ?? ''))
-            ->paymentMethodId((string) ($data['paymentMethodId'] ?? $data['forma_pagamento_id'] ?? ''))
+            ->paymentMethodId((string) ($data['paymentMethodId'] ??  $data['forma_pagamentos_id'] ?? $data['forma_pagamento_id'] ?? ''))
             ->paymentPlanId((string) ($data['paymentPlanId'] ?? $data['plano_pagamento_id'] ?? ''))
             ->financialOperatorId((string) ($data['financialOperatorId'] ?? $data['operador_financeiro_id'] ?? ''))
             ->status((string) ($data['status'] ?? ''));
@@ -454,7 +466,7 @@ class CreateAccountReceivableItemCommand
 
     public function getDataProperties(): array
     {
-        return [
+        $data = [
             'id' => (string)($this->id ?? ''),
             'description' => (string)($this->description ?? ''),
             'tenantId' => (string)($this->tenantId ?? ''),
@@ -494,5 +506,9 @@ class CreateAccountReceivableItemCommand
             'clearanceType' => (string) ($this->clearanceType ?? ''),
             'clearanceHash' => (string) ($this->clearanceHash ?? ''),
         ];
+
+        return array_filter($data, function ($value) {
+            return $value !== null && !empty($value);
+        });
     }
 }

@@ -45,7 +45,7 @@ class AccountReceivableController extends Controller
     public function store(StoreAccountReceivableRequest $request)
     {
         $data = $this->service->store(CreateAccountReceivableCommand::build($request->validated()));
-        return ApiResponseClass::sendRequest(new AccountReceivableResource($data), 'AccountReceivable Created Successful', 201);
+        return ApiResponseClass::sendRequest(new AccountReceivableCollection($data), 'AccountReceivable Created Successful', 201);
     }
 
     /**

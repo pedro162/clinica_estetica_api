@@ -11,13 +11,13 @@ use App\OperadorFinanceiro;
 
 class ContaReceber extends Model
 {
-    protected $primaryKey = "id";
+	protected $primaryKey = "id";
 
-    protected $table = "conta_recebers";
+	protected $table = "conta_recebers";
 
-    protected $fillable = [
+	protected $fillable = [
 		'id',
-    	'referencia_id',
+		'referencia_id',
 		'referencia',
 		'pessoa_id',
 		'descricao',
@@ -41,31 +41,31 @@ class ContaReceber extends Model
 		'plano_pagamento_id',
 		'operador_financeiro_id',
 		'status',
-    ];
+		'tenant_id'
+	];
 
-    public function contaReceberItem()
-    {
-    	return $this->hasMany(ContaReceberItem::class,'conta_receber_id', 'id');
-    }
+	public function contaReceberItem()
+	{
+		return $this->hasMany(ContaReceberItem::class, 'conta_receber_id', 'id');
+	}
 
-    public function pessoa()
-    {
-    	return $this->belongsTo(Pessoa::class,'pessoa_id', 'id');
-    }
+	public function pessoa()
+	{
+		return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
+	}
 
 	public function formaPagamento()
-    {
-    	return $this->belongsTo(FormaPagamento::class,'forma_pagamento_id', 'id');
-    }
+	{
+		return $this->belongsTo(FormaPagamento::class, 'forma_pagamento_id', 'id');
+	}
 
 	public function planoPagamento()
-    {
-    	return $this->belongsTo(PlanoPagamento::class,'plano_pagamento_id', 'id');
-    }
+	{
+		return $this->belongsTo(PlanoPagamento::class, 'plano_pagamento_id', 'id');
+	}
 
 	public function operadorFinanceiro()
-    {
-    	return $this->belongsTo(OperadorFinanceiro::class,'operador_financeiro_id', 'id');
-    }
-
+	{
+		return $this->belongsTo(OperadorFinanceiro::class, 'operador_financeiro_id', 'id');
+	}
 }
