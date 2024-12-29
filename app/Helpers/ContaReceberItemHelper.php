@@ -117,12 +117,11 @@ class ContaReceberItemHelper
             throw new CobrancaReceberException(implode('<br/>', $erros));
         }
 
-        $qtdParcela         = $objPlanoPagamento->qtdParcelas ?? 1;;
+        $qtdParcela         = $dados['qtdParcelas'] ?? $objPlanoPagamento->qtdParcelas ?? 1;;
         $dataParcelas       = [];
         $qtdDiasIntervalo   = $objPlanoPagamento->qtdDiasIntervaloParcelas ?? 0;
         $qtdDiasPriParcela  = $objPlanoPagamento->qtd_dias_pri_parcela ?? 0;
         $vrParcelaBase      = $vrCobranca / $qtdParcela;
-        $vrParcelaBase      = number_format($vrParcelaBase, 2, '.', ',');
         $vrParcelaBase      = (float) $vrParcelaBase;
 
         $objDtVencimento = new \DateTime();
@@ -230,30 +229,29 @@ class ContaReceberItemHelper
                 }
 
                 if ($tpStatusCobranca == 'pago') {
-                    //---Atualizo o cabeçalho-------------------------
                     $totalValuePayed += $accountReceivableItem->vrPago;
                 }
 
-                $objCobCartHelper   = new ContaReceberCartaoHelper();
-                $idBandeira         = $dados['bandeira_cartao_id'] ?? 1; //Gravar a bandeira do cartão na tabela de cobranças
-                $dataCartoes        = $objCobCartHelper->gerarCarteiraCartao(
-                    $accountReceivableItem->id,
-                    $idBandeira,
-                    [
-                        'status' => 'aberto',
-                        'nr_doc' => $dataParcela['nr_doc'] ?? $dataParcela['documento']
-                    ]
-                );
+                if (!empty($val['is_cartao']) && $val['is_cartao']) {
 
-                if (! $dataCartoes) {
-                    throw new CobrancaReceberException('Não foi possível gerar a carteira de cartões.Tente novamente ou entre em contato com o suporte.');
+                    $objCobCartHelper   = new ContaReceberCartaoHelper();
+                    $idBandeira         = $dados['bandeira_cartao_id'] ?? 1; //Gravar a bandeira do cartão na tabela de cobranças
+                    $dataCartoes        = $objCobCartHelper->gerarCarteiraCartao(
+                        $accountReceivableItem->id,
+                        $idBandeira,
+                        [
+                            'status' => 'aberto',
+                            'nr_doc' => $dataParcela['nr_doc'] ?? $dataParcela['documento']
+                        ]
+                    );
+
+                    if (! $dataCartoes) {
+                        throw new CobrancaReceberException('Não foi possível gerar a carteira de cartões.Tente novamente ou entre em contato com o suporte.');
+                    }
+
+                    $datacobReceberObjArr['data_cob_receber_cartoes'][] = $dataCartoes;
                 }
 
-                if ($tpStatusCobranca == 'pago') {
-                    $totalValuePayed += $accountReceivableItem->vrPago;
-                }
-
-                $datacobReceberObjArr['data_cob_receber_cartoes'][] = $dataCartoes;
                 $datacobReceberObjArr['data_cob_receber_item'][] = $accountReceivableItem;
             }
         } else {
@@ -264,10 +262,12 @@ class ContaReceberItemHelper
             CreateAccountReceivableCommand::build(['id' => $objCobReceber->id])
         );
 
+        $accountReceivableObject->vrPago += $totalValuePayed;
+
         $this->updateAccountReceivableHandler->handler(
             CreateAccountReceivableCommand::build([
                 'id' => $accountReceivableObject->id,
-                'vrPago' => $accountReceivableObject->vrPago + $totalValuePayed
+                'vrPago' => $accountReceivableObject->vrPago
             ])
         );
 
@@ -297,7 +297,6 @@ class ContaReceberItemHelper
         if (is_array($errosEncontrados) && count($errosEncontrados) > 0) {
             $erros = array_merge($erros, $errosEncontrados);
         }
-        // throw new CobrancaReceberException('teste');
 
         $objContaReceberItemValidator   = new ContaReceberItemValidator();
         $errosEncontrados               = $objContaReceberItemValidator->validarBaixar($id, $dados);

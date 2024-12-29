@@ -451,13 +451,13 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/receber/index/{id_assistente?}', ['as' => 'receber.index', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@index']);
 	Route::post('/receber/index/{id_assistente?}', ['as' => 'receber.index', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@index']);
 	Route::get('/receber/json/{id_assistente?}', ['as' => 'receber.json', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@index']);
-	Route::post('/receber/index/{id_assistente?}', ['as' => 'receber.json', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@index']);
+	Route::post('/receber/json/{id_assistente?}', ['as' => 'receber.json', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@index']);
 	Route::post('/receber/store/{id_assistente?}', ['as' => 'receber.store', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@store']);
 	Route::put('/receber/update/{id}/{id_assistente?}', ['as' => 'receber.update', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@update']);
 	Route::get('/receber/show/{id}/{id_assistente?}', ['as' => 'receber.show', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@show']);
 	Route::post('/receber/show/{id}/{id_assistente?}', ['as' => 'receber.show', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@show']);
-	Route::get('/receber/info/{id}/{id_assistente?}', ['as' => 'receber.info', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@info']);
-	Route::post('/receber/info/{id}/{id_assistente?}', ['as' => 'receber.info', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@info']);
+	Route::get('/receber/info/{id}/{id_assistente?}', ['as' => 'receber.info', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@show']);
+	Route::post('/receber/info/{id}/{id_assistente?}', ['as' => 'receber.info', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@show']);
 	Route::get('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@destroy']);
 	Route::post('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@destroy']);
 	Route::put('/receber/baixar/{id}/{id_assistente?}', ['as' => 'receber.baixar', 'uses' => 'Admin\CobrancaReceberController@baixar']);

@@ -35,6 +35,7 @@ class ContaReceberHelper extends BaseHelper
     protected GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler;
     protected AccountReceivableValidator $accountReceivableValidator;
     private CreateAccountReceivableItemHandler $createAccountReceivableItemHandler;
+    protected ContaReceberItemHelper $accountReceivableItemHelp;
 
     public function __construct(
         CreateAccountReceivableHandler $createAccountReceivableHandler,
@@ -42,7 +43,8 @@ class ContaReceberHelper extends BaseHelper
         UpdateAccountReceivableHandler $updateAccountReceivableHandler,
         GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler,
         AccountReceivableValidator $accountReceivableValidator,
-        CreateAccountReceivableItemHandler $createAccountReceivableItemHandler
+        CreateAccountReceivableItemHandler $createAccountReceivableItemHandler,
+        ContaReceberItemHelper $accountReceivableItemHelp
     ) {
         $this->createAccountReceivableHandler = $createAccountReceivableHandler;
         $this->getAllAccountReceivableHandler = $getAllAccountReceivableHandler;
@@ -50,6 +52,7 @@ class ContaReceberHelper extends BaseHelper
         $this->getAccountReceivableByIdHandler = $getAccountReceivableByIdHandler;
         $this->accountReceivableValidator = $accountReceivableValidator;
         $this->createAccountReceivableItemHandler = $createAccountReceivableItemHandler;
+        $this->accountReceivableItemHelp = $accountReceivableItemHelp;
     }
 
     public function validaGerCobranca(int $idPessoa, float $vrCobranca, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = []): array
@@ -143,10 +146,9 @@ class ContaReceberHelper extends BaseHelper
         }
 
         $vrTotalParelasGeradas = 0;
-
         $defaultReferenceId = date('ymdhis');
         $defaultReference = 'sem_referencia';
-        $status    = 'aberto';
+        $status = $dados['status'] ?? 'aberto';
 
         if (trim($paymentMethodObject->tipo) == 'cartao_credito' || trim($paymentMethodObject->tipo) == 'cartao_debito') {
             $installMentsQuantity = 1;
@@ -188,7 +190,6 @@ class ContaReceberHelper extends BaseHelper
         $installMentsDiff    = $vrParcelaBase - $vrTotalParelasGeradas;
         $installMentsDiffAbs = abs($installMentsDiff);
 
-        //-- Tento jogar a diferença das parcela na primeira parcela
         if ($installMentsDiffAbs > 0.02 && is_array($installMents) && count($installMents) > 0) {
             $installMents[0]['vrPago']      += 0;
             $installMents[0]['vrBruto']     += $installMentsDiff;
@@ -212,24 +213,23 @@ class ContaReceberHelper extends BaseHelper
                 }
 
                 if ($accountReceivable->status == 'pago') {
-
-                    $accountReceivableItemHelp = new ContaReceberItemHelper();
-                    $errosEncontrados = $accountReceivableItemHelp->validaGerCobrancaItem(
+                    $val['qtdParcelas'] = 1;
+                    $errosEncontrados = $this->accountReceivableItemHelp->validaGerCobrancaItem(
                         $accountReceivable,
-                        $vrCobranca,
+                        (float)$accountReceivable->vrLiquido,
                         $paymentMethodObject->id,
                         $paymentPlanObject->id,
                         $operatorFainantialObject->id ?? 0,
-                        $val
+                        $val,
                     );
 
                     if (is_array($errosEncontrados) && count($errosEncontrados) > 0) {
                         throw new CobrancaReceberException(implode('<br/>', $errosEncontrados));
                     }
 
-                    $responseHelper = $accountReceivableItemHelp->gerarCobrancaItem(
+                    $responseHelper = $this->accountReceivableItemHelp->gerarCobrancaItem(
                         $accountReceivable,
-                        $vrCobranca,
+                        (float)$accountReceivable->vrLiquido,
                         $paymentMethodObject->id,
                         $paymentPlanObject->id,
                         $operatorFainantialObject->id ?? 0,
@@ -244,7 +244,7 @@ class ContaReceberHelper extends BaseHelper
                     $datacobReceberObjArr['data_cob_receber_cartoes'][] = $dataCartoes;
                 }
 
-                $datacobReceberObjArr['data_cob_receber'][]         = $accountReceivable;
+                $datacobReceberObjArr['data_cob_receber'][] = $accountReceivable;
             }
         } else {
             throw new CobrancaReceberException('Não foi possível identificar quantas parcelas deveriam ser geradas. Tente novamente ou entre em contato com o suporte.');
@@ -308,8 +308,6 @@ class ContaReceberHelper extends BaseHelper
         ];
 
         $accountReceivableItemHelp = new ContaReceberItemHelper();
-
-        //contaRecebrItem
         $dataResponse = $accountReceivableItemHelp->gerarCobrancaItem(
             $registro,
             $vrCobranca,
@@ -327,8 +325,6 @@ class ContaReceberHelper extends BaseHelper
         if (!(is_array($dataItens) && count($dataItens) > 0)) {
             throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
         }
-
-
 
         foreach ($dataItens as $key => $contaRecebrItem) {
             if (!($contaRecebrItem)) {
@@ -412,8 +408,6 @@ class ContaReceberHelper extends BaseHelper
         ];
 
         $data['raw_grop_by'] = "{$rawSqlFilial},{$rawSqlYear},{$rawSqlMes}";
-
-
 
         return $this->json($data);
     }

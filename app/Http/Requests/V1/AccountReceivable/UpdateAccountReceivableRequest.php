@@ -47,6 +47,7 @@ class UpdateAccountReceivableRequest extends FormRequest
             'forma_pagamento_id' => 'sometimes|exists:App\FormaPagamento,id',
             'plano_pagamento_id' => 'sometimes|exists:App\PlanoPagamento,id',
             'operador_financeiro_id' => 'sometimes|exists:App\OperadorFinanceiro,id',
+            'bandeira_cartao_id' => 'sometimes|exists:App\BandeiraCartao,id',
             'status' => 'sometimes',
         ];
     }

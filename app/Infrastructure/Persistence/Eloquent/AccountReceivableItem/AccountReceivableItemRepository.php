@@ -123,6 +123,7 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
                             }
                             $tpExercicio = 'dtVencimento';
                         }
+
                         if (is_string($val) && strpos($val, ',') > -1) {
                             $val = explode(',', $val);
                             $registro->where('cr.' . $tpExercicio, '>=', date($val[0]));
@@ -153,7 +154,6 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
                         break;
                     case 'ordem':
 
-
                         if ($val[0] == ',') {
                             $val = substr($val, 1);
                         }
@@ -162,6 +162,7 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
                         }
 
                         $val = explode(',', $val);
+
                         for ($i = 0; !($i == count($val)); $i++) {
                             $atual = explode('-', $val[$i]);
                             if (array_key_exists(trim($atual[0]), $parse)) {
@@ -180,7 +181,6 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
                     case 'campos':
                         if (is_array($val) && count($val) > 0) {
                             //$campos = $this->montaCamposConsulta($registro, $val);
-
                         }
                         break;
                     case 'grop_by':

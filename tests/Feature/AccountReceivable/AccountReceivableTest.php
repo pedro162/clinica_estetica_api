@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\AccountReceivable;
 
+use App\BandeiraCartao;
 use App\ContaReceber;
 use App\FormaPagamento;
 use App\OperadorFinanceiro;
@@ -63,6 +64,7 @@ class AccountReceivableTest extends TestCase
         $methodOfPayment = factory(FormaPagamento::class)->create();
         $paymentPlanObject = factory(PlanoPagamento::class)->create();
         $financialOperator = factory(OperadorFinanceiro::class)->create();
+        $creditCardFlag = factory(BandeiraCartao::class)->create();
 
         $methodOfPayment->planoPagamento()->attach($paymentPlanObject->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
         $methodOfPayment->operadorFinanceiro()->attach($financialOperator->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
@@ -72,11 +74,51 @@ class AccountReceivableTest extends TestCase
         $accountReceivable->operador_financeiro_id = $financialOperator->id;
         $accountReceivable->status = 'pago';
 
-        $this->postJson(route('receber.store'), $accountReceivable->toArray())
-            ->assertJsonStructure([
-                'data',
-                'success'
-            ])->assertStatus(JsonResponse::HTTP_CREATED);
+        $requestData = $accountReceivable->toArray();
+        $requestData['bandeira_cartao_id'] = $creditCardFlag->id;
+        $requestData['status'] = 'pago';
+
+        $response = $this->postJson(route('receber.store'), $requestData);
+
+        $response->assertJsonStructure([
+            'success',
+            'data' => [
+                'data' => [
+                    '*' => [
+                        'id',
+                        'referencia_id',
+                        'referencia',
+                        'pessoa_id',
+                        'descricao',
+                        'dtVencimentoOriginal',
+                        'dtVencimento',
+                        'vrBruto',
+                        'vrLiquido',
+                        'vrDevolvido',
+                        'vrPago',
+                        'vrTaxa',
+                        'vrDesconto',
+                        'vrJuros',
+                        'user_id',
+                        'active',
+                        'created_at',
+                        'updated_at',
+                        'status',
+                    ],
+                ],
+            ],
+            'message',
+        ])->assertStatus(JsonResponse::HTTP_CREATED);
+
+        $response->assertJson([
+            'success' => true,
+        ]);
+
+        $responseData = $response->json();
+        $this->assertDatabaseHas($accountReceivable->getTable(), [
+            'id' => $responseData['data']['data'][0]['id'],
+            'vrPago' => $accountReceivable->vrBruto,
+        ]);
     }
 
     public function testUpdateAAccountReceivable()
@@ -95,7 +137,7 @@ class AccountReceivableTest extends TestCase
         ]);
     }
 
-    public function testGetAAccountReceivableById()
+    public function testGetAccountReceivableById()
     {
         $accountReceivable = factory(ContaReceber::class)->create();
 
