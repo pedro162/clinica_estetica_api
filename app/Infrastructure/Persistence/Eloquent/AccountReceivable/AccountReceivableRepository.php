@@ -26,16 +26,12 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
         $tenantId   = Auth::user()->tenant_id;
         $entity = $parameter->build();
         $entity->user_id = $userId;
+        $entity->responsavel_id = $entity->responsavel_id > 0 ? $entity->responsavel_id : Auth::user()->pessoa->id;
+        $entity->tenant_id = $tenantId;
         unset($entity->id);
-        unset($entity->tenant_id);
-
-        if (!app()->environment('testing')) {
-            $entity->tenant_id = $tenantId;
-        } else {
-            unset($entity->filial_id);
-        }
 
         $entity->save();
+
         return $this->findById(new AccountReceivableId((string)$entity->id));
     }
 
@@ -45,18 +41,9 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
         $tenantId   = Auth::user()->tenant_id;
         $entity = $parameter->build();
         $entity->user_id = $userId;
-        unset($entity->tenant_id);
-
-        if (!app()->environment('testing')) {
-            $entity->tenant_id = $tenantId;
-        }
+        $entity->tenant_id = $tenantId;
 
         $data = $entity->toArray();
-
-        if (app()->environment('testing')) {
-            unset($entity->filial_id);
-            unset($data['filial_id']);
-        }
 
         ContaReceber::find($entity->id)->update($data);
     }

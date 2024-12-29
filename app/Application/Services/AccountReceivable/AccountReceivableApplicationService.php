@@ -9,14 +9,18 @@ use App\Application\Handlers\AccountReceivable\GetAllAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivable\GetAccountReceivableByIdHandler;
 use App\Application\Handlers\AccountReceivable\UpdateAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHandler;
+use App\Classes\ApiResponseClass;
 use App\ContaReceber;
 use App\Domain\AccountReceivable\Entities\AccountReceivable;
 use App\Exceptions\CobrancaReceberException;
 use App\FormaPagamento;
+use App\Helpers\ContaReceberHelper;
 use App\Helpers\ContaReceberItemHelper;
 use App\Pessoa;
 use App\Utilitarios;
 use App\Validators\AccountReceivable\AccountReceivableValidator;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
 class AccountReceivableApplicationService implements AccountReceivableApplicationServiceInterface
@@ -27,6 +31,8 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
     protected GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler;
     protected AccountReceivableValidator $accountReceivableValidator;
     private CreateAccountReceivableItemHandler $createAccountReceivableItemHandler;
+    private ContaReceberHelper $accountReceivableHelper;
+    private ContaReceberItemHelper $accountReceivableItemHelper;
 
     public function __construct(
         CreateAccountReceivableHandler $createAccountReceivableHandler,
@@ -34,7 +40,9 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
         UpdateAccountReceivableHandler $updateAccountReceivableHandler,
         GetAccountReceivableByIdHandler $getAccountReceivableByIdHandler,
         AccountReceivableValidator $accountReceivableValidator,
-        CreateAccountReceivableItemHandler $createAccountReceivableItemHandler
+        CreateAccountReceivableItemHandler $createAccountReceivableItemHandler,
+        ContaReceberHelper $accountReceivableHelper,
+        ContaReceberItemHelper $accountReceivableItemHelper
     ) {
         $this->createAccountReceivableHandler = $createAccountReceivableHandler;
         $this->getAllAccountReceivableHandler = $getAllAccountReceivableHandler;
@@ -42,58 +50,101 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
         $this->getAccountReceivableByIdHandler = $getAccountReceivableByIdHandler;
         $this->accountReceivableValidator = $accountReceivableValidator;
         $this->createAccountReceivableItemHandler = $createAccountReceivableItemHandler;
+        $this->accountReceivableHelper = $accountReceivableHelper;
+        $this->accountReceivableItemHelper = $accountReceivableItemHelper;
     }
 
     public function store(
         CreateAccountReceivableCommand $command
     ): ?Collection {
+        try {
 
-        $installMents = $this->generateInstallMents(
-            $command->getDataProperties()
-        );
+            \DB::beginTransaction();
+            $propertiesData = $command->getDataProperties();
 
-        $createdRecords = collect();
-
-        foreach ($installMents as $installMent) {
-            $accountReceivable = $this->createAccountReceivableHandler->handler(
-                CreateAccountReceivableCommand::build($installMent)
+            $result = $this->accountReceivableHelper->gerarCobranca(
+                (int)$propertiesData['personId'],
+                (float) $propertiesData['grossValue'],
+                (int) $propertiesData['paymentMethodId'],
+                (int) $propertiesData['paymentPlanId'],
+                (int) $propertiesData['financialOperatorId'],
+                $propertiesData
             );
 
-            $createdRecords->push($accountReceivable);
+            $resultAccountReceivable = $result['data_cob_receber'] ?? [];
+            $createdRecords = collect();
 
-            if ($accountReceivable->status != 'pago') {
-                continue;
+            foreach ($resultAccountReceivable as $accountReceivable) {
+                $createdRecords->push($accountReceivable);
             }
 
-            $accountReceivableItem = $this->createAccountReceivableItemHandler->handler(
-                CreateAccountReceivableItemCommand::build($installMent)
-            );
+            \DB::commit();
 
-            if (!$accountReceivableItem) {
-                throw new CobrancaReceberException('Não foi possível realizar a baixa do contas a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');
-            }
+            return $createdRecords;
+        } catch (CobrancaReceberException $e) {
+            \DB::rollback();
+
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
         }
-
-        return $createdRecords;
     }
 
     public function update(
         CreateAccountReceivableCommand $command
     ): void {
+        try {
 
-        $this->updateAccountReceivableHandler->handler($command);
+            \DB::beginTransaction();
+            $this->updateAccountReceivableHandler->handler($command);
+            \DB::commit();
+        } catch (CobrancaReceberException $e) {
+            \DB::rollback();
+
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function getAll(array $data = []): ?Collection
     {
-        return $this->getAllAccountReceivableHandler->handler($data);
+        try {
+
+            \DB::beginTransaction();
+            $result = $this->getAllAccountReceivableHandler->handler($data);
+            \DB::commit();
+
+            return $result;
+        } catch (CobrancaReceberException $e) {
+            \DB::rollback();
+
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function findById(
         CreateAccountReceivableCommand $command
     ): ?ContaReceber {
+        try {
+            \DB::beginTransaction();
+            $result = $this->getAccountReceivableByIdHandler->handler($command);
+            \DB::commit();
 
-        return $this->getAccountReceivableByIdHandler->handler($command);
+            return $result;
+        } catch (CobrancaReceberException $e) {
+            \DB::rollback();
+
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     protected function accountReceivableParseData(array $data)
@@ -123,84 +174,6 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
         ];
     }
 
-    protected function generateInstallMents(array $data = []): array
-    {
-        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $data['forma_pagamento_id'])->first();
-        $paymentPlanObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $data['plano_pagamento_id'])->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $data['plano_pagamento_id'])->first();
-        $operatorFainantialObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $data['operador_financeiro_id'])->first();
-        $objPessoa              = Pessoa::where('active', '=', 'yes')->where('id', '=', $data['pessoa_id'])->first();
-
-        $accountReceivableValue   = Utilitarios::removeMaskMoney($data['vrBruto']);
-        $erros = $this->accountReceivableValidator->validaGerCobranca($data['pessoa_id'], $accountReceivableValue, $data['forma_pagamento_id'], $data['plano_pagamento_id'], $data['operador_financeiro_id'], $data);
-
-        if ((is_array($erros) && count($erros) > 0)) {
-            throw new CobrancaReceberException(implode('<br/>', $erros));
-        }
-
-        $installMentsQuantity = $paymentPlanObject->qtdParcelas ?? 1;;
-        $installMents = [];
-        $quantityDaysGap   = $paymentPlanObject->qtdDiasIntervaloParcelas ?? 0;
-        $quantityOfDaysFirstInstallMent  = $paymentPlanObject->qtd_dias_pri_parcela ?? 0;
-        $installMentBaseValue = $accountReceivableValue / $installMentsQuantity;
-        $installMentBaseValue = (float) $installMentBaseValue;
-
-        $dueDateObject = new \DateTime();
-
-        if ($quantityOfDaysFirstInstallMent > 0) {
-            $dueDateObject->add(new \DateInterval('P' . $quantityOfDaysFirstInstallMent . 'D'));
-        }
-
-        $totalInstallmentsValue = 0;
-        $defaultReferenceId = date('ymdhis');
-        $defaultReference = 'sem_referencia';
-        $status    = 'aberto';
-
-        if (trim($paymentMethodObject->tipo) == 'cartao_credito' || trim($paymentMethodObject->tipo) == 'cartao_debito') {
-            $installMentsQuantity = 0;
-
-            if (isset($data['documento']) && strlen(trim($data['documento'])) >= 3) {
-                $status    = 'pago';
-            }
-        }
-
-        for ($i = 0; !($i == $installMentsQuantity); $i++) {
-            $dueDate = $dueDateObject->format("Y-m-d H:i:s");
-            $installMents[] = $this->accountReceivableParseData([
-                'pessoa_id' => $objPessoa->id,
-                'descricao' => $data['descricao'] ?? "Recita financeira",
-                'documento' => $data['documento'] ?? null,
-                'dtVencimentoOriginal' => $dueDate,
-                'dtVencimento' => $dueDate,
-                'vrBruto' => $installMentBaseValue,
-                'vrLiquido' => $installMentBaseValue,
-                'referencia_id' => $data['referencia_id'] ?? $defaultReferenceId,
-                'referencia' => $data['referencia'] ?? $defaultReference,
-                'filial_id' => $data['filial_id'] ?? null,
-                'responsavel_id' => $data['responsavel_id'] ?? 0,
-                'forma_pagamento_id' => $paymentMethodObject->id,
-                'plano_pagamento_id' => $paymentPlanObject->id,
-                'operador_financeiro_id' => $operatorFainantialObject->id ?? 0,
-                'status' => $status,
-            ]);
-
-            if ($quantityDaysGap > 0) {
-                $dueDateObject->add(new \DateInterval('P' . $quantityDaysGap . 'D'));
-            }
-
-            $totalInstallmentsValue += $installMentBaseValue;
-        }
-
-        $installMentsDiff    = $installMentBaseValue - $totalInstallmentsValue;
-        $installMentsDiffAbs = abs($installMentsDiff);
-
-        if ($installMentsDiffAbs > 0.02 && is_array($installMents) && count($installMents) > 0) {
-            $installMents[0]['vrPago']      += 0;
-            $installMents[0]['vrBruto']     += $installMentsDiff;
-            $installMents[0]['vrLiquido']   += $installMentsDiff;
-        }
-
-        return $installMents;
-    }
 
     public function payOff(array $data, int $id)
     {
@@ -271,8 +244,8 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
             if (!($contaRecebrItem)) {
                 throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
             }
-            $objCobReceberItemHelp = new ContaReceberItemHelper();
-            $objCobReceberItemHelp->baixar($data, $contaRecebrItem->id);
+
+            $this->accountReceivableItemHelper->baixar($data, $contaRecebrItem->id);
         }
 
         return $registro;

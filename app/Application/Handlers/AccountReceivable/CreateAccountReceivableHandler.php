@@ -19,7 +19,7 @@ class CreateAccountReceivableHandler
     public function handler(CreateAccountReceivableCommand $command): ?ContaReceber
     {
         $entity = AccountReceivable::buildEntity($command->getDataProperties());
-
+        
         return $this->repository->save($entity);
     }
 }
