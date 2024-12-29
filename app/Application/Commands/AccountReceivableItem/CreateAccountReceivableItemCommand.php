@@ -456,7 +456,7 @@ class CreateAccountReceivableItemCommand
             ->interestValue((string) $interestValue)
             ->responsibleId((string) ($data['responsibleId'] ?? $data['responsavel_id'] ?? ''))
             ->isImportedData((string) ($data['isImportedData'] ?? $data['importacao_dados'] ?? ''))
-            ->paymentMethodId((string) ($data['paymentMethodId'] ?? $data['forma_pagamento_id'] ?? ''))
+            ->paymentMethodId((string) ($data['paymentMethodId'] ??  $data['forma_pagamentos_id'] ?? $data['forma_pagamento_id'] ?? ''))
             ->paymentPlanId((string) ($data['paymentPlanId'] ?? $data['plano_pagamento_id'] ?? ''))
             ->financialOperatorId((string) ($data['financialOperatorId'] ?? $data['operador_financeiro_id'] ?? ''))
             ->status((string) ($data['status'] ?? ''));

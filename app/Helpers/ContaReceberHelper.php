@@ -8,6 +8,7 @@ use App\Application\Handlers\AccountReceivable\GetAccountReceivableByIdHandler;
 use App\Application\Handlers\AccountReceivable\GetAllAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivable\UpdateAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHandler;
+use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -26,6 +27,7 @@ use \App\OrdemServico;
 use \App\Exceptions\CobrancaReceberException;
 use App\Helpers\BaseHelper;
 use App\Validators\AccountReceivable\AccountReceivableValidator;
+use Exception;
 
 class ContaReceberHelper extends BaseHelper
 {
@@ -162,17 +164,17 @@ class ContaReceberHelper extends BaseHelper
             $dtVencimento = $objDtVencimento->format("Y-m-d H:i:s");
             $installMents[] = $this->accountReceivableParseData([
                 'pessoa_id' => $personObject->id,
-                'descricao' => $dados['descricao'] ?? "Recita financeira",
-                'documento' => $dados['documento'] ?? null,
+                'descricao' => $dados['descricao'] ?? $dados['description'] ?? "Recita financeira",
+                'documento' => $dados['documento'] ?? $dados['document'] ?? null,
                 'dtVencimentoOriginal' => $dtVencimento,
                 'dtVencimento' => $dtVencimento,
                 'vrBruto' => $vrParcelaBase,
                 'vrLiquido' => $vrParcelaBase,
                 'importacao_dados' => 'no',
-                'referencia_id' => $dados['referencia_id'] ?? $defaultReferenceId,
-                'referencia' => $dados['referencia'] ?? $defaultReference,
-                'filial_id' => $dados['filial_id'] ?? null,
-                'responsavel_id' => $dados['responsavel_id'] ?? 0,
+                'referencia_id' => $dados['referencia_id'] ?? $dados['referenceId'] ?? $defaultReferenceId,
+                'referencia' => $dados['referencia'] ?? $dados['reference'] ?? $defaultReference,
+                'filial_id' => $dados['filial_id'] ?? $dados['branchId'] ?? null,
+                'responsavel_id' => $dados['responsavel_id'] ?? $dados['responsibleId'] ?? 0,
                 'forma_pagamento_id' => $paymentMethodObject->id,
                 'plano_pagamento_id' => $paymentPlanObject->id,
                 'operador_financeiro_id' => $operatorFainantialObject->id ?? 0,
@@ -204,6 +206,7 @@ class ContaReceberHelper extends BaseHelper
 
         if (is_array($installMents) && count($installMents) > 0) {
             foreach ($installMents as $key => $val) {
+
                 $accountReceivable = $this->createAccountReceivableHandler->handler(
                     CreateAccountReceivableCommand::build($val)
                 );

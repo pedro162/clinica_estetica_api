@@ -46,15 +46,20 @@ class AccountReceivableItemTest extends TestCase
         $methodOfPayment->planoPagamento()->attach($paymentPlanObject->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
         $methodOfPayment->operadorFinanceiro()->attach($financialOperator->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
 
-        $accountReceivable->forma_pagamento_id = $methodOfPayment->id;
+        $accountReceivable->forma_pagamentos_id = $methodOfPayment->id;
         $accountReceivable->plano_pagamento_id = $paymentPlanObject->id;
         $accountReceivable->operador_financeiro_id = $financialOperator->id;
 
-        $this->postJson(route('receber.item.store'), $accountReceivable->toArray())
-            ->assertJsonStructure([
-                'data',
-                'success'
-            ])->assertStatus(JsonResponse::HTTP_CREATED);
+        $response = $this->postJson(route('receber.item.store'), $accountReceivable->toArray());
+
+        $response->assertJsonStructure([
+            'data',
+            'success'
+        ])->assertStatus(JsonResponse::HTTP_CREATED);
+
+        $response->assertJson([
+            'success' => true,
+        ]);
     }
 
     public function testCrateANewAccountReceivableItemPayed()

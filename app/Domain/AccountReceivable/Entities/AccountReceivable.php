@@ -31,6 +31,7 @@ use App\Domain\AccountReceivable\ValueObjects\AccountReceivablePersonId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableReceivableAccountId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableResponsibleId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableReturnedValue;
+use Exception;
 
 class AccountReceivable extends BaseEntity
 {

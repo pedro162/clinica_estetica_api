@@ -3,6 +3,7 @@
 namespace App\Application\Commands\AccountReceivable;
 
 use App\Utilitarios;
+use Exception;
 
 class CreateAccountReceivableCommand
 {

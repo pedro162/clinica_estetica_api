@@ -60,6 +60,7 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
     ): ?Collection {
 
         $propertiesData = $command->getDataProperties();
+
         $accountReceivable = $this->getAccountReceivableByIdHandler->handler(
             CreateAccountReceivableCommand::build([
                 'id' => $propertiesData['receivableAccountId']

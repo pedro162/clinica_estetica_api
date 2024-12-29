@@ -51,11 +51,46 @@ class AccountReceivableTest extends TestCase
         $accountReceivable->plano_pagamento_id = $paymentPlanObject->id;
         $accountReceivable->operador_financeiro_id = $financialOperator->id;
 
-        $this->postJson(route('receber.store'), $accountReceivable->toArray())
-            ->assertJsonStructure([
-                'data',
-                'success'
-            ])->assertStatus(JsonResponse::HTTP_CREATED);
+        $response = $this->postJson(route('receber.store'), $accountReceivable->toArray());
+
+        $response->assertJsonStructure([
+            'success',
+            'data' => [
+                'data' => [
+                    '*' => [
+                        'id',
+                        'referencia_id',
+                        'referencia',
+                        'pessoa_id',
+                        'descricao',
+                        'dtVencimentoOriginal',
+                        'dtVencimento',
+                        'vrBruto',
+                        'vrLiquido',
+                        'vrDevolvido',
+                        'vrPago',
+                        'vrTaxa',
+                        'vrDesconto',
+                        'vrJuros',
+                        'user_id',
+                        'active',
+                        'created_at',
+                        'updated_at',
+                        'status',
+                    ],
+                ],
+            ],
+            'message',
+        ])->assertStatus(JsonResponse::HTTP_CREATED);
+
+        $response->assertJson([
+            'success' => true,
+        ]);
+
+        $responseData = $response->json();
+        $this->assertDatabaseHas($accountReceivable->getTable(), [
+            'id' => $responseData['data']['data'][0]['id']
+        ]);
     }
 
     public function testCrateANewAccountReceivablePayed()
