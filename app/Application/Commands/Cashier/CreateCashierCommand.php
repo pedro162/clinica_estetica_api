@@ -199,7 +199,7 @@ class CreateCashierCommand
             ->id((string)($data['id'] ?? 0))
             ->name((string)($data['name'] ?? ''))
             ->type((string)($data['type'] ?? ''))
-            ->tenantId((string)($data['tenantId'] ?? ''))
+            ->tenantId((string)($data['tenantId'] ?? $data['tenant_id'] ?? ''))
             ->openStatus((string)($data['status_abertura'] ?? $data['openStatus'] ?? ''))
             ->userId((string)($data['userId'] ?? \Auth::User()->id))
             ->userUpdateId((string)($data['userId'] ?? \Auth::User()->id))

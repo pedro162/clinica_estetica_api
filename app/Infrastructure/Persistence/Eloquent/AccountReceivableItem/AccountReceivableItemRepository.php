@@ -14,6 +14,7 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
 {
     protected const ITENS_PER_PAGE = 10;
 
+
     public function findById(AccountReceivableItemId $id): ?ContaReceberItem
     {
         return ContaReceberItem::where('active', '=', 'yes')
@@ -48,167 +49,77 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
 
     public function getAll(array $filter = []): ?array
     {
-        if (!isset($filter['ordem'])) {
-            $filter['ordem'] =  'id-desc';
-        }
-
-        $data = $filter;
+        $filter['ordem'] = $filter['ordem'] ?? 'id-desc';
         $consulta = $filter;
 
-        if (!isset($consulta['ordem'])) {
-            $consulta['ordem'] =  'id-desc';
+        $ordem = explode('-', $consulta['ordem']);
+
+        $query = ContaReceberItem::with([
+            'formaPagamento',
+            'contaReceber.pessoa',
+            'contaReceber.filial.pessoa',
+        ]);
+
+        if (!empty($consulta['id'])) {
+            $ids = explode(',', trim($consulta['id'], ','));
+            $query->whereIn('id', $ids);
         }
 
-        $ordem      = $consulta['ordem'] ?? 'id-desc';
-        $campos =  $data['campos'] ?? [];
-        $parse = [
-            'id' => 'cr.id',
-            'name' => 'pessoas.name',
-        ];
+        if (!empty($consulta['conta_receber_id'])) {
+            $ids = explode(',', trim($consulta['conta_receber_id'], ','));
+            $query->whereIn('conta_receber_id', $ids);
+        }
 
-        $registro = \DB::table('conta_receber_items as cr')
-            ->join('forma_pagamentos as fp', function ($join) {
-                $join->on('fp.id', '=', 'cr.forma_pagamentos_id');
-            });
-
-        if (is_array($consulta) && count($consulta) > 0) {
-            foreach ($consulta as $key => $val) {
-
-                switch (trim($key)) {
-                    case 'id':
-                        if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-                        }
-
-                        $val = explode(',', $val);
-                        $registro->whereIn('cr.id', $val);
-                        break;
-                    case 'dt_exercicio':
-                        $tpExercicio = 'dtVencimento';
-
-                        if (isset($consulta['tp_exercicio'])) {
-                            switch ($consulta['tp_exercicio']) {
-                                case 'created_at':
-                                case 'criacao':
-                                    $tpExercicio = 'created_at';
-                                    break;
-                                case 'vencimento':
-                                    $tpExercicio = 'dtVencimento';
-                                    break;
-
-                                default:
-                                    $tpExercicio = 'dtVencimento';
-                                    break;
-                            }
-                            $tpExercicio = 'dtVencimento';
-                        }
-
-                        if (is_string($val) && strpos($val, ',') > -1) {
-                            $val = explode(',', $val);
-                            $registro->where('cr.' . $tpExercicio, '>=', date($val[0]));
-                            $registro->where('cr.' . $tpExercicio, '<=', date($val[1]));
-                        }
-
-                        break;
-                    case 'status':
-                        if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-                            $val = explode(',', $val);
-
-                            $registro->whereIn('cr.status', $val);
-                        }
-                        break;
-                    case 'limite':
-                        $val = (int) $val;
-                        if (is_integer($val) && $val > 0) {
-
-                            $registro->limit($val);
-                        }
-                        break;
-                    case 'ordem':
-
-                        if ($val[0] == ',') {
-                            $val = substr($val, 1);
-                        }
-                        if ($val[strlen($val) - 1] == ',') {
-                            $val = substr($val, 0, -1);
-                        }
-
-                        $val = explode(',', $val);
-
-                        for ($i = 0; !($i == count($val)); $i++) {
-                            $atual = explode('-', $val[$i]);
-                            if (array_key_exists(trim($atual[0]), $parse)) {
-
-                                $parsed = $parse[trim($atual[0])];
-
-                                if ($parsed) {
-
-                                    $registro->orderBy($parsed, $atual[1]);
-                                }
-                            }
-                        }
-
-                        break;
-
-                    case 'campos':
-                        if (is_array($val) && count($val) > 0) {
-                            //$campos = $this->montaCamposConsulta($registro, $val);
-                        }
-                        break;
-                    case 'grop_by':
-                        $registro->groupBy($val);
-                        break;
-                    case 'raw_grop_by':
-                        $registro->groupByRaw($val);
-                        break;
-                }
+        if (!empty($consulta['dt_exercicio'])) {
+            $tpExercicio = $consulta['tp_exercicio'] ?? 'dtVencimento';
+            $datas = explode(',', $consulta['dt_exercicio']);
+            if (count($datas) === 2) {
+                $query->whereBetween($tpExercicio, [$datas[0], $datas[1]]);
             }
         }
 
-        if ($campos) {
-            $registro->select($campos);
-        } else {
-            $registro->select('cr.*', \DB::raw('(IFNULL(cr.vrLiquido, 0) - (IFNULL(cr.vrPago, 0) + IFNULL(cr.vrDevolvido, 0)))  vrAberto'),  'fp.cdCobrancaTipo');
+        if (!empty($consulta['status'])) {
+            $statuses = explode(',', trim($consulta['status'], ','));
+            $query->whereIn('status', $statuses);
         }
 
-        $ordemArr   = explode('-', $ordem);
-        $oremCampo  = $ordemArr[0];
-        $oremTipo  = $ordemArr[1];
+        if (!empty($consulta['limite'])) {
+            $query->limit((int)$consulta['limite']);
+        }
 
-        $usePaginate = $consulta['usePaginate'] ?? 0;
-        $usePaginate = (int) $usePaginate;
-        $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::ITENS_PER_PAGE;
+        if (!empty($consulta['grop_by'])) {
+            $query->groupBy($consulta['grop_by']);
+        }
+
+        if (!empty($consulta['raw_grop_by'])) {
+            $query->groupByRaw($consulta['raw_grop_by']);
+        }
+
+        if (!empty($consulta['ordem'])) {
+            $ordemArr = explode('-', $consulta['ordem']);
+            $campo = $ordemArr[0];
+            $tipo = $ordemArr[1] ?? 'asc';
+            $query->orderBy($campo, $tipo);
+        }
+
+        $usePaginate = (int)($consulta['usePaginate'] ?? 0);
+        $nrItensPerPage = $consulta['nr_itens_per_page'] ?? 15;
 
         if ($usePaginate > 0) {
-            $registro   = $registro->where('cr.active', '=', 'yes')
-                ->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+            $registros = $query->where('active', 'yes')->paginate($nrItensPerPage);
         } else {
-            $registro = $registro->where('cr.active', '=', 'yes')
-                ->get();
+            $registros = $query->where('active', 'yes')->get();
         }
 
-        if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
-            $dataToRequest = [];
-            foreach ($registro as $reg) {
-                $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
-            }
+        if (!empty($consulta['to_require'])) {
+            $dataToRequest = $registros->map(fn($registro) => [
+                'label' => $registro->contaReceber->pessoa->name,
+                'value' => $registro->id,
+            ])->toArray();
 
-            $registro = $dataToRequest;
+            return ['registro' => $dataToRequest];
         }
 
-        return  ['registro' => $registro];
+        return ['registro' => $registros];
     }
 }
