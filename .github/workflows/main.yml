@@ -73,7 +73,7 @@ jobs:
         run: |
           until mysqladmin ping -h 127.0.0.1 -P 3307 --silent; do
             echo "Waiting for database..."
-            sleep 2
+            sleep 5
           done
 
       - name: Run migrations
