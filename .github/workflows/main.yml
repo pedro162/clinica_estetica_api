@@ -12,7 +12,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ^7.2.5 # Ajuste para a versão que seu projeto suporta
+          php-version: 7.4 # Ajuste para a versão que seu projeto suporta
           extensions: mbstring, pdo, pdo_mysql
           coverage: none
 
