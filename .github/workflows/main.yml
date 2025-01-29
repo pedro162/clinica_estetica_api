@@ -16,12 +16,12 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: clinida_estetica_testing
+          MYSQL_ROOT_PASSWORD: root   # Senha do root aqui
+          MYSQL_DATABASE: clinida_estetica_testing  # Nome do banco de dados
         ports:
-          - 3306:3306
+          - 3306:3306  # Expõe a porta 3306 do container
         options: >-
-          --health-cmd="mysqladmin ping -h mysql -uroot -proot"  # Usar 'mysql' em vez de 127.0.0.1
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
@@ -51,7 +51,7 @@ jobs:
       - name: Wait for MySQL
         run: |
           for i in {1..30}; do
-            if mysqladmin ping -h mysql -P 3306 --silent; then  # Usar 'mysql' aqui também
+            if mysqladmin ping -h 127.0.0.1 -P 3306 --silent; then
               echo "MySQL is ready!"
               break
             else
@@ -63,7 +63,7 @@ jobs:
       - name: Run migrations
         env:
           DB_CONNECTION: mysql
-          DB_HOST: mysql  # Usar 'mysql' como o host do serviço MySQL
+          DB_HOST: 127.0.0.1  # Aqui, usa localhost ou IP do container do serviço MySQL
           DB_PORT: 3306
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
@@ -73,7 +73,7 @@ jobs:
       - name: Run tests
         env:
           DB_CONNECTION: mysql
-          DB_HOST: mysql  # Usar 'mysql' aqui também
+          DB_HOST: 127.0.0.1  # Aqui também
           DB_PORT: 3306
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
