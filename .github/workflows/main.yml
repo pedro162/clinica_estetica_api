@@ -74,9 +74,10 @@ jobs:
         run: |
           # Pega a porta alocada pelo Docker para o MySQL
           MYSQL_PORT=$(docker port mysql80 3306 | cut -d':' -f2)
-          until mysqladmin ping -h 127.0.0.1 -P $MYSQL_PORT --silent; do
+          echo "Waiting for database to be available on port $MYSQL_PORT"
+          until mysqladmin ping -h localhost -P $MYSQL_PORT --silent; do
             echo "Waiting for database..."
-            sleep 5
+            sleep 10  # Aguarda 10 segundos antes de tentar novamente
           done
 
       - name: Run migrations
