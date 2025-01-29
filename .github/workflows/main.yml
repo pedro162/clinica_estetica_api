@@ -25,7 +25,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
-        # Remover a opção --innodb-large-prefix aqui, e vamos configurá-la via arquivo my.cnf
 
     steps:
       - name: Checkout code
@@ -55,10 +54,13 @@ jobs:
           echo "[mysqld]" > my.cnf
           echo "innodb_large_prefix=1" >> my.cnf
 
+      - name: Create Docker network
+        run: docker network create github_network
+
       - name: Start MySQL container with custom config
         run: |
           # Rodar o MySQL com o arquivo de configuração customizado
-          docker run -d --name mysql80 -p 3307:3306 --network github_network_512bf812987646bdbd26993cbc758c57 \
+          docker run -d --name mysql80 -p 3307:3306 --network github_network \
             -e MYSQL_ROOT_PASSWORD=root \
             -e MYSQL_DATABASE=clinida_estetica_testing \
             -v $(pwd)/my.cnf:/etc/mysql/my.cnf \
