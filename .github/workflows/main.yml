@@ -19,7 +19,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: root   # Defina a senha do root aqui
           MYSQL_DATABASE: clinida_estetica_testing  # Nome do banco de dados
         ports:
-          - 3307:3306
+          - 3308:3306
         options: >-
           --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
           --health-interval=10s
@@ -60,7 +60,7 @@ jobs:
       - name: Start MySQL container with custom config
         run: |
           # Rodar o MySQL com o arquivo de configuração customizado
-          docker run -d --name mysql80 -p 3307:3306 --network github_network \
+          docker run -d --name mysql80 -p 3308:3306 --network github_network \
             -e MYSQL_ROOT_PASSWORD=root \
             -e MYSQL_DATABASE=clinida_estetica_testing \
             -v $(pwd)/my.cnf:/etc/mysql/my.cnf \
@@ -71,7 +71,7 @@ jobs:
 
       - name: Verify MySQL connection
         run: |
-          until mysqladmin ping -h 127.0.0.1 -P 3307 --silent; do
+          until mysqladmin ping -h 127.0.0.1 -P 3308 --silent; do
             echo "Waiting for database..."
             sleep 5
           done
@@ -80,7 +80,7 @@ jobs:
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
-          DB_PORT: 3307
+          DB_PORT: 3308
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
           DB_PASSWORD: root
@@ -90,7 +90,7 @@ jobs:
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
-          DB_PORT: 3307
+          DB_PORT: 3308
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
           DB_PASSWORD: root
