@@ -75,7 +75,7 @@ jobs:
           # Pega a porta alocada pelo Docker para o MySQL
           MYSQL_PORT=$(docker port mysql80 3306 | cut -d':' -f2)
           echo "Waiting for database to be available on port $MYSQL_PORT"
-          until mysqladmin ping -h localhost -P $MYSQL_PORT --silent; do
+          until mysqladmin ping -h mysql -P $MYSQL_PORT --silent; do
             echo "Waiting for database..."
             sleep 10  # Aguarda 10 segundos antes de tentar novamente
           done
@@ -83,7 +83,7 @@ jobs:
       - name: Run migrations
         env:
           DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
+          DB_HOST: mysql  # Usando o nome do contêiner como host
           DB_PORT: $MYSQL_PORT
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
@@ -93,7 +93,7 @@ jobs:
       - name: Run tests
         env:
           DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
+          DB_HOST: mysql  # Usando o nome do contêiner como host
           DB_PORT: $MYSQL_PORT
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
