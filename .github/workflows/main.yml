@@ -24,8 +24,9 @@ jobs:
           --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3          
-          --innodb-large-prefix=1  # Ativa a configuração que permite índices maiores
+          --health-retries=3
+        # Remover a opção --innodb-large-prefix aqui, e vamos configurá-la via arquivo my.cnf
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -47,6 +48,21 @@ jobs:
 
       - name: Generate application key
         run: php artisan key:generate --env=testing
+
+      - name: Create custom MySQL configuration
+        run: |
+          # Cria o arquivo my.cnf com a configuração para ativar o innodb_large_prefix
+          echo "[mysqld]" > my.cnf
+          echo "innodb_large_prefix=1" >> my.cnf
+
+      - name: Start MySQL container with custom config
+        run: |
+          # Rodar o MySQL com o arquivo de configuração customizado
+          docker run -d --name mysql80 -p 3307:3306 --network github_network_512bf812987646bdbd26993cbc758c57 \
+            -e MYSQL_ROOT_PASSWORD=root \
+            -e MYSQL_DATABASE=clinida_estetica_testing \
+            -v $(pwd)/my.cnf:/etc/mysql/my.cnf \
+            mysql:8.0
 
       - name: Wait for MySQL
         run: sleep 15  # Aguarda o MySQL iniciar
