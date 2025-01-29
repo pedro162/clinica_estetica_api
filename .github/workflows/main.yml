@@ -18,6 +18,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root   # Defina a senha do root aqui
           MYSQL_DATABASE: clinida_estetica_testing  # Nome do banco de dados
+        ports:
+          - 3306 # Port binding will be handled by Docker
         options: >-
           --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
           --health-interval=10s
@@ -55,11 +57,6 @@ jobs:
       - name: Create Docker network
         run: docker network create github_network
 
-      - name: Stop any existing MySQL containers
-        run: |
-          docker ps -q -f "name=mysql80" | xargs -r docker stop
-          docker ps -a -q -f "name=mysql80" | xargs -r docker rm
-
       - name: Start MySQL container with custom config
         run: |
           # Rodar o MySQL com o arquivo de configuração customizado
@@ -68,13 +65,16 @@ jobs:
             -e MYSQL_DATABASE=clinida_estetica_testing \
             -v $(pwd)/my.cnf:/etc/mysql/my.cnf \
             mysql:8.0
+          
+          # Pega a porta alocada pelo Docker para o MySQL
+          MYSQL_PORT=$(docker port mysql80 3306 | cut -d':' -f2)
+          echo "MySQL is running on port $MYSQL_PORT"
 
       - name: Wait for MySQL
-        run: sleep 15  # Aguarda o MySQL iniciar
-
-      - name: Verify MySQL connection
         run: |
-          until mysqladmin ping -h 127.0.0.1 --silent; do
+          # Pega a porta alocada pelo Docker para o MySQL
+          MYSQL_PORT=$(docker port mysql80 3306 | cut -d':' -f2)
+          until mysqladmin ping -h 127.0.0.1 -P $MYSQL_PORT --silent; do
             echo "Waiting for database..."
             sleep 5
           done
@@ -83,7 +83,7 @@ jobs:
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
-          DB_PORT: 3306  # Usando a porta padrão do MySQL
+          DB_PORT: $MYSQL_PORT
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
           DB_PASSWORD: root
@@ -93,7 +93,7 @@ jobs:
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
-          DB_PORT: 3306  # Usando a porta padrão do MySQL
+          DB_PORT: $MYSQL_PORT
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
           DB_PASSWORD: root
