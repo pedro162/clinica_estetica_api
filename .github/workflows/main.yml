@@ -1,6 +1,12 @@
-name: Run Tests
+name: Laravel CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
@@ -10,40 +16,66 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: clinida_estetica_testing
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
         ports:
-          - 3306:3306
+          - 3307:3306
         options: >-
-          --health-cmd="mysqladmin ping --silent"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: "7.4"
           extensions: mbstring, pdo, pdo_mysql
+          coverage: none
 
-      - name: Install dependencies
-        run: composer install --no-progress --prefer-dist
+      - name: Install Composer dependencies
+        run: |
+          composer install --prefer-dist --no-progress --no-suggest
+          composer dump-autoload
 
-      - name: Set up application environment
+      - name: Copy environment file
         run: cp .env.testing .env
 
       - name: Generate application key
-        run: php artisan key:generate
+        run: php artisan key:generate --env=testing
 
       - name: Wait for MySQL
-        run: sleep 15
+        run: sleep 15  # Aguarda o MySQL iniciar
+
+      - name: Verify MySQL connection
+        run: |
+          until mysqladmin ping -h 127.0.0.1 -P 3307 --silent; do
+            echo "Waiting for database..."
+            sleep 2
+          done
 
       - name: Run migrations
-        run: php artisan migrate --env=testing
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3307
+          DB_DATABASE: clinida_estetica_testing
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: php artisan migrate --env=testing --force
 
       - name: Run tests
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3307
+          DB_DATABASE: clinida_estetica_testing
+          DB_USERNAME: root
+          DB_PASSWORD: root
         run: php artisan test
