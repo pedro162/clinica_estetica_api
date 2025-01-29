@@ -43,7 +43,7 @@ jobs:
           composer dump-autoload
 
       - name: Copy environment file
-        run: cp env.testing.pipeline .env
+        run: cp .env.testing.pipeline .env
 
       - name: Generate application key
         run: php artisan key:generate --env=testing
