@@ -8,10 +8,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: ^7.2.5 # Ajuste para a versão que seu projeto suporta
           extensions: mbstring, pdo, pdo_mysql
           coverage: none
 
