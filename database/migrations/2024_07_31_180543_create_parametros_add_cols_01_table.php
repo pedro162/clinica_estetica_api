@@ -14,7 +14,7 @@ class CreateParametrosAddCols01Table extends Migration
     public function up()
     {
         Schema::table('parametros', function (Blueprint $table) {
-            $table->string('key', 1000)->comment('The parameter\'s key')->nullable()->index();
+            $table->string('key', 191)->comment('The parameter\'s key')->nullable()->index();
         });
     }
 
