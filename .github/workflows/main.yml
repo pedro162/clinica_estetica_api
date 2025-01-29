@@ -11,7 +11,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ^7.2.5
+          php-version: 8.2
           extensions: mbstring, pdo, pdo_mysql
           coverage: none
 
