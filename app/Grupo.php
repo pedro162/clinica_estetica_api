@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Grupo extends Model
 {
-    protected $fillable = 
-    [
-    	'name',
+	protected $fillable =
+	[
+		'name',
 		'descricao',
 		'user_id',
 		'user_update_id',
-		'active'
-    ];
+		'active',
+		'tenant_id'
+	];
 }

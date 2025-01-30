@@ -7,10 +7,10 @@ use App\Estado;
 
 class Logradouro extends Model
 {
-    protected $fillable = 
-    [
+	protected $fillable =
+	[
 		'id',
-    	'cep',
+		'cep',
 		'cidade',
 		'logradouro',
 		'complemento',
@@ -22,11 +22,12 @@ class Logradouro extends Model
 		'user_update_id',
 		'active',
 		'bairro',
-		'estado'
-    ];
+		'estado',
+		'tenant_id'
+	];
 
 	public function estado_logradouro()
-    {
-        return $this->belongsTo(Estado::class, 'estado', 'id');
-    }
+	{
+		return $this->belongsTo(Estado::class, 'estado', 'id');
+	}
 }

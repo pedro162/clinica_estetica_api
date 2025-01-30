@@ -7,7 +7,7 @@ use \App\VendaItem;
 
 class Venda extends Model
 {
-    protected $fillable  = [
+	protected $fillable  = [
 		'pessoa_id',
 		'qtdIntes',
 		'vrBruto',
@@ -58,9 +58,10 @@ class Venda extends Model
 		'idEnderecoEntrega',
 		'user_id',
 		'user_update_id',
-		'active'
+		'active',
+		'tenant_id'
 	];
-	
+
 
 	public function vendaItem()
 	{

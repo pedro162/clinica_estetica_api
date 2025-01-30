@@ -11,8 +11,8 @@ use \App\Conta;
 
 class FormaPagamento extends Model
 {
-    protected $fillable = [
-    	'name',
+	protected $fillable = [
+		'name',
 		'cdCobrancaTipo',
 		'hasComissao',
 		'tpPagamento',
@@ -25,7 +25,8 @@ class FormaPagamento extends Model
 		'user_update_id',
 		'hasOperadorFinanceiro',
 		'tipo',
-		'active'
+		'active',
+		'tenant_id'
 	];
 
 	public function tipo_pagamento()
@@ -39,11 +40,11 @@ class FormaPagamento extends Model
 	} */
 
 	public function prazoPagamento()
-    {
-        return $this->belongsToMany(PrazoPagamento::class, 'forma_prazo','forma_pagamento_id','prazo_pagamento_id')->withPivot('forma_prazo.pcTaxa','forma_prazo.vrTaxa','forma_prazo.bandeira_cartao_id','forma_prazo.user_id', "forma_prazo.active");
-    }
-	
-	 public function planoPagamento()
+	{
+		return $this->belongsToMany(PrazoPagamento::class, 'forma_prazo', 'forma_pagamento_id', 'prazo_pagamento_id')->withPivot('forma_prazo.pcTaxa', 'forma_prazo.vrTaxa', 'forma_prazo.bandeira_cartao_id', 'forma_prazo.user_id', "forma_prazo.active");
+	}
+
+	public function planoPagamento()
 	{
 		return $this->belongsToMany(PlanoPagamento::class, 'plano_forma_pgto', 'forma_pagamentos_id', 'plano_pagamentos_id');
 		//return $this->belongsToMany(Grupo::class, 'grupo_pessoa', 'pessoa_id', 'groupo_id');
@@ -73,6 +74,5 @@ class FormaPagamento extends Model
 	public function removeOperador($operador)
 	{
 		return $this->operadorFinanceiro()->detach($operador);
-	} 
-
+	}
 }

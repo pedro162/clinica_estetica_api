@@ -37,7 +37,8 @@ class VendaItem extends Model
         'qtdDevolucaoAvariado',
         'statusDesconto',
         'dsObservacoes',
-        'user_id'
+        'user_id',
+        'tenant_id'
 
     ];
 

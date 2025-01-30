@@ -34,6 +34,7 @@ class Icms extends Model
         'user_update_id',
         'active',
         'estados_id',
+        'tenant_id'
 
     ];
 
@@ -41,5 +42,4 @@ class Icms extends Model
     {
         return $this->belongsTo(Estado::class, 'pais_id', 'id');
     }
-
 }

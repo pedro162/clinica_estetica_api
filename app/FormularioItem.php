@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class FormularioItem extends Model
 {
     use SoftDeletes;
-    protected $table="formulario_items";
-    protected $primaryKey="id";
+    protected $table = "formulario_items";
+    protected $primaryKey = "id";
     protected $fillable = [
         'id',
         'name',
@@ -29,10 +29,12 @@ class FormularioItem extends Model
         'active',
         'deleted_at',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'tenant_id'
     ];
 
-    public function grupo(){
+    public function grupo()
+    {
         return $this->belongsTo(FormularioGrupo::class, 'formulario_grupo_id', 'id');
     }
 }

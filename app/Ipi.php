@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ipi extends Model
 {
-    protected $fillable =[
-        
+    protected $fillable = [
+
         'dsIpi',
         'cst',
         'cdExTipi',
@@ -25,9 +25,9 @@ class Ipi extends Model
         'user_id',
         'user_update_id',
         'active',
+        'tenant_id'
 
     ];
 
-    protected $table="ipis";
-            
+    protected $table = "ipis";
 }

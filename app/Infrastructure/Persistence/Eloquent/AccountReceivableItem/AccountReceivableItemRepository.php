@@ -70,9 +70,27 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
             $query->whereIn('conta_receber_id', $ids);
         }
 
+        $personName = $consulta['nmPessoa']
+            ?? $consulta['pessoa_name']
+            ?? $consulta['name_pessoa'] ?? '';
+
+        if (!empty($personName)) {
+            $query->whereHas('contaReceber.pessoa', function ($subQuery) use ($personName) {
+                $subQuery->where('name', 'like', '%' . $personName . '%');
+            });
+        }
+
+        if (!empty($consulta['pessoa_id'])) {
+            $query->whereHas('contaReceber.pessoa', function ($subQuery) use ($consulta) {
+                $ids = explode(',', trim($consulta['pessoa_id'], ','));
+                $subQuery->whereIn('id', $ids);
+            });
+        }
+
         if (!empty($consulta['dt_exercicio'])) {
             $tpExercicio = $consulta['tp_exercicio'] ?? 'dtVencimento';
             $datas = explode(',', $consulta['dt_exercicio']);
+
             if (count($datas) === 2) {
                 $query->whereBetween($tpExercicio, [$datas[0], $datas[1]]);
             }
@@ -81,6 +99,15 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
         if (!empty($consulta['status'])) {
             $statuses = explode(',', trim($consulta['status'], ','));
             $query->whereIn('status', $statuses);
+        }
+
+        $descricao = $consulta['descricao']
+            ?? $consulta['historico']
+            ?? '';
+
+        if (!empty($descricao)) {
+            $statuses = explode(',', trim($descricao, ','));
+            $query->where('descricao', 'like', '%' . $descricao . '%');
         }
 
         if (!empty($consulta['limite'])) {
@@ -112,6 +139,8 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
         }
 
         if (!empty($consulta['to_require'])) {
+            $registros->load(['contaReceber.pessoa']);
+
             $dataToRequest = $registros->map(fn($registro) => [
                 'label' => $registro->contaReceber->pessoa->name,
                 'value' => $registro->id,

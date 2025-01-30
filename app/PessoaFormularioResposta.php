@@ -26,6 +26,7 @@ class PessoaFormularioResposta extends Model
         'user_update_id',
         'active',
         'form_item_id',
+        'tenant_id'
     ];
 
 
