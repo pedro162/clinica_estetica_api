@@ -78,7 +78,7 @@ class CreateNotificationCommand
 
     public function getNotificationId(): ?string
     {
-        return $this->notificationId;
+        return $this->notificationId ?? '';
     }
 
     public function getNotificationTitle(): ?string
@@ -87,41 +87,41 @@ class CreateNotificationCommand
     }
     public function getNotificationMessage(): ?string
     {
-        return $this->notificationMessage;
+        return $this->notificationMessage ?? '';
     }
 
     public function getNotificationSentDate(): ?string
     {
-        return $this->notificationSentDate;
+        return $this->notificationSentDate ?? '';
     }
 
     public function getNotificationTargetContactAddress(): ?string
     {
-        return $this->notificationTargetContactAddress;
+        return $this->notificationTargetContactAddress ?? '';
     }
 
     public function getNotificationTargetContactName(): ?string
     {
-        return $this->notificationTargetContactName;
+        return $this->notificationTargetContactName ?? '';
     }
 
     public function getNotificationOriginContactAddress(): ?string
     {
-        return $this->notificationOriginContactAddress;
+        return $this->notificationOriginContactAddress ?? '';
     }
 
     public function getNotificationTemplateId(): ?string
     {
-        return $this->notificationTemplateId;
+        return $this->notificationTemplateId ?? '';
     }
 
     public function getNotificationShippingState(): ?string
     {
-        return $this->notificationShippingState;
+        return $this->notificationShippingState  ?? '';
     }
 
     public function getNotificationTenantId(): ?string
     {
-        return $this->notificationTenantId;
+        return $this->notificationTenantId ?? '';
     }
 }

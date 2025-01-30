@@ -38,10 +38,14 @@ class AccountReceivableItemTest extends TestCase
 
     public function testCrateANewAccountReceivableItem()
     {
-        $accountReceivable = factory(ContaReceberItem::class)->make();
-        $methodOfPayment = factory(FormaPagamento::class)->create();
+        $accountReceivable = factory(ContaReceberItem::class)->make(['vrPago' => 0, 'documento' => '', 'caixa_id' => null]);
+        $methodOfPayment = factory(FormaPagamento::class)->create(['tipo' => 'dinheiro']);
         $paymentPlanObject = factory(PlanoPagamento::class)->create();
         $financialOperator = factory(OperadorFinanceiro::class)->create();
+
+        $accountReceivable->contaReceber->vrBruto *= 10;
+        $accountReceivable->contaReceber->vrLiquido *= 10;
+        $accountReceivable->contaReceber->save();
 
         $methodOfPayment->planoPagamento()->attach($paymentPlanObject->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
         $methodOfPayment->operadorFinanceiro()->attach($financialOperator->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
@@ -49,6 +53,7 @@ class AccountReceivableItemTest extends TestCase
         $accountReceivable->forma_pagamentos_id = $methodOfPayment->id;
         $accountReceivable->plano_pagamento_id = $paymentPlanObject->id;
         $accountReceivable->operador_financeiro_id = $financialOperator->id;
+        $accountReceivable->status = 'aberto';
 
         $response = $this->postJson(route('receber.item.store'), $accountReceivable->toArray());
 
@@ -64,18 +69,21 @@ class AccountReceivableItemTest extends TestCase
 
     public function testCrateANewAccountReceivableItemPayed()
     {
-        $accountReceivable = factory(ContaReceberItem::class)->make();
-        $methodOfPayment = factory(FormaPagamento::class)->create();
+        $accountReceivable = factory(ContaReceberItem::class)->make(['vrPago' => 1, 'documento' => '', 'caixa_id' => null]);
+        $methodOfPayment = factory(FormaPagamento::class)->create(['tipo' => 'dinheiro']);
         $paymentPlanObject = factory(PlanoPagamento::class)->create();
         $financialOperator = factory(OperadorFinanceiro::class)->create();
+        $accountReceivable->contaReceber->vrBruto *= 10;
+        $accountReceivable->contaReceber->vrLiquido *= 10;
+        $accountReceivable->contaReceber->save();
 
         $methodOfPayment->planoPagamento()->attach($paymentPlanObject->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
         $methodOfPayment->operadorFinanceiro()->attach($financialOperator->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
 
-        $accountReceivable->forma_pagamento_id = $methodOfPayment->id;
+        $accountReceivable->forma_pagamentos_id = $methodOfPayment->id;
         $accountReceivable->plano_pagamento_id = $paymentPlanObject->id;
         $accountReceivable->operador_financeiro_id = $financialOperator->id;
-        $accountReceivable->status = 'pago';
+        $accountReceivable->status = 'aberto';
 
         $this->postJson(route('receber.item.store'), $accountReceivable->toArray())
             ->assertJsonStructure([
@@ -89,7 +97,6 @@ class AccountReceivableItemTest extends TestCase
         $accountReceivable = factory(ContaReceberItem::class)->create();
         $accountReceivable->descricao = 'New name';
         $accountReceivable->documento = '123456';
-
         $response = $this->putJson(route('receber.item.update', ['id' => $accountReceivable->id]), $accountReceivable->toArray())
             ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
 
