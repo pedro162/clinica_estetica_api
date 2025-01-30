@@ -13,6 +13,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
 use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 use App\Pessoa;
 use App\Profissional;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
@@ -28,7 +29,6 @@ class AppointmentServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Artisan::call('migrate', ['--force']);
         $objSetup = new SetupTest();
         $objSetup->settingUpUser();
         $this->testNotificationApplicationServiceBootstrap();
@@ -45,19 +45,19 @@ class AppointmentServiceTest extends TestCase
         $command = new CreateAppointmentCommand();
         $command->appointmentId(0)
             ->appointmentStartDate("2024-06-30")
-            ->appointmentPersonId(1)
+            ->appointmentPersonId(factory(Pessoa::class)->create()->id)
             ->appointmentStartHour('10:45')
             ->appointmentEndDate('')
             ->appointmentEndHour('')
-            ->appointmentProfessionalId(3)
-            ->appointmentBranchId(1)
+            ->appointmentProfessionalId(factory(Profissional::class)->create()->id)
+            ->appointmentBranchId(factory(Filial::class)->create()->id)
             ->appointmentName('José')
             ->appointmentNickname('Pedro')
             ->appointmentReminder("Test")
             ->appointmentPriority('alta')
             ->appointmentType('consulta')
             ->appointmentActive('yes')
-            ->appointmentUserId(1)
+            ->appointmentUserId(factory(User::class)->create()->id)
             ->appointmentStatus('pendente');
 
         //--------------------------

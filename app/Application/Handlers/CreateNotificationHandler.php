@@ -37,12 +37,16 @@ class CreateNotificationHandler
         $notification->setId(new NotificationId($command->getNotificationId()))
             ->setTitle(new NotificationTitle($command->getNotificationTitle()))
             ->setMessage(new NotificationMessage($command->getNotificationMessage()))
-            ->setTemplateId(new NotificationTemplateId($command->getNotificationTemplateId()))
             ->setTargetContactAddress(new NotificationTargetContactAddress($command->getNotificationTargetContactAddress()))
             ->setTargetContactName(new NotificationTargetContactName($command->getNotificationTargetContactName()))
             ->setOriginContactAddress(new NotificationOriginContactAddress($command->getNotificationOriginContactAddress()))
             ->setShippingState(new NotificationShippingState($command->getNotificationShippingState()))
             ->setSentDate(new NotificationSentDate($command->getNotificationSentDate()));
+
+        if ($command->getNotificationTemplateId()) {
+            $notification->setTemplateId(new NotificationTemplateId($command->getNotificationTemplateId()));
+        }
+
         return $this->repository->save($notification);
     }
 }
