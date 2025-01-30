@@ -37,9 +37,9 @@ class Notification
         return $this;
     }
 
-    public function getId(): NotificationId
+    public function getId(): ?NotificationId
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     public function setTitle(NotificationTitle $title): Notification
@@ -108,9 +108,9 @@ class Notification
         return $this;
     }
 
-    public function getTemplateId(): NotificationTemplateId
+    public function getTemplateId(): ?NotificationTemplateId
     {
-        return $this->template_id;
+        return $this->template_id ?? null;
     }
 
     public function setShippingState(NotificationShippingState $shipping_state): Notification

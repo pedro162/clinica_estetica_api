@@ -408,7 +408,7 @@ class AccountReceivableItem extends BaseEntity
 
         $mapping = [
             ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new AccountReceivableItemId($value))],
-            ['keys' => ['descricao', 'desciption'], 'callback' => fn($value) => $entity->desciption(new AccountReceivableItemDescription((string)$value))],
+            ['keys' => ['descricao', 'desciption', 'description'], 'callback' => fn($value) => $entity->desciption(new AccountReceivableItemDescription((string)$value))],
             ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId($value))],
             ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
             ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId($value))],
@@ -459,6 +459,7 @@ class AccountReceivableItem extends BaseEntity
         $data = [
             'id' => isset($this->id) ? (string)$this->id : null,
             'descricao' => isset($this->desciption) ? (string)$this->desciption : null,
+            'documento' => isset($this->document) ? (string)$this->document : null,
             'tenant_id' => isset($this->tenantId) ? (string)$this->tenantId : null,
             'active' => isset($this->active) ? (string)$this->active : null,
             'user_id' => isset($this->userId) ? (string)$this->userId : null,

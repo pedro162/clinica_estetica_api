@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \App\PlanoPagamentoPrazos;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class PlanoPagamento extends Model
 {
@@ -30,5 +31,10 @@ class PlanoPagamento extends Model
 	public function planoPrazo()
 	{
 		return $this->hasMany(PlanoPagamentoPrazos::class, 'plano_pagamentos_id');
+	}
+
+	public function formaPagamento(): BelongsToMany
+	{
+		return $this->belongsToMany(FormaPagamento::class, 'plano_forma_pgto', 'plano_pagamentos_id', 'forma_pagamentos_id');
 	}
 }

@@ -40,7 +40,7 @@ class AccountReceivableTest extends TestCase
     public function testCrateANewAccountReceivable()
     {
         $accountReceivable = factory(ContaReceber::class)->make();
-        $methodOfPayment = factory(FormaPagamento::class)->create();
+        $methodOfPayment = factory(FormaPagamento::class)->create(['tipo' => 'dinheiro']);
         $paymentPlanObject = factory(PlanoPagamento::class)->create();
         $financialOperator = factory(OperadorFinanceiro::class)->create();
 
@@ -96,10 +96,15 @@ class AccountReceivableTest extends TestCase
     public function testCrateANewAccountReceivablePayed()
     {
         $accountReceivable = factory(ContaReceber::class)->make();
-        $methodOfPayment = factory(FormaPagamento::class)->create();
+        $methodOfPayment = factory(FormaPagamento::class)->create(['tipo' => 'dinheiro']);
         $paymentPlanObject = factory(PlanoPagamento::class)->create();
         $financialOperator = factory(OperadorFinanceiro::class)->create();
         $creditCardFlag = factory(BandeiraCartao::class)->create();
+
+
+        $accountReceivable->vrBruto *= 10;
+        $accountReceivable->vrLiquido *= 10;
+        $accountReceivable->save();
 
         $methodOfPayment->planoPagamento()->attach($paymentPlanObject->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
         $methodOfPayment->operadorFinanceiro()->attach($financialOperator->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);

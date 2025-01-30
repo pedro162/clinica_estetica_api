@@ -428,7 +428,7 @@ class CreateAccountReceivableItemCommand
 
         $entity = (new self)
             ->id((string)($data['id'] ?? 0))
-            ->description((string)($data['description'] ?? ''))
+            ->description((string)($data['description'] ?? $data['descricao'] ?? ''))
             ->tenantId((string)($data['tenantId'] ?? ''))
             ->userId((string)($data['userId'] ?? ''))
             ->userUpdateId((string)($data['userId'] ?? ''))

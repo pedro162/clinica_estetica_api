@@ -21,18 +21,23 @@ use App\Domain\TemplateVariable\Entities\TemplateVariable;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableId;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableSyntax;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableValue;
+use App\Filial;
 use App\Infrastructure\Persistence\Eloquent\EloquentAppointmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentTemplateRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentTemplateVariableRepository;
 use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 use App\Jobs\SendNotification;
+use App\Notification as AppNotification;
+use App\Pessoa;
+use App\Profissional;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
 use Mockery;
 use Mockery\MockInterface;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 
@@ -48,8 +53,12 @@ class NotificationServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        //Artisan::call('migrate', ['--force']);
-        //Artisan::call('migrate');
+
+        // Cria um usuário fictício para teste
+        $user = factory(User::class)->create();
+
+        // Define o usuário como autenticado via Passport
+        Passport::actingAs($user);
 
         $objSetup = new SetupTest();
         $objSetup->settingUpUser();
@@ -58,7 +67,7 @@ class NotificationServiceTest extends TestCase
 
     public function testSendNotificationById()
     {
-        $response = $this->notificationApplicationService->sendNotificationOfId(1);
+        $response = $this->notificationApplicationService->sendNotificationOfId((string)(factory(AppNotification::class)->create()->id));
         $this->assertTrue($response);
     }
 
@@ -79,19 +88,19 @@ class NotificationServiceTest extends TestCase
         $command = new CreateAppointmentCommand();
         $command->appointmentId(0)
             ->appointmentStartDate("2024-06-30")
-            ->appointmentPersonId(1)
+            ->appointmentPersonId(factory(Pessoa::class)->create()->id)
             ->appointmentStartHour('10:45')
             ->appointmentEndDate('')
             ->appointmentEndHour('')
-            ->appointmentProfessionalId(3)
-            ->appointmentBranchId(1)
+            ->appointmentProfessionalId(factory(Profissional::class)->create()->id)
+            ->appointmentBranchId(factory(Filial::class)->create()->id)
             ->appointmentName('José')
             ->appointmentNickname('Pedro')
             ->appointmentReminder("Test")
             ->appointmentPriority('alta')
             ->appointmentType('consulta')
             ->appointmentActive('yes')
-            ->appointmentUserId(1)
+            ->appointmentUserId(factory(User::class)->create()->id)
             ->appointmentStatus('pendente');
         $appointment = $this->appointmentApplicationService->createAppointment($command);
         $response = $objServiceNotification->createAppointmentNotification($appointment);

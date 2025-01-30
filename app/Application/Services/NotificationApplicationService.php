@@ -110,6 +110,7 @@ class NotificationApplicationService
         //--- Alimentar variaveis template
         $notificationRepository = new EloquentNotificationRepository();
         $notification = $notificationRepository->findById(new NotificationId($notification_id));
+
         if (!$notification) {
             throw new Exception("The notification was not found.");
         }
@@ -120,14 +121,17 @@ class NotificationApplicationService
         $templateRepository = new EloquentTemplateRepository();
         $templateVariableRepository = new EloquentTemplateVariableRepository();
         $objTemplate = $templateRepository->findById(new TemplateId((string) $notification->getTemplateId()));
-        $templateVariables = $templateVariableRepository->findByTemplateId(
-            new TemplateVariableTemplateId((string)$objTemplate->getId())
-        );
-
-
         $templateObj = new WhatsAppTemplate();
-        $templateObj->setLanguage(new TemplateLanguage((string)$objTemplate->getLanguage()));
-        $templateObj->setTitle(new TemplateTitle((string)$objTemplate->getTitle()));
+
+        if ($objTemplate) {
+            $templateVariables = $templateVariableRepository->findByTemplateId(
+                new TemplateVariableTemplateId((string)$objTemplate->getId())
+            );
+
+            $templateObj->setLanguage(new TemplateLanguage((string)$objTemplate->getLanguage()));
+            $templateObj->setTitle(new TemplateTitle((string)$objTemplate->getTitle()));
+        }
+
         if ($notificationVariables) {
             foreach ($notificationVariables as $key => $variable) {
                 if ($variable) {
@@ -153,13 +157,17 @@ class NotificationApplicationService
         $templateCommandObj = new CreateTemplateCommand();
         $templateCommandObj->templateId($idTemplateLoad);
         $idTemplate = new TemplateId($templateCommandObj->getTemplateId());
-
+        $command = new CreateNotificationCommand();
         $objTemplate = $this->templateRepository->findById($idTemplate);
 
-        $templateVariables = $this->templateVariableRepository->findByTemplateId(
-            new TemplateVariableTemplateId((string)$objTemplate->getId())
-        );
-        $command = new CreateNotificationCommand();
+        if ($objTemplate) {
+            $templateVariables = $this->templateVariableRepository->findByTemplateId(
+                new TemplateVariableTemplateId((string)$objTemplate->getId())
+            );
+
+            $command->notificationTemplateId((string) $objTemplate->getId());
+        }
+
         $command->notificationId(0)
             ->notificationTitle('Appointment Remainder')
             ->notificationSentDate('2024-06-30')
@@ -167,8 +175,7 @@ class NotificationApplicationService
             ->notificationTargetContactName((string)$appointment->getName())
             ->notificationTargetContactAddress('+5598984257623')
             ->notificationOriginContactAddress('+5598984257623')
-            ->notificationShippingState('waiting')
-            ->notificationTemplateId((string) $objTemplate->getId());
+            ->notificationShippingState('waiting');
         $newNotification = $this->createNotification($command);
         if (!$newNotification) {
             throw new Exception("Was no possible to create the notification.");
@@ -184,7 +191,7 @@ class NotificationApplicationService
             '{{8}}' => (string)"http://localhost:3000",
         ];
 
-        if (is_array($templateVariables) && count($templateVariables) > 0) {
+        if (isset($templateVariables) && is_array($templateVariables) && count($templateVariables) > 0) {
             foreach ($templateVariables as $key => $variable) {
                 $syntax = (string) $variable->getVariable();
                 if (array_key_exists($syntax, $variablesOptions)) {
@@ -211,6 +218,7 @@ class NotificationApplicationService
         //--get rabbitmq ip
         //docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rabbitmq
     }
+
     public function createAppointmentNotificationBkp(Appointment $appointment)
     {
         //---Alimentar variaveis
