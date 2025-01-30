@@ -8,7 +8,7 @@ use App\ContaCategoria;
 class Conta extends Model
 {
     protected $table = "contas";
-    protected $primaryKey="id";
+    protected $primaryKey = "id";
     protected $fillable = [
         'id',
         'name',
@@ -17,12 +17,12 @@ class Conta extends Model
         'typo',
         'user_id',
         'user_update_id',
-        'active'
+        'active',
+        'tenant_id'
     ];
 
     public function categoria()
     {
         return $this->belongsTo(ContaCategoria::class, 'conta_categorias_id', 'id');
     }
-
 }

@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Funcionario extends Model
 {
-    protected $fillable = [
-    	'vrSalario',
+	protected $fillable = [
+		'vrSalario',
 		'tituloEleitor',
 		'zonaEleitor',
 		'dsNaturalidade',
@@ -28,6 +28,7 @@ class Funcionario extends Model
 		'pessoa_id',
 		'user_id',
 		'user_update_id',
-		'active'
-    ];
+		'active',
+		'tenant_id'
+	];
 }

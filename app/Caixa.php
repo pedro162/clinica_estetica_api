@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Caixa extends Model
 {
-	protected $table = "caixas";
-    protected $primaryKey="id";
+    protected $table = "caixas";
+    protected $primaryKey = "id";
     protected $fillable = [
         'id',
         'name',
@@ -22,7 +22,7 @@ class Caixa extends Model
         'active',
         'vrSaldo',
         'tpSaldo',
-        'filial_id'
+        'filial_id',
+        'tenant_id'
     ];
-    
 }

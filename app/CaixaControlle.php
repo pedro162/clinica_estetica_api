@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CaixaControlle extends Model
 {
     protected $table = "caixa_controlles";
-    protected $primaryKey="id";
+    protected $primaryKey = "id";
     protected $fillable = [
         'id',
         'dtAbertura',
@@ -21,6 +21,7 @@ class CaixaControlle extends Model
         'caixa_id',
         'user_id',
         'user_update_id',
-        'active'
+        'active',
+        'tenant_id'
     ];
 }

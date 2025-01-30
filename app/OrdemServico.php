@@ -42,7 +42,8 @@ class OrdemServico extends Model
 		'profissional_id',
 		'mt_calcel_id',
 		'type',
-		'is_orcamento'
+		'is_orcamento',
+		'tenant_id'
 	];
 
 	public function getTable()

@@ -25,14 +25,14 @@ class Ncm extends Model
         'vrAliqMunicipal',
         'user_id',
         'user_update_id',
-        'active'
+        'active',
+        'tenant_id'
     ];
 
     use SoftDeletes;
 
     public function produto()
     {
-       return $this->hasMany(Produto::class, 'produto_id', 'id');
+        return $this->hasMany(Produto::class, 'produto_id', 'id');
     }
-    
 }

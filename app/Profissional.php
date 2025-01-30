@@ -34,6 +34,7 @@ class Profissional extends Model
 		'tipo_contrato',
 		'filial_id',
 		'uf_cnh_id',
+		'tenant_id'
 	];
 	public function especialidade()
 	{

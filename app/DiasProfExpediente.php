@@ -8,15 +8,16 @@ use App\HoraProfExpediente;
 
 class DiasProfExpediente extends Model
 {
-    protected $table="dias_prof_expedientes";
-    protected $primaryKey="id";
-    protected $fillable =[
+    protected $table = "dias_prof_expedientes";
+    protected $primaryKey = "id";
+    protected $fillable = [
         'name',
         'nr_dia',
         'profissional_id',
         'user_id',
         'user_update_id',
         'active',
+        'tenant_id'
     ];
 
     public function profissional()
@@ -29,5 +30,4 @@ class DiasProfExpediente extends Model
     {
         return $this->hasMany(HoraProfExpediente::class, 'dias_prof_expediente_id', 'id');
     }
-
 }

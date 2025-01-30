@@ -12,11 +12,11 @@ use \App\OperadorFinanceiro;
 class OrdemServicoCobranca extends Model
 {
     use SoftDeletes;
-    protected $table="ordem_servico_cobrancas";
-    protected $primaryKey="id";
+    protected $table = "ordem_servico_cobrancas";
+    protected $primaryKey = "id";
     protected $fillable = [
-    	
-		'ordem_servico_id',
+
+        'ordem_servico_id',
         'forma_pagamento_id',
         'operador_financeiro_id',
         'plano_pagamento_id',
@@ -27,20 +27,24 @@ class OrdemServicoCobranca extends Model
         'vr_cobranca',
         'vr_acrescimo',
         'vr_final',
-		'user_id',
-		'user_update_id',
-		'active',
-	];
+        'user_id',
+        'user_update_id',
+        'active',
+        'tenant_id'
+    ];
 
-    public function formaPgto(){
+    public function formaPgto()
+    {
         return $this->belongsTo(FormaPagamento::class, 'forma_pagamento_id', 'id');
     }
 
-    public function planoPgto(){
+    public function planoPgto()
+    {
         return $this->belongsTo(PlanoPagamento::class, 'plano_pagamento_id', 'id');
     }
 
-    public function operadorFinanceiro(){
+    public function operadorFinanceiro()
+    {
         return $this->belongsTo(OperadorFinanceiro::class, 'operador_financeiro_id', 'id');
     }
 }
