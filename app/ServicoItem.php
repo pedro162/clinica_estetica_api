@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ServicoItem extends Model
 {
     use SoftDeletes;
-    protected $table="servico_items";
-    protected $primaryKey="id";
+    protected $table = "servico_items";
+    protected $primaryKey = "id";
     protected $fillable = [
         'qtd',
         'servico_id',
@@ -26,13 +26,16 @@ class ServicoItem extends Model
         'vr_desconto',
         'pct_acrescimo',
         'vr_acrescimo',
-        'pct_desconto'
+        'pct_desconto',
+        'tenant_id'
     ];
 
-    public function ordem(){
+    public function ordem()
+    {
         return $this->belongsTo(OrdemServico::class, 'ordem_servico_id', 'id');
     }
-    public function servico(){
+    public function servico()
+    {
         return $this->belongsTo(Servico::class, 'servico_id', 'id');
     }
 }

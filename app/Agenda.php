@@ -23,5 +23,6 @@ class Agenda extends Model
         'user_id',
         'user_update_id',
         'active',
+        'tenant_id'
     ];
 }

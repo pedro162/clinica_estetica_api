@@ -52,4 +52,9 @@ class ContaReceberItem extends Model
 	{
 		return $this->hasMany(FinanceiroMovimentacoe::class, 'referencia_id', 'id')->where('referencia', 'conta_receber_items');
 	}
+
+	public function formaPagamento()
+	{
+		return $this->belongsTo(FormaPagamento::class, 'forma_pagamentos_id', 'id');
+	}
 }

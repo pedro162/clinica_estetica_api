@@ -205,7 +205,7 @@ class Cashier extends BaseEntity
     {
         $data = [
             'id' => isset($this->id) ? (string)$this->id : null,
-            'branchId' => isset($this->branchId) ? (string)$this->branchId : null,
+            'filial_id' => isset($this->branchId) ? (string)$this->branchId : null,
             'name' => isset($this->name) ? (string)$this->name : null,
             'vrMin' => isset($this->minValue) ? (string)$this->minValue : null,
             'vrMax' => isset($this->maxValue) ? (string)$this->maxValue : null,

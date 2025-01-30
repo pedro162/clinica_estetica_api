@@ -10,17 +10,18 @@ class MotivoCancelamentoOrdemServico extends Model
 {
     use SoftDeletes;
 
-    protected $table='motivo_cancelamento_ordem_servicos';
+    protected $table = 'motivo_cancelamento_ordem_servicos';
     protected $primaryKey = 'id';
     protected $fillable = [
         'motivo',
         'user_id',
-		'user_update_id',
-		'active'
-
+        'user_update_id',
+        'active',
+        'tenant_id'
     ];
 
-    public function ordemServico(){
+    public function ordemServico()
+    {
         return $this->hasMany(OrdemServico::class, 'mt_calcel_id', 'id');
     }
 }

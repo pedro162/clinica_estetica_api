@@ -26,7 +26,8 @@ class Pessoa extends Model
 		'tipo',
 		'user_id',
 		'user_update_id',
-		'active'
+		'active',
+		'tenant_id'
 	];
 
 	public function grupo()

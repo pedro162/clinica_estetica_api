@@ -17,13 +17,13 @@ class Produto extends Model
         'price',
         'active',
         'spotlight',
-        'image'
+        'image',
+        'tenant_id'
     ];
 
     public function marca()
     {
         return $this->hasOne(Marca::class, 'id', 'marca_id');
-        
     }
 
     public function ncm()

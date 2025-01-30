@@ -7,15 +7,14 @@ use App\Produto;
 
 class Categoria extends Model
 {
-    protected $fillable = [
-    	'user_id',
-		'name'
-    ];
+  protected $fillable = [
+    'user_id',
+    'name',
+    'tenant_id'
+  ];
 
-    public function produto()
-    {
-    	return $this->belongsToMany(Produto::class);
-    }
-
-        
+  public function produto()
+  {
+    return $this->belongsToMany(Produto::class);
+  }
 }

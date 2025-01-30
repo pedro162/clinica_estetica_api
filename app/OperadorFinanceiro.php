@@ -7,8 +7,8 @@ use \App\Pessoa;
 
 class OperadorFinanceiro extends Model
 {
-    protected $fillable = [
-    	'vrTarifa',
+	protected $fillable = [
+		'vrTarifa',
 		'vrDesconto',
 		'vrPorcentagemDesconto',
 		'nrRemessaAtual',
@@ -22,12 +22,13 @@ class OperadorFinanceiro extends Model
 		'filial_id',
 		'user_id',
 		'user_update_id',
-		'active'
-    ];
+		'active',
+		'tenant_id'
+	];
 
 
-    public function pessoa()
-    {
-    	return $this->hasOne(Pessoa::class, 'id', 'pessoa_id');
-    }
+	public function pessoa()
+	{
+		return $this->hasOne(Pessoa::class, 'id', 'pessoa_id');
+	}
 }

@@ -13,11 +13,12 @@ class Contrato extends Model
         'isLiberaCatraca',
         'dtVencimento',
         'vrAdesao',
-        'vrContrato', 
+        'vrContrato',
         'filial_id',
         'user_id',
-        'user_update_id',       
-        'active'
+        'user_update_id',
+        'active',
+        'tenant_id'
     ];
 
 

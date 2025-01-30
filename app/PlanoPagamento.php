@@ -7,9 +7,9 @@ use \App\PlanoPagamentoPrazos;
 
 class PlanoPagamento extends Model
 {
-    protected $fillable = [
+	protected $fillable = [
 
-    	'name',
+		'name',
 		'descricao',
 		'diasmedios',
 		'qtdParcelas',
@@ -24,10 +24,11 @@ class PlanoPagamento extends Model
 		'qtd_dias_pri_parcela',
 		'qtdDiasIntervaloParcelas',
 		'exibe_balcao',
+		'tenant_id'
 	];
-	
+
 	public function planoPrazo()
 	{
-		return $this->hasMany(PlanoPagamentoPrazos::class,'plano_pagamentos_id');
+		return $this->hasMany(PlanoPagamentoPrazos::class, 'plano_pagamentos_id');
 	}
 }

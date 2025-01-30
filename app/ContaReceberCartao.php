@@ -14,7 +14,7 @@ class ContaReceberCartao extends Model
     protected $table = "conta_receber_cartaos";
 
     protected $fillable = [
-    	'nr_doc',
+        'nr_doc',
         'dt_emissao',
         'dt_vencimento',
         'dt_baixa',
@@ -31,5 +31,6 @@ class ContaReceberCartao extends Model
         'user_id',
         'user_update_id',
         'active',
+        'tenant_id'
     ];
 }

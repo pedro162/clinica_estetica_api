@@ -7,7 +7,7 @@ use App\Estado;
 
 class Pais extends Model
 {
-   
+
     protected $fillable = [
         'id',
         'nmPais',
@@ -15,13 +15,12 @@ class Pais extends Model
         'padrao',
         'user_id',
         'user_update_id',
-        'active'
+        'active',
+        'tenant_id'
     ];
 
     public function estado()
     {
         return $this->hasMany(Estado::class, 'pais_id', 'id');
     }
-
-   
 }

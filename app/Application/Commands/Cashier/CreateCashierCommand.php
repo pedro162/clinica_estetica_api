@@ -3,6 +3,7 @@
 namespace App\Application\Commands\Cashier;
 
 use App\Utilitarios;
+use Exception;
 
 class CreateCashierCommand
 {
@@ -194,21 +195,28 @@ class CreateCashierCommand
         $minValue = Utilitarios::removeMaskMoney($data['vrMin'] ?? $data['minValue'] ?? 0);
         $maxValue = Utilitarios::removeMaskMoney($data['vrMax'] ?? $data['maxValue'] ?? 0);
         $balance = Utilitarios::removeMaskMoney($data['balance'] ?? $data['vrSaldo'] ?? 0);
+        $balanceType = $data['tpSaldo'] ?? $data['balanceType'] ?? '';
+
+        $balanceType = 'positivo';
+
+        if ($balance < 0) {
+            $balanceType = 'negativo';
+        }
 
         $entity = (new self)
             ->id((string)($data['id'] ?? 0))
             ->name((string)($data['name'] ?? ''))
             ->type((string)($data['type'] ?? ''))
-            ->tenantId((string)($data['tenantId'] ?? ''))
-            ->openStatus((string)($data['status_abertura'] ?? $data['openStatus'] ?? ''))
-            ->userId((string)($data['userId'] ?? \Auth::User()->id))
-            ->userUpdateId((string)($data['userId'] ?? \Auth::User()->id))
+            ->tenantId((string)($data['tenantId'] ?? $data['tenant_id'] ?? ''))
+            ->openStatus((string)($data['status_abertura'] ?? $data['openStatus'] ?? 'close'))
+            ->userId((string)($data['userId'] ?? $data['user_id'] ?? \Auth::User()->id))
+            ->userUpdateId((string)($data['userUpdateId'] ?? $data['user_update_id'] ?? \Auth::User()->id))
             ->active((string)($data['active'] ?? 'yes'))
-            ->blockStatus((string)($data['status_bloqueio'] ?? $data['blockStatus'] ?? ''))
+            ->blockStatus((string)($data['status_bloqueio'] ?? $data['blockStatus'] ?? 'liberado'))
             ->minValue((float)($minValue))
             ->maxValue((float)($maxValue))
             ->acceptTransfer((string)($data['aceita_transferencia'] ?? $data['acceptTransfer'] ?? ''))
-            ->balanceType((string)($data['tpSaldo'] ?? $data['balanceType'] ?? ''))
+            ->balanceType((string)($balanceType))
             ->branchId((string)($data['filial_id'] ?? $data['branchId'] ?? ''))
             ->balance((float)($balance));
 

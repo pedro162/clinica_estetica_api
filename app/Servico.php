@@ -10,15 +10,15 @@ class Servico extends Model
 	use SoftDeletes;
 	protected $primaryKey	= 'id';
 	protected $table 		= 'servicos';
-    protected $fillable 	= [
-    	'name',
+	protected $fillable 	= [
+		'name',
 		'descricao',
 		'vrServico',
 		'unidade',
 		'user_id',
 		'user_update_id',
 		'type',
-		'active'
-
-    ];
+		'active',
+		'tenant_id'
+	];
 }

@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 class PisCofins extends Model
-{         
+{
 
     protected $fillable = [
         'id',
@@ -18,9 +18,9 @@ class PisCofins extends Model
         'user_update_id',
         'st',
         'active',
+        'tenant_id'
     ];
 
     protected $table = "pis_cofins";
     protected $primaryKey = 'id';
-
 }

@@ -54,6 +54,11 @@ class ContaReceber extends Model
 		return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
 	}
 
+	public function filial()
+	{
+		return $this->belongsTo(Filial::class, 'filial_id', 'id');
+	}
+
 	public function formaPagamento()
 	{
 		return $this->belongsTo(FormaPagamento::class, 'forma_pagamento_id', 'id');
