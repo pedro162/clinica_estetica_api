@@ -276,7 +276,6 @@ class ContaReceberItemHelper
 
     public function baixar(array $dados, int $id)
     {
-
         $erros = [];
 
         $id             = $id ?? $dados['id'];
@@ -308,14 +307,12 @@ class ContaReceberItemHelper
             throw new CobrancaReceberException(implode('<br/>', $erros));
         }
 
-
         $objCaixa = Caixa::where('active', '=', 'yes')
             ->where('id', '=', $caixa_id)->first();
 
         if (! $objCaixa) {
             throw new CobrancaReceberException('Caixa não identificao. Tente novamente ou entre em contato com o suporte.');
         }
-
 
         $registro = ContaReceberItem::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();

@@ -8,25 +8,17 @@ use App\Application\Handlers\AccountReceivable\GetAccountReceivableByIdHandler;
 use App\Application\Handlers\AccountReceivable\GetAllAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivable\UpdateAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHandler;
-use App\Classes\ApiResponseClass;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use \App\Utilitarios;
 use \App\ContaReceber;
 use \App\ContaReceber as CobrancaReceber;
-use \App\ContaReceberItem;
 use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\ContaReceberCartao;
-use \App\Helpers\ContaReceberCartaoHelper;
 use \App\Helpers\ContaReceberItemHelper;
 use \App\Pessoa;
 use \App\OrdemServico;
 use \App\Exceptions\CobrancaReceberException;
 use App\Helpers\BaseHelper;
 use App\Validators\AccountReceivable\AccountReceivableValidator;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class ContaReceberHelper extends BaseHelper
@@ -256,9 +248,8 @@ class ContaReceberHelper extends BaseHelper
         return $datacobReceberObjArr;
     }
 
-    public function baixar(array $dados, int $id)
+    public function baixar(array $dados, int $id): ContaReceber
     {
-
         $id = $id ?? $dados['id'];
         $callBack = $dados['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
@@ -274,8 +265,7 @@ class ContaReceberHelper extends BaseHelper
             throw new CobrancaReceberException('O valor para baixa é inválido');
         }
 
-        $registro = CobrancaReceber::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+        $registro = $this->getAccountReceivableByIdHandler->handler(CreateAccountReceivableCommand::build(['id' => $id]));
 
         if (!$registro) {
             throw new CobrancaReceberException('Registro não identificado. Tentenovamente ou entre em contato com o suporte');
@@ -294,7 +284,6 @@ class ContaReceberHelper extends BaseHelper
             'vrTaxa' => 0,
             'vrDesconto' => 0,
             'vrJuros' => 0,
-            'user_id' => \Auth::User()->id,
             'active' => 'yes',
             'importacao_dados' => 'no',
             'referencia_id' => $registro->referencia_id ?? date('ymdhis'),
@@ -307,11 +296,9 @@ class ContaReceberHelper extends BaseHelper
             'plano_pagamento_id' => $registro->planoPagamento->id,
             'operador_financeiro_id' => $registro->operadorFinanceiro->id ?? 0,
             'status' => 'aberto',
-
         ];
 
-        $accountReceivableItemHelp = new ContaReceberItemHelper();
-        $dataResponse = $accountReceivableItemHelp->gerarCobrancaItem(
+        $dataResponse = $this->accountReceivableItemHelp->gerarCobrancaItem(
             $registro,
             $vrCobranca,
             $registro->formaPagamento->id,
@@ -319,6 +306,7 @@ class ContaReceberHelper extends BaseHelper
             $registro->operadorFinanceiro->id ?? 0,
             $dataParcela
         );
+
         if (!(is_array($dataResponse) && count($dataResponse) > 0)) {
             throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
         }
@@ -333,11 +321,9 @@ class ContaReceberHelper extends BaseHelper
             if (!($contaRecebrItem)) {
                 throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
             }
-            $accountReceivableItemHelp = new ContaReceberItemHelper();
-            $accountReceivableItemHelp->baixar($dados, $contaRecebrItem->id);
+
+            $this->accountReceivableItemHelp->baixar($dados, $contaRecebrItem->id);
         }
-
-
 
         return $registro;
     }

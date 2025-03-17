@@ -21,5 +21,10 @@ interface AccountReceivableApplicationServiceInterface
         CreateAccountReceivableCommand $command
     ): void;
 
+    public function payOff(
+        CreateAccountReceivableCommand $command,
+        array $data = []
+    ): ?ContaREceber;
+
     public function getAll(array $data = []): ?Collection;
 }
