@@ -331,7 +331,6 @@ class ContaReceberHelper extends BaseHelper
     public function update(array $data, int $id)
     {
         $dadosRequest = [];
-
         $dadosRequest['descricao']                  = $data['descricao'];
         $dadosRequest['user_update_id']             = \Auth::User()->id;
         $dadosRequest['active']                     =  'yes';
@@ -359,7 +358,6 @@ class ContaReceberHelper extends BaseHelper
             throw new CobrancaReceberException('Parâmetro ínválido');
         }
 
-
         $registro = CobrancaReceber::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
@@ -382,7 +380,6 @@ class ContaReceberHelper extends BaseHelper
 
     public function faturamentoLiquidezMesAnoWidgetJson(array $data)
     {
-
         $rawSqlYear = \DB::raw('YEAR(cr.created_at)');
         $rawSqlMes = \DB::raw('MONTH(cr.created_at)');
         $rawSqlDia = \DB::raw('DAY(cr.created_at)');
@@ -449,7 +446,7 @@ class ContaReceberHelper extends BaseHelper
         if (!isset($consulta['ordem'])) {
             $consulta['ordem'] =  'id-desc';
         }
-        $ordem      = $consulta['ordem'] ?? 'id-desc';
+        $ordem = $consulta['ordem'] ?? 'id-desc';
 
         $campos =  $data['campos'] ?? [];
         $parse = [

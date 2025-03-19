@@ -458,7 +458,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/receber/info/{id}/{id_assistente?}', ['as' => 'receber.info', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@show']);
 	Route::get('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@destroy']);
 	Route::post('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@destroy']);
-	Route::put('/receber/baixar/{id}/{id_assistente?}', ['as' => 'receber.baixar', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@payOff']);
+	Route::post('/receber/baixar/{id}/{id_assistente?}', ['as' => 'receber.baixar', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@payOff']);
 
 	Route::get('/receber/item/index/{id_assistente?}', ['as' => 'receber.item.index', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@index']);
 	Route::post('/receber/item/index/{id_assistente?}', ['as' => 'receber.item.index', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@index']);

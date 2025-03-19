@@ -91,7 +91,7 @@ class AccountReceivableController extends Controller
         $data = $request->validated();
         $data['id'] = $id;
         $data = $this->service->payOff(CreateAccountReceivableCommand::build($data), $data);
-        return ApiResponseClass::sendRequest(new AccountReceivableCollection($data), 'Accounts receivable successfully cleared', JsonResponse::HTTP_OK);
+        return ApiResponseClass::sendRequest(new AccountReceivableResource($data), 'Accounts receivable successfully cleared', JsonResponse::HTTP_OK);
     }
 
     /**
