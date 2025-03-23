@@ -158,7 +158,7 @@ class AccountReceivableTest extends TestCase
         $responseData = $response->json();
         $this->assertDatabaseHas($accountReceivable->getTable(), [
             'id' => $responseData['data']['data'][0]['id'],
-            'vrPago' => $accountReceivable->vrBruto,
+            'status' => $accountReceivable->status,
         ]);
     }
 
@@ -182,7 +182,7 @@ class AccountReceivableTest extends TestCase
     {
         $accountReceivable = factory(ContaReceber::class)->create();
 
-        $response = $this->getJson(route('receber.baixar', ['id' => $accountReceivable->id]));
+        $response = $this->getJson(route('receber.show', ['id' => $accountReceivable->id]));
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonStructure([
