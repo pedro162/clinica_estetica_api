@@ -23,8 +23,6 @@ use \App\ExceptionApplication;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\ContaReceberHelper;
 
-
-
 class CobrancaReceberController extends Controller
 {
 

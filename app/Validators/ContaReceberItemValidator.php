@@ -15,82 +15,73 @@ use \App\Caixa;
 use Illuminate\Support\Facades\Validator;
 use \App\Exceptions\CobrancaReceberException;
 
-class ContaReceberItemValidator{
+class ContaReceberItemValidator
+{
 
-    
-    public function validarBaixar(int $id, array $dados = []){
+
+    public function validarBaixar(int $id, array $dados = [])
+    {
 
         $erros = [];
 
-        $id             		= $id ?? $dados['id'];
-        $caixa_id       		= $dados['caixa_id'] ?? 0;
-        $dados['receber_id'] 	= $id;
+        $id                     = $id ?? $dados['id'];
+        $caixa_id               = $dados['caixa_id'] ?? 0;
+        $dados['receber_id']     = $id;
 
-        $vrPago 				= $dados['vrPago'];
-        
         $errosEncontrados = $this->validaBaixaRequest($dados);
-        if(is_array($errosEncontrados) && count($errosEncontrados) > 0){
-        	$erros =  array_merge($errosEncontrados, $erros);
+        if (is_array($errosEncontrados) && count($errosEncontrados) > 0) {
+            $erros =  array_merge($errosEncontrados, $erros);
         }
 
-        if(is_array($erros) && count($erros) > 0){
-        	throw new CobrancaReceberException(implode('<br/>', $erros));
+        if (is_array($erros) && count($erros) > 0) {
+            throw new CobrancaReceberException(implode('<br/>', $erros));
         }
 
-        if($id > 0){
-        	$registro = ContaReceberItem::where('active', '=', 'yes')
-            	->where('id', '=', $id)->first();
+        if ($id > 0) {
+            $registro = ContaReceberItem::where('active', '=', 'yes')
+                ->where('id', '=', $id)->first();
 
-            if(! $registro){
-            	throw new CobrancaReceberException('Caixa não identificao. Tente novamente ou entre em contato com o suporte.');
-        	}else{
+            if (! $registro) {
+                throw new CobrancaReceberException('Caixa não identificao. Tente novamente ou entre em contato com o suporte.');
+            } else {
 
-        		if(! ($registro->status == 'aberto')){
-		            $erros[] = "O contas a receber de código encontra-se \"{$registro->status}\" e não poderá ser baixado";
-		        }
+                if (! ($registro->status == 'aberto')) {
+                    $erros[] = "O contas a receber de código encontra-se \"{$registro->status}\" e não poderá ser baixado";
+                }
 
-		        $objCobrancaReceber = $registro->contaReceber;
-		        if(! $objCobrancaReceber){
-		            throw new CobrancaReceberException('O cabeçalho do contas a receber não foi identificado. Tente novamente ou entre em contato com o suporte.');
-		        }
+                $objCobrancaReceber = $registro->contaReceber;
+                if (! $objCobrancaReceber) {
+                    throw new CobrancaReceberException('O cabeçalho do contas a receber não foi identificado. Tente novamente ou entre em contato com o suporte.');
+                }
 
-		        $vrPagoToal = $objCobrancaReceber->vrPago+$registro->vrLiquido;
-		        $dif = $objCobrancaReceber->vrLiquido - $vrPagoToal;
-		        $difAbs = abs($dif);
-		        $difAbsFormat = number_format($difAbs, 2, ',', '.');
+                $vrPagoToal = $objCobrancaReceber->vrPago + $registro->vrLiquido;
+                $dif = $objCobrancaReceber->vrLiquido - $vrPagoToal;
+                $difAbs = abs($dif);
+                $difAbsFormat = number_format($difAbs, 2, ',', '.');
 
-		        if($vrPagoToal > $objCobrancaReceber->vrLiquido){
-		        	if($difAbs > 0.02){
-		        		$erros[] = "O saldo disónível para baixa é de apenas {$difAbsFormat}";
-		        	}
-
-		        }
-
-
-		        
-        	}
-
-
+                if ($vrPagoToal > $objCobrancaReceber->vrLiquido) {
+                    if ($difAbs > 0.02) {
+                        $erros[] = "O saldo disónível para baixa é de apenas {$difAbsFormat}";
+                    }
+                }
+            }
         }
 
-        if($caixa_id > 0){
-        	$objCaixa = Caixa::where('active', '=', 'yes')
-            ->where('id', '=', $caixa_id)->first();
+        if ($caixa_id > 0) {
+            $objCaixa = Caixa::where('active', '=', 'yes')
+                ->where('id', '=', $caixa_id)->first();
 
-            if(! $objCaixa){
-            	throw new CobrancaReceberException('Caixa não identificao. Tente novamente ou entre em contato com o suporte.');
-        	}
+            if (! $objCaixa) {
+                throw new CobrancaReceberException('Caixa não identificao. Tente novamente ou entre em contato com o suporte.');
+            }
         }
-        
-		
-        
 
         return $erros;
     }
 
-     protected function validaBaixaRequest(array $dados)
+    protected function validaBaixaRequest(array $dados)
     {
-    	$errosEncontrados= [];
+        $errosEncontrados = [];
 
         $validator = Validator::make($dados, [
             'ds_observacao' => 'required|max:255|min:2',

@@ -19,6 +19,8 @@ class FinanceiroMovimentacoe extends Model
         'id',
         'referencia_id',
         'referencia',
+        'sub_referencia_id',
+        'sub_referencia',
         'historico',
         'caixa_id',
         'vr_saldo_anterior',

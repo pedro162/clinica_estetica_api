@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Eloquent\AccountReceivable;
 
 use App\ContaReceber;
+use App\ContaReceberItem;
 use App\Domain\AccountReceivable\Entities\AccountReceivable;
 use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableId;
@@ -382,5 +383,13 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
         }
 
         return  ['registro' => $registro];
+    }
+
+    public function sumOpenNetAmounts(AccountReceivableId $id): ?float
+    {
+        return ContaReceberItem::where('conta_receber_id', (string)$id)
+            ->where('status', 'aberto')
+            ->where('active', 'yes')
+            ->sum('vrLiquido');
     }
 }

@@ -15,4 +15,5 @@ interface AccountReceivableRepositoryInterface
     public function getLiquidityBillingByMonthYear(array $filter = []): ?array;
     public function getLiquidityBillingByBranch(array $filter = []): ?array;
     public function getLiquidityBillingByProfessional(array $filter = []): ?array;
+    public function sumOpenNetAmounts(AccountReceivableId $id): ?float;
 }
