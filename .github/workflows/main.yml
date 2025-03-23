@@ -33,6 +33,9 @@ jobs:
       - name: Validate composer.json and composer.lock
         uses: composer validate --strict
 
+      - name: Validate syntax
+        run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
