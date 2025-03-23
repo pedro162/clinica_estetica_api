@@ -325,7 +325,7 @@ class ContaReceberHelper extends BaseHelper
             $this->accountReceivableItemHelp->baixar($dados, $contaRecebrItem->id);
         }
 
-        return $registro;
+        return $registro->refresh();
     }
 
     public function update(array $data, int $id)

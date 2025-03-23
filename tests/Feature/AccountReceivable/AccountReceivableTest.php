@@ -162,7 +162,7 @@ class AccountReceivableTest extends TestCase
         ]);
     }
 
-    public function testUpdateAAccountReceivable()
+    public function testUpdateAccountReceivable()
     {
         $accountReceivable = factory(ContaReceber::class)->create();
         $accountReceivable->descricao = 'New name';
