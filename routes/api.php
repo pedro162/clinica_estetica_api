@@ -70,7 +70,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/produto/ingrediente/salvar/{id}/{id_assistente?}', ['as' => 'produto.ingrediente.salvar', 'uses' => 'Admin\ProdutoController@ingredienteSalvar']);
 	Route::post('/produto/index/json/{id_assistente?}', ['as' => 'produto.index.json', 'uses' => 'Admin\ProdutoController@indexJson']);
 
-
 	Route::get('/marca/index/{id_assistente?}', ['as' => 'marca.index', 'uses' => 'Admin\MarcaController@index']);
 	Route::post('/marca/index/{id_assistente?}', ['as' => 'marca.index', 'uses' => 'Admin\MarcaController@index']);
 	Route::get('/marca/create/{id_assistente?}', ['as' => 'marca.create', 'uses' => 'Admin\MarcaController@create']);
@@ -181,7 +180,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/profissional/dia/exprediente/info/{id}', ['as' => 'profissional.dia.exprediente.info', 'uses' => 'Admin\ProfissionalDiaExpedienteController@info']);
 	Route::post('/profissional/dia/exprediente/info/{id}', ['as' => 'profissional.dia.exprediente.info', 'uses' => 'Admin\ProfissionalDiaExpedienteController@info']);
 	Route::get('/profissional/dia/exprediente/destroy/{id}', ['as' => 'profissional.dia.exprediente/destroy', 'uses' => 'Admin\ProfissionalDiaExpedienteController@destroy']);
-
 
 	Route::get('/grupo/index/{id_assistente?}', ['as' => 'grupo.index', 'uses' => 'Admin\GrupoController@index']);
 	Route::post('/grupo/index/{id_assistente?}', ['as' => 'grupo.index', 'uses' => 'Admin\GrupoController@index']);
@@ -460,7 +458,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/receber/info/{id}/{id_assistente?}', ['as' => 'receber.info', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@show']);
 	Route::get('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@destroy']);
 	Route::post('/receber/destroy/{id}/{id_assistente?}', ['as' => 'receber.destroy', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@destroy']);
-	Route::put('/receber/baixar/{id}/{id_assistente?}', ['as' => 'receber.baixar', 'uses' => 'Admin\CobrancaReceberController@baixar']);
+	Route::post('/receber/baixar/{id}/{id_assistente?}', ['as' => 'receber.baixar', 'uses' => 'Admin\V1\AccountReceivable\AccountReceivableController@payOff']);
 
 	Route::get('/receber/item/index/{id_assistente?}', ['as' => 'receber.item.index', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@index']);
 	Route::post('/receber/item/index/{id_assistente?}', ['as' => 'receber.item.index', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@index']);

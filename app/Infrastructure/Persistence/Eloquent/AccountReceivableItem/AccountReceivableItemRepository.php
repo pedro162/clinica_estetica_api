@@ -43,7 +43,6 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
         $entity->tenant_id = $tenantId;
 
         $data = $entity->toArray();
-
         ContaReceberItem::find($entity->id)->update($data);
     }
 

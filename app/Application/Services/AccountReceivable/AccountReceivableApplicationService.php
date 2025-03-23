@@ -22,6 +22,7 @@ use App\Validators\AccountReceivable\AccountReceivableValidator;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class AccountReceivableApplicationService implements AccountReceivableApplicationServiceInterface
 {
@@ -174,80 +175,34 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
         ];
     }
 
-
-    public function payOff(array $data, int $id)
+    public function payOff(CreateAccountReceivableCommand $command, array $data = []): ?ContaReceber
     {
-        $id = $id ?? $data['id'];
+        try {
+            \DB::beginTransaction();
+            $dataCommand = $command->getDataProperties();
+            $newData = array_merge($dataCommand, $data);
+            $result = $this->accountReceivableHelper->baixar($newData, $newData['id']);
+            \DB::commit();
 
-        if ($id <= 0) {
-            throw new CobrancaReceberException('Parâmetro ínválido');
+            return $result;
+        } catch (CobrancaReceberException $e) {
+            \DB::rollback();
+            Log::info("It was no possible to pay off the account receivable: ", [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'code' => $e->getCode(),
+            ]);
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            Log::info("It was no possible to pay off the account receivable: ", [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'code' => $e->getCode(),
+            ]);
+            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $accountReceivableValue = $data['vr_final'] ?? 0;
-        $accountReceivableValue   = Utilitarios::removeMaskMoney($accountReceivableValue);
-
-        if (!($accountReceivableValue > 0)) {
-            throw new CobrancaReceberException('O valor para baixa é inválido');
-        }
-
-        $registro = $this->findById(CreateAccountReceivableCommand::build(['id' => $id]));
-
-        if (!$registro) {
-            throw new CobrancaReceberException('Registro não identificado. Tentenovamente ou entre em contato com o suporte');
-        }
-
-        $installMent = $this->accountReceivableParseData([
-            'pessoa_id' => $registro->pessoa->id,
-            'descricao' => $data['descricao'] ?? "Recita financeira",
-            'documento' => $data['documento'] ?? null,
-            'dtVencimentoOriginal' => $registro->dtVencimentoOriginal,
-            'dtVencimento' => $registro->dtVencimento,
-            'vrBruto' => $accountReceivableValue,
-            'vrLiquido' => $accountReceivableValue,
-            'user_id' => \Auth::User()->id,
-            'active' => 'yes',
-            'importacao_dados' => 'no',
-            'referencia_id' => $registro->referencia_id ?? date('ymdhis'),
-            'referencia' => $registro->referencia ?? 'sem_referencia',
-            'filial_id' => $registro->filial_id ?? null,
-            'responsavel_id' => $registro->responsavel_id ?? 0,
-            'qtd_parcelas' => 1,
-            'nr_parcela' => 1,
-            'forma_pagamento_id' => $registro->formaPagamento->id,
-            'plano_pagamento_id' => $registro->planoPagamento->id,
-            'operador_financeiro_id' => $registro->operadorFinanceiro->id ?? 0,
-            'status' => 'aberto',
-
-        ]);
-
-        $accountReceivableItem = $this->createAccountReceivableItemHandler->handler(
-            CreateAccountReceivableItemCommand::build($installMent)
-        );
-
-        if (!$accountReceivableItem) {
-            throw new CobrancaReceberException('Não foi possível realizar a baixa do contas a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');
-        }
-
-        $dataResponse = $accountReceivableItem;
-
-        if (!(is_array($dataResponse) && count($dataResponse) > 0)) {
-            throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
-        }
-
-        $dataItens = $dataResponse['data_cob_receber_item'] ?? [];
-
-        if (!(is_array($dataItens) && count($dataItens) > 0)) {
-            throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
-        }
-
-        foreach ($dataItens as $key => $contaRecebrItem) {
-            if (!($contaRecebrItem)) {
-                throw new CobrancaReceberException('Não foi possível concluir a operação. Tentenovamente ou entre em contato com o suporte');
-            }
-
-            $this->accountReceivableItemHelper->baixar($data, $contaRecebrItem->id);
-        }
-
-        return $registro;
     }
 }

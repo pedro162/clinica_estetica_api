@@ -3,6 +3,7 @@
 namespace Tests\Feature\AccountReceivable;
 
 use App\BandeiraCartao;
+use App\Caixa;
 use App\ContaReceber;
 use App\FormaPagamento;
 use App\OperadorFinanceiro;
@@ -157,11 +158,11 @@ class AccountReceivableTest extends TestCase
         $responseData = $response->json();
         $this->assertDatabaseHas($accountReceivable->getTable(), [
             'id' => $responseData['data']['data'][0]['id'],
-            'vrPago' => $accountReceivable->vrBruto,
+            'status' => $accountReceivable->status,
         ]);
     }
 
-    public function testUpdateAAccountReceivable()
+    public function testUpdateAccountReceivable()
     {
         $accountReceivable = factory(ContaReceber::class)->create();
         $accountReceivable->descricao = 'New name';
@@ -192,6 +193,53 @@ class AccountReceivableTest extends TestCase
         $this->assertDatabaseHas($accountReceivable->getTable(), [
             'id' => $accountReceivable->id
         ]);
+    }
+
+    public function testPayOffAccountReceivable()
+    {
+        $accountReceivable = $this->generateAccountReceivable();
+        $accountReceivable->save();
+
+        $cash = factory(Caixa::class)->create();
+
+        $response = $this->postJson(route('receber.baixar', [
+            'id' => $accountReceivable->id
+        ]), [
+            'caixa_id' => $cash->id,
+            'ds_observacao' => "Test payoff",
+            'vr_pago' => $accountReceivable->vrLiquido,
+            'vr_final' => $accountReceivable->vrLiquido,
+        ]);
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonStructure([
+                'data',
+                'success'
+            ])->assertJsonPath('data.id', $accountReceivable->id);
+
+        $this->assertDatabaseHas($accountReceivable->getTable(), [
+            'id' => $accountReceivable->id,
+            'vrPago' => $accountReceivable->vrLiquido
+        ]);
+    }
+
+    public function generateAccountReceivable()
+    {
+        $accountReceivable = factory(ContaReceber::class)->make();
+        $methodOfPayment = factory(FormaPagamento::class)->create(['tipo' => 'dinheiro']);
+        $paymentPlanObject = factory(PlanoPagamento::class)->create();
+        $financialOperator = factory(OperadorFinanceiro::class)->create();
+
+        $accountReceivable->vrBruto *= 10;
+        $accountReceivable->vrLiquido *= 10;
+
+        $methodOfPayment->planoPagamento()->attach($paymentPlanObject->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
+        $methodOfPayment->operadorFinanceiro()->attach($financialOperator->id, ['user_id' => factory(User::class)->create()->id, 'active' => 'yes']);
+
+        $accountReceivable->forma_pagamento_id = $methodOfPayment->id;
+        $accountReceivable->plano_pagamento_id = $paymentPlanObject->id;
+        $accountReceivable->operador_financeiro_id = $financialOperator->id;
+        return $accountReceivable;
     }
 
     public function tearDown(): void
