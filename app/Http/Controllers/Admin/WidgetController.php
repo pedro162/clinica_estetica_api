@@ -26,15 +26,19 @@ use App\Helpers\AtendimentoHelper;
 
 class WidgetController extends Controller
 {
+    protected ContaReceberHelper $objCobReceberHelper;
+
+    public function __construct(ContaReceberHelper $objCobReceberHelper)
+    {
+        $this->objCobReceberHelper = $objCobReceberHelper;
+    }
 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
-    }
+    public function index(Request $request) {}
 
     /**
      * Display a listing of the resource.
@@ -48,9 +52,7 @@ class WidgetController extends Controller
 
             $data = $request->all();
 
-            $objCobReceberHelper = new ContaReceberHelper();
-
-            $registro = $objCobReceberHelper->faturamentoLiquidezMesAnoWidgetJson($data);
+            $registro = $this->objCobReceberHelper->faturamentoLiquidezMesAnoWidgetJson($data);
 
             \DB::commit();
 
@@ -79,9 +81,7 @@ class WidgetController extends Controller
 
             $data = $request->all();
 
-            $objCobReceberHelper = new ContaReceberHelper();
-
-            $registro = $objCobReceberHelper->faturamentoLiquidezFilialWidgetJson($data);
+            $registro = $this->objCobReceberHelper->faturamentoLiquidezFilialWidgetJson($data);
 
             \DB::commit();
 
@@ -112,9 +112,7 @@ class WidgetController extends Controller
 
             $data = $request->all();
 
-            $objCobReceberHelper = new ContaReceberHelper();
-
-            $registro = $objCobReceberHelper->faturamentoLiquidezProfissionallWidgetJson($data);
+            $registro = $this->objCobReceberHelper->faturamentoLiquidezProfissionallWidgetJson($data);
 
             \DB::commit();
 

@@ -17,7 +17,7 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
 
     public function findById(AccountReceivableItemId $id): ?ContaReceberItem
     {
-        return ContaReceberItem::where('active', '=', 'yes')
+        return ContaReceberItem::with(['contaReceber.pessoa.logradouro', 'contaReceber.filial', 'movimentacao', 'formaPagamento'])->where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
     }
 
@@ -65,8 +65,15 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
         }
 
         if (!empty($consulta['conta_receber_id'])) {
-            $ids = explode(',', trim($consulta['conta_receber_id'], ','));
+            $ids = explode(',', trim((string)$consulta['conta_receber_id'], ','));
             $query->whereIn('conta_receber_id', $ids);
+        }
+
+        if (!empty($consulta['filial_id'])) {
+            $ids = explode(',', trim((string)$consulta['filial_id'], ','));
+            $query->whereHas('contaReceber.filial', function ($subQuery) use ($ids) {
+                $subQuery->whereIn('id', $ids);
+            });
         }
 
         $personName = $consulta['nmPessoa']
@@ -87,7 +94,7 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
         }
 
         if (!empty($consulta['dt_exercicio'])) {
-            $tpExercicio = $consulta['tp_exercicio'] ?? 'dtVencimento';
+            $tpExercicio = $consulta['tp_exercicio'] ?? 'dtBaixa';
             $datas = explode(',', $consulta['dt_exercicio']);
 
             if (count($datas) === 2) {
