@@ -17,7 +17,7 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
 
     public function findById(AccountReceivableId $id): ?ContaReceber
     {
-        return ContaReceber::where('active', '=', 'yes')
+        return ContaReceber::with(['pessoa.logradouro', 'filial', 'formaPagamento', 'planoPagamento', 'operadorFinanceiro'])->where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
     }
 
