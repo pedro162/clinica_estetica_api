@@ -8,7 +8,8 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: clinica_estetica_api
+  ECR_REPOSITORY: clinica_estetica_api  
+  ECR_REPOSITORY_WEB: laravel_nginx
   ECS_CLUSTER: clinica_estetica_api
   ECS_SERVICE: clinica_estetica_api
   CONTAINER_NAME: clinica_estetica_api
