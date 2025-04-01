@@ -43,4 +43,10 @@ jobs:
 
       - name: Atualizar serviço no ECS
         run: |
-          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment
+          LATEST_TASK_DEF=$(aws ecs describe-task-definition --task-definition $ECS_SERVICE --query taskDefinition | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy, .tags)')
+
+          NEW_TASK_DEF=$(echo $LATEST_TASK_DEF | jq --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG" '.containerDefinitions[0].image = $IMAGE')
+
+          NEW_TASK_REVISION=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" --query 'taskDefinition.revision' --output text)
+
+          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $ECS_SERVICE:$NEW_TASK_REVISION --force-new-deployment
