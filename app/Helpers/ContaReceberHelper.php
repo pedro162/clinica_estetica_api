@@ -49,7 +49,7 @@ class ContaReceberHelper extends BaseHelper
         $this->accountReceivableItemHelp = $accountReceivableItemHelp;
     }
 
-    public function validaGerCobranca(int $idPessoa, float $vrCobranca, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = []): array
+    public function validaGerCobranca(int $idPessoa, float $paidValue, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = []): array
     {
         $erros = [];
 
@@ -58,7 +58,7 @@ class ContaReceberHelper extends BaseHelper
         $operatorFainantialObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
         $personObject              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
 
-        $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);
+        $paidValue   = Utilitarios::removeMaskMoney($paidValue);
 
         if (!$personObject) {
             $erros[] = 'A pessoa de código nº ' . $idPessoa . ' não foi identificada.';
@@ -78,7 +78,7 @@ class ContaReceberHelper extends BaseHelper
             }
         }
 
-        if (!$vrCobranca) {
+        if (!$paidValue) {
             $erros[] = 'O valor da cobrança informado é inválido.';
         }
 
@@ -112,15 +112,15 @@ class ContaReceberHelper extends BaseHelper
         ];
     }
 
-    public function gerarCobranca(int $idPessoa, float $vrCobranca, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = [])
+    public function gerarCobranca(int $idPessoa, float $paidValue, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = [])
     {
         $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
         $paymentPlanObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
         $operatorFainantialObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
         $personObject              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
 
-        $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);
-        $erros = $this->validaGerCobranca($idPessoa, $vrCobranca, $idFormaPagamento, $idPlanoPagamento, $idOperadorFinanceiro, $dados);
+        $paidValue   = Utilitarios::removeMaskMoney($paidValue);
+        $erros = $this->validaGerCobranca($idPessoa, $paidValue, $idFormaPagamento, $idPlanoPagamento, $idOperadorFinanceiro, $dados);
 
         if ((is_array($erros) && count($erros) > 0)) {
             throw new CobrancaReceberException(implode('<br/>', $erros));
@@ -130,7 +130,7 @@ class ContaReceberHelper extends BaseHelper
         $installMents       = [];
         $qtdDiasIntervalo   = $paymentPlanObject->qtdDiasIntervaloParcelas ?? 0;
         $qtdDiasPriParcela  = $paymentPlanObject->qtd_dias_pri_parcela ?? 0;
-        $vrParcelaBase      = $vrCobranca / $installMentsQuantity;
+        $vrParcelaBase      = $paidValue / $installMentsQuantity;
         $vrParcelaBase      = (float) $vrParcelaBase;
 
         $objDtVencimento = new \DateTime();
@@ -258,11 +258,32 @@ class ContaReceberHelper extends BaseHelper
             throw new CobrancaReceberException('Parâmetro ínválido');
         }
 
-        $vrCobranca = $dados['vr_final'] ?? 0;
-        $vrCobranca   = Utilitarios::removeMaskMoney($vrCobranca);
+        $paidValue = $dados['vr_final'] ?? 0;
+        $paidValue   = (float)Utilitarios::removeMaskMoney($paidValue);
 
-        if (!($vrCobranca > 0)) {
+        $interestValue = $dados['vr_juros'] ?? 0;
+        $interestValue   = (float)Utilitarios::removeMaskMoney($interestValue);
+
+        $feeValue = $dados['vr_multa'] ?? 0;
+        $feeValue   = (float)Utilitarios::removeMaskMoney($feeValue);
+
+        $discountValue = $dados['vr_desconto'] ?? 0;
+        $discountValue   = (float)Utilitarios::removeMaskMoney($discountValue);
+
+        if (!($paidValue > 0)) {
             throw new CobrancaReceberException('O valor para baixa é inválido');
+        }
+
+        if ($interestValue < 0) {
+            throw new CobrancaReceberException('O valor para juros é inválido');
+        }
+
+        if ($feeValue < 0) {
+            throw new CobrancaReceberException('O valor para multa é inválido');
+        }
+
+        if ($discountValue < 0) {
+            throw new CobrancaReceberException('O valor para desconto é inválido');
         }
 
         $registro = $this->getAccountReceivableByIdHandler->handler(CreateAccountReceivableCommand::build(['id' => $id]));
@@ -278,12 +299,12 @@ class ContaReceberHelper extends BaseHelper
             'dtVencimentoOriginal' => $registro->dtVencimentoOriginal,
             'dtVencimento' => $registro->dtVencimento,
             'vrPago' => 0,
-            'vrBruto' => $vrCobranca,
-            'vrLiquido' => $vrCobranca,
+            'vrBruto' => $paidValue,
+            'vrLiquido' => $paidValue,
             'vrDevolvido' => 0,
-            'vrTaxa' => 0,
-            'vrDesconto' => 0,
-            'vrJuros' => 0,
+            'vrTaxa' => $feeValue,
+            'vrDesconto' => $discountValue,
+            'vrJuros' => $interestValue,
             'active' => 'yes',
             'importacao_dados' => 'no',
             'referencia_id' => $registro->referencia_id ?? date('ymdhis'),
@@ -300,7 +321,7 @@ class ContaReceberHelper extends BaseHelper
 
         $dataResponse = $this->accountReceivableItemHelp->gerarCobrancaItem(
             $registro,
-            $vrCobranca,
+            $paidValue,
             $registro->formaPagamento->id,
             $registro->planoPagamento->id,
             $registro->operadorFinanceiro->id ?? 0,

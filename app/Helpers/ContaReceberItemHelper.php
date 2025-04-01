@@ -30,6 +30,7 @@ use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterfa
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableId;
 use App\Domain\Cashier\Repositories\CashierRepositoryInterface;
 use App\Domain\Cashier\ValueObjects\CashierId;
+use Exception;
 
 class ContaReceberItemHelper
 {
@@ -66,18 +67,26 @@ class ContaReceberItemHelper
         $this->cashierRepository = $cashierRepository;
     }
 
-    public function validaGerCobrancaItem(ContaReceber $accountReceivableObject, float $billingAmount, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $data = []): array
+    public function validaGerCobrancaItem(ContaReceber $accountReceivableObject, float $billingAmount, int $paymentMethodId, int $paymentPlanId, $financialOperatorId = null, array $data = []): array
     {
         $erros = [];
 
-        $paymentMethodObject = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
-        $planOfPaymentObject = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
-        $financialOperatorObject = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
+        $paymentMethodObject = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $paymentMethodId)->first();
+        $planOfPaymentObject = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $paymentPlanId)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $paymentPlanId)->first();
+        $financialOperatorObject = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $financialOperatorId)->first();
         $personObject = $accountReceivableObject->pessoa;
         $openNettAmoun = $this->repository->sumOpenNetAmounts(new AccountReceivableId((string) $accountReceivableObject->id));
+
+        $interestValue = (float)Utilitarios::removeMaskMoney($data['vrJuros'] ?? 0);
+        $feeValue = (float)Utilitarios::removeMaskMoney($data['vrTaxa'] ?? 0);
+        $discountValue = (float)Utilitarios::removeMaskMoney($data['vrDesconto'] ?? 0);
+
+        $interestValue = $interestValue  >= 0 ? $interestValue : 0;
+        $feeValue = $feeValue  >= 0 ? $feeValue : 0;
+        $discountValue = $discountValue  >= 0 ? $discountValue : 0;
         $billingBalance = $accountReceivableObject->vrLiquido - (abs($accountReceivableObject->vrPago) + abs($openNettAmoun));
 
-        $billingAmount = Utilitarios::removeMaskMoney($billingAmount);
+        $billingAmount = $billingAmount - ($interestValue + $feeValue);
 
         $balanceDifference =  $billingBalance - $billingAmount;
         $balanceDifferenceAbs = abs($balanceDifference);
@@ -98,16 +107,16 @@ class ContaReceberItemHelper
         }
 
         if (! $paymentMethodObject) {
-            $erros[] = 'A forma de pagamento de código nº ' . $idFormaPagamento . ' não foi identificada.';
+            $erros[] = 'A forma de pagamento de código nº ' . $paymentMethodId . ' não foi identificada.';
         }
 
         if (! $planOfPaymentObject) {
-            $erros[] = 'O plano de pagamento de código nº ' . $idPlanoPagamento . ' não foi identificado.';
+            $erros[] = 'O plano de pagamento de código nº ' . $paymentPlanId . ' não foi identificado.';
         }
 
         if (!$financialOperatorObject) {
             if ($paymentMethodObject->hasOperadorFinanceiro == 'yes') {
-                $erros[] = 'O operador financeiro de código nº ' . $idOperadorFinanceiro . ' não foi identificado.';
+                $erros[] = 'O operador financeiro de código nº ' . $financialOperatorId . ' não foi identificado.';
             }
         }
 
@@ -118,15 +127,18 @@ class ContaReceberItemHelper
         return $erros;
     }
 
-    public function gerarCobrancaItem(ContaReceber $accountReceivableObject, float $billingAmount, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $data = [])
+    public function gerarCobrancaItem(ContaReceber $accountReceivableObject, float $billingAmount, int $paymentMethodId, int $paymentPlanId, $financialOperatorId = null, array $data = [])
     {
-        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
-        $planOfPaymentObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
-        $financialOperatorObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
+        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $paymentMethodId)->first();
+        $planOfPaymentObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $paymentPlanId)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $paymentPlanId)->first();
+        $financialOperatorObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $financialOperatorId)->first();
         $personObject              = $accountReceivableObject->pessoa;
 
-        $billingAmount   = Utilitarios::removeMaskMoney($billingAmount);
-        $erros = $this->validaGerCobrancaItem($accountReceivableObject, $billingAmount, $idFormaPagamento, $idPlanoPagamento, $idOperadorFinanceiro, $data);
+        $interestValue = (float)Utilitarios::removeMaskMoney($data['vrJuros'] ?? 0);
+        $feeValue = (float)Utilitarios::removeMaskMoney($data['vrTaxa'] ?? 0);
+        $discountValue = (float)Utilitarios::removeMaskMoney($data['vrDesconto'] ?? 0);
+
+        $erros = $this->validaGerCobrancaItem($accountReceivableObject, $billingAmount, $paymentMethodId, $paymentPlanId, $financialOperatorId, $data);
 
         if ((is_array($erros) && count($erros) > 0)) {
             throw new CobrancaReceberException(implode('<br/>', $erros));
@@ -139,6 +151,16 @@ class ContaReceberItemHelper
         $installmentBaseAmount = $billingAmount / $installmentCount;
         $installmentBaseAmount = (float) $installmentBaseAmount;
 
+        $interestBaseAmount = $interestValue / $installmentCount;
+        $interestBaseAmount = (float) $interestBaseAmount;
+
+        $feeBaseAmount = $feeValue / $installmentCount;
+        $feeBaseAmount = (float) $feeBaseAmount;
+
+        $discountBaseAmount = $discountValue / $installmentCount;
+        $discountBaseAmount = (float) $discountBaseAmount;
+
+
         $objDtVencimento = new \DateTime();
 
         if ($daysUntilFirstInstallment > 0) {
@@ -146,9 +168,15 @@ class ContaReceberItemHelper
         }
 
         $totalGeneratedInstallments = 0;
+        $totalGeneratedFee = 0;
+        $totalGeneratedDiscount = 0;
+        $totalGeneratedInterest = 0;
         $paymentDate        = null;
         $settlementDate     = null;
         $amountPaid         = 0;
+        $amountFee          = 0;
+        $amountDiscount     = 0;
+        $amountInterest     = 0;
         $settlementType     = 'user';
         $billingStatus      = 'aberto'; //aberto
         $settlementHash     = null;
@@ -187,9 +215,9 @@ class ContaReceberItemHelper
                 'vrBruto' => $installmentBaseAmount,
                 'vrLiquido' => $installmentBaseAmount,
                 'vrPago' => $amountPaid,
-                'vrTaxa' => $data['vrTaxa'] ?? null,
-                'vrDesconto' => $data['vrDesconto'] ?? null,
-                'vrJuros' => $data['vrJuros'] ?? null,
+                'vrTaxa' => $feeBaseAmount ?? null,
+                'vrDesconto' => $discountBaseAmount ?? null,
+                'vrJuros' => $interestBaseAmount ?? null,
                 'status' => $billingStatus,
                 'forma_pagamentos_id' => $paymentMethodObject->id,
                 'plano_pagamento_id' => $planOfPaymentObject->id,
@@ -205,21 +233,35 @@ class ContaReceberItemHelper
             $installmentListData[] = $installmentData;
 
             if ($intervalDays > 0) {
-
                 $objDtVencimento->add(new \DateInterval('P' . $intervalDays . 'D'));
             }
 
             $totalGeneratedInstallments += $installmentBaseAmount;
+            $totalGeneratedFee += $amountFee;
+            $totalGeneratedDiscount += $amountDiscount;
+            $totalGeneratedInterest += $amountInterest;
         }
 
         $difParcelas    = $billingAmount - $totalGeneratedInstallments;
         $difParcelasAbs = abs($difParcelas);
+
+        $difInterest    = $totalGeneratedInterest <= 0 ? 0 : $interestValue - $totalGeneratedInterest;
+        $difInterestAbs = abs($difInterest);
+
+        $difFeeValue    = $totalGeneratedFee <= 0 ? 0 : $feeValue - $totalGeneratedFee;
+        $difFeeValueAbs = abs($difFeeValue);
+
+        $difDiscountValue    = $totalGeneratedDiscount <= 0 ? 0 : $discountValue - $totalGeneratedDiscount;
+        $difDiscountValueAbs = abs($difDiscountValue);
 
         //-- Tento jogar a diferença das parcela na primeira parcela
         if ($difParcelasAbs > 0.02 && is_array($installmentListData) && count($installmentListData) > 0) {
             $installmentListData[0]['vrPago']      += 0;
             $installmentListData[0]['vrBruto']     += $difParcelas;
             $installmentListData[0]['vrLiquido']   += $difParcelas;
+            $installmentListData[0]['vrTaxa']      += $difFeeValueAbs;
+            $installmentListData[0]['vrDesconto']  += $difDiscountValueAbs;
+            $installmentListData[0]['vrJuros']   += $difInterestAbs;
         }
 
         $datacobReceberObjArr = [
@@ -366,6 +408,9 @@ class ContaReceberItemHelper
         $amountPaidToal = $objCobrancaReceber->vrPago + $dataRequestBKP['vrPago'];
         $dataRequest = [
             'vrPago' => $amountPaidToal,
+            'vrTaxa' => $objCobrancaReceber->vrTaxa + $registro->vrTaxa,
+            'vrDesconto' => $objCobrancaReceber->vrDesconto + $registro->vrDesconto,
+            'vrJuros' => $objCobrancaReceber->vrJuros + $registro->vrJuros,
             'id' => $objCobrancaReceber->id
         ];
 
