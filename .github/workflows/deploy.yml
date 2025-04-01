@@ -9,7 +9,6 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: clinica_estetica_api  
-  ECR_REPOSITORY_WEB: laravel_nginx
   ECS_CLUSTER: clinica_estetica_api
   ECS_SERVICE: clinica_estetica_api
   CONTAINER_NAME: clinica_estetica_api
@@ -38,20 +37,24 @@ jobs:
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
 
+          # Construir e enviar a imagem do app (Laravel)
           docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
           docker tag $ECR_REPOSITORY:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
-          docker build -t $ECR_REPOSITORY_WEB:$IMAGE_TAG -f nginx/Dockerfile .
-          docker tag $ECR_REPOSITORY_WEB:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_WEB:$IMAGE_TAG
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_WEB:$IMAGE_TAG
-
+          # Definir a variável de Nginx como a imagem oficial do Docker Hub
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Atualizar serviço no ECS
         run: |
-          LATEST_TASK_DEF=$(aws ecs describe-task-definition --task-definition $ECS_SERVICE_APP --query taskDefinition | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy, .tags)')
+          # Obter a última definição de tarefa
+          LATEST_TASK_DEF=$(aws ecs describe-task-definition --task-definition $ECS_SERVICE --query taskDefinition | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy, .tags)')
+          
+          # Atualizar a imagem da aplicação Laravel
           NEW_TASK_DEF=$(echo $LATEST_TASK_DEF | jq --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG" '.containerDefinitions[0].image = $IMAGE')
+
+          # Registrar a nova definição de tarefa
           NEW_TASK_REVISION=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" --query 'taskDefinition.revision' --output text)
 
-          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE_APP --task-definition $ECS_SERVICE_APP:$NEW_TASK_REVISION --force-new-deployment
+          # Atualizar o serviço no ECS
+          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $ECS_SERVICE:$NEW_TASK_REVISION --force-new-deployment
