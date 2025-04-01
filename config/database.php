@@ -106,9 +106,9 @@ return [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL_'),
             'host' => env('DB_HOST', 'database-1.chggya42a5ow.us-east-2.rds.amazonaws.com'), //127.0.0.1
-            'port' => env('DB_PORT', '3307'),
-            'database' => env('DB_DATABASE', 'clinida_estetica'), //forge,
-            'username' => env('DB_USERNAME', 'admin'), //forge
+            'port' => env('DB_PORT', '3308'), //3307
+            'database' => env('DB_DATABASE', 'laravel'), //forge//clinida_estetica,
+            'username' => env('DB_USERNAME', 'laravel'), //forge//admin
             'password' => env('DB_PASSWORD', ''), //''
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
