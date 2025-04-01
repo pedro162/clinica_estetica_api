@@ -1,4 +1,4 @@
-FROM php:8.3-fpm  # Usar PHP-FPM para melhor desempenho
+FROM php:8.3-fpm
 
 # Criar um usuário não-root
 RUN groupadd -g 1000 laravel && useradd -u 1000 -g laravel -m laravel
