@@ -64,7 +64,7 @@ jobs:
                                           'map(
                                             if .name == "clinica_estetica_api" then
                                               .image = $IMAGE_APP | .memory = $MEMORY | .memoryReservation = $MEMORY
-                                            elif .name == "clinica_estetica_nginx" then
+                                            elif .name == "laravel_nginx" or .name == "clinica_estetica_nginx" then
                                               .image = $IMAGE_NGINX | .memory = $MEMORY | .memoryReservation = $MEMORY
                                             else
                                               .
