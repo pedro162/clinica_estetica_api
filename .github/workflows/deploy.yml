@@ -8,7 +8,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY_APP: clinica_estetica_api
+  ECR_REPOSITORY_APP: clinica_estetica_api  
   ECR_REPOSITORY_NGINX: clinica_estetica_nginx
   ECS_CLUSTER: clinica_estetica_api
   ECS_SERVICE: clinica_estetica_api
@@ -45,11 +45,11 @@ jobs:
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG
 
           # Construir e enviar a imagem do Nginx
-          docker build -t $ECR_REPOSITORY_NGINX:$IMAGE_TAG -f .docker/Dockerfile.nginx .
+          docker build -f .docker/Dockerfile.nginx -t $ECR_REPOSITORY_NGINX:$IMAGE_TAG .
           docker tag $ECR_REPOSITORY_NGINX:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG
 
-          # Definir a variável de Nginx como a imagem oficial do Docker Hub
+          # Definir a variável de Nginx e Laravel como imagens no Docker
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Atualizar serviço no ECS
@@ -57,14 +57,15 @@ jobs:
           # Obter a última definição de tarefa
           LATEST_TASK_DEF=$(aws ecs describe-task-definition --task-definition $ECS_SERVICE --query 'taskDefinition.containerDefinitions' --output json)
 
-          # Atualizar as imagens dos containers Laravel e Nginx
+          # Atualizar as imagens dos containers Laravel e Nginx e adicionar memória
           NEW_TASK_DEF=$(echo $LATEST_TASK_DEF | jq --arg IMAGE_APP "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG" \
                                                       --arg IMAGE_NGINX "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG" \
+                                                      --arg MEMORY "512" \ # Adiciona a quantidade de memória
                                                       'map(
                                                         if .name == "clinica_estetica_api" then
-                                                          .image = $IMAGE_APP
+                                                          .image = $IMAGE_APP | .memory = $MEMORY # Definir a memória para o app
                                                         elif .name == "clinica_estetica_nginx" then
-                                                          .image = $IMAGE_NGINX
+                                                          .image = $IMAGE_NGINX | .memory = $MEMORY # Definir a memória para o nginx
                                                         else
                                                           .
                                                         end
