@@ -63,9 +63,9 @@ jobs:
                                                       --arg MEMORY 512 \
                                                       'map(
                                                         if .name == "clinica_estetica_api" then
-                                                          .image = $IMAGE_APP, .memory = $MEMORY
+                                                          .image = $IMAGE_APP | .memory = ($MEMORY | tonumber)
                                                         elif .name == "clinica_estetica_nginx" then
-                                                          .image = $IMAGE_NGINX, .memory = $MEMORY
+                                                          .image = $IMAGE_NGINX | .memory = ($MEMORY | tonumber)
                                                         else
                                                           .
                                                         end
