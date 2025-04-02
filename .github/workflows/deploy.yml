@@ -59,17 +59,17 @@ jobs:
           
           # Atualizar as imagens dos containers Laravel e Nginx e adicionar memória
           NEW_TASK_DEF=$(echo $LATEST_TASK_DEF | jq --arg IMAGE_APP "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG" \
-                                                      --arg IMAGE_NGINX "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG" \
-                                                      --arg MEMORY 512 \
-                                                      'map(
-                                                        if .name == "clinica_estetica_api" then
-                                                          .image = $IMAGE_APP | .memory = ($MEMORY | tonumber)
-                                                        elif .name == "clinica_estetica_nginx" then
-                                                          .image = $IMAGE_NGINX | .memory = ($MEMORY | tonumber)  | .memoryReservation = ($MEMORY | tonumber)
-                                                        else
-                                                          .
-                                                        end
-                                                      )')
+                                          --arg IMAGE_NGINX "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG" \
+                                          --argjson MEMORY 512 \
+                                          'map(
+                                            if .name == "clinica_estetica_api" then
+                                              .image = $IMAGE_APP | .memory = $MEMORY | .memoryReservation = $MEMORY
+                                            elif .name == "clinica_estetica_nginx" then
+                                              .image = $IMAGE_NGINX | .memory = $MEMORY | .memoryReservation = $MEMORY
+                                            else
+                                              .
+                                            end
+                                          )')
           
           # Registrar a nova definição de tarefa
           NEW_TASK_REVISION=$(aws ecs register-task-definition \
