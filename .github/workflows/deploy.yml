@@ -29,18 +29,18 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login no Amazon ECR
         run: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com
 
-      - name: Construir e enviar a imagem Docker para o ECR
+      - name: Construir e enviar imagens Docker para o ECR
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
 
-          # Construir e enviar a imagem do app (Laravel)
-          docker build -t $ECR_REPOSITORY_APP:$IMAGE_TAG .
+          # Construir e enviar a imagem do Laravel
+          docker build -t $ECR_REPOSITORY_APP:$IMAGE_TAG -f .docker/Dockerfile.app .
           docker tag $ECR_REPOSITORY_APP:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG
 
@@ -49,33 +49,36 @@ jobs:
           docker tag $ECR_REPOSITORY_NGINX:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG
 
-          # Definir a variável de Nginx como a imagem oficial do Docker Hub
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Atualizar serviço no ECS
         run: |
-          # Obter a última definição de tarefa
+          # Obter a última definição da Task Definition
           LATEST_TASK_DEF=$(aws ecs describe-task-definition --task-definition $ECS_SERVICE --query 'taskDefinition.containerDefinitions' --output json)
-          
-          # Atualizar as imagens dos containers Laravel e Nginx e adicionar memória
+
+          # Atualizar apenas as imagens mantendo as outras configurações
           NEW_TASK_DEF=$(echo $LATEST_TASK_DEF | jq --arg IMAGE_APP "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG" \
                                                       --arg IMAGE_NGINX "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG" \
-                                                      --arg MEMORY 512 \
                                                       'map(
                                                         if .name == "clinica_estetica_api" then
-                                                          .image = $IMAGE_APP | .memory = ($MEMORY | tonumber)
+                                                          .image = $IMAGE_APP
                                                         elif .name == "clinica_estetica_nginx" then
-                                                          .image = $IMAGE_NGINX | .memory = ($MEMORY | tonumber)
+                                                          .image = $IMAGE_NGINX
                                                         else
                                                           .
                                                         end
                                                       )')
-          
-          # Registrar a nova definição de tarefa
+
+          # Registrar a nova Task Definition mantendo compatibilidades e recursos
           NEW_TASK_REVISION=$(aws ecs register-task-definition \
             --family $ECS_SERVICE \
             --container-definitions "$NEW_TASK_DEF" \
+            --network-mode "bridge" \
+            --cpu "512" \
+            --memory "1024" \
             --query 'taskDefinition.revision' --output text)
 
-          # Atualizar o serviço no ECS
+          # Atualizar o serviço para usar a nova revisão da Task Definition
           aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $ECS_SERVICE:$NEW_TASK_REVISION --force-new-deployment
+
+          echo "✅ Deploy finalizado! Nova revisão: $NEW_TASK_REVISION"
