@@ -65,7 +65,7 @@ jobs:
                                                         if .name == "clinica_estetica_api" then
                                                           .image = $IMAGE_APP | .memory = ($MEMORY | tonumber)
                                                         elif .name == "clinica_estetica_nginx" then
-                                                          .image = $IMAGE_NGINX | .memory = ($MEMORY | tonumber)
+                                                          .image = $IMAGE_NGINX | .memory = ($MEMORY | tonumber)  | .memoryReservation = ($MEMORY | tonumber)
                                                         else
                                                           .
                                                         end
