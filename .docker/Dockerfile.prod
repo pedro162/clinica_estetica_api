@@ -39,9 +39,9 @@ RUN chown -R laravel:laravel /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Copiar configurações
-COPY .docker/nginx/default.conf /etc/nginx/sites-available/default
+COPY .docker/nginx/-prod.conf /etc/nginx/sites-available/default
 COPY .docker/supervisor/supervisord-prod.conf /etc/supervisor/supervisord.conf
-COPY .docker/supervisor/conf.d/laravel-worker.conf /etc/supervisor/conf.d/
+COPY .docker/supervisor/conf.d/laravel-worker-prod.conf /etc/supervisor/conf.d/
 
 # Trocar para usuário laravel
 USER laravel
