@@ -45,6 +45,10 @@ RUN mkdir -p /var/log/php-fpm && chown -R laravel:laravel /var/log/php-fpm
 # Ajustar permissões para o usuário laravel poder acessar os diretórios do PHP-FPM
 RUN chown -R laravel:laravel /var/run/php /var/log
 
+RUN touch /var/log/supervisord.log && \
+    chown laravel:laravel /var/log/supervisord.log
+
+
 # Trocar para o usuário não-root
 USER laravel
 

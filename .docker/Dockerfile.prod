@@ -1,0 +1,53 @@
+FROM php:7.4-fpm
+
+# Criar usuário não-root
+RUN groupadd -g 1000 laravel && useradd -u 1000 -g laravel -m laravel
+
+# Instalar dependências do sistema + PHP + NGINX
+RUN apt-get update && apt-get install -y \
+    nginx \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    unzip \
+    pkg-config \
+    libonig-dev \
+    libxml2-dev \
+    libsodium-dev \
+    supervisor \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip pdo_mysql bcmath soap sockets sodium \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalar Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Criar diretórios necessários
+RUN mkdir -p /var/run/php /var/log/php-fpm /var/log/nginx /var/www \
+    && chown -R laravel:laravel /var/run/php /var/log/php-fpm /var/www
+
+# Definir diretório de trabalho
+WORKDIR /var/www
+
+# Copiar projeto Laravel
+COPY . .
+
+# Permissões Laravel
+RUN chown -R laravel:laravel /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
+# Copiar configurações
+COPY .docker/nginx/default.conf /etc/nginx/sites-available/default
+COPY .docker/supervisor/supervisord-prod.conf /etc/supervisor/supervisord.conf
+COPY .docker/supervisor/conf.d/laravel-worker.conf /etc/supervisor/conf.d/
+
+# Trocar para usuário laravel
+USER laravel
+
+# Expor a porta do Nginx
+EXPOSE 80
+
+# Iniciar supervisor (Nginx + PHP-FPM + Workers)
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
