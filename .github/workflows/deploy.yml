@@ -8,10 +8,10 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: clinica_estetica_api
+  ECR_REPOSITORY_APP: clinica_estetica_api
   ECS_CLUSTER: clinica_estetica_api
   ECS_SERVICE: clinica_estetica_api
-  CONTAINER_NAME: clinica_estetica_api
+  CONTAINER_NAME_APP: clinica_estetica_api
 
 jobs:
   deploy:
@@ -36,39 +36,47 @@ jobs:
       - name: Construir e enviar a imagem Docker
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REPOSITORY:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+          docker build -t $ECR_REPOSITORY_APP:$IMAGE_TAG -f .docker/Dockerfile.prod .
+          docker tag $ECR_REPOSITORY_APP:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG
+
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Atualizar serviço no ECS
         run: |
-          # Obter definição de tarefa atual
-          TASK_DEF_ARN=$(aws ecs describe-services \
+          # Obter a definição de tarefa atual
+          TASK_DEFINITION=$(aws ecs describe-services \
             --cluster $ECS_CLUSTER \
             --services $ECS_SERVICE \
             --query "services[0].taskDefinition" \
             --output text)
 
-          TASK_DEF_JSON=$(aws ecs describe-task-definition \
-            --task-definition $TASK_DEF_ARN \
-            --query "taskDefinition" \
+          # Obter os container definitions
+          CONTAINER_DEFINITIONS=$(aws ecs describe-task-definition \
+            --task-definition $TASK_DEFINITION \
+            --query "taskDefinition.containerDefinitions" \
             --output json)
 
-          # Atualizar apenas a imagem do container principal
-          NEW_TASK_DEF=$(echo "$TASK_DEF_JSON" | jq \
-            --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG" \
-            '.containerDefinitions |= map(if .name == env.CONTAINER_NAME then .image = $IMAGE else . end) |
-             {family: .family, executionRoleArn: .executionRoleArn, networkMode: .networkMode, containerDefinitions: .containerDefinitions, requiresCompatibilities: .requiresCompatibilities, cpu: .cpu, memory: .memory, taskRoleArn: .taskRoleArn}')
+          # Substituir imagem no container definitions
+          UPDATED_DEFINITIONS=$(echo "$CONTAINER_DEFINITIONS" | jq \
+            --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG" \
+            'map(if .name == env.CONTAINER_NAME_APP then .image = $IMAGE else . end)')
 
-          # Registrar nova task definition
-          NEW_REVISION=$(aws ecs register-task-definition \
-            --cli-input-json "$(echo $NEW_TASK_DEF)" \
+          # Registrar nova definição de tarefa
+          NEW_TASK_REVISION=$(aws ecs register-task-definition \
+            --family $ECS_SERVICE \
+            --container-definitions "$UPDATED_DEFINITIONS" \
+            --execution-role-arn $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.executionRoleArn" --output text) \
+            --network-mode $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.networkMode" --output text) \
+            --requires-compatibilities $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.requiresCompatibilities" --output json) \
+            --cpu $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.cpu" --output text) \
+            --memory $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.memory" --output text) \
             --query "taskDefinition.revision" --output text)
 
-          # Atualizar o serviço no ECS
+          # Atualizar o serviço com nova task
           aws ecs update-service \
             --cluster $ECS_CLUSTER \
             --service $ECS_SERVICE \
-            --task-definition $ECS_SERVICE:$NEW_REVISION \
+            --task-definition $ECS_SERVICE:$NEW_TASK_REVISION \
             --force-new-deployment
