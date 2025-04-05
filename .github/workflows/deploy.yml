@@ -8,12 +8,10 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY_APP: clinica_estetica_api  
-  ECR_REPOSITORY_NGINX: clinica_estetica_nginx
+  ECR_REPOSITORY: clinica_estetica_api
   ECS_CLUSTER: clinica_estetica_api
   ECS_SERVICE: clinica_estetica_api
-  CONTAINER_NAME_APP: clinica_estetica_api
-  CONTAINER_NAME_NGINX: clinica_estetica_nginx
+  CONTAINER_NAME: clinica_estetica_api
 
 jobs:
   deploy:
@@ -29,53 +27,48 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login no Amazon ECR
         run: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com
 
-      - name: Construir e enviar a imagem Docker para o ECR
+      - name: Construir e enviar a imagem Docker
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
-
-          # Construir e enviar a imagem do app (Laravel)
-          docker build -t $ECR_REPOSITORY_APP:$IMAGE_TAG .
-          docker tag $ECR_REPOSITORY_APP:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG
-
-          # Construir e enviar a imagem do Nginx
-          docker build -t $ECR_REPOSITORY_NGINX:$IMAGE_TAG -f .docker/Dockerfile.nginx .
-          docker tag $ECR_REPOSITORY_NGINX:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG
-
-          # Definir a variável de Nginx como a imagem oficial do Docker Hub
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Atualizar serviço no ECS
         run: |
-          # Obter a última definição de tarefa
-          LATEST_TASK_DEF=$(aws ecs describe-task-definition --task-definition $ECS_SERVICE --query 'taskDefinition.containerDefinitions' --output json)
-          
-          # Atualizar as imagens dos containers Laravel e Nginx e adicionar memória
-          NEW_TASK_DEF=$(echo $LATEST_TASK_DEF | jq --arg IMAGE_APP "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_APP:$IMAGE_TAG" \
-                                          --arg IMAGE_NGINX "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NGINX:$IMAGE_TAG" \
-                                          --argjson MEMORY 512 \
-                                          'map(
-                                            if .name == "clinica_estetica_api" then
-                                              .image = $IMAGE_APP | .memory = $MEMORY | .memoryReservation = $MEMORY
-                                            elif .name == "laravel_nginx" or .name == "clinica_estetica_nginx" then
-                                              .image = $IMAGE_NGINX | .memory = $MEMORY | .memoryReservation = $MEMORY
-                                            else
-                                              .
-                                            end
-                                          )')
-          
-          # Registrar a nova definição de tarefa
-          NEW_TASK_REVISION=$(aws ecs register-task-definition \
-            --family $ECS_SERVICE \
-            --container-definitions "$NEW_TASK_DEF" \
-            --query 'taskDefinition.revision' --output text)
+          # Obter definição de tarefa atual
+          TASK_DEF_ARN=$(aws ecs describe-services \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
+            --query "services[0].taskDefinition" \
+            --output text)
+
+          TASK_DEF_JSON=$(aws ecs describe-task-definition \
+            --task-definition $TASK_DEF_ARN \
+            --query "taskDefinition" \
+            --output json)
+
+          # Atualizar apenas a imagem do container principal
+          NEW_TASK_DEF=$(echo "$TASK_DEF_JSON" | jq \
+            --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG" \
+            '.containerDefinitions |= map(if .name == env.CONTAINER_NAME then .image = $IMAGE else . end) |
+             {family: .family, executionRoleArn: .executionRoleArn, networkMode: .networkMode, containerDefinitions: .containerDefinitions, requiresCompatibilities: .requiresCompatibilities, cpu: .cpu, memory: .memory, taskRoleArn: .taskRoleArn}')
+
+          # Registrar nova task definition
+          NEW_REVISION=$(aws ecs register-task-definition \
+            --cli-input-json "$(echo $NEW_TASK_DEF)" \
+            --query "taskDefinition.revision" --output text)
 
           # Atualizar o serviço no ECS
-          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $ECS_SERVICE:$NEW_TASK_REVISION --force-new-deployment
+          aws ecs update-service \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
+            --task-definition $ECS_SERVICE:$NEW_REVISION \
+            --force-new-deployment
