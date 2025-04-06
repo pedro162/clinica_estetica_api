@@ -34,6 +34,8 @@ WORKDIR /var/www
 # Copiar aplicação Laravel
 COPY . .
 
+RUN composer install --no-dev --optimize-autoloader
+
 # Copiar configurações do nginx e supervisor
 COPY .docker/nginx/default-prod.conf /etc/nginx/sites-available/default
 COPY .docker/supervisor/supervisord-prod.conf /etc/supervisor/supervisord.conf
