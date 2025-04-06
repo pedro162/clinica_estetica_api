@@ -1,9 +1,9 @@
 FROM php:7.4-fpm
 
-# Criar usuário não-root
+# Criar usuário não-root (laravel) para rodar PHP/Nginx com menos privilégios
 RUN groupadd -g 1000 laravel && useradd -u 1000 -g laravel -m laravel
 
-# Instalar dependências do sistema + PHP + NGINX
+# Instalar dependências do sistema e extensões PHP
 RUN apt-get update && apt-get install -y \
     nginx \
     libpng-dev \
@@ -21,33 +21,48 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Instalar Composer
+# Instalar o Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Criar diretórios necessários
+# Criar diretórios essenciais
 RUN mkdir -p /var/run/php /var/log/php-fpm /var/log/nginx /var/www \
     && chown -R laravel:laravel /var/run/php /var/log/php-fpm /var/www
 
 # Definir diretório de trabalho
 WORKDIR /var/www
 
-# Copiar projeto Laravel
+# Copiar aplicação Laravel
 COPY . .
 
-# Permissões Laravel
-RUN chown -R laravel:laravel /var/www \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
-
-# Copiar configurações
+# Copiar configurações do nginx e supervisor
 COPY .docker/nginx/default-prod.conf /etc/nginx/sites-available/default
 COPY .docker/supervisor/supervisord-prod.conf /etc/supervisor/supervisord.conf
 COPY .docker/supervisor/conf.d/laravel-worker-prod.conf /etc/supervisor/conf.d/
 
-# Trocar para usuário laravel
-USER laravel
+# Copiar configuração personalizada do PHP-FPM para rodar como laravel
+COPY .docker/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-# Expor a porta do Nginx
+# Permissões das configurações do supervisor
+RUN chmod -R 755 /etc/supervisor && chown -R root:root /etc/supervisor
+
+# Criar diretórios e arquivos de log + ajustar permissões da aplicação
+RUN mkdir -p \
+    /var/log/supervisor \
+    /var/lib/nginx/body \
+    /var/www/storage/logs \
+    && touch /var/log/supervisord.log /var/www/storage/logs/laravel.log \
+    && chown -R laravel:laravel \
+    /var/log/supervisord.log \
+    /var/log/supervisor \
+    /var/log/nginx \
+    /var/lib/nginx \
+    /var/www \
+    && chmod -R 775 \
+    /var/www/storage \
+    /var/www/bootstrap/cache
+
+# Expor porta do Nginx
 EXPOSE 80
 
-# Iniciar supervisor (Nginx + PHP-FPM + Workers)
+# Iniciar supervisor (que gerencia Nginx, PHP-FPM e Laravel Workers)
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
