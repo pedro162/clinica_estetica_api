@@ -11,7 +11,7 @@ $factory->define(Pais::class, function (Faker $faker) {
         'nmPais' => $faker->country,
         'cdPais' => $faker->countryCode,
         'padrao' => 'no',
-        'user_id' => factory(User::class)->create()->id,
+        'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'user_update_id' => null,
         'active' => 'yes'
     ];

@@ -13,7 +13,7 @@ $factory->define(Cidade::class, function (Faker $faker) {
         'sigla' => $faker->citySuffix,
         'cdCidade' => '12',
         'estado_id' => factory(Estado::class)->create()->id,
-        'user_id' => factory(User::class)->create()->id,
+        'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'user_update_id' => null,
         'active' => 'yes',
         //'tenant_id' => null

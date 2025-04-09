@@ -11,7 +11,7 @@ $factory->define(BandeiraCartao::class, function (Faker $faker) {
     return [
         'name' => $faker->unique()->word(),
         'standard' => 'no',
-        'user_id' => factory(User::class)->create()->id,
+        'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'user_update_id' => null,
         //'pessoa_autor_id' => factory(Pessoa::class)->create()->id,
         'active' => 'yes'

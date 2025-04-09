@@ -19,7 +19,7 @@ $factory->define(Person::class, function (Faker $faker) {
         'nascimento_fundacao' => substr(now()->subYears(26), 0, 10),
         'sexo' => 'm',
         'tipo' => 'fisica',
-        'user_id' => factory(User::class)->create()->id,
+        'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'user_update_id' => null,
         'active' => 'yes'
     ];

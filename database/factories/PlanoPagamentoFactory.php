@@ -16,7 +16,7 @@ $factory->define(PlanoPagamento::class, function (Faker $faker) {
         'gerarDuplicataManual' => 'yes',
         'isAtiva' => 'yes',
         'isAberto' => 'yes',
-        'user_id' => factory(User::class)->create()->id,
+        'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'user_update_id' => null,
         'active' => 'yes',
         'qtdMinParcelas' => 1,

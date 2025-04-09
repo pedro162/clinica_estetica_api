@@ -4,6 +4,7 @@
 
 use App\Caixa;
 use App\Filial;
+use App\SimpleTenantDatabase;
 use App\User;
 use Faker\Generator as Faker;
 
@@ -18,16 +19,12 @@ $factory->define(Caixa::class, function (Faker $faker) {
         'status_abertura' => 'open',
         'status_bloqueio' => 'liberado',
         'aceita_transferencia' => 'yes',
-        'user_id' => factory(User::class)->create()->id,
-        'filial_id' => factory(Filial::class)->create()->id,
+        'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
+        'filial_id' => Filial::first() ? Filial::first()->id : factory(Filial::class)->create()->id,
         'user_update_id' => null,
         'active' => 'yes',
-        //'tenant_id' => null
+        'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];
-
-    if (app()->environment('testing')) {
-        unset($data['filial_id']);
-    }
 
     return $data;
 });
