@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Eloquent\Cashier;
+namespace App\Infrastructure\Persistence\Eloquent\PaymentMethod;
 
 use App\Caixa;
-use App\Domain\Cashier\Entities\Cashier;
-use App\Domain\Cashier\Repositories\CashierRepositoryInterface;
-use App\Domain\Cashier\ValueObjects\CashierId;
-use Illuminate\Support\Facades\Auth;;
+use App\Domain\PaymentMethod\Entities\PaymentMethod;
+use App\Domain\PaymentMethod\Repositories\PaymentMethodRepositoryInterface;
+use App\Domain\PaymentMethod\ValueObjects\PaymentMethodId;
+use Illuminate\Support\Facades\Auth;
 
-class CashierRepository implements CashierRepositoryInterface
+class PaymentMethodRepository implements PaymentMethodRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;
 
-    public function findById(CashierId $id): ?Caixa
+    public function findById(PaymentMethodId $id): ?Caixa
     {
         return Caixa::where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
     }
 
-    public function save(Cashier $parameter): ?Caixa
+    public function save(PaymentMethod $parameter): ?Caixa
     {
         $userId   = Auth::user()->id;
         $tenantId   = Auth::user()->tenant_id;
@@ -30,10 +30,10 @@ class CashierRepository implements CashierRepositoryInterface
 
         unset($entity->id);
         $entity->save();
-        return $this->findById(new CashierId((string)$entity->id));
+        return $this->findById(new PaymentMethodId((string)$entity->id));
     }
 
-    public function update(Cashier $parameter): void
+    public function update(PaymentMethod $parameter): void
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
