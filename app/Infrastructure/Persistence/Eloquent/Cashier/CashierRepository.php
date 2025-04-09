@@ -26,15 +26,9 @@ class CashierRepository implements CashierRepositoryInterface
         $tenantId   = Auth::user()->tenant_id;
         $entity = $parameter->build();
         $entity->user_id = $userId;
+        $entity->tenant_id = $tenantId;
+
         unset($entity->id);
-        unset($entity->tenant_id);
-
-        if (!app()->environment('testing')) {
-            $entity->tenant_id = $tenantId;
-        } else {
-            unset($entity->filial_id);
-        }
-
         $entity->save();
         return $this->findById(new CashierId((string)$entity->id));
     }
@@ -42,20 +36,13 @@ class CashierRepository implements CashierRepositoryInterface
     public function update(Cashier $parameter): void
     {
         $userId   = Auth::user()->id;
-        $tenantId   = Auth::user()->tenant_id;
         $entity = $parameter->build();
-        $entity->user_id = $userId;
-        unset($entity->tenant_id);
-
-        if (!app()->environment('testing')) {
-            $entity->tenant_id = $tenantId;
-        }
+        $entity->user_update_id = $userId;
 
         $data = $entity->toArray();
 
-        if (app()->environment('testing')) {
-            unset($entity->filial_id);
-            unset($data['filial_id']);
+        if (isset($data['tenant_id']) && $data['tenant_id'] == 0) {
+            unset($data['tenant_id']);
         }
 
         Caixa::find($entity->id)->update($data);
