@@ -225,7 +225,7 @@ class CreateCashierCommand
 
     public function getDataProperties(): array
     {
-        return [
+        $data = [
             'id' => (string)($this->id ?? ''),
             'name' => (string)($this->name ?? ''),
             'type' => (string)($this->type ?? ''),
@@ -242,5 +242,9 @@ class CreateCashierCommand
             'balance' => (string)($this->balance ?? ''),
             'branchId' => (string)($this->branchId ?? ''),
         ];
+
+        return array_filter($data, function ($value) {
+            return $value !== null && !empty($value);
+        });
     }
 }

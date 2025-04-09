@@ -13,8 +13,8 @@ $factory->define(Estado::class, function (Faker $faker) {
         'codEstado' => '1235',
         'sigla' => $faker->slug(),
         'padrao' => 'no',
-        'pais_id' => factory(Pais::class)->create()->id,
-        'user_id' => factory(User::class)->create()->id,
+        'pais_id' => Pais::first() ? Pais::first()->id : factory(Pais::class)->create()->id,
+        'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'user_update_id' => null,
         'active' => 'yes',
     ];

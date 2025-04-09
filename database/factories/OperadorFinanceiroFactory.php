@@ -20,9 +20,9 @@ $factory->define(OperadorFinanceiro::class, function (Faker $faker) {
         'tpLocalAtualizacaoBoleto' => 'empresa',
         'isPadrao' => 'yes',
         'isLiberado' => 'yes',
-        'pessoa_id' => factory(Pessoa::class)->create()->id,
-        'filial_id' => factory(Filial::class)->create()->id,
-        'user_id' => factory(User::class)->create()->id,
+        'pessoa_id' => Pessoa::first() ? Pessoa::first()->id : factory(Pessoa::class)->create()->id,
+        'filial_id' => Filial::first() ? Filial::first()->id : factory(Filial::class)->create()->id,
+        'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'user_update_id' => null,
         'active' => 'yes'
     ];

@@ -13,7 +13,7 @@ $factory->define(Atendimento::class, function (Faker $faker) {
         'name' => $faker->name,
         'historico' => Str::random(50),
         'pessoa_id' => $faker->name,
-        'user_id' => User::factory(),
+        'user_id' => User::first() ? User::first()->id : User::factory()->id,
         'user_update_id' => null,
         'active' => 'yes',
         'profissional_id' => null,
