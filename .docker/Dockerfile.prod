@@ -66,10 +66,10 @@ RUN mkdir -p \
 # Instala dependências PHP
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-RUN chmod +x /var/www/.docker/entrypoint.sh
+#RUN chmod +x /var/www/.docker/entrypoint.sh
 
 # Define o entrypoint
-ENTRYPOINT ["sh", "/var/www/.docker/entrypoint.sh"]
+#ENTRYPOINT ["sh", "/var/www/.docker/entrypoint.sh"]
 
 # Expor porta do Nginx
 EXPOSE 80
