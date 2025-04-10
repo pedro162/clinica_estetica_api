@@ -63,6 +63,14 @@ RUN mkdir -p \
     /var/www/storage \
     /var/www/bootstrap/cache
 
+# Instala dependências PHP
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+RUN chmod +x /var/www/.docker/entrypoint.sh
+
+# Define o entrypoint
+ENTRYPOINT ["sh", "/var/www/.docker/entrypoint.sh"]
+
 # Expor porta do Nginx
 EXPOSE 80
 
