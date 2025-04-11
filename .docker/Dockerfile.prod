@@ -67,10 +67,10 @@ RUN mkdir -p \
     /var/www/bootstrap/cache
 
 
-RUN chmod +x /var/www/.docker/entrypoint.sh
+#RUN chmod +x /var/www/.docker/entrypoint.sh
 
 # Define o entrypoint
-ENTRYPOINT ["sh", "/var/www/.docker/entrypoint.sh"]
+#ENTRYPOINT ["sh", "/var/www/.docker/entrypoint.sh"]
 
 # Expor porta do Nginx
 EXPOSE 80
