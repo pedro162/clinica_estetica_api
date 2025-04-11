@@ -12,7 +12,7 @@ echo "📦 Preparando a aplicação Laravel..."
 # Cache de configs
 php artisan config:clear
 php artisan config:cache
-php artisan route:cache
+#php artisan route:cache
 php artisan view:cache
 
 # Executar migrations
