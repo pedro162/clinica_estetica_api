@@ -20,8 +20,8 @@ echo "🧬 Executando migrations no banco de dados RDS..."
 php artisan migrate --force
 
 # Instala o Passport (gera os client_id, secrets, etc)
-echo "🔑 Instalando Laravel Passport..."
-php artisan passport:install --force
+#echo "🔑 Instalando Laravel Passport..."
+#php artisan passport:install --force
 
 echo "✅ Tudo pronto. Iniciando o servidor..."
 
