@@ -203,23 +203,33 @@ class CreatePaymentMethodCommand
 
     public static function build(array $data): CreatePaymentMethodCommand
     {
-        $entity = (new self)
-            ->id((string)($data['id'] ?? 0))
-            ->name((string)($data['name'] ?? ''))
-            ->type((string)($data['type'] ?? ''))
-            ->tenantId((string)($data['tenantId'] ?? $data['tenant_id'] ?? ''))
-            ->userId((string)($data['userId'] ?? $data['user_id'] ?? ''))
-            ->userUpdateId((string)($data['userUpdateId'] ?? $data['user_update_id'] ?? ''))
-            ->active((string)($data['active'] ?? 'yes'))
-            ->billingCode((string)($data['billingCode'] ?? ''))
-            ->hasCommission((string)($data['hasCommission'] ?? 'no'))
-            ->paymentType((string)($data['paymentType'] ?? 'cash'))
-            ->hasInstallments((string)($data['hasInstallments'] ?? 'yes'))
-            ->hasCreditLimit((string)($data['hasCreditLimit'] ?? 'no'))
-            ->hasCounterAdjustment((string)($data['hasCounterAdjustment'] ?? 'no'))
-            ->hasCashAdjustment((string)($data['hasCashAdjustment'] ?? 'no'))
-            ->hasDownPayment((string)($data['hasDownPayment'] ?? 'no'))
-            ->hasFinancialOperator((string)($data['hasFinancialOperator'] ?? 'no'));
+        $entity = (new self());
+        $mapping = [
+            ['keys' => ['id'], 'callback' => fn($value) => $entity->id($value)],
+            ['keys' => ['name'], 'callback' => fn($value) => $entity->name((string)$value)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId((string)$value)],
+            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId((string)$value)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId((string)$value)],
+            ['keys' => ['type', 'tipo'], 'callback' => fn($value) => $entity->type((string)$value)],
+            ['keys' => ['paymentType', 'tpPagamento'], 'callback' => fn($value) => $entity->paymentType((string)$value)],
+            ['keys' => ['billingCode', 'cdCobrancaTipo'], 'callback' => fn($value) => $entity->billingCode((string)$value)],
+            ['keys' => ['hasCommission', 'hasComissao'], 'callback' => fn($value) => $entity->hasCommission((string)$value)],
+            ['keys' => ['hasCreditLimit', 'hasLimiteDeCredito'], 'callback' => fn($value) => $entity->hasCreditLimit((string)$value)],
+            ['keys' => ['hasCounterAdjustment', 'hasAcertoBalcao'], 'callback' => fn($value) => $entity->hasCounterAdjustment((string)$value)],
+            ['keys' => ['hasCashAdjustment', 'hasAcertoCaixa'], 'callback' => fn($value) => $entity->hasCashAdjustment((string)$value)],
+            ['keys' => ['hasDownPayment', 'hasEntrada'], 'callback' => fn($value) => $entity->hasDownPayment((string)$value)],
+            ['keys' => ['hasFinancialOperator', 'hasOperadorFinanceiro'], 'callback' => fn($value) => $entity->hasFinancialOperator((string)$value)],
+        ];
+
+        foreach ($mapping as $map) {
+            foreach ($map['keys'] as $key) {
+                if (isset($data[$key])) {
+                    $map['callback']($data[$key]);
+                    break;
+                }
+            }
+        }
 
         return $entity;
     }

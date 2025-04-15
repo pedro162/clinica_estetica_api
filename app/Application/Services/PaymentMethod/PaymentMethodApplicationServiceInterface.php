@@ -3,7 +3,7 @@
 namespace App\Application\Services\PaymentMethod;
 
 use App\Application\Commands\PaymentMethod\CreatePaymentMethodCommand;
-use App\Cidade;
+use App\FormaPagamento;
 use App\Domain\PaymentMethod\Entities\PaymentMethod;
 use Illuminate\Support\Collection;
 
@@ -11,11 +11,11 @@ interface PaymentMethodApplicationServiceInterface
 {
     public function store(
         CreatePaymentMethodCommand $command
-    ): ?Cidade;
+    ): ?FormaPagamento;
 
     public function findById(
         CreatePaymentMethodCommand $command
-    ): ?Cidade;
+    ): ?FormaPagamento;
 
     public function update(
         CreatePaymentMethodCommand $command

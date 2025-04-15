@@ -7,7 +7,7 @@ use App\Application\Handlers\PaymentMethod\CreatePaymentMethodHandler;
 use App\Application\Handlers\PaymentMethod\GetAllPaymentMethodHandler;
 use App\Application\Handlers\PaymentMethod\GetPaymentMethodByIdHandler;
 use App\Application\Handlers\PaymentMethod\UpdatePaymentMethodHandler;
-use App\Cidade;
+use App\FormaPagamento;
 use App\Domain\PaymentMethod\Entities\PaymentMethod;
 use Illuminate\Support\Collection;
 
@@ -32,7 +32,7 @@ class PaymentMethodApplicationService implements PaymentMethodApplicationService
 
     public function store(
         CreatePaymentMethodCommand $command
-    ): ?Cidade {
+    ): ?FormaPagamento {
         return $this->createPaymentMethodHandler->handler($command);
     }
 
@@ -50,7 +50,7 @@ class PaymentMethodApplicationService implements PaymentMethodApplicationService
 
     public function findById(
         CreatePaymentMethodCommand $command
-    ): ?Cidade {
+    ): ?FormaPagamento {
 
         return $this->getPaymentMethodByIdHandler->handler($command);
     }

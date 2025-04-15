@@ -27,6 +27,7 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
         $entity = $parameter->build();
         $entity->user_id = $userId;
         $entity->tenant_id = $tenantId;
+        $entity->active = $entity->active ? $entity->active : 'yes';
 
         unset($entity->id);
         $entity->save();
@@ -45,7 +46,7 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
             unset($data['tenant_id']);
         }
 
-        FormaPagamento::find($entity->id)->update($data);
+        FormaPagamento::find((string)$parameter->getId())->update($data);
     }
 
     public function getAll(array $filter = []): ?array
@@ -53,16 +54,16 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
         if (!isset($filter['ordem'])) {
             $filter['ordem'] = 'id-desc';
         }
-    
+
         $ordem = $filter['ordem'];
         $campos = null;
-    
+
         $parse = [
             'forma_name' => 'forma_pagamentos.name',
         ];
-    
+
         $query = FormaPagamento::query();
-    
+
         if (!empty($filter)) {
             foreach ($filter as $key => $val) {
                 switch (trim($key)) {
@@ -73,28 +74,28 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
                             $query->whereIn('id', $ids);
                         }
                         break;
-    
+
                     case 'name':
                         if (is_string($val)) {
                             $val = trim($val, ',');
                             $query->where('name', 'like', '%' . $val . '%');
                         }
                         break;
-    
+
                     case 'forma_pagamento_id':
                         if (is_string($val)) {
                             $val = trim($val, ',');
                             $query->where('id', $val);
                         }
                         break;
-    
+
                     case 'limite':
                         $val = (int) $val;
                         if ($val > 0) {
                             $query->limit($val);
                         }
                         break;
-    
+
                     case 'ordem':
                         $val = trim($val, ',');
                         $ordens = explode(',', $val);
@@ -106,7 +107,7 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
                             }
                         }
                         break;
-    
+
                     case 'campos':
                         if (is_array($val) && count($val) > 0) {
                             // Se quiser montar campos específicos, implementar aqui
@@ -116,41 +117,41 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
                 }
             }
         }
-    
+
         if ($campos) {
             $query->select($campos);
         } else {
             $query->select('forma_pagamentos.*');
         }
-    
+
         $ordemArr = explode('-', $ordem);
         $oremCampo = $ordemArr[0] ?? 'id';
         $oremTipo = $ordemArr[1] ?? 'desc';
-    
+
         $usePaginate = (int) ($filter['usePaginate'] ?? 0);
         $nrItensPerPage = isset($filter['nr_itens_per_page']) && $filter['nr_itens_per_page'] > 0
             ? $filter['nr_itens_per_page']
             : self::ITENS_PER_PAGE;
-    
+
         $query->where('active', 'yes')->orderBy($oremCampo, $oremTipo);
-    
+
         $registro = $usePaginate
             ? $query->paginate($nrItensPerPage)
             : $query->get();
-    
+
         if (!empty($filter['to_require'])) {
             $dataToRequest = [];
-    
+
             foreach ($registro as $reg) {
                 $dataToRequest[] = [
                     'label' => $reg->name,
                     'value' => $reg->id,
                 ];
             }
-    
+
             $registro = $dataToRequest;
         }
-    
+
         return ['registro' => $registro];
     }
 }

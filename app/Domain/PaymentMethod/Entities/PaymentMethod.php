@@ -46,6 +46,94 @@ class PaymentMethod extends BaseEntity
         return $this->id ?? null;
     }
 
+    public function billingCode(PaymentMethodBillingCode $billingCode): PaymentMethod
+    {
+        $this->billingCode = $billingCode;
+        return $this;
+    }
+
+    public function getBillingCode(): ?PaymentMethodBillingCode
+    {
+        return $this->billingCode ?? null;
+    }
+
+    public function paymentType(PaymentMethodPaymentType $paymentType): PaymentMethod
+    {
+        $this->paymentType = $paymentType;
+        return $this;
+    }
+
+    public function getPaymentType(): ?PaymentMethodPaymentType
+    {
+        return $this->paymentType ?? null;
+    }
+
+    public function hasCommission(PaymentMethodHasCommission $hasCommission): PaymentMethod
+    {
+        $this->hasCommission = $hasCommission;
+        return $this;
+    }
+
+    public function getHasCommission(): ?PaymentMethodHasCommission
+    {
+        return $this->hasCommission ?? null;
+    }
+
+    public function hasCreditLimit(PaymentMethodHasCreditLimit $hasCreditLimit): PaymentMethod
+    {
+        $this->hasCreditLimit = $hasCreditLimit;
+        return $this;
+    }
+
+    public function getHasCreditLimit(): ?PaymentMethodHasCreditLimit
+    {
+        return $this->hasCreditLimit ?? null;
+    }
+
+    public function hasCounterAdjustment(PaymentMethodHasCounterAdjustment $hasCounterAdjustment): PaymentMethod
+    {
+        $this->hasCounterAdjustment = $hasCounterAdjustment;
+        return $this;
+    }
+
+    public function getHasCounterAdjustment(): ?PaymentMethodHasCounterAdjustment
+    {
+        return $this->hasCounterAdjustment ?? null;
+    }
+
+    public function hasCashAdjustment(PaymentMethodHasCashAdjustment $hasCashAdjustment): PaymentMethod
+    {
+        $this->hasCashAdjustment = $hasCashAdjustment;
+        return $this;
+    }
+
+    public function getHasCashAdjustment(): ?PaymentMethodHasCashAdjustment
+    {
+        return $this->hasCashAdjustment ?? null;
+    }
+
+    public function hasDownPayment(PaymentMethodHasDownPayment $hasDownPayment): PaymentMethod
+    {
+        $this->hasDownPayment = $hasDownPayment;
+        return $this;
+    }
+
+    public function getHasDownPayment(): ?PaymentMethodHasDownPayment
+    {
+        return $this->hasDownPayment ?? null;
+    }
+
+    public function hasFinancialOperator(PaymentMethodHasFinancialOperator $hasFinancialOperator): PaymentMethod
+    {
+        $this->hasFinancialOperator = $hasFinancialOperator;
+        return $this;
+    }
+
+    public function getHasFinancialOperator(): ?PaymentMethodHasFinancialOperator
+    {
+        return $this->hasFinancialOperator ?? null;
+    }
+
     public function branchId(PaymentMethodBranchId $branchId): PaymentMethod
     {
         $this->branchId = $branchId;
@@ -81,50 +169,34 @@ class PaymentMethod extends BaseEntity
 
     public static function buildEntity(array $data): PaymentMethod
     {
-        $tenantId = $data['tenant_id'] ?? $data['tenantId'] ?? 0;
-        $tenantId = (string) (!empty($tenantId) ? $tenantId : 0);
+        $entity = (new self());
+        $mapping = [
+            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new PaymentMethodId($value))],
+            ['keys' => ['name'], 'callback' => fn($value) => $entity->name(new PaymentMethodName((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['type', 'tipo'], 'callback' => fn($value) => $entity->type(new PaymentMethodType((string)$value))],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn($value) => $entity->branchId(new PaymentMethodBranchId((string)$value))],
+            ['keys' => ['paymentType', 'tpPagamento'], 'callback' => fn($value) => $entity->paymentType(new PaymentMethodPaymentType((string)$value))],
+            ['keys' => ['billingCode', 'cdCobrancaTipo'], 'callback' => fn($value) => $entity->billingCode(new PaymentMethodBillingCode((string)$value))],
+            ['keys' => ['hasCommission', 'hasComissao'], 'callback' => fn($value) => $entity->hasCommission(new PaymentMethodHasCommission((string)$value))],
+            ['keys' => ['hasCreditLimit', 'hasLimiteDeCredito'], 'callback' => fn($value) => $entity->hasCreditLimit(new PaymentMethodHasCreditLimit((string)$value))],
+            ['keys' => ['hasCounterAdjustment', 'hasAcertoBalcao'], 'callback' => fn($value) => $entity->hasCounterAdjustment(new PaymentMethodHasCounterAdjustment((string)$value))],
+            ['keys' => ['hasCashAdjustment', 'hasAcertoCaixa'], 'callback' => fn($value) => $entity->hasCashAdjustment(new PaymentMethodHasCashAdjustment((string)$value))],
+            ['keys' => ['hasDownPayment', 'hasEntrada'], 'callback' => fn($value) => $entity->hasDownPayment(new PaymentMethodHasDownPayment((string)$value))],
+            ['keys' => ['hasFinancialOperator', 'hasOperadorFinanceiro'], 'callback' => fn($value) => $entity->hasFinancialOperator(new PaymentMethodHasFinancialOperator((string)$value))],
+        ];
 
-        $userId = $data['user_id'] ?? $data['userId'] ?? 0;
-        $userId = (string) (!empty($userId) ? $userId : 0);
-
-        $userUpdateId = $data['user_update_id'] ?? $data['userUpdateId'] ?? 0;
-        $userUpdateId = (string) (!empty($userUpdateId) ? $userUpdateId : 0);
-
-        $stateId = $data['state_id'] ?? $data['stateId'] ?? 0;
-        $stateId = (string) (!empty($stateId) ? $stateId : 0);
-
-        $id = $data['city_id'] ?? $data['id'] ?? 0;
-        $id = (string) (!empty($id) ? $id : 0);
-
-        $type = $data['type'] ?? '';
-
-        $branchId = (string) ($data['branchId'] ?? $data['filial_id'] ?? 0);
-        $paymentType = (string) ($data['paymentType'] ?? $data['tpPagamento'] ?? '');
-        $billingCode = (string) ($data['billingCode'] ?? $data['cdCobrancaTipo'] ?? '');
-        $hasCommission = (string) ($data['hasCommission'] ?? $data['hasComissao'] ?? '');
-        $hasCreditLimit = (string) ($data['hasCreditLimit'] ?? $data['hasLimiteDeCredito'] ?? '');
-        $hasCounterAdjustment = (string) ($data['hasCounterAdjustment'] ?? $data['hasAcertoBalcao'] ?? '');
-        $hasCashAdjustment = (string) ($data['hasCashAdjustment'] ?? $data['hasAcertoCaixa'] ?? '');
-        $hasDownPayment = (string) ($data['hasDownPayment'] ?? $data['hasEntrada'] ?? '');
-        $hasFinancialOperator = (string) ($data['hasFinancialOperator'] ?? $data['hasOperadorFinanceiro'] ?? '');
-
-        $entity = (new self())
-            ->id(new PaymentMethodId($id))
-            ->name(new PaymentMethodName((string)($data['nmCidade'] ?? $data['name'] ?? '')))
-            ->tenantId(new BaseEntityTenantId($tenantId))
-            ->active(((string)($data['active'] ?? '')))
-            ->userId(new BaseEntityUserId($userId))
-            ->userUpdateId(new BaseEntityUserId($userUpdateId))
-            ->type(new PaymentMethodType((string)$type))
-            ->branchId(new PaymentMethodBranchId($branchId))
-            ->paymentType(new PaymentMethodBranchId($paymentType))
-            ->billingCode(new PaymentMethodBranchId($billingCode))
-            ->hasCommission(new PaymentMethodBranchId($hasCommission))
-            ->hasCreditLimit(new PaymentMethodBranchId($hasCreditLimit))
-            ->hasCounterAdjustment(new PaymentMethodBranchId($hasCounterAdjustment))
-            ->hasCashAdjustment(new PaymentMethodBranchId($hasCashAdjustment))
-            ->hasDownPayment(new PaymentMethodBranchId($hasDownPayment))
-            ->hasFinancialOperator(new PaymentMethodBranchId($hasFinancialOperator));
+        foreach ($mapping as $map) {
+            foreach ($map['keys'] as $key) {
+                if (isset($data[$key])) {
+                    $map['callback']($data[$key]);
+                    break;
+                }
+            }
+        }
 
         return $entity;
     }

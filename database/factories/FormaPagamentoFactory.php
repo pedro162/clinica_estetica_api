@@ -19,7 +19,7 @@ $factory->define(FormaPagamento::class, function (Faker $faker) {
         'hasAcertoCaixa' => 'no',
         'hasEntrada' => 'no',
         'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
-        'user_update_id' => null,
+        'user_update_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'hasOperadorFinanceiro' => 'no',
         'tipo' => 'cartao_credito',
         'active' => 'yes'

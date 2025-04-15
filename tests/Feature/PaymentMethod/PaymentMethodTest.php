@@ -34,6 +34,7 @@ class PaymentMethodTest extends TestCase
                 'success'
             ]);
     }
+
     public function testCrateANewPaymentMethod()
     {
         $this->postJson(route('forma_pagamento.store'), $this->payload->toArray())
@@ -52,7 +53,6 @@ class PaymentMethodTest extends TestCase
     public function testUpdateAPaymentMethod()
     {
         $this->paymentMethod->name = 'New name';
-
         $response = $this->putJson(route('forma_pagamento.update', ['id' => $this->paymentMethod->id]), $this->paymentMethod->toArray())
             ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
 
