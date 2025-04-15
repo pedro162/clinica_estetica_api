@@ -99,6 +99,14 @@ class PaymentMethod extends BaseEntity
         $type = $data['type'] ?? '';
 
         $branchId = (string) ($data['branchId'] ?? $data['filial_id'] ?? 0);
+        $paymentType = (string) ($data['paymentType'] ?? $data['tpPagamento'] ?? '');
+        $billingCode = (string) ($data['billingCode'] ?? $data['cdCobrancaTipo'] ?? '');
+        $hasCommission = (string) ($data['hasCommission'] ?? $data['hasComissao'] ?? '');
+        $hasCreditLimit = (string) ($data['hasCreditLimit'] ?? $data['hasLimiteDeCredito'] ?? '');
+        $hasCounterAdjustment = (string) ($data['hasCounterAdjustment'] ?? $data['hasAcertoBalcao'] ?? '');
+        $hasCashAdjustment = (string) ($data['hasCashAdjustment'] ?? $data['hasAcertoCaixa'] ?? '');
+        $hasDownPayment = (string) ($data['hasDownPayment'] ?? $data['hasEntrada'] ?? '');
+        $hasFinancialOperator = (string) ($data['hasFinancialOperator'] ?? $data['hasOperadorFinanceiro'] ?? '');
 
         $entity = (new self())
             ->id(new PaymentMethodId($id))
@@ -108,7 +116,15 @@ class PaymentMethod extends BaseEntity
             ->userId(new BaseEntityUserId($userId))
             ->userUpdateId(new BaseEntityUserId($userUpdateId))
             ->type(new PaymentMethodType((string)$type))
-            ->branchId(new PaymentMethodBranchId($branchId));
+            ->branchId(new PaymentMethodBranchId($branchId))
+            ->paymentType(new PaymentMethodBranchId($paymentType))
+            ->billingCode(new PaymentMethodBranchId($billingCode))
+            ->hasCommission(new PaymentMethodBranchId($hasCommission))
+            ->hasCreditLimit(new PaymentMethodBranchId($hasCreditLimit))
+            ->hasCounterAdjustment(new PaymentMethodBranchId($hasCounterAdjustment))
+            ->hasCashAdjustment(new PaymentMethodBranchId($hasCashAdjustment))
+            ->hasDownPayment(new PaymentMethodBranchId($hasDownPayment))
+            ->hasFinancialOperator(new PaymentMethodBranchId($hasFinancialOperator));
 
         return $entity;
     }
@@ -119,15 +135,15 @@ class PaymentMethod extends BaseEntity
             'id' => isset($this->id) ? (string)$this->id : null,
             'filial_id' => isset($this->branchId) ? (string)$this->branchId : null,
             'name' => isset($this->name) ? (string)$this->name : null,
-            'type' => isset($this->type) ? (string)$this->type : null,
-            'billingCode' => isset($this->billingCode) ? (string)$this->billingCode : null,
-            'paymentType' => isset($this->paymentType) ? (string)$this->paymentType : null,
-            'hasCommission' => isset($this->hasCommission) ? (string)$this->hasCommission : null,
-            'hasCreditLimit' => isset($this->hasCreditLimit) ? (string)$this->hasCreditLimit : null,
-            'hasCounterAdjustment' => isset($this->hasCounterAdjustment) ? (string)$this->hasCounterAdjustment : null,
-            'hasCashAdjustment' => isset($this->hasCashAdjustment) ? (string)$this->hasCashAdjustment : null,
-            'hasDownPayment' => isset($this->hasDownPayment) ? (string)$this->hasDownPayment : null,
-            'hasFinancialOperator' => isset($this->hasFinancialOperator) ? (string)$this->hasFinancialOperator : null,
+            'tipo' => isset($this->type) ? (string)$this->type : null,
+            'cdCobrancaTipo' => isset($this->billingCode) ? (string)$this->billingCode : null,
+            'tpPagamento' => isset($this->paymentType) ? (string)$this->paymentType : null,
+            'hasComissao' => isset($this->hasCommission) ? (string)$this->hasCommission : null,
+            'hasLimiteDeCredito' => isset($this->hasCreditLimit) ? (string)$this->hasCreditLimit : null,
+            'hasAcertoBalcao' => isset($this->hasCounterAdjustment) ? (string)$this->hasCounterAdjustment : null,
+            'hasAcertoCaixa' => isset($this->hasCashAdjustment) ? (string)$this->hasCashAdjustment : null,
+            'hasEntrada' => isset($this->hasDownPayment) ? (string)$this->hasDownPayment : null,
+            'hasOperadorFinanceiro' => isset($this->hasFinancialOperator) ? (string)$this->hasFinancialOperator : null,
             'tenant_id' => isset($this->tenantId) ? (string)$this->tenantId : null,
             'active' => isset($this->active) ? (string)$this->active : null,
             'user_id' => isset($this->userId) ? (string)$this->userId : null,
