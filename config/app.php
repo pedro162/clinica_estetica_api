@@ -178,6 +178,7 @@ return [
         App\Providers\Cashier\CashierServiceProvider::class,
         App\Providers\AccountReceivable\AccountReceivableServiceProvider::class,
         App\Providers\AccountReceivableItem\AccountReceivableItemServiceProvider::class,
+        App\Providers\PaymentMethod\PaymentMethodServiceProvider::class,
     ],
 
     /*

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\PaymentMethod;
 
-use App\Caixa;
+use App\FormaPagamento;
 use App\Domain\PaymentMethod\Entities\PaymentMethod;
 use App\Domain\PaymentMethod\Repositories\PaymentMethodRepositoryInterface;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodId;
@@ -14,13 +14,13 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;
 
-    public function findById(PaymentMethodId $id): ?Caixa
+    public function findById(PaymentMethodId $id): ?FormaPagamento
     {
-        return Caixa::where('active', '=', 'yes')
+        return FormaPagamento::where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
     }
 
-    public function save(PaymentMethod $parameter): ?Caixa
+    public function save(PaymentMethod $parameter): ?FormaPagamento
     {
         $userId   = Auth::user()->id;
         $tenantId   = Auth::user()->tenant_id;
@@ -45,143 +45,112 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
             unset($data['tenant_id']);
         }
 
-        Caixa::find($entity->id)->update($data);
+        FormaPagamento::find($entity->id)->update($data);
     }
 
     public function getAll(array $filter = []): ?array
     {
         if (!isset($filter['ordem'])) {
-            $filter['ordem'] =  'id-desc';
+            $filter['ordem'] = 'id-desc';
         }
-
-        $ordem      = $filter['ordem'] ?? 'id-desc';
-        $campos =  null;
+    
+        $ordem = $filter['ordem'];
+        $campos = null;
+    
         $parse = [
-            'caixa_name' => 'caixas.name',
-            'name_caixa' => 'caixas.name'
-
+            'forma_name' => 'forma_pagamentos.name',
         ];
-
-        $registro = \DB::table('caixas');
-
-        if (is_array($filter) && count($filter) > 0) {
+    
+        $query = FormaPagamento::query();
+    
+        if (!empty($filter)) {
             foreach ($filter as $key => $val) {
-
                 switch (trim($key)) {
                     case 'id':
                         if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-                            $val = explode(',', $val);
-
-                            $registro->whereIn('caixas.id', $val);
+                            $val = trim($val, ',');
+                            $ids = explode(',', $val);
+                            $query->whereIn('id', $ids);
                         }
                         break;
+    
                     case 'name':
-                    case 'caixa_name':
-                    case 'name_caixa':
                         if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('caixas.name', 'like', '%' . $val . '%');
+                            $val = trim($val, ',');
+                            $query->where('name', 'like', '%' . $val . '%');
                         }
                         break;
-                    case 'caixa_id':
+    
+                    case 'forma_pagamento_id':
                         if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('caixas.id', '=', '' . $val . '');
+                            $val = trim($val, ',');
+                            $query->where('id', $val);
                         }
                         break;
+    
                     case 'limite':
                         $val = (int) $val;
-                        if (is_integer($val) && $val > 0) {
-
-                            $registro->limit($val);
+                        if ($val > 0) {
+                            $query->limit($val);
                         }
                         break;
+    
                     case 'ordem':
-
-                        if ($val[0] == ',') {
-                            $val = substr($val, 1);
-                        }
-                        if ($val[strlen($val) - 1] == ',') {
-                            $val = substr($val, 0, -1);
-                        }
-
-                        $val = explode(',', $val);
-                        for ($i = 0; !($i == count($val)); $i++) {
-                            $atual = explode('-', $val[$i]);
-                            if (array_key_exists(trim($atual[0]), $parse)) {
-
-                                $parsed = $parse[trim($atual[0])];
-
-                                if ($parsed) {
-
-                                    $registro->orderBy($parsed, $atual[1]);
-                                }
+                        $val = trim($val, ',');
+                        $ordens = explode(',', $val);
+                        foreach ($ordens as $ord) {
+                            $atual = explode('-', $ord);
+                            $campo = $parse[$atual[0]] ?? null;
+                            if ($campo && isset($atual[1])) {
+                                $query->orderBy($campo, $atual[1]);
                             }
                         }
-
                         break;
-
+    
                     case 'campos':
                         if (is_array($val) && count($val) > 0) {
-                            //$campos = $this->montaCamposConsulta($registro, $val);
-
+                            // Se quiser montar campos específicos, implementar aqui
+                            // $campos = $this->montaCamposConsulta($query, $val);
                         }
                         break;
                 }
             }
         }
-
+    
         if ($campos) {
-            $registro->select($campos);
+            $query->select($campos);
         } else {
-            $registro->select('caixas.*');
+            $query->select('forma_pagamentos.*');
         }
-
-        $ordemArr   = explode('-', $ordem);
-        $oremCampo  = $ordemArr[0];
-        $oremTipo  = $ordemArr[1];
-
-        $usePaginate = $filter['usePaginate'] ?? 0;
-        $usePaginate = (int) $usePaginate;
-        $nrItensPerPage = isset($filter['nr_itens_per_page']) && $filter['nr_itens_per_page'] > 0 ? $filter['nr_itens_per_page'] : self::ITENS_PER_PAGE;
-
-        if ($usePaginate > 0) {
-            $registro   = $registro->where('caixas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
-        } else {
-            $registro = $registro->where('caixas.active', '=', 'yes')->get();
-        }
-
-        if (isset($filter['to_require']) && $filter['to_require'] == true) {
+    
+        $ordemArr = explode('-', $ordem);
+        $oremCampo = $ordemArr[0] ?? 'id';
+        $oremTipo = $ordemArr[1] ?? 'desc';
+    
+        $usePaginate = (int) ($filter['usePaginate'] ?? 0);
+        $nrItensPerPage = isset($filter['nr_itens_per_page']) && $filter['nr_itens_per_page'] > 0
+            ? $filter['nr_itens_per_page']
+            : self::ITENS_PER_PAGE;
+    
+        $query->where('active', 'yes')->orderBy($oremCampo, $oremTipo);
+    
+        $registro = $usePaginate
+            ? $query->paginate($nrItensPerPage)
+            : $query->get();
+    
+        if (!empty($filter['to_require'])) {
             $dataToRequest = [];
-
+    
             foreach ($registro as $reg) {
-                $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
+                $dataToRequest[] = [
+                    'label' => $reg->name,
+                    'value' => $reg->id,
+                ];
             }
-
+    
             $registro = $dataToRequest;
         }
-
-        return  ['registro' => $registro];
+    
+        return ['registro' => $registro];
     }
 }

@@ -251,20 +251,16 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/prazo_pagamento/head/{id_assistente?}', ['as' => 'prazo_pagamento.head', 'uses' => 'Admin\PrazoPagamentoController@head']);
 	Route::get('/prazo_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'prazo_pagamento.destroy', 'uses' => 'Admin\PrazoPagamentoController@destroy']);
 
-
-	Route::get('/forma_pagamento/index/{id_assistente?}', ['as' => 'forma_pagamento.index', 'uses' => 'Admin\FormaPagamentoController@index']);
-	Route::post('/forma_pagamento/index/{id_assistente?}', ['as' => 'forma_pagamento.index', 'uses' => 'Admin\FormaPagamentoController@index']);
-	Route::get('/forma_pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.json', 'uses' => 'Admin\FormaPagamentoController@json']);
-	Route::post('/forma_pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.json', 'uses' => 'Admin\FormaPagamentoController@json']);
-	Route::get('/forma_pagamento/create/{id_assistente?}', ['as' => 'forma_pagamento.create', 'uses' => 'Admin\FormaPagamentoController@create']);
-	Route::post('/forma_pagamento/store/{id_assistente?}', ['as' => 'forma_pagamento.store', 'uses' => 'Admin\FormaPagamentoController@store']);
-	Route::get('/forma_pagamento/edit/{id}/{id_assistente?}', ['as' => 'forma_pagamento.edit', 'uses' => 'Admin\FormaPagamentoController@edit']);
-	Route::put('/forma_pagamento/update/{id}/{id_assistente?}', ['as' => 'forma_pagamento.update', 'uses' => 'Admin\FormaPagamentoController@update']);
-	Route::get('/forma_pagamento/show/{id}/{id_assistente?}', ['as' => 'forma_pagamento.show', 'uses' => 'Admin\FormaPagamentoController@show']);
-	Route::get('/forma_pagamento/info/{id}/{id_assistente?}', ['as' => 'forma_pagamento.info', 'uses' => 'Admin\FormaPagamentoController@info']);
-	Route::get('/forma_pagamento/head/{id_assistente?}', ['as' => 'forma_pagamento.head', 'uses' => 'Admin\FormaPagamentoController@head']);
-	Route::get('/forma_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'forma_pagamento.destroy', 'uses' => 'Admin\FormaPagamentoController@destroy']);
-
+	Route::get('/forma_pagamento/index/{id_assistente?}', ['as' => 'forma_pagamento.index', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@index']);
+	Route::post('/forma_pagamento/index/{id_assistente?}', ['as' => 'forma_pagamento.index', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@index']);
+	Route::get('/forma_pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.json', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@index']);
+	Route::post('/forma_pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.json', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@index']);
+	Route::post('/forma_pagamento/store/{id_assistente?}', ['as' => 'forma_pagamento.store', 'uses' => 'Admin\Admin\V1\PaymentMethod\PaymentMethodController@store']);
+	Route::get('/forma_pagamento/edit/{id}/{id_assistente?}', ['as' => 'forma_pagamento.edit', 'uses' => 'Admin\Admin\V1\PaymentMethod\PaymentMethodController@edit']);
+	Route::put('/forma_pagamento/update/{id}/{id_assistente?}', ['as' => 'forma_pagamento.update', 'uses' => 'Admin\Admin\V1\PaymentMethod\PaymentMethodController@update']);
+	Route::get('/forma_pagamento/show/{id}/{id_assistente?}', ['as' => 'forma_pagamento.show', 'uses' => 'Admin\Admin\V1\PaymentMethod\PaymentMethodController@show']);
+	Route::get('/forma_pagamento/info/{id}/{id_assistente?}', ['as' => 'forma_pagamento.info', 'uses' => 'Admin\Admin\V1\PaymentMethod\PaymentMethodController@info']);
+	Route::get('/forma_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'forma_pagamento.destroy', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@destroy']);
 	Route::post('/forma_pagamento/plano/pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.plano.pagamento.json', 'uses' => 'Admin\FormaPagamentoController@planoPagamentoJson']);
 	Route::post('/forma_pagamento/operador/financeiro/json/{id_assistente?}', ['as' => 'forma_pagamento.operador.financeiro.json', 'uses' => 'Admin\FormaPagamentoController@operadorJson']);
 

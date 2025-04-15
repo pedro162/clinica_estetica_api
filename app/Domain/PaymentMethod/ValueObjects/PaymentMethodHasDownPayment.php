@@ -2,16 +2,14 @@
 
 namespace App\Domain\PaymentMethod\ValueObjects;
 
-class PaymentMethodOpenStatus
+class PaymentMethodHasDownPayment
 {
     private string $value;
 
     public function __construct(string $value)
     {
-        if (!empty($value)) {
-            if (!in_array($value, ['open', 'close'])) {
-                throw new \InvalidArgumentException("The PaymentMethod type is invalid. It should be either (open, close)");
-            }
+        if (empty($value)) {
+            throw new \InvalidArgumentException("The field, has down payment, cannot be empty");
         }
 
         $this->value = $value;

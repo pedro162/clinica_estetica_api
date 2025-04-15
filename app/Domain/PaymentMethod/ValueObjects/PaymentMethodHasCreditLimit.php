@@ -2,16 +2,14 @@
 
 namespace App\Domain\PaymentMethod\ValueObjects;
 
-class PaymentMethodAcceptTransfer
+class PaymentMethodHasCreditLimit
 {
     private string $value;
 
     public function __construct(string $value)
     {
-        if (!empty($value)) {
-            if (!in_array($value, ['yes', 'no'])) {
-                throw new \InvalidArgumentException("The cashier accept type is invalid. It should be either (yes, no)");
-            }
+        if (empty($value)) {
+            throw new \InvalidArgumentException("The field, has credit limit, cannot be empty");
         }
 
         $this->value = $value;
