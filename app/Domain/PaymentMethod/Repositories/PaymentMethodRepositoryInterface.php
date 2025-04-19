@@ -12,4 +12,5 @@ interface PaymentMethodRepositoryInterface
     public function findById(PaymentMethodId $id): ?FormaPagamento;
     public function getAll(array $filter = []): ?array;
     public function update(PaymentMethod $parameter): void;
+    public function destroy(PaymentMethod $parameter): void;
 }

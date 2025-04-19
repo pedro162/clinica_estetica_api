@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\DiasProfExpediente;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class HoraProfExpediente extends Model
 {
+    use SoftDeletes, BelongsToTenant;
+
     protected $table = "hora_prof_expedientes";
     protected $primaryKey = "id";
     protected $fillable = [

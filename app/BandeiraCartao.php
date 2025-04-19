@@ -3,10 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BandeiraCartao extends Model
 {
-	//
+	use SoftDeletes, BelongsToTenant;
 	protected $primaryKey = "id";
 	protected $table = "bandeira_cartaos";
 	protected $fillable =

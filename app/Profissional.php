@@ -7,9 +7,13 @@ use App\Especialidade;
 use App\EventoAgenda;
 use App\Pessoa;
 use App\DiasProfExpediente;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Profissional extends Model
 {
+	use SoftDeletes, BelongsToTenant;
+
 	protected $table = "profissionals";
 	protected $primaryKey = "id";
 	protected $fillable = [
@@ -65,11 +69,6 @@ class Profissional extends Model
 	public function removeEspecialidade($especialidade)
 	{
 		return $this->especialidade()->detach($especialidade);
-	}
-
-	public function eventoAgenda()
-	{
-		return $this->hasMany(EventoAgenda::class, 'profissional_id', 'id');
 	}
 
 	public function diasExpediente()

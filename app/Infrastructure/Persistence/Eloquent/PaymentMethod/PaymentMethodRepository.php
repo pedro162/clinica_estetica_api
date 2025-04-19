@@ -23,10 +23,9 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
     public function save(PaymentMethod $parameter): ?FormaPagamento
     {
         $userId   = Auth::user()->id;
-        $tenantId   = Auth::user()->tenant_id;
         $entity = $parameter->build();
         $entity->user_id = $userId;
-        $entity->tenant_id = $tenantId;
+        $entity->tenant_id = $this->getTenantId();
         $entity->active = $entity->active ? $entity->active : 'yes';
 
         unset($entity->id);
@@ -47,6 +46,25 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
         }
 
         FormaPagamento::find((string)$parameter->getId())->update($data);
+    }
+
+    public function destroy(PaymentMethod $parameter): void
+    {
+        $userId   = Auth::user()->id;
+        $entity = $parameter->build();
+        $entity->user_update_id = $userId;
+
+        $data = $entity->toArray();
+
+        if (isset($data['tenant_id']) && $data['tenant_id'] == 0) {
+            unset($data['tenant_id']);
+        }
+
+        $data['active'] = 'no';
+        $paymentMethod = FormaPagamento::find((string)$parameter->getId());
+
+        $paymentMethod->update($data);
+        $paymentMethod->delete();
     }
 
     public function getAll(array $filter = []): ?array
@@ -153,5 +171,10 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
         }
 
         return ['registro' => $registro];
+    }
+
+    protected function getTenantId(): int
+    {
+        return Auth::user()->tenant_id;
     }
 }

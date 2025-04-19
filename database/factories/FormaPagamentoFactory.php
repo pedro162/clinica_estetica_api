@@ -3,6 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\FormaPagamento;
+use App\SimpleTenantDatabase;
 use App\User;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
@@ -22,6 +23,7 @@ $factory->define(FormaPagamento::class, function (Faker $faker) {
         'user_update_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'hasOperadorFinanceiro' => 'no',
         'tipo' => 'cartao_credito',
-        'active' => 'yes'
+        'active' => 'yes',
+        'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];
 });

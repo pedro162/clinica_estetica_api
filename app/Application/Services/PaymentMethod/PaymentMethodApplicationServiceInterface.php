@@ -21,5 +21,9 @@ interface PaymentMethodApplicationServiceInterface
         CreatePaymentMethodCommand $command
     ): void;
 
+    public function destroy(
+        CreatePaymentMethodCommand $command
+    ): void;
+
     public function getAll(array $data = []): ?Collection;
 }

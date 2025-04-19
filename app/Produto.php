@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Categoria;
 use App\Ncm;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Produto extends Model
 {
+    use SoftDeletes, BelongsToTenant;
+
     protected $fillable = [
         'marca_id',
         'user_id',

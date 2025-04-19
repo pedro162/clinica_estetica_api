@@ -259,7 +259,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/forma_pagamento/edit/{id}/{id_assistente?}', ['as' => 'forma_pagamento.edit', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@edit']);
 	Route::put('/forma_pagamento/update/{id}/{id_assistente?}', ['as' => 'forma_pagamento.update', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@update']);
 	Route::get('/forma_pagamento/show/{id}/{id_assistente?}', ['as' => 'forma_pagamento.show', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@show']);
-	Route::get('/forma_pagamento/info/{id}/{id_assistente?}', ['as' => 'forma_pagamento.info', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@info']);
+	Route::get('/forma_pagamento/info/{id}/{id_assistente?}', ['as' => 'forma_pagamento.info', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@show']);
 	Route::get('/forma_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'forma_pagamento.destroy', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@destroy']);
 	Route::post('/forma_pagamento/plano/pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.plano.pagamento.json', 'uses' => 'Admin\FormaPagamentoController@planoPagamentoJson']);
 	Route::post('/forma_pagamento/operador/financeiro/json/{id_assistente?}', ['as' => 'forma_pagamento.operador.financeiro.json', 'uses' => 'Admin\FormaPagamentoController@operadorJson']);

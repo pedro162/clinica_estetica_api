@@ -3,15 +3,17 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use \App\Filial;
 use \App\FormaPagamento;
 use \App\PlanoPagamento;
 use \App\OperadorFinanceiro;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class OrdemServicoCobranca extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
+
     protected $table = "ordem_servico_cobrancas";
     protected $primaryKey = "id";
     protected $fillable = [

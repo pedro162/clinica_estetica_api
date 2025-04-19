@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \App\Pessoa;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class OperadorFinanceiro extends Model
 {
+	use SoftDeletes, BelongsToTenant;
+
 	protected $fillable = [
 		'vrTarifa',
 		'vrDesconto',

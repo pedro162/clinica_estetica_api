@@ -3,10 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use \App\CobrancaReceber;
+use \App\ContaReceber;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contrato extends Model
 {
+    use SoftDeletes, BelongsToTenant;
     protected $fillable = [
 
         'tpVencimento',
@@ -24,6 +27,6 @@ class Contrato extends Model
 
     public function cobrancaReceber()
     {
-        return $this->hasMany(CobrancaReceber::class);
+        return $this->hasMany(ContaReceber::class);
     }
 }

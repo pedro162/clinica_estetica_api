@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \App\Pessoa;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Telefone extends Model
 {
+	use SoftDeletes, BelongsToTenant;
+
 	protected $fillable =
 	[
 		'numero',
