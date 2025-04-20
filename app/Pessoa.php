@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pessoa extends Model
 {
-	use SoftDeletes, BelongsToTenant;
+	use SoftDeletes,  BelongsToTenant;
 
 	protected $fillable =
 	[

@@ -4,6 +4,7 @@
 
 use App\Atendimento;
 use App\Pessoa;
+use App\SimpleTenantDatabase;
 use App\User;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
@@ -32,5 +33,6 @@ $factory->define(Atendimento::class, function (Faker $faker) {
         'vr_atendimento' => null,
         'vr_desconto' => null,
         'vr_acrescimo' => null,
+        'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];
 });

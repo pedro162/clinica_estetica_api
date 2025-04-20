@@ -179,6 +179,7 @@ return [
         App\Providers\AccountReceivable\AccountReceivableServiceProvider::class,
         App\Providers\AccountReceivableItem\AccountReceivableItemServiceProvider::class,
         App\Providers\PaymentMethod\PaymentMethodServiceProvider::class,
+        App\Providers\PaymentPlan\PaymentPlanServiceProvider::class,
     ],
 
     /*

@@ -4,6 +4,7 @@
 
 use App\BandeiraCartao;
 use App\Pessoa;
+use App\SimpleTenantDatabase;
 use App\User;
 use Faker\Generator as Faker;
 
@@ -14,6 +15,7 @@ $factory->define(BandeiraCartao::class, function (Faker $faker) {
         'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'user_update_id' => null,
         //'pessoa_autor_id' => factory(Pessoa::class)->create()->id,
-        'active' => 'yes'
+        'active' => 'yes',
+        'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];
 });

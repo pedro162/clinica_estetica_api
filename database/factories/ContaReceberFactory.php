@@ -8,6 +8,7 @@ use App\FormaPagamento;
 use App\OperadorFinanceiro;
 use App\Pessoa;
 use App\PlanoPagamento;
+use App\SimpleTenantDatabase;
 use App\User;
 use Faker\Generator as Faker;
 
@@ -37,5 +38,6 @@ $factory->define(ContaReceber::class, function (Faker $faker) {
         'plano_pagamento_id' => PlanoPagamento::first() ? Filial::first()->id : factory(PlanoPagamento::class)->create()->id,
         'operador_financeiro_id' => OperadorFinanceiro::first() ? Filial::first()->id : factory(OperadorFinanceiro::class)->create()->id,
         'status' => 'aberto',
+        'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];
 });

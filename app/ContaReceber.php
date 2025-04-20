@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ContaReceber extends Model
 {
-	use SoftDeletes, BelongsToTenant;
+	use SoftDeletes,  BelongsToTenant;
 	protected $primaryKey = "id";
 
 	protected $table = "conta_recebers";

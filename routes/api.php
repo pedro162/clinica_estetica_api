@@ -224,18 +224,15 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/contrato/destroy/{id}/{idPessoa}/{id_assistente?}', ['as' => 'contrato.destroy', 'uses' => 'Admin\ContratoController@destroy']);
 
 
-	Route::get('/plano_pagamento/index/{id_assistente?}', ['as' => 'plano_pagamento.index', 'uses' => 'Admin\PlanoPagamentoController@index']);
-	Route::post('/plano_pagamento/index/{id_assistente?}', ['as' => 'plano_pagamento.index', 'uses' => 'Admin\PlanoPagamentoController@index']);
-	Route::get('/plano_pagamento/json/{id_assistente?}', ['as' => 'plano_pagamento.json', 'uses' => 'Admin\PlanoPagamentoController@json']);
-	Route::post('/plano_pagamento/json/{id_assistente?}', ['as' => 'plano_pagamento.json', 'uses' => 'Admin\PlanoPagamentoController@json']);
-	Route::get('/plano_pagamento/create/{id_assistente?}', ['as' => 'plano_pagamento.create', 'uses' => 'Admin\PlanoPagamentoController@create']);
-	Route::post('/plano_pagamento/store/{id_assistente?}', ['as' => 'plano_pagamento.store', 'uses' => 'Admin\PlanoPagamentoController@store']);
-	Route::get('/plano_pagamento/edit/{id}/{id_assistente?}', ['as' => 'plano_pagamento.edit', 'uses' => 'Admin\PlanoPagamentoController@edit']);
-	Route::put('/plano_pagamento/update/{id}/{id_assistente?}', ['as' => 'plano_pagamento.update', 'uses' => 'Admin\PlanoPagamentoController@update']);
-	Route::get('/plano_pagamento/show/{id}/{id_assistente?}', ['as' => 'plano_pagamento.show', 'uses' => 'Admin\PlanoPagamentoController@show']);
-	Route::get('/plano_pagamento/info/{id}/{id_assistente?}', ['as' => 'plano_pagamento.info', 'uses' => 'Admin\PlanoPagamentoController@info']);
-	Route::get('/plano_pagamento/head/{id_assistente?}', ['as' => 'plano_pagamento.head', 'uses' => 'Admin\PlanoPagamentoController@head']);
-	Route::get('/plano_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'plano_pagamento.destroy', 'uses' => 'Admin\PlanoPagamentoController@destroy']);
+	Route::get('/plano_pagamento/index/{id_assistente?}', ['as' => 'plano_pagamento.index', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@index']);
+	Route::post('/plano_pagamento/index/{id_assistente?}', ['as' => 'plano_pagamento.index', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@index']);
+	Route::get('/plano_pagamento/json/{id_assistente?}', ['as' => 'plano_pagamento.json', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@json']);
+	Route::post('/plano_pagamento/json/{id_assistente?}', ['as' => 'plano_pagamento.json', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@json']);
+	Route::post('/plano_pagamento/store/{id_assistente?}', ['as' => 'plano_pagamento.store', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@store']);
+	Route::put('/plano_pagamento/update/{id}/{id_assistente?}', ['as' => 'plano_pagamento.update', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@update']);
+	Route::get('/plano_pagamento/show/{id}/{id_assistente?}', ['as' => 'plano_pagamento.show', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@show']);
+	Route::get('/plano_pagamento/info/{id}/{id_assistente?}', ['as' => 'plano_pagamento.info', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@info']);
+	Route::get('/plano_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'plano_pagamento.destroy', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@destroy']);
 
 
 	Route::get('/prazo_pagamento/index/{id_assistente?}', ['as' => 'prazo_pagamento.index', 'uses' => 'Admin\PrazoPagamentoController@index']);

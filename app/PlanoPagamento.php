@@ -13,7 +13,7 @@ class PlanoPagamento extends Model
 	use SoftDeletes, BelongsToTenant;
 
 	protected $fillable = [
-
+		'id',
 		'name',
 		'descricao',
 		'diasmedios',

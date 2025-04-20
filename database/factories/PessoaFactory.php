@@ -3,6 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Pessoa as Person;
+use App\SimpleTenantDatabase;
 use App\User;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
@@ -21,6 +22,7 @@ $factory->define(Person::class, function (Faker $faker) {
         'tipo' => 'fisica',
         'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'user_update_id' => null,
-        'active' => 'yes'
+        'active' => 'yes',
+        'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];
 });

@@ -5,6 +5,7 @@
 use App\Filial;
 use App\Pessoa;
 use App\Profissional as Professional;
+use App\SimpleTenantDatabase;
 use App\User;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
@@ -34,6 +35,6 @@ $factory->define(Professional::class, function (Faker $faker) {
         'tipo_contrato' => 'efetivo',
         'filial_id' => Filial::first() ? Filial::first()->id : factory(Filial::class)->create()->id,
         'uf_cnh_id' => null,
-        'tenant_id' => null
+        'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];
 });
