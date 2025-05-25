@@ -24,7 +24,7 @@ $factory->define(OperadorFinanceiro::class, function (Faker $faker) {
         'pessoa_id' => Pessoa::first() ? Pessoa::first()->id : factory(Pessoa::class)->create()->id,
         'filial_id' => Filial::first() ? Filial::first()->id : factory(Filial::class)->create()->id,
         'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
-        'user_update_id' => null,
+        'user_update_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'active' => 'yes',
         'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];

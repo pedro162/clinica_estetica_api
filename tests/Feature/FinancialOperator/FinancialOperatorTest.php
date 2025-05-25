@@ -37,29 +37,26 @@ class FinancialOperatorTest extends TestCase
 
     public function testCrateANewFinancialOperator()
     {
-        $this->postJson(route('operador_financeiro.store'), $this->payload->toArray())
+        $data = $this->payload->toArray();
+        unset($data['user_id']);
+        $this->postJson(route('operador_financeiro.store'), $data)
             ->assertJsonStructure([
                 'data',
                 'success'
             ])->assertJson([
-                'data' => [
-                    'qtdDiasProtesto' => $this->payload->qtdDiasProtesto,
-                    'nrNossoNumero' => $this->payload->nrNossoNumero,
-                    'nrRemessaAtual' => $this->payload->nrRemessaAtual,
-                ]
-            ])->assertJsonPath('data.type', $this->payload->type);
+                'data' => $data
+            ]);
     }
 
     public function testUpdateAFinancialOperator()
     {
         $this->paymentMethod->qtdDiasProtesto = 5;
-        $response = $this->putJson(route('operador_financeiro.update', ['id' => $this->paymentMethod->id]), $this->paymentMethod->toArray())
+        $data = $this->paymentMethod->toArray();
+
+        $response = $this->putJson(route('operador_financeiro.update', ['id' => $this->paymentMethod->id]), $data)
             ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
 
-        $this->assertDatabaseHas($this->paymentMethod->getTable(), [
-            'id' => $this->paymentMethod->id,
-            'qtdDiasProtesto' => $this->paymentMethod->qtdDiasProtesto
-        ]);
+        $this->assertDatabaseHas($this->paymentMethod->getTable(), ['id' => $data['id'], 'qtdDiasProtesto' => $data['qtdDiasProtesto']]);
     }
 
     public function testGetAFinancialOperatorById()

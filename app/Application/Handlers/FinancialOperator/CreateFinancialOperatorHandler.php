@@ -3,7 +3,7 @@
 namespace App\Application\Handlers\FinancialOperator;
 
 use App\Application\Commands\FinancialOperator\CreateFinancialOperatorCommand;
-use App\FormaPagamento;
+use App\OperadorFinanceiro;
 use App\Domain\FinancialOperator\Entities\FinancialOperator;
 use App\Domain\FinancialOperator\Repositories\FinancialOperatorRepositoryInterface;;
 
@@ -16,7 +16,7 @@ class CreateFinancialOperatorHandler
         $this->repository = $repository;
     }
 
-    public function handler(CreateFinancialOperatorCommand $command): ?FormaPagamento
+    public function handler(CreateFinancialOperatorCommand $command): ?OperadorFinanceiro
     {
         $entity = FinancialOperator::buildEntity($command->getDataProperties());
 

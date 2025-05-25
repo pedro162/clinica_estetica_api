@@ -8,8 +8,8 @@ class FinancialOperatorOurNumber
 
     public function __construct(string $value)
     {
-        if (empty($value)) {
-            throw new \InvalidArgumentException("The current remittance number cannot be empty");
+        if (trim($value) == '') {
+            throw new \InvalidArgumentException("The our number value cannot be empty");
         }
 
         $this->value = $value;

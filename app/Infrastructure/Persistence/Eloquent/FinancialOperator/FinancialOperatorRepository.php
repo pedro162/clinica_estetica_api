@@ -75,12 +75,8 @@ class FinancialOperatorRepository implements FinancialOperatorRepositoryInterfac
 
         $ordem = $filter['ordem'];
         $campos = null;
-
-        $parse = [
-            'plano_name' => 'plano_pagamentos.name',
-        ];
-
-        $query = OperadorFinanceiro::query();
+        $query = OperadorFinanceiro::query()
+            ->with(['pessoa', 'formaPagamento', 'filial']);
 
         if (!empty($filter)) {
             foreach ($filter as $key => $val) {
@@ -88,59 +84,60 @@ class FinancialOperatorRepository implements FinancialOperatorRepositoryInterfac
                     case 'id':
                         if (is_string($val)) {
                             $val = trim($val, ',');
-                            $ids = explode(',', $val);
-                            $query->whereIn('id', $ids);
                         }
-                        break;
 
-                    case 'name':
-                    case 'nome_plano':
-                        if (is_string($val)) {
-                            $val = trim($val, ',');
-                            $query->where('name', 'like', '%' . $val . '%');
-                        }
+                        $ids = explode(',', $val);
+                        $query->whereIn('id', $ids);
                         break;
-
                     case 'forma_pagamentos_id':
                         if (is_string($val)) {
                             $val = trim($val, ',');
-                            $query->where('id', $val);
                         }
+
+                        $ids = explode(',', $val);
+                        $query->whereHas('formaPagamento', function ($q) use ($ids) {
+                            $q->whereIn('id', $ids);
+                        });
                         break;
+
+                    case 'name':
+                    case 'nome_operador':
+                        if (is_string($val)) {
+                            $val = trim($val, ',');
+                        }
+
+                        $query->whereHas('pessoa', function ($q) use ($val) {
+                            $q->where('name', 'like', '%' . $val . '%');
+                        });
+
+                        break;
+
 
                     case 'limite':
                         $val = (int) $val;
+
                         if ($val > 0) {
                             $query->limit($val);
                         }
                         break;
 
                     case 'ordem':
-                        $val = trim($val, ',');
-                        $ordens = explode(',', $val);
+                        $ordens = explode(',', trim($val, ','));
+
                         foreach ($ordens as $ord) {
-                            $atual = explode('-', $ord);
-                            $campo = $parse[$atual[0]] ?? null;
-                            if ($campo && isset($atual[1])) {
-                                $query->orderBy($campo, $atual[1]);
-                            }
+                            [$campo, $direcao] = explode('-', $ordem);
+                            $query->orderBy($campo, $direcao);
                         }
+
                         break;
 
                     case 'campos':
                         if (is_array($val) && count($val) > 0) {
-                            // Se quiser montar campos específicos, implementar aqui
-                            // $campos = $this->montaCamposConsulta($query, $val);
+                            //
                         }
                         break;
                 }
             }
-        }
-
-        if ($campos) {
-            $query->select($campos);
-        } else {
-            $query->select('plano_pagamentos.*');
         }
 
         $ordemArr = explode('-', $ordem);

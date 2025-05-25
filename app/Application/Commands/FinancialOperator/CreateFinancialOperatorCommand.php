@@ -269,6 +269,6 @@ class CreateFinancialOperatorCommand
             'personId' => $this->personId ?? '',
         ];
 
-        return array_filter($data, fn($value) => $value !== null && !empty($value));
+        return array_filter($data, fn($value) => $value !== null && trim($value) != '');
     }
 }

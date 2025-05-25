@@ -24,14 +24,14 @@ class StoreFinancialOperatorRequest extends FormRequest
     public function rules()
     {
         return [
-            'vrTarifa' => 'sometimes|float|min:0',
-            'vrDesconto' => 'sometimes|float|min:0',
-            'vrPorcentagemDesconto' => 'sometimes|float|min:0|max:100',
-            'nrRemessaAtual' => 'sometimes|string',
-            'nrNossoNumero' => 'sometimes|string',
-            'qtdDiasProtesto' => 'sometimes|integer|min:1|max:1000',
+            'vrTarifa' => 'sometimes|numeric|min:0',
+            'vrDesconto' => 'sometimes|numeric|min:0',
+            'vrPorcentagemDesconto' => 'sometimes|nullable|numeric|min:0|max:100',
+            'nrRemessaAtual' => 'sometimes|nullable|integer|min:0',
+            'nrNossoNumero' => 'sometimes|nullable|integer|min:0',
+            'qtdDiasProtesto' => 'sometimes|nullable|integer|min:0|max:1000',
             'isAssumeDuplicata' => 'sometimes|in:yes,no',
-            'tpLocalAtualizacaoBoleto' => 'sometimes|string',
+            'tpLocalAtualizacaoBoleto' => 'sometimes|in:empresa,banco',
             'isPadrao' => 'sometimes|in:yes,no',
             'isLiberado' => 'sometimes|in:yes,no',
             'pessoa_id' => 'sometimes|exists:App\Pessoa,id',
