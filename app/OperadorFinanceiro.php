@@ -12,6 +12,7 @@ class OperadorFinanceiro extends Model
 	use SoftDeletes, BelongsToTenant;
 
 	protected $fillable = [
+		'id',
 		'vrTarifa',
 		'vrDesconto',
 		'vrPorcentagemDesconto',
@@ -29,7 +30,6 @@ class OperadorFinanceiro extends Model
 		'active',
 		'tenant_id'
 	];
-
 
 	public function pessoa()
 	{

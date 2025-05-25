@@ -29,18 +29,14 @@ class OrdemServicoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
-    }
+    public function index(Request $request) {}
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, $idAssistente)
-    {
-    }
+    public function create(Request $request, $idAssistente) {}
 
     /**
      * Store a newly created resource in storage.
@@ -98,19 +94,16 @@ class OrdemServicoController extends Controller
             \DB::beginTransaction();
 
             $dados = $request->all();
-
-
             $objOrdemHelper = new OrdemServicoHelper();
             $registro       = $objOrdemHelper->concluir($dados, $id);
-            
+
             if (!$registro) {
                 throw new OrdemServicoException('Não foi possível gerar o financeiro da ordem de serviço. Tente novamente ou entre em contato com o suporte.');
             }
 
             \DB::commit();
-            
-            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
 
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
         } catch (OrdemServicoException $e) {
             \DB::rollback();
             return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
@@ -165,9 +158,7 @@ class OrdemServicoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $id, $idAssistente)
-    {
-    }
+    public function show(Request $request, $id, $idAssistente) {}
 
 
     public function info(Request $request, $id)
@@ -302,7 +293,6 @@ class OrdemServicoController extends Controller
 
             \DB::commit();
             return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
-
         } catch (OrdemServicoException $e) {
             \DB::rollback();
             return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
@@ -385,7 +375,7 @@ class OrdemServicoController extends Controller
             $dados = $request->all();
 
             $id             = $id ?? $dados['id'];
-            
+
 
             $objOrdemHelper = new OrdemServicoHelper();
             $registro = $objOrdemHelper->adicionarItem($dados, $id);
@@ -398,7 +388,6 @@ class OrdemServicoController extends Controller
             \DB::commit();
 
             return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
-
         } catch (OrdemServicoException $e) {
             \DB::rollback();
             return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
@@ -437,7 +426,6 @@ class OrdemServicoController extends Controller
             \DB::commit();
 
             return response()->json(['mensagem' => 'Registro deletado com sucesso', 'class' => 'success'], 200);
-
         } catch (OrdemServicoException $e) {
             \DB::rollback();
             return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
@@ -519,7 +507,7 @@ class OrdemServicoController extends Controller
                 return response()->json([['mensagem' => 'Parâmetro inválido', 'class' => 'warning'], 400]);
             }
 
-           
+
             $objOrdemHelper = new OrdemServicoHelper();
             $registro       = $objOrdemHelper->destroy($id);
 
@@ -530,8 +518,6 @@ class OrdemServicoController extends Controller
             \DB::commit();
 
             return response()->json(['mensagem' => 'Registro deletado com sucesso', 'class' => 'success'], 200);
-
-
         } catch (OrdemServicoException $e) {
             \DB::rollback();
             return response()->json(['mensagem' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 404);
@@ -544,9 +530,7 @@ class OrdemServicoController extends Controller
         }
     }
 
-    public function head(Request $request)
-    {
-    }
+    public function head(Request $request) {}
 
 
     /**
