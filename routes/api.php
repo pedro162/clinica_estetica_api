@@ -270,6 +270,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/operador_financeiro/show/{id}/{id_assistente?}', ['as' => 'operador_financeiro.show', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@show']);
 	Route::get('/operador_financeiro/info/{id}/{id_assistente?}', ['as' => 'operador_financeiro.info', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@show']);
 	Route::post('/operador_financeiro/info/{id}/{id_assistente?}', ['as' => 'operador_financeiro.info', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@show']);
+	Route::get('/operador_financeiro/destroy/{id}/{id_assistente?}', ['as' => 'operador_financeiro.destroy', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@destroy']);
 
 	Route::get('/nfe/index/{id_assistente?}', ['as' => 'nfe.index', 'uses' => 'Admin\NfeController@index']);
 	Route::get('/nfe/create/{id_assistente?}', ['as' => 'nfe.create', 'uses' => 'Admin\NfeController@create']);

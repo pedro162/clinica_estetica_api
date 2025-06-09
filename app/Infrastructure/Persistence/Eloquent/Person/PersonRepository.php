@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Eloquent\FinancialOperator;
+namespace App\Infrastructure\Persistence\Eloquent\Person;
 
-use App\OperadorFinanceiro;
-use App\Domain\FinancialOperator\Entities\FinancialOperator;
-use App\Domain\FinancialOperator\Repositories\FinancialOperatorRepositoryInterface;
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorId;
+use App\Pessoa;
+use App\Domain\Person\Entities\Person;
+use App\Domain\Person\Repositories\PersonRepositoryInterface;
+use App\Domain\Person\ValueObjects\PersonId;
 use Illuminate\Support\Facades\Auth;
 
-class FinancialOperatorRepository implements FinancialOperatorRepositoryInterface
+class PersonRepository implements PersonRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;
 
-    public function findById(FinancialOperatorId $id): ?OperadorFinanceiro
+    public function findById(PersonId $id): ?Pessoa
     {
-        return OperadorFinanceiro::with(['pessoa', 'filial'])->where('active', '=', 'yes')
+        return Pessoa::where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
     }
 
-    public function save(FinancialOperator $parameter): ?OperadorFinanceiro
+    public function save(Person $parameter): ?Pessoa
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
@@ -30,38 +30,32 @@ class FinancialOperatorRepository implements FinancialOperatorRepositoryInterfac
 
         unset($entity->id);
         $entity->save();
-        return $this->findById(new FinancialOperatorId((string)$entity->id));
+        return $this->findById(new PersonId((string)$entity->id));
     }
 
-    public function update(FinancialOperator $parameter): void
+    public function update(Person $parameter): void
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
         $entity->user_update_id = $userId;
 
         $data = $entity->toArray();
+        unset($data['tenant_id']);
 
-        if (isset($data['tenant_id']) && $data['tenant_id'] == 0) {
-            unset($data['tenant_id']);
-        }
-
-        OperadorFinanceiro::findOrFail((string)$parameter->getId())->update($data);
+        Pessoa::findOrFail((string)$parameter->getId())->update($data);
     }
 
-    public function destroy(FinancialOperator $parameter): void
+    public function destroy(Person $parameter): void
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
         $entity->user_update_id = $userId;
 
         $data = $entity->toArray();
-
-        if (isset($data['tenant_id']) && $data['tenant_id'] == 0) {
-            unset($data['tenant_id']);
-        }
+        unset($data['tenant_id']);
 
         $data['active'] = 'no';
-        $paymentPlan = OperadorFinanceiro::find((string)$parameter->getId());
+        $paymentPlan = Pessoa::find((string)$parameter->getId());
 
         $paymentPlan->update($data);
         $paymentPlan->delete();
@@ -74,14 +68,15 @@ class FinancialOperatorRepository implements FinancialOperatorRepositoryInterfac
         }
 
         $ordem = $filter['ordem'];
-        $campos = null;
-        $query = OperadorFinanceiro::query()
-            ->with(['pessoa', 'formaPagamento', 'filial']);
+        $parse = [];
+
+        $query = Pessoa::query();
 
         if (!empty($filter)) {
             foreach ($filter as $key => $val) {
                 switch (trim($key)) {
                     case 'id':
+                    case 'codigo_to_search':
                         if (is_string($val)) {
                             $val = trim($val, ',');
                         }
@@ -89,29 +84,15 @@ class FinancialOperatorRepository implements FinancialOperatorRepositoryInterfac
                         $ids = explode(',', $val);
                         $query->whereIn('id', $ids);
                         break;
-                    case 'forma_pagamentos_id':
-                        if (is_string($val)) {
-                            $val = trim($val, ',');
-                        }
-
-                        $ids = explode(',', $val);
-                        $query->whereHas('formaPagamento', function ($q) use ($ids) {
-                            $q->whereIn('id', $ids);
-                        });
-                        break;
 
                     case 'name':
-                    case 'nome_operador':
+                    case 'description_to_search':
                         if (is_string($val)) {
                             $val = trim($val, ',');
                         }
 
-                        $query->whereHas('pessoa', function ($q) use ($val) {
-                            $q->where('name', 'like', '%' . $val . '%');
-                        });
-
+                        $query->where('name', 'like', '%' . $val . '%');
                         break;
-
 
                     case 'limite':
                         $val = (int) $val;
@@ -119,14 +100,20 @@ class FinancialOperatorRepository implements FinancialOperatorRepositoryInterfac
                         if ($val > 0) {
                             $query->limit($val);
                         }
+
                         break;
 
                     case 'ordem':
-                        $ordens = explode(',', trim($val, ','));
+                        $val = trim($val, ',');
+                        $ordens = explode(',', $val);
 
                         foreach ($ordens as $ord) {
-                            [$campo, $direcao] = explode('-', $ordem);
-                            $query->orderBy($campo, $direcao);
+                            $atual = explode('-', $ord);
+                            $campo = $parse[$atual[0]] ?? null;
+
+                            if ($campo && isset($atual[1])) {
+                                $query->orderBy($campo, $atual[1]);
+                            }
                         }
 
                         break;
