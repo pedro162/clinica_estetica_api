@@ -2,45 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Eloquent\Person;
+namespace App\Infrastructure\Persistence\Eloquent\PersonAddress;
 
-use App\Pessoa;
-use App\Domain\Person\Entities\Person;
-use App\Domain\Person\Repositories\PersonRepositoryInterface;
-use App\Domain\Person\ValueObjects\PersonDocument;
-use App\Domain\Person\ValueObjects\PersonId;
+use App\Domain\PersonAddress\Entities\PersonAddress;
+use App\Domain\PersonAddress\Repositories\PersonAddressRepositoryInterface;
+use App\Domain\PersonAddress\ValueObjects\PersonAddressDocument;
+use App\Domain\PersonAddress\ValueObjects\PersonAddressId;
+use App\Logradouro;
 use Illuminate\Support\Facades\Auth;
 
-class PersonRepository implements PersonRepositoryInterface
+class PersonAddressRepository implements PersonAddressRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;
 
-    public function findById(PersonId $id): ?Pessoa
+    public function findById(PersonAddressId $id): ?Logradouro
     {
-        return Pessoa::with([
-            'logradouro' => function ($query) {
-                $query->where('logradouros.active', 'yes')
-                    ->with(['estado_logradouro' => function ($query) {
-                        $query->where('estadoss.active', 'yes')
-                            ->with(['pais' => function ($query) {
-                                $query->where('pais.active', 'yes');
-                            }]);
-                    }]);
-            },
-            'telefone' => function ($query) {
-                $query->where('telefones.active', 'yes');
-            },
-        ])->where('active', '=', 'yes')
+        return Logradouro::where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
     }
 
-    public function findByDocument(PersonDocument $document): ?Pessoa
-    {
-        return Pessoa::where('active', '=', 'yes')
-            ->where('documento', '=', (string)$document)->first();
-    }
-
-    public function save(Person $parameter): ?Pessoa
+    public function save(PersonAddress $parameter): ?Logradouro
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
@@ -50,10 +31,10 @@ class PersonRepository implements PersonRepositoryInterface
 
         unset($entity->id);
         $entity->save();
-        return $this->findById(new PersonId((string)$entity->id));
+        return $this->findById(new PersonAddressId((string)$entity->id));
     }
 
-    public function update(Person $parameter): void
+    public function update(PersonAddress $parameter): void
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
@@ -62,10 +43,10 @@ class PersonRepository implements PersonRepositoryInterface
         $data = $entity->toArray();
         unset($data['tenant_id']);
 
-        Pessoa::findOrFail((string)$parameter->getId())->update($data);
+        Logradouro::findOrFail((string)$parameter->getId())->update($data);
     }
 
-    public function destroy(Person $parameter): void
+    public function destroy(PersonAddress $parameter): void
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
@@ -75,7 +56,7 @@ class PersonRepository implements PersonRepositoryInterface
         unset($data['tenant_id']);
 
         $data['active'] = 'no';
-        $paymentPlan = Pessoa::find((string)$parameter->getId());
+        $paymentPlan = Logradouro::find((string)$parameter->getId());
 
         $paymentPlan->update($data);
         $paymentPlan->delete();
@@ -90,7 +71,7 @@ class PersonRepository implements PersonRepositoryInterface
         $ordem = $filter['ordem'];
         $parse = [];
 
-        $query = Pessoa::query();
+        $query = Logradouro::query();
 
         if (!empty($filter)) {
             foreach ($filter as $key => $val) {
@@ -108,28 +89,15 @@ class PersonRepository implements PersonRepositoryInterface
                         }, explode(',', $val));
 
                         $query->whereIn('id', $val);
+
                         break;
-                    case 'documento':
-                        $val = (string) $val;
-
-                        if (is_string($val)) {
-                            $val = trim($val, ',');
-                        }
-
-                        $val = array_map(function ($item) {
-                            return trim($item);
-                        }, explode(',', $val));
-
-                        $query->whereIn('documento', $val);
-                        break;
-
-                    case 'name':
+                    case 'logradouro':
                     case 'description_to_search':
                         if (is_string($val)) {
                             $val = trim($val, ',');
                         }
 
-                        $query->where('name', 'like', '%' . $val . '%');
+                        $query->where('logradouro', 'like', '%' . $val . '%');
                         break;
 
                     case 'limite':

@@ -99,22 +99,18 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/categoria/head/{id_assistente?}', ['as' => 'categoria.head', 'uses' => 'Admin\CategoriaController@head']);
 	Route::get('/categoria/destroy/{id}', ['as' => 'categoria.destroy', 'uses' => 'Admin\CategoriaController@destroy']);
 
-	Route::get('/pessoa/index/{id_assistente?}', ['as' => 'pessoa.index', 'uses' => 'Admin\PessoaController@index']);
-	Route::post('/pessoa/index/{id_assistente?}', ['as' => 'pessoa.index', 'uses' => 'Admin\PessoaController@index']);
-	Route::get('/pessoa/json/{id_assistente?}', ['as' => 'pessoa.json', 'uses' => 'Admin\PessoaController@json']);
-	Route::post('/pessoa/json/{id_assistente?}', ['as' => 'pessoa.json', 'uses' => 'Admin\PessoaController@json']);
-	Route::get('/pessoa/create/{id_assistente?}', ['as' => 'pessoa.create', 'uses' => 'Admin\PessoaController@create']);
-	Route::post('/pessoa/create/{id_assistente?}', ['as' => 'pessoa.create', 'uses' => 'Admin\PessoaController@create']);
-	Route::post('/pessoa/store/{id_assistente?}', ['as' => 'pessoa.store', 'uses' => 'Admin\PessoaController@store']);
-	Route::get('/pessoa/edit/{id}/{id_assistente?}', ['as' => 'pessoa.edit', 'uses' => 'Admin\PessoaController@edit']);
-	Route::post('/pessoa/edit/{id}/{id_assistente?}', ['as' => 'pessoa.edit', 'uses' => 'Admin\PessoaController@edit']);
-	Route::put('/pessoa/update/{id}/{id_assistente?}', ['as' => 'pessoa.update', 'uses' => 'Admin\PessoaController@update']);
-	Route::get('/pessoa/show/{id}/{id_assistente?}', ['as' => 'pessoa.show', 'uses' => 'Admin\PessoaController@show']);
-	Route::post('/pessoa/show/{id}/{id_assistente?}', ['as' => 'pessoa.show', 'uses' => 'Admin\PessoaController@show']);
-	Route::get('/pessoa/info/{id}', ['as' => 'pessoa.info', 'uses' => 'Admin\PessoaController@info']);
-	Route::post('/pessoa/info/{id}', ['as' => 'pessoa.info', 'uses' => 'Admin\PessoaController@info']);
-	Route::get('/pessoa/head/{id_assistente?}', ['as' => 'pessoa.head', 'uses' => 'Admin\PessoaController@head']);
-	Route::post('/pessoa/head/{id_assistente?}', ['as' => 'pessoa.head', 'uses' => 'Admin\PessoaController@head']);
+	Route::get('/pessoa/index/{id_assistente?}', ['as' => 'pessoa.index', 'uses' => 'Admin\V1\Person\PersonController@index']);
+	Route::post('/pessoa/index/{id_assistente?}', ['as' => 'pessoa.index', 'uses' => 'Admin\V1\Person\PersonController@index']);
+	Route::get('/pessoa/json/{id_assistente?}', ['as' => 'pessoa.json', 'uses' => 'Admin\V1\Person\PersonController@index']);
+	Route::post('/pessoa/json/{id_assistente?}', ['as' => 'pessoa.json', 'uses' => 'Admin\V1\Person\PersonController@index']);
+	Route::get('/pessoa/create/{id_assistente?}', ['as' => 'pessoa.create', 'uses' => 'Admin\V1\Person\PersonController@create']);
+	Route::post('/pessoa/create/{id_assistente?}', ['as' => 'pessoa.create', 'uses' => 'Admin\V1\Person\PersonController@create']);
+	Route::post('/pessoa/store/{id_assistente?}', ['as' => 'pessoa.store', 'uses' => 'Admin\V1\Person\PersonController@store']);
+	Route::put('/pessoa/update/{id}/{id_assistente?}', ['as' => 'pessoa.update', 'uses' => 'Admin\V1\Person\PersonController@update']);
+	Route::get('/pessoa/show/{id}/{id_assistente?}', ['as' => 'pessoa.show', 'uses' => 'Admin\V1\Person\PersonController@show']);
+	Route::post('/pessoa/show/{id}/{id_assistente?}', ['as' => 'pessoa.show', 'uses' => 'Admin\V1\Person\PersonController@show']);
+	Route::get('/pessoa/info/{id}', ['as' => 'pessoa.info', 'uses' => 'Admin\V1\Person\PersonController@show']);
+	Route::post('/pessoa/info/{id}', ['as' => 'pessoa.info', 'uses' => 'Admin\V1\Person\PersonController@show']);
 	Route::get('/pessoa/destroy/{id}/{id_assistente?}', ['as' => 'pessoa.destroy', 'uses' => 'Admin\PessoaController@destroy']);
 	Route::get('/pessoa/valida/cpf/{cpf}/{id_assistente?}', ['as' => 'pessoa.valida.cpf', 'uses' => 'Admin\PessoaController@validarCpf']);
 	Route::get('/pessoa/plano/adicionar/{id}/{id_assistente?}', ['as' => 'pessoa.plano.adicionar', 'uses' => 'Admin\PessoaController@adicionarPlano']);
@@ -200,15 +196,12 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/grupo/destroy/{id}/{id_assistente?}', ['as' => 'grupo.destroy', 'uses' => 'Admin\GrupoController@destroy']);
 	Route::post('/grupo/destroy/{id}/{id_assistente?}', ['as' => 'grupo.destroy', 'uses' => 'Admin\GrupoController@destroy']);
 
-	Route::get('/logradouro/index/{id_assistente?}', ['as' => 'logradouro.index', 'uses' => 'Admin\LogradouroController@index']);
-	Route::get('/logradouro/create/{id}/{id_assistente?}', ['as' => 'logradouro.create', 'uses' => 'Admin\LogradouroController@create']);
-	Route::post('/logradouro/store/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.store', 'uses' => 'Admin\LogradouroController@store']);
-	Route::get('/logradouro/edit/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.edit', 'uses' => 'Admin\LogradouroController@edit']);
-	Route::put('/logradouro/update/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.update', 'uses' => 'Admin\LogradouroController@update']);
-	Route::get('/logradouro/show/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.show', 'uses' => 'Admin\LogradouroController@show']);
-	Route::get('/logradouro/info/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.info', 'uses' => 'Admin\LogradouroController@info']);
-	Route::get('/logradouro/head/{id_assistente?}', ['as' => 'logradouro.head', 'uses' => 'Admin\LogradouroController@head']);
-	Route::get('/logradouro/destroy/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.destroy', 'uses' => 'Admin\LogradouroController@destroy']);
+	Route::get('/logradouro/index/{id_assistente?}', ['as' => 'logradouro.index', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@index']);
+	Route::post('/logradouro/store/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.store', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@store']);
+	Route::put('/logradouro/update/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.update', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@update']);
+	Route::get('/logradouro/show/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.show', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@show']);
+	Route::get('/logradouro/info/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.info', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@show']);
+	Route::get('/logradouro/destroy/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.destroy', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@destroy']);
 
 	Route::get('/logradouro/load/api', ['as' => 'logradouro.load.api', 'uses' => 'Admin\LogradouroController@loadLogradouroApi']);
 

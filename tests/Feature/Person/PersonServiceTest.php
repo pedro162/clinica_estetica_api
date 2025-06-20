@@ -17,6 +17,8 @@ use Tests\Feature\SetupTest;
 
 class PersonServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected PersonApplicationService $personApplicationService;
     protected Pessoa $payload;
     protected Pessoa $person;
@@ -45,7 +47,7 @@ class PersonServiceTest extends TestCase
     public function testCreateANewPerson()
     {
         $data = $this->payload->toArray();
-        unset($data['id']);
+        unset($data['id'], $data['user_id'], $data['user_update_id']);
         $this->postJson(route('pessoa.store'), $data)
             ->assertJsonStructure([
                 'data',
@@ -57,14 +59,31 @@ class PersonServiceTest extends TestCase
 
     public function testUpdatePerson()
     {
-        $this->person->name = 'Pessoa de teste';
-        $data = $this->person->toArray();
+        $data = $this->payload->toArray();
+        unset($data['id'], $data['user_id'], $data['user_update_id']);
 
         $response = $this->putJson(route('pessoa.update', ['id' => $this->person->id]), $data)
             ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
-        $this->assertDatabaseHas($this->person->getTable(), [
-            'id' => $this->person->id,
-            'name' => $this->person->name
-        ]);
+        $this->assertDatabaseHas(
+            $this->person->getTable(),
+            array_merge($data, ['id' => $this->person->id])
+        );
+    }
+
+    public function testGetAPersonsById()
+    {
+        $data = $this->person->toArray();
+        $response = $this->getJson(route('pessoa.show', ['id' => $this->person->id]));
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonStructure([
+                'data',
+                'success'
+            ])->assertJsonPath('data.id', $this->person->id)
+            ->assertJson([
+                'data' => $data
+            ]);
+
+        $this->assertDatabaseHas($this->person->getTable(), $data);
     }
 }

@@ -8,7 +8,7 @@ use App\Application\Handlers\Person\DestroyPersonHandler;
 use App\Application\Handlers\Person\GetAllPersonHandler;
 use App\Application\Handlers\Person\GetPersonByIdHandler;
 use App\Application\Handlers\Person\UpdatePersonHandler;
-use App\PlanoPagamento;
+use App\Pessoa;
 use App\Domain\Person\Entities\Person;
 use Illuminate\Support\Collection;
 
@@ -36,7 +36,7 @@ class PersonApplicationService implements PersonApplicationServiceInterface
 
     public function store(
         CreatePersonCommand $command
-    ): ?PlanoPagamento {
+    ): ?Pessoa {
         return $this->createPersonHandler->handler($command);
     }
 
@@ -61,7 +61,7 @@ class PersonApplicationService implements PersonApplicationServiceInterface
 
     public function findById(
         CreatePersonCommand $command
-    ): ?PlanoPagamento {
+    ): ?Pessoa {
 
         return $this->getPersonByIdHandler->handler($command);
     }

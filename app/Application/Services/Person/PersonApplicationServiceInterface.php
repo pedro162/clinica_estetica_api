@@ -3,7 +3,7 @@
 namespace App\Application\Services\Person;
 
 use App\Application\Commands\Person\CreatePersonCommand;
-use App\PlanoPagamento;
+use App\Pessoa;
 use App\Domain\Person\Entities\Person;
 use Illuminate\Support\Collection;
 
@@ -11,11 +11,11 @@ interface PersonApplicationServiceInterface
 {
     public function store(
         CreatePersonCommand $command
-    ): ?PlanoPagamento;
+    ): ?Pessoa;
 
     public function findById(
         CreatePersonCommand $command
-    ): ?PlanoPagamento;
+    ): ?Pessoa;
 
     public function update(
         CreatePersonCommand $command

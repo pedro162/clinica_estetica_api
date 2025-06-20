@@ -7,7 +7,6 @@ use Exception;
 
 class CreatePaymentPlanCommand
 {
-
     protected string $id;
     protected string $name;
     protected string $userId;

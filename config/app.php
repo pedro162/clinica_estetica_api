@@ -181,6 +181,8 @@ return [
         App\Providers\PaymentMethod\PaymentMethodServiceProvider::class,
         App\Providers\PaymentPlan\PaymentPlanServiceProvider::class,
         App\Providers\FinancialOperator\FinancialOperatorServiceProvider::class,
+        App\Providers\Person\PersonServiceProvider::class,
+        App\Providers\PersonAddress\PersonAddressServiceProvider::class,
     ],
 
     /*
