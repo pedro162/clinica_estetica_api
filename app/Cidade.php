@@ -5,9 +5,12 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Estado;
 use App\Bairro;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cidade extends Model
 {
+    use SoftDeletes, BelongsToTenant;
     protected $table = "cidades";
     protected $primaryKey = "id";
     protected $fillable = [

@@ -5,11 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use \App\Servico;
 use \App\OrdemServico;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ServicoItem extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
+
     protected $table = "servico_items";
     protected $primaryKey = "id";
     protected $fillable = [

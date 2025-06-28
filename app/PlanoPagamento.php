@@ -4,12 +4,16 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \App\PlanoPagamentoPrazos;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PlanoPagamento extends Model
 {
-	protected $fillable = [
+	use SoftDeletes, BelongsToTenant;
 
+	protected $fillable = [
+		'id',
 		'name',
 		'descricao',
 		'diasmedios',

@@ -3,12 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ParametroCampo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class Parametro extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
+
     protected $primaryKey    = 'id';
     protected $table         = 'parametros';
     protected $fillable     = [

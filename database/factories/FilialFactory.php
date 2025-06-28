@@ -4,6 +4,7 @@
 
 use App\Filial;
 use App\Pessoa;
+use App\SimpleTenantDatabase;
 use App\User;
 use Faker\Generator as Faker;
 
@@ -15,6 +16,7 @@ $factory->define(Filial::class, function (Faker $faker) {
         'nrExercicioImplantacaoContabil' => null,
         'user_id' => User::first() ? User::first()->id : factory(User::class)->create(),
         'user_update_id' => null,
-        'active' => 'yes'
+        'active' => 'yes',
+        'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];
 });

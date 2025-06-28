@@ -23,10 +23,9 @@ class CashierRepository implements CashierRepositoryInterface
     public function save(Cashier $parameter): ?Caixa
     {
         $userId   = Auth::user()->id;
-        $tenantId   = Auth::user()->tenant_id;
         $entity = $parameter->build();
         $entity->user_id = $userId;
-        $entity->tenant_id = $tenantId;
+        $entity->tenant_id = $this->getTenantId();
 
         unset($entity->id);
         $entity->save();
@@ -50,138 +49,87 @@ class CashierRepository implements CashierRepositoryInterface
 
     public function getAll(array $filter = []): ?array
     {
-        if (!isset($filter['ordem'])) {
-            $filter['ordem'] =  'id-desc';
-        }
-
-        $ordem      = $filter['ordem'] ?? 'id-desc';
-        $campos =  null;
+        $ordem = $filter['ordem'] ?? 'id-desc';
         $parse = [
-            'caixa_name' => 'caixas.name',
-            'name_caixa' => 'caixas.name'
-
+            'caixa_name' => 'name',
+            'name_caixa' => 'name',
         ];
 
-        $registro = \DB::table('caixas');
+        $query = Caixa::query();
 
-        if (is_array($filter) && count($filter) > 0) {
-            foreach ($filter as $key => $val) {
+        // Filtros
+        foreach ($filter as $key => $val) {
+            $val = is_string($val) ? trim($val, ',') : $val;
 
-                switch (trim($key)) {
-                    case 'id':
-                        if (is_string($val)) {
+            switch (trim($key)) {
+                case 'id':
+                    $ids = explode(',', $val);
+                    $query->whereIn('id', $ids);
+                    break;
 
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-                            $val = explode(',', $val);
+                case 'name':
+                case 'caixa_name':
+                case 'name_caixa':
+                    $query->where('name', 'like', '%' . $val . '%');
+                    break;
 
-                            $registro->whereIn('caixas.id', $val);
-                        }
-                        break;
-                    case 'name':
-                    case 'caixa_name':
-                    case 'name_caixa':
-                        if (is_string($val)) {
+                case 'caixa_id':
+                    $query->where('id', $val);
+                    break;
 
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
+                case 'limite':
+                    if ((int)$val > 0) {
+                        $query->limit((int)$val);
+                    }
+                    break;
 
-                            $registro->where('caixas.name', 'like', '%' . $val . '%');
-                        }
-                        break;
-                    case 'caixa_id':
-                        if (is_string($val)) {
+                case 'ordem':
+                    $ordens = explode(',', $val);
+                    foreach ($ordens as $ordemItem) {
+                        [$campo, $dir] = explode('-', $ordemItem);
+                        $campo = $parse[$campo] ?? $campo;
+                        $query->orderBy($campo, $dir);
+                    }
+                    break;
 
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('caixas.id', '=', '' . $val . '');
-                        }
-                        break;
-                    case 'limite':
-                        $val = (int) $val;
-                        if (is_integer($val) && $val > 0) {
-
-                            $registro->limit($val);
-                        }
-                        break;
-                    case 'ordem':
-
-                        if ($val[0] == ',') {
-                            $val = substr($val, 1);
-                        }
-                        if ($val[strlen($val) - 1] == ',') {
-                            $val = substr($val, 0, -1);
-                        }
-
-                        $val = explode(',', $val);
-                        for ($i = 0; !($i == count($val)); $i++) {
-                            $atual = explode('-', $val[$i]);
-                            if (array_key_exists(trim($atual[0]), $parse)) {
-
-                                $parsed = $parse[trim($atual[0])];
-
-                                if ($parsed) {
-
-                                    $registro->orderBy($parsed, $atual[1]);
-                                }
-                            }
-                        }
-
-                        break;
-
-                    case 'campos':
-                        if (is_array($val) && count($val) > 0) {
-                            //$campos = $this->montaCamposConsulta($registro, $val);
-
-                        }
-                        break;
-                }
+                case 'campos':
+                    if (is_array($val) && count($val) > 0) {
+                        $query->select($val);
+                    }
+                    break;
             }
         }
 
-        if ($campos) {
-            $registro->select($campos);
-        } else {
-            $registro->select('caixas.*');
+        // Ordenação padrão
+        if (!isset($filter['ordem'])) {
+            [$campo, $dir] = explode('-', $ordem);
+            $query->orderBy($campo, $dir);
         }
 
-        $ordemArr   = explode('-', $ordem);
-        $oremCampo  = $ordemArr[0];
-        $oremTipo  = $ordemArr[1];
+        // Ativo
+        $query->where('active', 'yes');
 
-        $usePaginate = $filter['usePaginate'] ?? 0;
-        $usePaginate = (int) $usePaginate;
-        $nrItensPerPage = isset($filter['nr_itens_per_page']) && $filter['nr_itens_per_page'] > 0 ? $filter['nr_itens_per_page'] : self::ITENS_PER_PAGE;
+        // Paginação
+        $usePaginate = (int)($filter['usePaginate'] ?? 0);
+        $nrItensPerPage = $filter['nr_itens_per_page'] ?? self::ITENS_PER_PAGE;
 
-        if ($usePaginate > 0) {
-            $registro   = $registro->where('caixas.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
-        } else {
-            $registro = $registro->where('caixas.active', '=', 'yes')->get();
+        $result = $usePaginate > 0
+            ? $query->paginate($nrItensPerPage)
+            : $query->get();
+
+        // Retorno formatado para <select> ou autocomplete
+        if (!empty($filter['to_require'])) {
+            $result = $result->map(fn($r) => [
+                'label' => $r->name,
+                'value' => $r->id,
+            ]);
         }
 
-        if (isset($filter['to_require']) && $filter['to_require'] == true) {
-            $dataToRequest = [];
+        return ['registro' => $result];
+    }
 
-            foreach ($registro as $reg) {
-                $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
-            }
-
-            $registro = $dataToRequest;
-        }
-
-        return  ['registro' => $registro];
+    protected function getTenantId(): int
+    {
+        return Auth::user()->tenant_id;
     }
 }

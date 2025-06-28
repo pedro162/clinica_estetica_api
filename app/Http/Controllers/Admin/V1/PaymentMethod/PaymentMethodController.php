@@ -7,6 +7,7 @@ use App\Application\Services\PaymentMethod\PaymentMethodApplicationServiceInterf
 use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\PaymentMethod\CreatePaymentMethodRequest;
+use App\Http\Requests\V1\PaymentMethod\DestroyPaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\GetAllPaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\ShowPaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\StorePaymentMethodRequest;
@@ -90,11 +91,15 @@ class PaymentMethodController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \App\Http\Requests\V1\PaymentMethod\DestroyPaymentMethodRequest $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(DestroyPaymentMethodRequest $request, $id)
     {
-        //
+        $data = $request->validated();
+        $data['id'] = $id;
+        $data = $this->service->destroy(CreatePaymentMethodCommand::build($data));
+        return response()->noContent();
     }
 }

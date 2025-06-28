@@ -2,20 +2,22 @@
 
 namespace App\Domain\PaymentMethod\Entities;
 
-use App\Caixa;
+use App\FormaPagamento;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
-use App\Domain\PaymentMethod\ValueObjects\PaymentMethodAcceptTransfer;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBalance;
-use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBalanceType;
-use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBlockStatus;
+use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBillingCode;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBranchId;
+use App\Domain\PaymentMethod\ValueObjects\PaymentMethodHasCashAdjustment;
+use App\Domain\PaymentMethod\ValueObjects\PaymentMethodHasCommission;
+use App\Domain\PaymentMethod\ValueObjects\PaymentMethodHasCounterAdjustment;
+use App\Domain\PaymentMethod\ValueObjects\PaymentMethodHasCreditLimit;
+use App\Domain\PaymentMethod\ValueObjects\PaymentMethodHasDownPayment;
+use App\Domain\PaymentMethod\ValueObjects\PaymentMethodHasFinancialOperator;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodId;
-use App\Domain\PaymentMethod\ValueObjects\PaymentMethodMaxValue;
-use App\Domain\PaymentMethod\ValueObjects\PaymentMethodMinValue;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodName;
-use App\Domain\PaymentMethod\ValueObjects\PaymentMethodOpenStatus;
+use App\Domain\PaymentMethod\ValueObjects\PaymentMethodPaymentType;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodType;
 
 class PaymentMethod extends BaseEntity
@@ -23,13 +25,14 @@ class PaymentMethod extends BaseEntity
     protected PaymentMethodId $id;
     protected PaymentMethodName $name;
     protected PaymentMethodType $type;
-    protected PaymentMethodMinValue $minValue;
-    protected PaymentMethodMaxValue $maxValue;
-    protected PaymentMethodBalanceType $balanceType;
-    protected PaymentMethodBlockStatus $blockStatus;
-    protected PaymentMethodOpenStatus $openStatus;
-    protected PaymentMethodAcceptTransfer $acceptTransfer;
-    protected PaymentMethodBalance $balance;
+    protected PaymentMethodBillingCode $billingCode;
+    protected PaymentMethodPaymentType $paymentType;
+    protected PaymentMethodHasCommission $hasCommission;
+    protected PaymentMethodHasCreditLimit $hasCreditLimit;
+    protected PaymentMethodHasCounterAdjustment $hasCounterAdjustment;
+    protected PaymentMethodHasCashAdjustment $hasCashAdjustment;
+    protected PaymentMethodHasDownPayment $hasDownPayment;
+    protected PaymentMethodHasFinancialOperator $hasFinancialOperator;
     protected PaymentMethodBranchId $branchId;
 
     public function id(PaymentMethodId $id): PaymentMethod
@@ -41,6 +44,94 @@ class PaymentMethod extends BaseEntity
     public function getId(): ?PaymentMethodId
     {
         return $this->id ?? null;
+    }
+
+    public function billingCode(PaymentMethodBillingCode $billingCode): PaymentMethod
+    {
+        $this->billingCode = $billingCode;
+        return $this;
+    }
+
+    public function getBillingCode(): ?PaymentMethodBillingCode
+    {
+        return $this->billingCode ?? null;
+    }
+
+    public function paymentType(PaymentMethodPaymentType $paymentType): PaymentMethod
+    {
+        $this->paymentType = $paymentType;
+        return $this;
+    }
+
+    public function getPaymentType(): ?PaymentMethodPaymentType
+    {
+        return $this->paymentType ?? null;
+    }
+
+    public function hasCommission(PaymentMethodHasCommission $hasCommission): PaymentMethod
+    {
+        $this->hasCommission = $hasCommission;
+        return $this;
+    }
+
+    public function getHasCommission(): ?PaymentMethodHasCommission
+    {
+        return $this->hasCommission ?? null;
+    }
+
+    public function hasCreditLimit(PaymentMethodHasCreditLimit $hasCreditLimit): PaymentMethod
+    {
+        $this->hasCreditLimit = $hasCreditLimit;
+        return $this;
+    }
+
+    public function getHasCreditLimit(): ?PaymentMethodHasCreditLimit
+    {
+        return $this->hasCreditLimit ?? null;
+    }
+
+    public function hasCounterAdjustment(PaymentMethodHasCounterAdjustment $hasCounterAdjustment): PaymentMethod
+    {
+        $this->hasCounterAdjustment = $hasCounterAdjustment;
+        return $this;
+    }
+
+    public function getHasCounterAdjustment(): ?PaymentMethodHasCounterAdjustment
+    {
+        return $this->hasCounterAdjustment ?? null;
+    }
+
+    public function hasCashAdjustment(PaymentMethodHasCashAdjustment $hasCashAdjustment): PaymentMethod
+    {
+        $this->hasCashAdjustment = $hasCashAdjustment;
+        return $this;
+    }
+
+    public function getHasCashAdjustment(): ?PaymentMethodHasCashAdjustment
+    {
+        return $this->hasCashAdjustment ?? null;
+    }
+
+    public function hasDownPayment(PaymentMethodHasDownPayment $hasDownPayment): PaymentMethod
+    {
+        $this->hasDownPayment = $hasDownPayment;
+        return $this;
+    }
+
+    public function getHasDownPayment(): ?PaymentMethodHasDownPayment
+    {
+        return $this->hasDownPayment ?? null;
+    }
+
+    public function hasFinancialOperator(PaymentMethodHasFinancialOperator $hasFinancialOperator): PaymentMethod
+    {
+        $this->hasFinancialOperator = $hasFinancialOperator;
+        return $this;
+    }
+
+    public function getHasFinancialOperator(): ?PaymentMethodHasFinancialOperator
+    {
+        return $this->hasFinancialOperator ?? null;
     }
 
     public function branchId(PaymentMethodBranchId $branchId): PaymentMethod
@@ -76,144 +167,55 @@ class PaymentMethod extends BaseEntity
         return $this->type ?? null;
     }
 
-    public function minValue(PaymentMethodMinValue $minValue): PaymentMethod
-    {
-        $this->minValue = $minValue;
-        return $this;
-    }
-
-    public function getMinValue(): ?PaymentMethodMinValue
-    {
-        return $this->minValue ?? null;
-    }
-
-    public function maxValue(PaymentMethodMaxValue $maxValue): PaymentMethod
-    {
-        $this->maxValue = $maxValue;
-        return $this;
-    }
-
-    public function getMaxValue(): ?PaymentMethodMaxValue
-    {
-        return $this->maxValue ?? null;
-    }
-
-    public function balanceType(PaymentMethodBalanceType $balanceType): PaymentMethod
-    {
-        $this->balanceType = $balanceType;
-        return $this;
-    }
-
-    public function getBalanceType(): ?PaymentMethodBalanceType
-    {
-        return $this->balanceType ?? null;
-    }
-
-    public function blockStatus(PaymentMethodBlockStatus $blockStatus): PaymentMethod
-    {
-        $this->blockStatus = $blockStatus;
-        return $this;
-    }
-
-    public function getBlockStatus(): ?PaymentMethodBlockStatus
-    {
-        return $this->blockStatus ?? null;
-    }
-
-    public function openStatus(PaymentMethodOpenStatus $openStatus): PaymentMethod
-    {
-        $this->openStatus = $openStatus;
-        return $this;
-    }
-
-    public function getOpenStatus(): ?PaymentMethodBlockStatus
-    {
-        return $this->openStatus ?? null;
-    }
-
-    public function acceptTransfer(PaymentMethodAcceptTransfer $acceptTransfer): PaymentMethod
-    {
-        $this->acceptTransfer = $acceptTransfer;
-        return $this;
-    }
-
-    public function getAcceptTransfer(): ?PaymentMethodAcceptTransfer
-    {
-        return $this->acceptTransfer ?? null;
-    }
-
-    public function balance(PaymentMethodBalance $balance): PaymentMethod
-    {
-        $this->balance = $balance;
-        return $this;
-    }
-
-    public function getBalance(): ?PaymentMethodBalance
-    {
-        return $this->balance ?? null;
-    }
-
     public static function buildEntity(array $data): PaymentMethod
     {
-        $tenantId = $data['tenant_id'] ?? $data['tenantId'] ?? 0;
-        $tenantId = (string) (!empty($tenantId) ? $tenantId : 0);
+        $entity = (new self());
+        $mapping = [
+            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new PaymentMethodId($value))],
+            ['keys' => ['name'], 'callback' => fn($value) => $entity->name(new PaymentMethodName((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['type', 'tipo'], 'callback' => fn($value) => $entity->type(new PaymentMethodType((string)$value))],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn($value) => $entity->branchId(new PaymentMethodBranchId((string)$value))],
+            ['keys' => ['paymentType', 'tpPagamento'], 'callback' => fn($value) => $entity->paymentType(new PaymentMethodPaymentType((string)$value))],
+            ['keys' => ['billingCode', 'cdCobrancaTipo'], 'callback' => fn($value) => $entity->billingCode(new PaymentMethodBillingCode((string)$value))],
+            ['keys' => ['hasCommission', 'hasComissao'], 'callback' => fn($value) => $entity->hasCommission(new PaymentMethodHasCommission((string)$value))],
+            ['keys' => ['hasCreditLimit', 'hasLimiteDeCredito'], 'callback' => fn($value) => $entity->hasCreditLimit(new PaymentMethodHasCreditLimit((string)$value))],
+            ['keys' => ['hasCounterAdjustment', 'hasAcertoBalcao'], 'callback' => fn($value) => $entity->hasCounterAdjustment(new PaymentMethodHasCounterAdjustment((string)$value))],
+            ['keys' => ['hasCashAdjustment', 'hasAcertoCaixa'], 'callback' => fn($value) => $entity->hasCashAdjustment(new PaymentMethodHasCashAdjustment((string)$value))],
+            ['keys' => ['hasDownPayment', 'hasEntrada'], 'callback' => fn($value) => $entity->hasDownPayment(new PaymentMethodHasDownPayment((string)$value))],
+            ['keys' => ['hasFinancialOperator', 'hasOperadorFinanceiro'], 'callback' => fn($value) => $entity->hasFinancialOperator(new PaymentMethodHasFinancialOperator((string)$value))],
+        ];
 
-        $userId = $data['user_id'] ?? $data['userId'] ?? 0;
-        $userId = (string) (!empty($userId) ? $userId : 0);
-
-        $userUpdateId = $data['user_update_id'] ?? $data['userUpdateId'] ?? 0;
-        $userUpdateId = (string) (!empty($userUpdateId) ? $userUpdateId : 0);
-
-        $stateId = $data['state_id'] ?? $data['stateId'] ?? 0;
-        $stateId = (string) (!empty($stateId) ? $stateId : 0);
-
-        $id = $data['city_id'] ?? $data['id'] ?? 0;
-        $id = (string) (!empty($id) ? $id : 0);
-
-        $type = $data['type'] ?? '';
-        $minValue = $data['minValue'] ?? $data['vrMin'] ?? 0;
-        $maxValue = $data['maxValue'] ?? $data['vrMax'] ?? 0;
-        $balanceType = $data['balanceType'] ?? $data['tpSaldo'] ?? '';
-        $balance = $data['balance'] ?? $data['vrSaldo'] ?? 0;
-        $blockStatus = $data['blockStatus'] ?? $data['status_bloqueio'] ?? '';
-        $openStatus = $data['openStatus'] ?? $data['status_abertura'] ?? '';
-        $acceptTransfer = $data['acceptTransfer'] ?? $data['aceita_transferencia'] ?? '';
-
-        $branchId = (string) ($data['branchId'] ?? $data['filial_id'] ?? 0);
-
-        $entity = (new self())
-            ->id(new PaymentMethodId($id))
-            ->name(new PaymentMethodName((string)($data['nmCidade'] ?? $data['name'] ?? '')))
-            ->tenantId(new BaseEntityTenantId($tenantId))
-            ->active(((string)($data['active'] ?? '')))
-            ->userId(new BaseEntityUserId($userId))
-            ->userUpdateId(new BaseEntityUserId($userUpdateId))
-            ->type(new PaymentMethodType((string)$type))
-            ->minValue(new PaymentMethodMinValue((float) $minValue))
-            ->maxValue(new PaymentMethodMaxValue((float) $maxValue))
-            ->balanceType(new PaymentMethodBalanceType((string) $balanceType))
-            ->balance(new PaymentMethodBalance((float) $balance))
-            ->blockStatus(new PaymentMethodBlockStatus((string) $blockStatus))
-            ->openStatus(new PaymentMethodOpenStatus((string) $openStatus))
-            ->acceptTransfer(new PaymentMethodAcceptTransfer((string) $acceptTransfer))
-            ->branchId(new PaymentMethodBranchId($branchId));
+        foreach ($mapping as $map) {
+            foreach ($map['keys'] as $key) {
+                if (isset($data[$key])) {
+                    $map['callback']($data[$key]);
+                    break;
+                }
+            }
+        }
 
         return $entity;
     }
 
-    public function build(): Caixa
+    public function build(): FormaPagamento
     {
         $data = [
             'id' => isset($this->id) ? (string)$this->id : null,
             'filial_id' => isset($this->branchId) ? (string)$this->branchId : null,
             'name' => isset($this->name) ? (string)$this->name : null,
-            'vrMin' => isset($this->minValue) ? (string)$this->minValue : null,
-            'vrMax' => isset($this->maxValue) ? (string)$this->maxValue : null,
-            'vrSaldo' => isset($this->balance) ? (string)$this->balance : null,
-            'tpSaldo' => isset($this->balanceType) ? (string)$this->balanceType : null,
-            'status_abertura' => isset($this->openStatus) ? (string)$this->openStatus : null,
-            'status_bloqueio' => isset($this->blockStatus) ? (string)$this->blockStatus : null,
-            'aceita_transferencia' => isset($this->acceptTransfer) ? (string)$this->acceptTransfer : null,
+            'tipo' => isset($this->type) ? (string)$this->type : null,
+            'cdCobrancaTipo' => isset($this->billingCode) ? (string)$this->billingCode : null,
+            'tpPagamento' => isset($this->paymentType) ? (string)$this->paymentType : null,
+            'hasComissao' => isset($this->hasCommission) ? (string)$this->hasCommission : null,
+            'hasLimiteDeCredito' => isset($this->hasCreditLimit) ? (string)$this->hasCreditLimit : null,
+            'hasAcertoBalcao' => isset($this->hasCounterAdjustment) ? (string)$this->hasCounterAdjustment : null,
+            'hasAcertoCaixa' => isset($this->hasCashAdjustment) ? (string)$this->hasCashAdjustment : null,
+            'hasEntrada' => isset($this->hasDownPayment) ? (string)$this->hasDownPayment : null,
+            'hasOperadorFinanceiro' => isset($this->hasFinancialOperator) ? (string)$this->hasFinancialOperator : null,
             'tenant_id' => isset($this->tenantId) ? (string)$this->tenantId : null,
             'active' => isset($this->active) ? (string)$this->active : null,
             'user_id' => isset($this->userId) ? (string)$this->userId : null,
@@ -224,6 +226,6 @@ class PaymentMethod extends BaseEntity
             return $value !== null;
         });
 
-        return new Caixa($data);
+        return new FormaPagamento($data);
     }
 }

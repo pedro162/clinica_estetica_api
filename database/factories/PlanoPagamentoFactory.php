@@ -3,6 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\PlanoPagamento;
+use App\SimpleTenantDatabase;
 use App\User;
 use Faker\Generator as Faker;
 
@@ -17,11 +18,12 @@ $factory->define(PlanoPagamento::class, function (Faker $faker) {
         'isAtiva' => 'yes',
         'isAberto' => 'yes',
         'user_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
-        'user_update_id' => null,
+        'user_update_id' => User::first() ? User::first()->id : factory(User::class)->create()->id,
         'active' => 'yes',
         'qtdMinParcelas' => 1,
         'qtd_dias_pri_parcela' => 2,
         'qtdDiasIntervaloParcelas' => 5,
         'exibe_balcao' => 'yes',
+        'tenant_id' => SimpleTenantDatabase::first() ? SimpleTenantDatabase::first()->id : factory(SimpleTenantDatabase::class)->create()->id,
     ];
 });

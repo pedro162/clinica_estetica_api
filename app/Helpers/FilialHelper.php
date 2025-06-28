@@ -108,6 +108,7 @@ class FilialHelper extends BaseHelper
                 switch (trim($key)) {
                     case 'id':
                     case 'filial_id':
+                    case 'codigo_to_search':
                         if (is_string($val)) {
 
                             if ($val[0] == ',') {
@@ -225,7 +226,7 @@ class FilialHelper extends BaseHelper
         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
             $dataToRequest = [];
             foreach ($registro as $reg) {
-                $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
+                $dataToRequest[] = ['label' => $reg->name_filial, 'value' => $reg->id];
             }
 
             $registro = $dataToRequest;

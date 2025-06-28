@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Caixa extends Model
 {
+    use SoftDeletes, BelongsToTenant;
+
     protected $table = "caixas";
     protected $primaryKey = "id";
     protected $fillable = [

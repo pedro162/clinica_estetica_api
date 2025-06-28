@@ -28,8 +28,8 @@ class CreatePlanoPagamentosTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
 
             $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
-            
-            $table->enum('active',['yes', 'no'])->default('no');
+
+            $table->enum('active', ['yes', 'no'])->default('no');
             $table->softDeletes();
 
             $table->timestamps();
@@ -49,39 +49,13 @@ class CreatePlanoPagamentosTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
 
             $table->bigInteger('user_update_id')->unsigned()->nullable()->default(null);
-            
-            $table->enum('active',['yes', 'no'])->default('no');
+
+            $table->enum('active', ['yes', 'no'])->default('no');
             $table->softDeletes();
-            
+
             $table->timestamps();
         });
-
     }
-
-    /*
-        `Financeiro_PlanosDePagamentos_id`,
-        `Financeiro_PlanosDePagamentos_nome`,
-        `Financeiro_PlanosDePagamentos_descricao`,
-        `Financeiro_PlanosDePagamentos_diasmedios`,
-        `Financeiro_PlanosDePagamentos_tpVenda`,
-        `Financeiro_PlanosDePagamentos_hasBoleto`,
-        `Financeiro_PlanosDePagamentos_hasPrazoAdicionalCliente`,
-        `Financeiro_PlanosDePagamentos_qtdDiasProrrogacao`,
-        `Financeiro_PlanosDePagamentos_qtdParcelas`,
-        `Financeiro_PlanosDePagamentos_tipo`,
-        `Financeiro_PlanosDePagamentos_nrDia`,
-        `Financeiro_PlanosDePagamentos_vrPcntAcrescimos`,
-        `hasGeraDuplicataManual`,
-        `isAvista`,
-        `isAberto`,
-        `isAtivo`,
-        `idPessoaAutor`,
-        `dtCriacao`,
-        `dtAlteracao`,
-        `Financeiro_PlanosDePagamentos_exigePlanoVenda`,
-        `hasManterDiaPrimeiraParcela`,
-        `idAtividade`
-    */
 
     /**
      * Reverse the migrations.

@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Estado;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class Icms extends Model
 {
+    use SoftDeletes, BelongsToTenant;
+    
     protected $fillable = [
         'id',
         'nmIcms',
