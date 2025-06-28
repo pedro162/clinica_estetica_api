@@ -99,22 +99,18 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/categoria/head/{id_assistente?}', ['as' => 'categoria.head', 'uses' => 'Admin\CategoriaController@head']);
 	Route::get('/categoria/destroy/{id}', ['as' => 'categoria.destroy', 'uses' => 'Admin\CategoriaController@destroy']);
 
-	Route::get('/pessoa/index/{id_assistente?}', ['as' => 'pessoa.index', 'uses' => 'Admin\PessoaController@index']);
-	Route::post('/pessoa/index/{id_assistente?}', ['as' => 'pessoa.index', 'uses' => 'Admin\PessoaController@index']);
-	Route::get('/pessoa/json/{id_assistente?}', ['as' => 'pessoa.json', 'uses' => 'Admin\PessoaController@json']);
-	Route::post('/pessoa/json/{id_assistente?}', ['as' => 'pessoa.json', 'uses' => 'Admin\PessoaController@json']);
-	Route::get('/pessoa/create/{id_assistente?}', ['as' => 'pessoa.create', 'uses' => 'Admin\PessoaController@create']);
-	Route::post('/pessoa/create/{id_assistente?}', ['as' => 'pessoa.create', 'uses' => 'Admin\PessoaController@create']);
-	Route::post('/pessoa/store/{id_assistente?}', ['as' => 'pessoa.store', 'uses' => 'Admin\PessoaController@store']);
-	Route::get('/pessoa/edit/{id}/{id_assistente?}', ['as' => 'pessoa.edit', 'uses' => 'Admin\PessoaController@edit']);
-	Route::post('/pessoa/edit/{id}/{id_assistente?}', ['as' => 'pessoa.edit', 'uses' => 'Admin\PessoaController@edit']);
-	Route::put('/pessoa/update/{id}/{id_assistente?}', ['as' => 'pessoa.update', 'uses' => 'Admin\PessoaController@update']);
-	Route::get('/pessoa/show/{id}/{id_assistente?}', ['as' => 'pessoa.show', 'uses' => 'Admin\PessoaController@show']);
-	Route::post('/pessoa/show/{id}/{id_assistente?}', ['as' => 'pessoa.show', 'uses' => 'Admin\PessoaController@show']);
-	Route::get('/pessoa/info/{id}', ['as' => 'pessoa.info', 'uses' => 'Admin\PessoaController@info']);
-	Route::post('/pessoa/info/{id}', ['as' => 'pessoa.info', 'uses' => 'Admin\PessoaController@info']);
-	Route::get('/pessoa/head/{id_assistente?}', ['as' => 'pessoa.head', 'uses' => 'Admin\PessoaController@head']);
-	Route::post('/pessoa/head/{id_assistente?}', ['as' => 'pessoa.head', 'uses' => 'Admin\PessoaController@head']);
+	Route::get('/pessoa/index/{id_assistente?}', ['as' => 'pessoa.index', 'uses' => 'Admin\V1\Person\PersonController@index']);
+	Route::post('/pessoa/index/{id_assistente?}', ['as' => 'pessoa.index', 'uses' => 'Admin\V1\Person\PersonController@index']);
+	Route::get('/pessoa/json/{id_assistente?}', ['as' => 'pessoa.json', 'uses' => 'Admin\V1\Person\PersonController@index']);
+	Route::post('/pessoa/json/{id_assistente?}', ['as' => 'pessoa.json', 'uses' => 'Admin\V1\Person\PersonController@index']);
+	Route::get('/pessoa/create/{id_assistente?}', ['as' => 'pessoa.create', 'uses' => 'Admin\V1\Person\PersonController@create']);
+	Route::post('/pessoa/create/{id_assistente?}', ['as' => 'pessoa.create', 'uses' => 'Admin\V1\Person\PersonController@create']);
+	Route::post('/pessoa/store/{id_assistente?}', ['as' => 'pessoa.store', 'uses' => 'Admin\V1\Person\PersonController@store']);
+	Route::put('/pessoa/update/{id}/{id_assistente?}', ['as' => 'pessoa.update', 'uses' => 'Admin\V1\Person\PersonController@update']);
+	Route::get('/pessoa/show/{id}/{id_assistente?}', ['as' => 'pessoa.show', 'uses' => 'Admin\V1\Person\PersonController@show']);
+	Route::post('/pessoa/show/{id}/{id_assistente?}', ['as' => 'pessoa.show', 'uses' => 'Admin\V1\Person\PersonController@show']);
+	Route::get('/pessoa/info/{id}', ['as' => 'pessoa.info', 'uses' => 'Admin\V1\Person\PersonController@show']);
+	Route::post('/pessoa/info/{id}', ['as' => 'pessoa.info', 'uses' => 'Admin\V1\Person\PersonController@show']);
 	Route::get('/pessoa/destroy/{id}/{id_assistente?}', ['as' => 'pessoa.destroy', 'uses' => 'Admin\PessoaController@destroy']);
 	Route::get('/pessoa/valida/cpf/{cpf}/{id_assistente?}', ['as' => 'pessoa.valida.cpf', 'uses' => 'Admin\PessoaController@validarCpf']);
 	Route::get('/pessoa/plano/adicionar/{id}/{id_assistente?}', ['as' => 'pessoa.plano.adicionar', 'uses' => 'Admin\PessoaController@adicionarPlano']);
@@ -200,18 +196,14 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/grupo/destroy/{id}/{id_assistente?}', ['as' => 'grupo.destroy', 'uses' => 'Admin\GrupoController@destroy']);
 	Route::post('/grupo/destroy/{id}/{id_assistente?}', ['as' => 'grupo.destroy', 'uses' => 'Admin\GrupoController@destroy']);
 
-	Route::get('/logradouro/index/{id_assistente?}', ['as' => 'logradouro.index', 'uses' => 'Admin\LogradouroController@index']);
-	Route::get('/logradouro/create/{id}/{id_assistente?}', ['as' => 'logradouro.create', 'uses' => 'Admin\LogradouroController@create']);
-	Route::post('/logradouro/store/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.store', 'uses' => 'Admin\LogradouroController@store']);
-	Route::get('/logradouro/edit/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.edit', 'uses' => 'Admin\LogradouroController@edit']);
-	Route::put('/logradouro/update/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.update', 'uses' => 'Admin\LogradouroController@update']);
-	Route::get('/logradouro/show/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.show', 'uses' => 'Admin\LogradouroController@show']);
-	Route::get('/logradouro/info/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.info', 'uses' => 'Admin\LogradouroController@info']);
-	Route::get('/logradouro/head/{id_assistente?}', ['as' => 'logradouro.head', 'uses' => 'Admin\LogradouroController@head']);
-	Route::get('/logradouro/destroy/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.destroy', 'uses' => 'Admin\LogradouroController@destroy']);
+	Route::get('/logradouro/index/{id_assistente?}', ['as' => 'logradouro.index', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@index']);
+	Route::post('/logradouro/store/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.store', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@store']);
+	Route::put('/logradouro/update/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.update', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@update']);
+	Route::get('/logradouro/show/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.show', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@show']);
+	Route::get('/logradouro/info/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.info', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@show']);
+	Route::get('/logradouro/destroy/{id}/{idPessoa}/{id_assistente?}', ['as' => 'logradouro.destroy', 'uses' => 'Admin\V1\PersonAddress\PersonAddressController@destroy']);
 
 	Route::get('/logradouro/load/api', ['as' => 'logradouro.load.api', 'uses' => 'Admin\LogradouroController@loadLogradouroApi']);
-
 
 	Route::get('/contrato/index/{id_assistente?}', ['as' => 'contrato.index', 'uses' => 'Admin\ContratoController@index']);
 	Route::get('/contrato/create/{id}/{id_assistente?}', ['as' => 'contrato.create', 'uses' => 'Admin\ContratoController@create']);
@@ -223,19 +215,15 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/contrato/head/{id_assistente?}', ['as' => 'contrato.head', 'uses' => 'Admin\ContratoController@head']);
 	Route::get('/contrato/destroy/{id}/{idPessoa}/{id_assistente?}', ['as' => 'contrato.destroy', 'uses' => 'Admin\ContratoController@destroy']);
 
-
-	Route::get('/plano_pagamento/index/{id_assistente?}', ['as' => 'plano_pagamento.index', 'uses' => 'Admin\PlanoPagamentoController@index']);
-	Route::post('/plano_pagamento/index/{id_assistente?}', ['as' => 'plano_pagamento.index', 'uses' => 'Admin\PlanoPagamentoController@index']);
-	Route::get('/plano_pagamento/json/{id_assistente?}', ['as' => 'plano_pagamento.json', 'uses' => 'Admin\PlanoPagamentoController@json']);
-	Route::post('/plano_pagamento/json/{id_assistente?}', ['as' => 'plano_pagamento.json', 'uses' => 'Admin\PlanoPagamentoController@json']);
-	Route::get('/plano_pagamento/create/{id_assistente?}', ['as' => 'plano_pagamento.create', 'uses' => 'Admin\PlanoPagamentoController@create']);
-	Route::post('/plano_pagamento/store/{id_assistente?}', ['as' => 'plano_pagamento.store', 'uses' => 'Admin\PlanoPagamentoController@store']);
-	Route::get('/plano_pagamento/edit/{id}/{id_assistente?}', ['as' => 'plano_pagamento.edit', 'uses' => 'Admin\PlanoPagamentoController@edit']);
-	Route::put('/plano_pagamento/update/{id}/{id_assistente?}', ['as' => 'plano_pagamento.update', 'uses' => 'Admin\PlanoPagamentoController@update']);
-	Route::get('/plano_pagamento/show/{id}/{id_assistente?}', ['as' => 'plano_pagamento.show', 'uses' => 'Admin\PlanoPagamentoController@show']);
-	Route::get('/plano_pagamento/info/{id}/{id_assistente?}', ['as' => 'plano_pagamento.info', 'uses' => 'Admin\PlanoPagamentoController@info']);
-	Route::get('/plano_pagamento/head/{id_assistente?}', ['as' => 'plano_pagamento.head', 'uses' => 'Admin\PlanoPagamentoController@head']);
-	Route::get('/plano_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'plano_pagamento.destroy', 'uses' => 'Admin\PlanoPagamentoController@destroy']);
+	Route::get('/plano_pagamento/index/{id_assistente?}', ['as' => 'plano_pagamento.index', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@index']);
+	Route::post('/plano_pagamento/index/{id_assistente?}', ['as' => 'plano_pagamento.index', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@index']);
+	Route::get('/plano_pagamento/json/{id_assistente?}', ['as' => 'plano_pagamento.json', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@index']);
+	Route::post('/plano_pagamento/json/{id_assistente?}', ['as' => 'plano_pagamento.json', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@index']);
+	Route::post('/plano_pagamento/store/{id_assistente?}', ['as' => 'plano_pagamento.store', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@store']);
+	Route::put('/plano_pagamento/update/{id}/{id_assistente?}', ['as' => 'plano_pagamento.update', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@update']);
+	Route::get('/plano_pagamento/show/{id}/{id_assistente?}', ['as' => 'plano_pagamento.show', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@show']);
+	Route::get('/plano_pagamento/info/{id}/{id_assistente?}', ['as' => 'plano_pagamento.info', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@show']);
+	Route::get('/plano_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'plano_pagamento.destroy', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@destroy']);
 
 
 	Route::get('/prazo_pagamento/index/{id_assistente?}', ['as' => 'prazo_pagamento.index', 'uses' => 'Admin\PrazoPagamentoController@index']);
@@ -251,37 +239,31 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/prazo_pagamento/head/{id_assistente?}', ['as' => 'prazo_pagamento.head', 'uses' => 'Admin\PrazoPagamentoController@head']);
 	Route::get('/prazo_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'prazo_pagamento.destroy', 'uses' => 'Admin\PrazoPagamentoController@destroy']);
 
-
-	Route::get('/forma_pagamento/index/{id_assistente?}', ['as' => 'forma_pagamento.index', 'uses' => 'Admin\FormaPagamentoController@index']);
-	Route::post('/forma_pagamento/index/{id_assistente?}', ['as' => 'forma_pagamento.index', 'uses' => 'Admin\FormaPagamentoController@index']);
-	Route::get('/forma_pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.json', 'uses' => 'Admin\FormaPagamentoController@json']);
-	Route::post('/forma_pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.json', 'uses' => 'Admin\FormaPagamentoController@json']);
-	Route::get('/forma_pagamento/create/{id_assistente?}', ['as' => 'forma_pagamento.create', 'uses' => 'Admin\FormaPagamentoController@create']);
-	Route::post('/forma_pagamento/store/{id_assistente?}', ['as' => 'forma_pagamento.store', 'uses' => 'Admin\FormaPagamentoController@store']);
-	Route::get('/forma_pagamento/edit/{id}/{id_assistente?}', ['as' => 'forma_pagamento.edit', 'uses' => 'Admin\FormaPagamentoController@edit']);
-	Route::put('/forma_pagamento/update/{id}/{id_assistente?}', ['as' => 'forma_pagamento.update', 'uses' => 'Admin\FormaPagamentoController@update']);
-	Route::get('/forma_pagamento/show/{id}/{id_assistente?}', ['as' => 'forma_pagamento.show', 'uses' => 'Admin\FormaPagamentoController@show']);
-	Route::get('/forma_pagamento/info/{id}/{id_assistente?}', ['as' => 'forma_pagamento.info', 'uses' => 'Admin\FormaPagamentoController@info']);
-	Route::get('/forma_pagamento/head/{id_assistente?}', ['as' => 'forma_pagamento.head', 'uses' => 'Admin\FormaPagamentoController@head']);
-	Route::get('/forma_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'forma_pagamento.destroy', 'uses' => 'Admin\FormaPagamentoController@destroy']);
-
+	Route::get('/forma_pagamento/index/{id_assistente?}', ['as' => 'forma_pagamento.index', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@index']);
+	Route::post('/forma_pagamento/index/{id_assistente?}', ['as' => 'forma_pagamento.index', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@index']);
+	Route::get('/forma_pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.json', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@index']);
+	Route::post('/forma_pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.json', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@index']);
+	Route::post('/forma_pagamento/store/{id_assistente?}', ['as' => 'forma_pagamento.store', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@store']);
+	Route::get('/forma_pagamento/edit/{id}/{id_assistente?}', ['as' => 'forma_pagamento.edit', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@edit']);
+	Route::put('/forma_pagamento/update/{id}/{id_assistente?}', ['as' => 'forma_pagamento.update', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@update']);
+	Route::get('/forma_pagamento/show/{id}/{id_assistente?}', ['as' => 'forma_pagamento.show', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@show']);
+	Route::get('/forma_pagamento/info/{id}/{id_assistente?}', ['as' => 'forma_pagamento.info', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@show']);
+	Route::get('/forma_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'forma_pagamento.destroy', 'uses' => 'Admin\V1\PaymentMethod\PaymentMethodController@destroy']);
 	Route::post('/forma_pagamento/plano/pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.plano.pagamento.json', 'uses' => 'Admin\FormaPagamentoController@planoPagamentoJson']);
 	Route::post('/forma_pagamento/operador/financeiro/json/{id_assistente?}', ['as' => 'forma_pagamento.operador.financeiro.json', 'uses' => 'Admin\FormaPagamentoController@operadorJson']);
 
 
-	Route::get('/operador_financeiro/index/{id_assistente?}', ['as' => 'operador_financeiro.index', 'uses' => 'Admin\OperadorFinanceiroController@index']);
-	Route::post('/operador_financeiro/index/{id_assistente?}', ['as' => 'operador_financeiro.index', 'uses' => 'Admin\OperadorFinanceiroController@index']);
-	Route::get('/operador_financeiro/json/{id_assistente?}', ['as' => 'operador_financeiro.json', 'uses' => 'Admin\OperadorFinanceiroController@json']);
-	Route::post('/operador_financeiro/json/{id_assistente?}', ['as' => 'operador_financeiro.json', 'uses' => 'Admin\OperadorFinanceiroController@json']);
-	Route::get('/operador_financeiro/create/{id_assistente?}', ['as' => 'operador_financeiro.create', 'uses' => 'Admin\OperadorFinanceiroController@create']);
-	Route::post('/operador_financeiro/store/{id_assistente?}', ['as' => 'operador_financeiro.store', 'uses' => 'Admin\OperadorFinanceiroController@store']);
-	Route::get('/operador_financeiro/edit/{id}/{id_assistente?}', ['as' => 'operador_financeiro.edit', 'uses' => 'Admin\OperadorFinanceiroController@edit']);
-	Route::put('/operador_financeiro/update/{id}/{id_assistente?}', ['as' => 'operador_financeiro.update', 'uses' => 'Admin\OperadorFinanceiroController@update']);
-	Route::get('/operador_financeiro/show/{id}/{id_assistente?}', ['as' => 'operador_financeiro.show', 'uses' => 'Admin\OperadorFinanceiroController@show']);
-	Route::get('/operador_financeiro/info/{id}/{id_assistente?}', ['as' => 'operador_financeiro.info', 'uses' => 'Admin\OperadorFinanceiroController@info']);
-	Route::post('/operador_financeiro/info/{id}/{id_assistente?}', ['as' => 'operador_financeiro.info', 'uses' => 'Admin\OperadorFinanceiroController@info']);
-	Route::get('/operador_financeiro/head/{id_assistente?}', ['as' => 'operador_financeiro.head', 'uses' => 'Admin\OperadorFinanceiroController@head']);
-	Route::get('/operador_financeiro/destroy/{id}/{id_assistente?}', ['as' => 'operador_financeiro.destroy', 'uses' => 'Admin\OperadorFinanceiroController@destroy']);
+	Route::get('/operador_financeiro/index/{id_assistente?}', ['as' => 'operador_financeiro.index', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@index']);
+	Route::post('/operador_financeiro/index/{id_assistente?}', ['as' => 'operador_financeiro.index', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@index']);
+	Route::get('/operador_financeiro/json/{id_assistente?}', ['as' => 'operador_financeiro.json', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@index']);
+	Route::post('/operador_financeiro/json/{id_assistente?}', ['as' => 'operador_financeiro.json', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@index']);
+	Route::post('/operador_financeiro/store/{id_assistente?}', ['as' => 'operador_financeiro.store', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@store']);
+	Route::get('/operador_financeiro/edit/{id}/{id_assistente?}', ['as' => 'operador_financeiro.edit', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@edit']);
+	Route::put('/operador_financeiro/update/{id}/{id_assistente?}', ['as' => 'operador_financeiro.update', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@update']);
+	Route::get('/operador_financeiro/show/{id}/{id_assistente?}', ['as' => 'operador_financeiro.show', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@show']);
+	Route::get('/operador_financeiro/info/{id}/{id_assistente?}', ['as' => 'operador_financeiro.info', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@show']);
+	Route::post('/operador_financeiro/info/{id}/{id_assistente?}', ['as' => 'operador_financeiro.info', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@show']);
+	Route::get('/operador_financeiro/destroy/{id}/{id_assistente?}', ['as' => 'operador_financeiro.destroy', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@destroy']);
 
 	Route::get('/nfe/index/{id_assistente?}', ['as' => 'nfe.index', 'uses' => 'Admin\NfeController@index']);
 	Route::get('/nfe/create/{id_assistente?}', ['as' => 'nfe.create', 'uses' => 'Admin\NfeController@create']);

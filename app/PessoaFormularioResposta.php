@@ -8,10 +8,12 @@ use App\Pessoa;
 use App\Profissional;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\FormularioItem;
+use App\Traits\BelongsToTenant;
 
 class PessoaFormularioResposta extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
+
     protected $table = "pessoa_formulario_respostas";
     protected $primaryKey = "id";
     protected $fillable = [

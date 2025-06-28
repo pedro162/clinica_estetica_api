@@ -18,9 +18,7 @@ class FilialController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function index(Request $request)
-    {
-    }
+    public function index(Request $request) {}
 
     public function json(Request $request)
     {
@@ -32,7 +30,7 @@ class FilialController extends Controller
             $objFilialHelper    = new FilialHelper();
             $registro           = $objFilialHelper->json($consulta);
             if (!$registro) {
-                throw new PaisException('Registro não identifiado');
+                throw new FilialException('Registro não identifiado');
             }
 
             \DB::commit();
@@ -53,9 +51,7 @@ class FilialController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function create(Request $request, $idAssistente)
-    {
-    }
+    public function create(Request $request, $idAssistente) {}
 
 
     /**
@@ -109,9 +105,7 @@ class FilialController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-    }
+    public function show($id) {}
 
 
     public function info(Request $request, $id)
@@ -127,7 +121,7 @@ class FilialController extends Controller
             $registro       = $objFilialHelper->info($dados, $id);
 
             if ($registro == null) {
-                throw new PaisException('Registro não encontrado');
+                throw new FilialException('Registro não encontrado');
             }
             //dd($registro);
 

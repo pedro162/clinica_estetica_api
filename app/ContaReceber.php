@@ -8,9 +8,12 @@ use App\Pessoa;
 use App\FormaPagamento;
 use App\PlanoPagamento;
 use App\OperadorFinanceiro;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ContaReceber extends Model
 {
+	use SoftDeletes,  BelongsToTenant;
 	protected $primaryKey = "id";
 
 	protected $table = "conta_recebers";

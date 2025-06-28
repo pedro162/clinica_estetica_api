@@ -8,10 +8,15 @@ use \App\OperadorFinanceiro;
 use \App\TipoPagamento;
 use \App\PrazoPagamento;
 use \App\Conta;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class FormaPagamento extends Model
 {
+	use SoftDeletes, BelongsToTenant;
+
 	protected $fillable = [
+		'id',
 		'name',
 		'cdCobrancaTipo',
 		'hasComissao',

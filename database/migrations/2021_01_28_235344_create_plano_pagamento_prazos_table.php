@@ -27,9 +27,6 @@ class CreatePlanoPagamentoPrazosTable extends Migration
         });
     }
 
-    //$table->bigInteger('filial_id')->unsigned();
-    //$table->foreign('filial_id')->references('id')->on('filials')->onUpdate('cascade')->onDelete('cascade');
-
     /**
      * Reverse the migrations.
      *

@@ -3,11 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Produto;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class Ncm extends Model
 {
+    use SoftDeletes, BelongsToTenant;
 
     protected $table = 'ncms';
     protected $primaryKey = 'id';

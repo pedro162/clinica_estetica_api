@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ContaReceberItem;
 use App\Caixa;
 use App\User;
-
+use App\Traits\BelongsToTenant;
 
 class FinanceiroMovimentacoe extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
     protected $primaryKey = 'id';
     protected $table = 'financeiro_movimentacoes';
 

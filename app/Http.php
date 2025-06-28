@@ -4,11 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class Http extends Model
 {
-
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
 
     protected $table = 'https';
     protected $primaryKey = "id";

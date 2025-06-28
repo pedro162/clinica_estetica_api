@@ -68,7 +68,7 @@ class OrdemServicoHelper extends BaseHelper
 
             $vrTotalCobrancas += $obranca->vr_final;
 
-            $cobRecebHelper = new ContaReceberHelper();
+            $cobRecebHelper = app(ContaReceberHelper::class);
             $erros = $cobRecebHelper->validaGerCobranca($pessoa->id, $obranca->vr_final, $formaPagamento->id, $planoPagamento->id, $operadorFinanceiro->id ?? 0, []);
 
             if ((is_array($erros) && count($erros) > 0)) {
@@ -95,7 +95,7 @@ class OrdemServicoHelper extends BaseHelper
             $planoPagamento     = $obranca->planoPgto;
             $operadorFinanceiro = $obranca->operadorFinanceiro;
 
-            $cobRecebHelper = new ContaReceberHelper();
+            $cobRecebHelper = app(ContaReceberHelper::class);
 
             $dados = [
                 'filial_id' => $ordemServico->filial_id,
@@ -226,7 +226,6 @@ class OrdemServicoHelper extends BaseHelper
 
     public function concluir(array $dados, int $id = 0)
     {
-
         $id             = $id ?? $dados['id'];
         $callBack       = $dados['callBack'] ?? '';
         $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
@@ -266,7 +265,6 @@ class OrdemServicoHelper extends BaseHelper
         $dadosRequest['vr_acrescimo']     = 0;
         $dadosRequest['user_update_id']         = \Auth::User()->id;
         $registro->update($dadosRequest);
-
 
         if (!$registro) {
             throw new OrdemServicoException('Registro não encontrado');

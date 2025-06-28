@@ -11,11 +11,16 @@ use App\Venda;
 use App\User;
 use App\Filial;
 use App\PessoaFormulario;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pessoa extends Model
 {
+	use SoftDeletes,  BelongsToTenant;
+
 	protected $fillable =
 	[
+		'id',
 		'name',
 		'name_opcional',
 		'documento',

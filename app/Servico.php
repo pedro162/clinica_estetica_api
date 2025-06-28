@@ -2,12 +2,14 @@
 
 namespace App;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Servico extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, BelongsToTenant;
+
 	protected $primaryKey	= 'id';
 	protected $table 		= 'servicos';
 	protected $fillable 	= [

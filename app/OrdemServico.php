@@ -3,17 +3,19 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use \App\CobrancaReceber;
+use \App\ContaReceber;
 use \App\ServicoItem;
 use \App\Pessoa;
 use \App\Rca;
 use \App\Filial;
 use \App\OrdemServicoCobranca;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class OrdemServico extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, BelongsToTenant;
+
 	protected $table = "ordem_servicos";
 	protected $primaryKey = "id";
 	protected $fillable = [
@@ -53,7 +55,7 @@ class OrdemServico extends Model
 
 	public function cobrancaReceber()
 	{
-		return $this->belongsToMany(CobrancaReceber::class);
+		return $this->belongsToMany(ContaReceber::class);
 	}
 
 	public function item()

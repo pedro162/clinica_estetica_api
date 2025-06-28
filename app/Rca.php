@@ -5,11 +5,12 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Pessoa;
 use App\Filial;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Rca extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
 
     protected $table = 'rcas';
     protected $primaryKey = 'id';

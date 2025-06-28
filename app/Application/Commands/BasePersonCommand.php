@@ -11,8 +11,19 @@ abstract class BasePersonCommand
     protected string $personExtraDocument;
     protected string $personSex;
     protected string $personEmail;
+    protected string $personBirthOrFoundation;
+    protected string $personType;
+    protected string $personUserId;
+    protected string $personUserUpdateId;
+    protected string $personTenantId;
+    protected string $personActive;
 
     public function getPersonId(): ?string
+    {
+        return $this->personId;
+    }
+
+    public function getId(): ?string
     {
         return $this->personId;
     }

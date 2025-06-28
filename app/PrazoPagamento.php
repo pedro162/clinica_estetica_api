@@ -4,11 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\FormaPagamento;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PrazoPagamento extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
+
     protected $primaryKey = "id";
     protected $table = "prazo_pagamentos";
     protected $fillable =

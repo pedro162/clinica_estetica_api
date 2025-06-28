@@ -5,9 +5,12 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\ContaReceber;
 use App\FinanceiroMovimentacoe;
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ContaReceberItem extends Model
 {
+	use SoftDeletes, BelongsToTenant;
 	protected $primaryKey = "id";
 
 	protected $table = "conta_receber_items";

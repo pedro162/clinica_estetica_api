@@ -27,7 +27,7 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
         $tenantId   = Auth::user()->tenant_id;
         $entity = $parameter->build();
         $entity->user_id = $userId;
-        $entity->responsavel_id = $entity->responsavel_id > 0 ? $entity->responsavel_id : Auth::user()->pessoa->id;
+        $entity->responsavel_id = isset($entity->responsavel_id) ? $entity->responsavel_id : Auth::user()->pessoa->id;
         $entity->tenant_id = $tenantId;
         unset($entity->id);
 
