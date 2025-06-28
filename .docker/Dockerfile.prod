@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.2-fpm
 
 # Criar usuário não-root (laravel) para rodar PHP/Nginx com menos privilégios
 RUN groupadd -g 1000 laravel && useradd -u 1000 -g laravel -m laravel

@@ -183,6 +183,7 @@ return [
         App\Providers\FinancialOperator\FinancialOperatorServiceProvider::class,
         App\Providers\Person\PersonServiceProvider::class,
         App\Providers\PersonAddress\PersonAddressServiceProvider::class,
+        Laravel\Passport\PassportServiceProvider::class,
     ],
 
     /*
