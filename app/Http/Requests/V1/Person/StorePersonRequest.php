@@ -35,6 +35,48 @@ class StorePersonRequest extends FormRequest
             'active' => 'sometimes|in:yes,no',
             'user_id' => 'sometimes|exists:App\User,id',
             'user_update_id' => 'sometimes|exists:App\User,id',
+            'grupo_id' => 'required|exists:App\Grupo,id',
+            'endereco' => 'sometimes|array',
+            'endereco.logradouro' => 'sometimes|string|min:1|max:255',
+            'endereco.numero' => 'sometimes|string|min:1|max:20',
+            'endereco.complemento' => 'sometimes|string|min:0|max:255',
+            'endereco.bairro' => 'sometimes|string|min:1|max:255',
+            'endereco.cidade' => 'sometimes|string|min:1|max:255',
+            'endereco.estado_id' => 'sometimes|exists:App\Estado,id',
+            'endereco.cep' => 'sometimes|string|min:8|max:9',
+            'endereco.pais_id' => 'sometimes|exists:App\Pais,id',
+            'endereco.importancia' => 'sometimes|in:principal,secundario',
+            'endereco.bloco' => 'sometimes|string|min:0|max:255',
+            'endereco.active' => 'sometimes|in:yes,no',
+            'endereco.tipo' => 'sometimes|in:casa,apartamento',
+            'contatos' => 'sometimes|array',
+            'contatos.*.tipo' => 'sometimes|string|in:telefone,fixo',
+            'contatos.*.valor' => 'sometimes|string|min:1|max:255',
+            'contatos.*.active' => 'sometimes|in:yes,no',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $contatos = $this->input('contatos', []);
+
+        $this->merge([
+            'documento' => preg_replace('/\D/', '', $this->input('documento')),
+            'documento_complementar' => preg_replace('/\D/', '', $this->input('documento_complementar')),
+            'endereco.cep' => preg_replace('/\D/', '', $this->input('endereco.cep')),
+
+        ]);
+
+        foreach ($contatos as $index => $contato) {
+            if (isset($contato['tipo']) && in_array($contato['tipo'], ['telefone', 'fixo'])) {
+                if (isset($contato['valor'])) {
+                    $contatos[$index]['valor'] = preg_replace('/\D/', '', $contato['valor']);
+                }
+            }
+        }
+
+        $this->merge([
+            'contatos' => $contatos,
+        ]);
     }
 }

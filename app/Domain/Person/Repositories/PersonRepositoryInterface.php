@@ -15,4 +15,7 @@ interface PersonRepositoryInterface
     public function getAll(array $filter = []): ?array;
     public function update(Person $parameter): void;
     public function destroy(Person $parameter): void;
+    public function syncGroupe(int $personId, int $groupId, array $data = []): void;
+    public function syncAddress(int $personId, int $addressId, array $data = []): void;
+    public function deletePhones(int $personId, array $data = []): void;
 }

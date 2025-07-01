@@ -2,47 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Eloquent\Person;
+namespace App\Infrastructure\Persistence\Eloquent\Contact;
 
-use App\Pessoa;
-use App\Domain\Person\Entities\Person;
-use App\Domain\Person\Repositories\PersonRepositoryInterface;
-use App\Domain\Person\ValueObjects\PersonDocument;
-use App\Domain\Person\ValueObjects\PersonId;
-use App\Grupo;
-use App\Logradouro;
+use App\Telefone;
+use App\Domain\Contact\Entities\Contact;
+use App\Domain\Contact\Repositories\ContactRepositoryInterface;
+use App\Domain\Contact\ValueObjects\ContactId;
 use Illuminate\Support\Facades\Auth;
 
-class PersonRepository implements PersonRepositoryInterface
+class PhoneRepository implements ContactRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;
 
-    public function findById(PersonId $id): ?Pessoa
+    public function findById(ContactId $id): ?Telefone
     {
-        return Pessoa::with([
-            'logradouro' => function ($query) {
-                $query->where('logradouros.active', 'yes')
-                    ->with(['estado_logradouro' => function ($query) {
-                        $query->where('estadoss.active', 'yes')
-                            ->with(['pais' => function ($query) {
-                                $query->where('pais.active', 'yes');
-                            }]);
-                    }]);
-            },
-            'telefone' => function ($query) {
-                $query->where('telefones.active', 'yes');
-            },
-        ])->where('active', '=', 'yes')
+        return Telefone::where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
     }
 
-    public function findByDocument(PersonDocument $document): ?Pessoa
-    {
-        return Pessoa::where('active', '=', 'yes')
-            ->where('documento', '=', (string)$document)->first();
-    }
-
-    public function save(Person $parameter): ?Pessoa
+    public function save(Contact $parameter): ?Telefone
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
@@ -52,32 +30,47 @@ class PersonRepository implements PersonRepositoryInterface
 
         unset($entity->id);
         $entity->save();
-        return $this->findById(new PersonId((string)$entity->id));
+        return $this->findById(new ContactId((string)$entity->id));
     }
 
-    public function update(Person $parameter): void
+    public function crateSimple(array $data): ?Telefone
+    {
+        $data['user_id'] = $data['user_id'] ?? Auth::user()->id;;
+        $data['tenant_id'] = $this->getTenantId();
+        $data['active'] = $data['active'] ?? 'yes';
+
+        return Telefone::create($data);
+    }
+
+    public function update(Contact $parameter): void
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
         $entity->user_update_id = $userId;
 
         $data = $entity->toArray();
-        unset($data['tenant_id']);
 
-        Pessoa::findOrFail((string)$parameter->getId())->update($data);
+        if (isset($data['tenant_id']) && $data['tenant_id'] == 0) {
+            unset($data['tenant_id']);
+        }
+
+        Telefone::findOrFail((string)$parameter->getId())->update($data);
     }
 
-    public function destroy(Person $parameter): void
+    public function destroy(Contact $parameter): void
     {
         $userId   = Auth::user()->id;
         $entity = $parameter->build();
         $entity->user_update_id = $userId;
 
         $data = $entity->toArray();
-        unset($data['tenant_id']);
+
+        if (isset($data['tenant_id']) && $data['tenant_id'] == 0) {
+            unset($data['tenant_id']);
+        }
 
         $data['active'] = 'no';
-        $paymentPlan = Pessoa::find((string)$parameter->getId());
+        $paymentPlan = Telefone::find((string)$parameter->getId());
 
         $paymentPlan->update($data);
         $paymentPlan->delete();
@@ -90,81 +83,73 @@ class PersonRepository implements PersonRepositoryInterface
         }
 
         $ordem = $filter['ordem'];
-        $parse = [];
+        $campos = null;
 
-        $query = Pessoa::query();
+        $parse = [
+            'plano_name' => 'plano_pagamentos.name',
+        ];
+
+        $query = Telefone::query();
 
         if (!empty($filter)) {
             foreach ($filter as $key => $val) {
                 switch (trim($key)) {
                     case 'id':
-                    case 'codigo_to_search':
-                        $val = (string) $val;
-
                         if (is_string($val)) {
                             $val = trim($val, ',');
+                            $ids = explode(',', $val);
+                            $query->whereIn('id', $ids);
                         }
-
-                        $val = array_map(function ($item) {
-                            return trim($item);
-                        }, explode(',', $val));
-
-                        $query->whereIn('id', $val);
-                        break;
-                    case 'documento':
-                        $val = (string) $val;
-
-                        if (is_string($val)) {
-                            $val = trim($val, ',');
-                        }
-
-                        $val = array_map(function ($item) {
-                            return trim($item);
-                        }, explode(',', $val));
-
-                        $query->whereIn('documento', $val);
                         break;
 
                     case 'name':
-                    case 'description_to_search':
+                    case 'nome_plano':
                         if (is_string($val)) {
                             $val = trim($val, ',');
+                            $query->where('name', 'like', '%' . $val . '%');
                         }
+                        break;
 
-                        $query->where('name', 'like', '%' . $val . '%');
+                    case 'forma_pagamentos_id':
+                        if (is_string($val)) {
+                            $val = trim($val, ',');
+                            $query->where('id', $val);
+                        }
                         break;
 
                     case 'limite':
                         $val = (int) $val;
-
                         if ($val > 0) {
                             $query->limit($val);
                         }
-
                         break;
 
                     case 'ordem':
                         $val = trim($val, ',');
                         $ordens = explode(',', $val);
-
                         foreach ($ordens as $ord) {
                             $atual = explode('-', $ord);
                             $campo = $parse[$atual[0]] ?? null;
-
                             if ($campo && isset($atual[1])) {
                                 $query->orderBy($campo, $atual[1]);
                             }
                         }
-
                         break;
 
                     case 'campos':
                         if (is_array($val) && count($val) > 0) {
-                            //
+                            // Se quiser montar campos específicos, implementar aqui
+                            // $campos = $this->montaCamposConsulta($query, $val);
                         }
                         break;
                 }
             }
+        }
+
+        if ($campos) {
+            $query->select($campos);
+        } else {
+            $query->select('plano_pagamentos.*');
         }
 
         $ordemArr = explode('-', $ordem);
@@ -201,35 +186,5 @@ class PersonRepository implements PersonRepositoryInterface
     protected function getTenantId(): int
     {
         return Auth::user()->tenant_id;
-    }
-
-    public function syncGroupe(int $pessoaId, int $grupoId, array $data = []): void
-    {
-        $person = Pessoa::find($pessoaId);
-        $grupo = Grupo::find($grupoId);
-
-        $person->removerGrupo($person->grupo);
-        $person->adicionarGrupo($grupo, [
-            'active' => 'yes',
-            'user_id' => Auth::user()->id
-        ]);
-    }
-
-    public function syncAddress(int $personId, int $addressId, array $data = []): void
-    {
-        $person = Pessoa::find($personId);
-        $logradouro = Logradouro::find($addressId);
-
-        $person->removerLogradouro($logradouro);
-        $person->adicionarLogradouro($logradouro, [
-            'active' => 'yes',
-            'user_id' => Auth::user()->id
-        ]);
-    }
-
-    public function deletePhones(int $personId, array $data = []): void
-    {
-        $person = Pessoa::find($personId)
-            ->telefone()->delete();
     }
 }
