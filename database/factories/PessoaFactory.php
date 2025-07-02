@@ -2,6 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use App\Grupo;
 use App\Pessoa as Person;
 use App\SimpleTenantDatabase;
 use App\User;
@@ -12,15 +13,15 @@ $factory->define(Person::class, function (Faker $faker) {
     //Factory States
     //Documentation->https://laravel.com/docs/11.x/eloquent-factories#main-content
     $type = $faker->randomElement(['fisica', 'juridica']);
-    $document = $faker->randomElement(['80638838029', '54617916032']);
+    //$document = $faker->randomElement(['80638838029', '54617916032']);
     $extraDocument = $faker->randomElement(['8063883802', '5461791603']);
 
-    //$document = str_pad(mt_rand(0, 99999999999), 11, '0', STR_PAD_LEFT);
+    $document = str_pad(mt_rand(0, 99999999999), 11, '0', STR_PAD_LEFT);
 
     if ($type == 'juridica') {
-        $document = $faker->randomElement(['31356555000102', '90517181000110']);
+        //$document = $faker->randomElement(['31356555000102', '90517181000110']);
         $extraDocument = $faker->randomElement(['3135655500', '9051718100']);
-        //$document = str_pad(mt_rand(0, 99999999999), 14, '0', STR_PAD_LEFT);
+        $document = str_pad(mt_rand(0, 99999999999), 14, '0', STR_PAD_LEFT);
     }
 
     return [

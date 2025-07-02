@@ -50,8 +50,9 @@ class UpdatePersonRequest extends FormRequest
             'endereco.active' => 'sometimes|in:yes,no',
             'endereco.tipo' => 'sometimes|in:casa,apartamento',
             'contatos' => 'sometimes|array',
-            'contatos.*.tipo' => 'sometimes|string|in:telefone,fixo',
+            'contatos.*.tipo' => 'sometimes|string|in:celular,fixo',
             'contatos.*.valor' => 'sometimes|string|min:1|max:255',
+            'contatos.*.numero' => 'sometimes|string|min:1|max:255',
             'contatos.*.importancia' => 'sometimes|in:principal,secundario',
             'contatos.*.active' => 'sometimes|in:yes,no',
         ];
@@ -72,6 +73,10 @@ class UpdatePersonRequest extends FormRequest
             if (isset($contato['tipo']) && in_array($contato['tipo'], ['telefone', 'fixo'])) {
                 if (isset($contato['valor'])) {
                     $contatos[$index]['valor'] = preg_replace('/\D/', '', $contato['valor']);
+                }
+
+                if (isset($contato['numero'])) {
+                    $contatos[$index]['numero'] = preg_replace('/\D/', '', $contato['numero']);
                 }
             }
         }

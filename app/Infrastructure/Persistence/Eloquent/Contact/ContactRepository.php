@@ -10,7 +10,7 @@ use App\Domain\Contact\Repositories\ContactRepositoryInterface;
 use App\Domain\Contact\ValueObjects\ContactId;
 use Illuminate\Support\Facades\Auth;
 
-class PhoneRepository implements ContactRepositoryInterface
+class ContactRepository implements ContactRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;
 

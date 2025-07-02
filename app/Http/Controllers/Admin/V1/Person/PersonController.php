@@ -37,7 +37,7 @@ class PersonController extends Controller
         PersonApplicationServiceInterface $service,
         PersonRepositoryInterface $personRepository,
         PersonAddressRepositoryInterface $addressRepository,
-        ContactRepositoryInterface $phoneRepotitory,
+        ContactRepositoryInterface $phoneRepotitory
     ) {
         $this->service = $service;
         $this->personRepository = $personRepository;
@@ -74,11 +74,11 @@ class PersonController extends Controller
         $addressData = $requestData['endereco'] ?? [];
         $dadosContato = $requestData['contatos'] ?? [];
 
-        $this->personRepository->syncGroupe((int)$data->id, $requestData['groupo_id']);
+        $this->personRepository->syncGroupe((int)$data->id, $requestData['grupo_id']);
         $this->syncEndereco($data, $addressData);
         $this->syncContatos($data, $dadosContato);
 
-        return ApiResponseClass::sendRequest(new PersonResource($data), 'Person Created Successful', 201);
+        return ApiResponseClass::sendRequest(new PersonResource($data->refresh()), 'Person Created Successful', 201);
     }
 
     /**
@@ -125,7 +125,7 @@ class PersonController extends Controller
         $addressData = $requestData['endereco'] ?? [];
         $dadosContato = $requestData['contatos'] ?? [];
 
-        $this->personRepository->syncGroupe((int)$data->id, $requestData['groupo_id']);
+        $this->personRepository->syncGroupe((int)$data->id, $requestData['grupo_id']);
         $this->syncEndereco($data, $addressData);
         $this->syncContatos($data, $dadosContato);
 
@@ -136,7 +136,7 @@ class PersonController extends Controller
     {
         $address = $data->logradouro()->where('importancia', '=', 'principal')->first();
 
-        $enderecoData['id']  = $address?->id ?? null;
+        $enderecoData['id']  = $address ? $address->id : null;
         $enderecoData['active']   =  $enderecoData['active'] ?? 'yes';
         $enderecoData['importancia']  = $enderecoData['importancia'] ?? 'principal';
         $enderecoData['estado']   = $enderecoData['estado'] ?? $addressData['estado_id'] ?? null;
