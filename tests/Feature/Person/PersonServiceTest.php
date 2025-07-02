@@ -41,7 +41,7 @@ class PersonServiceTest extends TestCase
         Passport::actingAs($user, ['*']);
     }
 
-    public function testGetAllPersons()
+    public function testGetAllPeople()
     {
         $response = $this->getJson(route('pessoa.index'))
             ->assertStatus(JsonResponse::HTTP_OK)
@@ -101,7 +101,6 @@ class PersonServiceTest extends TestCase
         $dataResponse = $data;
         unset($dataResponse['contatos'], $dataResponse['telefone'], $dataResponse['endereco'], $dataResponse['logradouro'], $dataResponse['grupo_id']);
         unset($data['id'], $data['user_id'], $data['user_update_id']);
-
 
         $response = $this->putJson(route('pessoa.update', ['id' => $this->person->id]), $data)
             ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
