@@ -184,6 +184,7 @@ return [
         App\Providers\Person\PersonServiceProvider::class,
         App\Providers\PersonAddress\PersonAddressServiceProvider::class,
         App\Providers\Contact\ContactServiceProvider::class,
+        App\Providers\Country\CountryServiceProvider::class,
     ],
 
     /*

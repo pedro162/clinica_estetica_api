@@ -2,9 +2,15 @@
 
 namespace App\Helpers;
 
+use App\Application\Commands\Country\CreateCountryCommand as CountryCreateCountryCommand;
 use App\Application\Commands\CreateCountryCommand;
-use App\Application\Handlers\CreateCountryHandler;
+use App\Application\Handlers\Country\GetAllCountryHandler;
+use App\Application\Handlers\Country\GetCountryByIdHandler;
+use App\Application\Handlers\Country\UpdateCountryHandler;
+use App\Application\Handlers\Country\CreateCountryHandler;
 use App\Application\Services\CountryApplicationService;
+use App\Domain\Country\Repositories\CountryRepositoryInterface;
+use App\Domain\Country\ValueObjects\CountryId;
 use \App\Utilitarios;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -14,64 +20,36 @@ use App\Infrastructure\Persistence\Eloquent\Country\CountryRepository;
 
 class PaisHelper
 {
+    protected CreateCountryHandler $createCountryHandler;
+    protected GetAllCountryHandler $getAllCountryHandler;
+    protected UpdateCountryHandler $updateCountryHandler;
+    protected GetCountryByIdHandler $getCountryByIdHandler;
+
+    public function __construct(
+        CreateCountryHandler $createCountryHandler,
+        GetAllCountryHandler $getAllCountryHandler,
+        UpdateCountryHandler $updateCountryHandler,
+        GetCountryByIdHandler $getCountryByIdHandler
+    ) {
+        $this->createCountryHandler = $createCountryHandler;
+        $this->getAllCountryHandler = $getAllCountryHandler;
+        $this->updateCountryHandler = $updateCountryHandler;
+        $this->getCountryByIdHandler = $getCountryByIdHandler;
+    }
 
     public function info($dados, $id)
     {
-
-        $id = $id ?? $dados['id'];
-        $callBack = $dados['callBack'] ?? '';
-        $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
-
-        if ($id <= 0) {
-            throw new PaisException('Parâmetro ínválido');
-        }
-
-
-
-        $registro = Pais::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
-
-        if ($registro == null) {
-            throw new PaisException('Registro não encontrado');
-        }
-
-        return $registro;
+        $dados['id'] = $id;
+        return $this->getCountryByIdHandler->handler(CountryCreateCountryCommand::build($dados));
     }
-
-
 
     public function store($dados)
     {
-        $dadosRequest = [];
-
-        $dadosRequest['user_id']            = \Auth::User()->id;
-        $dadosRequest['user_update_id']     = \Auth::User()->id;
-        $dadosRequest['nmPais']             = $dados['nmPais'];
-        $dadosRequest['cdPais']             = $dados['cdPais'];
-        $dadosRequest['padrao']             = $dados['padrao'];
-        $dadosRequest['active']             = 'yes';
-        $createCountryCommand = (new CreateCountryCommand())
-            ->id(0)
-            ->name($dados['nmPais'])
-            ->isDefault($dados['padrao'] === 'yes')
-            ->code($dados['cdPais']);
-
-        $objRepo = new CountryRepository();
-        $objCreateHandler = new CreateCountryHandler($objRepo);
-        $objServiceCountry = new CountryApplicationService($objCreateHandler);
-        $result = $objServiceCountry->createCountry($createCountryCommand);
-
-        if (! $result) {
-            throw new PaisException('Erro ao cadastrar');
-        }
-
-        return $result->build();
+        return $this->createCountryHandler->handler(CountryCreateCountryCommand::build($dados));
     }
 
-
-    public function json($consulta)
+    public function json($dados)
     {
-        $repository = new CountryRepository();
-        return $repository->getAll($consulta);
+        return $this->getAllCountryHandler->handler($dados);
     }
 }
