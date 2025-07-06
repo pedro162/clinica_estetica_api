@@ -32,6 +32,9 @@ class PersonRepository implements PersonRepositoryInterface
             'telefone' => function ($query) {
                 $query->where('telefones.active', 'yes');
             },
+            'grupo' => function ($query) {
+                $query->where('grupos.active', 'yes');
+            },
         ])->where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
     }
