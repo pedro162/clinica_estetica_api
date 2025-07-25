@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Admin\V1\Person;
 use App\Application\Commands\Person\CreatePersonCommand;
 use App\Application\Services\Person\PersonApplicationServiceInterface;
 use App\Classes\ApiResponseClass;
+use App\Domain\Contact\Repositories\ContactRepositoryInterface;
 use App\Domain\Person\Repositories\PersonRepositoryInterface;
 use App\Domain\Person\ValueObjects\PersonDocument;
+use App\Domain\PersonAddress\Entities\PersonAddress;
+use App\Domain\PersonAddress\Repositories\PersonAddressRepositoryInterface;
 use App\Exceptions\PessoaException;
 use App\Grupo;
 use App\Http\Controllers\Controller;
@@ -27,13 +30,19 @@ class PersonController extends Controller
 {
     protected PersonApplicationServiceInterface $service;
     protected PersonRepositoryInterface $personRepository;
+    protected PersonAddressRepositoryInterface $addressRepository;
+    protected ContactRepositoryInterface $phoneRepotitory;
 
     public function __construct(
         PersonApplicationServiceInterface $service,
-        PersonRepositoryInterface $personRepository
+        PersonRepositoryInterface $personRepository,
+        PersonAddressRepositoryInterface $addressRepository,
+        ContactRepositoryInterface $phoneRepotitory
     ) {
         $this->service = $service;
         $this->personRepository = $personRepository;
+        $this->addressRepository = $addressRepository;
+        $this->phoneRepotitory = $phoneRepotitory;
     }
 
     /**
@@ -55,56 +64,21 @@ class PersonController extends Controller
      */
     public function store(StorePersonRequest $request)
     {
-        $document = preg_replace("/[^0-9]/", '', trim($request['documento']));
-        $request['documento'] = $document;
+        $requestData = $request->validated();
 
-        if ($this->personRepository->findByDocument(new PersonDocument((string) $document))) {
+        if ($this->personRepository->findByDocument(new PersonDocument((string) $requestData['documento']))) {
             throw new PessoaException('Pessoa já se encontra cadastrada.');
         }
 
-        $data = $this->service->store(CreatePersonCommand::build($request->validated()));
+        $data = $this->service->store(CreatePersonCommand::build($requestData));
+        $addressData = $requestData['endereco'] ?? [];
+        $dadosContato = $requestData['contatos'] ?? [];
 
-        $grupo = Grupo::where('id', '=', $request['groupo_id'])
-            ->where('active', '=', 'yes')->first();
+        $this->personRepository->syncGroupe((int)$data->id, $requestData['grupo_id']);
+        $this->syncEndereco($data, $addressData);
+        $this->syncContatos($data, $dadosContato);
 
-        $addressData = array_intersect_key($request->all(), array_flip([
-            'cep',
-            'logradouro',
-            'numero',
-            'tipo',
-            'complemento',
-            'bairro',
-            'cidade',
-            'estado',
-            'bloco'
-        ]));
-
-        $addressData['user_id']  = $data->user_id;
-        $addressData['active']   = 'yes';
-        $addressData['importancia']   = 'principal';
-
-        $dadosContato = array_intersect_key($request->all(), array_flip([
-            'celular_1',
-            'celular_2',
-            'telefone',
-        ]));
-
-        $logradouro         = Logradouro::create($addressData);
-        $resultLogradouro   = $data->adicionarLogradouro($logradouro, ['active' => 'yes', 'user_id' => $data->user_id]);
-        $resultGrupoPessoa  = $data->adicionarGrupo($grupo, ['active' => 'yes', 'user_id' => $data->user_id, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
-
-        foreach ($dadosContato as $key => $value) {
-            $tipo = $key == 'telefone' ? 'fixo' : 'celular';
-            $contato        = Telefone::create([
-                'numero' => $value ?? '00000000000',
-                'tipo' => $tipo,
-                'user_id' => $data['user_id'],
-                'active' => 'yes',
-                'pessoa_id' => $data['id']
-            ]);
-        }
-
-        return ApiResponseClass::sendRequest(new PersonResource($data), 'Person Created Successful', 201);
+        return ApiResponseClass::sendRequest(new PersonResource($data->refresh()), 'Person Created Successful', 201);
     }
 
     /**
@@ -140,10 +114,55 @@ class PersonController extends Controller
      */
     public function update(UpdatePersonRequest $request, $id)
     {
-        $data = $request->validated();
-        $data['id'] = $id;
-        $data = $this->service->update(CreatePersonCommand::build($data));
+        $requestData = $request->validated();
+        $requestData['id'] = $id;
+
+        $command = CreatePersonCommand::build($requestData);
+
+        $this->service->update($command);
+        $data = $this->service->findById($command);
+
+        $addressData = $requestData['endereco'] ?? [];
+        $dadosContato = $requestData['contatos'] ?? [];
+
+        $this->personRepository->syncGroupe((int)$data->id, $requestData['grupo_id']);
+        $this->syncEndereco($data, $addressData);
+        $this->syncContatos($data, $dadosContato);
+
         return response()->noContent();
+    }
+
+    protected function syncEndereco($data, $enderecoData)
+    {
+        $address = $data->logradouro()->where('importancia', '=', 'principal')->first();
+
+        $enderecoData['id']  = $address ? $address->id : null;
+        $enderecoData['active']   =  $enderecoData['active'] ?? 'yes';
+        $enderecoData['importancia']  = $enderecoData['importancia'] ?? 'principal';
+        $enderecoData['estado']   = $enderecoData['estado'] ?? $addressData['estado_id'] ?? null;
+
+        if ($enderecoData['id'] > 0) {
+            $this->addressRepository->update(PersonAddress::buildEntity($enderecoData));
+        } else {
+            $address = $this->addressRepository->save(PersonAddress::buildEntity($enderecoData));
+        }
+
+        $this->personRepository->syncAddress((int)$data->id, (int) $address->id);
+    }
+
+    protected function syncContatos($data, $contactData)
+    {
+        $this->personRepository->deletePhones((int)$data->id);
+
+        foreach ($contactData as $value) {
+            $value['tipo'] = $value['tipo'] ?? 'telefone';
+            $value['importancia'] = $value['importancia'] ?? 'secundario';
+            $value['numero'] = $value['numero'] ?? $value['valor'] ?? '00000000000';
+            $value['pessoa_id'] = $data->id;
+
+            unset($value['valor']);
+            $this->phoneRepotitory->crateSimple($value);
+        }
     }
 
     /**

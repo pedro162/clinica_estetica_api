@@ -9,6 +9,8 @@ use App\Domain\Person\Entities\Person;
 use App\Domain\Person\Repositories\PersonRepositoryInterface;
 use App\Domain\Person\ValueObjects\PersonDocument;
 use App\Domain\Person\ValueObjects\PersonId;
+use App\Grupo;
+use App\Logradouro;
 use Illuminate\Support\Facades\Auth;
 
 class PersonRepository implements PersonRepositoryInterface
@@ -29,6 +31,9 @@ class PersonRepository implements PersonRepositoryInterface
             },
             'telefone' => function ($query) {
                 $query->where('telefones.active', 'yes');
+            },
+            'grupo' => function ($query) {
+                $query->where('grupos.active', 'yes');
             },
         ])->where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
@@ -199,5 +204,35 @@ class PersonRepository implements PersonRepositoryInterface
     protected function getTenantId(): int
     {
         return Auth::user()->tenant_id;
+    }
+
+    public function syncGroupe(int $pessoaId, int $grupoId, array $data = []): void
+    {
+        $person = Pessoa::find($pessoaId);
+        $grupo = Grupo::find($grupoId);
+
+        $person->removerGrupo($person->grupo);
+        $person->adicionarGrupo($grupo, [
+            'active' => 'yes',
+            'user_id' => Auth::user()->id
+        ]);
+    }
+
+    public function syncAddress(int $personId, int $addressId, array $data = []): void
+    {
+        $person = Pessoa::find($personId);
+        $logradouro = Logradouro::find($addressId);
+
+        $person->removerLogradouro($logradouro);
+        $person->adicionarLogradouro($logradouro, [
+            'active' => 'yes',
+            'user_id' => Auth::user()->id
+        ]);
+    }
+
+    public function deletePhones(int $personId, array $data = []): void
+    {
+        $person = Pessoa::find($personId)
+            ->telefone()->delete();
     }
 }
