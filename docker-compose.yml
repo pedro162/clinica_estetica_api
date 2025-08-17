@@ -52,6 +52,8 @@ services:
     restart: unless-stopped
     ports:
       - "6380:6379"
+    networks:
+      - laravel
 
   queue:
     build:
@@ -64,9 +66,66 @@ services:
     depends_on:
       - db
       - redis
+      - rabbitmq
     volumes:
       - .:/var/www/html
+    networks:
+      - laravel
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - laravel
 
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter
+    container_name: rabbitmq_exporter
+    ports:
+      - "9419:9419"
+    environment:
+      RABBIT_URL: http://admin:admin@rabbitmq:15672
+    depends_on:
+      - rabbitmq
+    networks:
+      - laravel
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./metrics/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"    
+    command:
+       - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - laravel
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - laravel
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./metrics/alertmanager:/etc/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    networks:
+      - laravel
 volumes:
   db_data:
 

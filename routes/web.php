@@ -7,6 +7,7 @@ use App\Jobs\SendNotification;
 use App\Mail\DefaultEmailHandler;
 use App\Parametro;
 use App\ParametroCampo;
+use App\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 
@@ -73,4 +74,28 @@ Route::get('/test/sendemail', function () {
 	$resp = Mail::to('phedroclooney@gmail.com')
 		->send(new DefaultEmailHandler());
 	dd($resp);
+});
+
+Route::get('/metrics', function () {
+	$metrics = [];
+
+	// Exemplo 1: contador de requisições
+	$metrics[] = '# HELP app_requests_total Total de requisições HTTP';
+	$metrics[] = '# TYPE app_requests_total counter';
+	$metrics[] = 'app_requests_total{method="GET",route="/"} 1';
+
+	// Exemplo 2: usuários ativos
+	$userCount = User::count();
+	$metrics[] = '# HELP app_users_total Número total de usuários';
+	$metrics[] = '# TYPE app_users_total gauge';
+	$metrics[] = "app_users_total $userCount";
+
+	// Exemplo 3: tempo atual do servidor
+	$timestamp = time();
+	$metrics[] = '# HELP app_server_time Timestamp atual do servidor';
+	$metrics[] = '# TYPE app_server_time gauge';
+	$metrics[] = "app_server_time $timestamp";
+
+	return response(implode("\n", $metrics), 200)
+		->header('Content-Type', 'text/plain; version=0.0.4');
 });

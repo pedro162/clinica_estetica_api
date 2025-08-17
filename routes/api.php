@@ -117,26 +117,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/pessoa/ultima/ficha/info/{id}', ['as' => 'pessoa.ultima.ficha.info', 'uses' => 'Admin\PessoaController@lastFichaInfo']);
 	Route::post('/pessoa/ultima/ficha/info/{id}', ['as' => 'pessoa.ultima.ficha.info', 'uses' => 'Admin\PessoaController@lastFichaInfo']);
 
-	Route::get('/agenda/evento/json', ['as' => 'agenda.evento.json', 'uses' => 'Admin\EventoAgendaController@json']);
-	Route::post('/agenda/evento/json', ['as' => 'agenda.evento.json', 'uses' => 'Admin\EventoAgendaController@json']);
-	Route::post('/agenda/evento/store', ['as' => 'agenda.evento.store', 'uses' => 'Admin\EventoAgendaController@store']);
-	Route::get('/agenda/evento/edit/{id}', ['as' => 'agenda.evento.edit', 'uses' => 'Admin\EventoAgendaController@edit']);
-	Route::post('/agenda/evento/edit/{id}', ['as' => 'agenda.evento.edit', 'uses' => 'Admin\EventoAgendaController@edit']);
-	Route::put('/agenda/evento/update/{id}', ['as' => 'agenda.evento.update', 'uses' => 'Admin\EventoAgendaController@update']);
-	Route::get('/agenda/evento/info/{id}', ['as' => 'agenda.evento.info', 'uses' => 'Admin\EventoAgendaController@info']);
-	Route::post('/agenda/evento/info/{id}', ['as' => 'agenda.evento.info', 'uses' => 'Admin\EventoAgendaController@info']);
-	Route::get('/agenda/evento/destroy/{id}', ['as' => 'agenda/evento.destroy', 'uses' => 'Admin\EventoAgendaController@destroy']);
-
-	Route::get('/categoria/evento/json', ['as' => 'categoria.evento.json', 'uses' => 'Admin\CategoriaEventoController@json']);
-	Route::post('/categoria/evento/json', ['as' => 'categoria.evento.json', 'uses' => 'Admin\CategoriaEventoController@json']);
-	Route::post('/categoria/evento/store', ['as' => 'categoria.evento.store', 'uses' => 'Admin\CategoriaEventoController@store']);
-	Route::get('/categoria/evento/edit/{id}', ['as' => 'categoria.evento.edit', 'uses' => 'Admin\CategoriaEventoController@edit']);
-	Route::post('/categoria/evento/edit/{id}', ['as' => 'categoria.evento.edit', 'uses' => 'Admin\CategoriaEventoController@edit']);
-	Route::put('/categoria/evento/update/{id}', ['as' => 'categoria.evento.update', 'uses' => 'Admin\CategoriaEventoController@update']);
-	Route::get('/categoria/evento/info/{id}', ['as' => 'categoria.evento.info', 'uses' => 'Admin\CategoriaEventoController@info']);
-	Route::post('/categoria/evento/info/{id}', ['as' => 'categoria.evento.info', 'uses' => 'Admin\CategoriaEventoController@info']);
-	Route::get('/categoria/evento/destroy/{id}', ['as' => 'categoria/evento.destroy', 'uses' => 'Admin\CategoriaEventoController@destroy']);
-
 	Route::get('/especialidade/json', ['as' => 'especialidade.json', 'uses' => 'Admin\EspecialidadeController@json']);
 	Route::post('/especialidade/json', ['as' => 'especialidade.json', 'uses' => 'Admin\EspecialidadeController@json']);
 	Route::post('/especialidade/store', ['as' => 'especialidade.store', 'uses' => 'Admin\EspecialidadeController@store']);

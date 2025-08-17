@@ -69,7 +69,7 @@ jobs:
             --container-definitions "$UPDATED_DEFINITIONS" \
             --execution-role-arn $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.executionRoleArn" --output text) \
             --network-mode $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.networkMode" --output text) \
-            --requires-compatibilities $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.requiresCompatibilities" --output json) \
+            --requires-compatibilities $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.requiresCompatibilities[]" --output text) \
             --cpu $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.cpu" --output text) \
             --memory $(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.memory" --output text) \
             --query "taskDefinition.revision" --output text)

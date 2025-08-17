@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.2-fpm
 
 # Criar um usuário não-root
 RUN groupadd -g 1000 laravel && useradd -u 1000 -g laravel -m laravel

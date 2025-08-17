@@ -185,6 +185,7 @@ return [
         App\Providers\PersonAddress\PersonAddressServiceProvider::class,
         App\Providers\Contact\ContactServiceProvider::class,
         App\Providers\Country\CountryServiceProvider::class,
+        Laravel\Passport\PassportServiceProvider::class,
     ],
 
     /*

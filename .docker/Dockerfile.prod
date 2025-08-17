@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.2-fpm
 
 # Criar usuário não-root (laravel) para rodar PHP/Nginx com menos privilégios
 RUN groupadd -g 1000 laravel && useradd -u 1000 -g laravel -m laravel
@@ -34,7 +34,10 @@ WORKDIR /var/www
 # Copiar aplicação Laravel
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+#RUN composer install --no-dev --optimize-autoloader
+
+# Instala dependências PHP
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 # Copiar configurações do nginx e supervisor
 COPY .docker/nginx/default-prod.conf /etc/nginx/sites-available/default
@@ -63,9 +66,10 @@ RUN mkdir -p \
     /var/www/storage \
     /var/www/bootstrap/cache
 
-COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+
+COPY .docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["sh", "/usr/local/bin/entrypoint.sh"]
 
 # Expor porta do Nginx
 EXPOSE 80
