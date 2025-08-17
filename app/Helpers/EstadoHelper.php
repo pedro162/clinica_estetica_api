@@ -221,7 +221,7 @@ class EstadoHelper
 
             foreach ($registro as $reg) {
                 $dataToRequest[] = [
-                    'label' => $reg->nmPais,
+                    'label' => $reg->nmEStado,
                     'value' => $reg->id,
                 ];
             }
