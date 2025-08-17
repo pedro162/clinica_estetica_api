@@ -1,5 +1,6 @@
 <?php
 
+use App\SimpleTenantDatabase;
 use Illuminate\Database\Seeder;
 
 class PessoasSeeds extends Seeder
@@ -11,12 +12,25 @@ class PessoasSeeds extends Seeder
      */
     public function run()
     {
-        \App\Pessoa::create(
-            ['name'=>'pedro', 'name_opcional'=>'aguiar',
-             'documento'=>'61224450370',
-             'email'=>'pedroclooney@gmail.com', 'sexo'=>'m',
-             'tipo'=>'fisica', 'user_id'=>\App\User::first()->id, 'active'=>'yes']
-            );
+        [$model, $created] =  \App\Pessoa::updateOrCreate(
+            ['name' => 'admin'],
+            [
+                'name' => 'admin',
+                'name_opcional' => 'admin',
+                'documento' => '61224450370',
+                'email' => 'admin@gmail.com',
+                'sexo' => 'm',
+                'tipo' => 'fisica',
+                'user_id' => \App\User::first()->id,
+                'active' => 'yes',
+                'tenant_id' => SimpleTenantDatabase::first()->id
+            ]
+        );
 
+        if ($created) {
+            \Illuminate\Support\Facades\Log::info("Pessoa criada.");
+        } else {
+            \Illuminate\Support\Facades\Log::info("Pessoa atualizada.");
+        }
     }
 }

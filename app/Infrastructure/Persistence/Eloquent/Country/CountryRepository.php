@@ -18,126 +18,108 @@ class CountryRepository implements CountryRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;
 
-    public function findById(CountryId $id): ?Country
+    public function findById(CountryId $id): ?Pais
     {
-        $data = Pais::where('active', '=', 'yes')
+        return Pais::where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
-        return (new Country())
-            ->id(new CountryId($data['id']))
-            ->name(new CountryName($data['name']))
-            ->code(new CountryCode($data['cdPais']))
-            ->isDefault(new CountryIsDefault($data['padrao'] == 'yes' ? true : false))
-            ->tenantId(new CountryTenantId($data['tenant_id']));
     }
 
-    public function save(Country $parameter): ?Country
+    public function save(Country $parameter): ?Pais
     {
         $userId   = Auth::user()->id;
         $tenantId   = Auth::user()->tenant_id;
         $country = $parameter->build();
         $country->user_id = $userId;
         $country->tenant_id = $tenantId;
+
         $country->save();
-        return $this->findById(new CountryId($country->id));
+        return $this->findById(new CountryId((string)$country->id));
     }
 
-    public function getAll(array $consulta)
+    public function update(Country $parameter): void
     {
-        if (!isset($consulta['ordem'])) {
-            $consulta['ordem'] =  'id-desc';
+        $userId   = Auth::user()->id;
+        $entity = $parameter->build();
+        $entity->user_update_id = $userId;
+
+        $data = $entity->toArray();
+        unset($data['tenant_id']);
+
+        Pais::findOrFail((string)$parameter->getId())->update($data);
+    }
+
+    public function destroy(Country $parameter): void
+    {
+        $userId   = Auth::user()->id;
+        $entity = $parameter->build();
+        $entity->user_update_id = $userId;
+
+        $data = $entity->toArray();
+        unset($data['tenant_id']);
+
+        $data['active'] = 'no';
+        $paymentPlan = Pais::find((string)$parameter->getId());
+
+        $paymentPlan->update($data);
+        $paymentPlan->delete();
+    }
+
+    public function getAll(array $filter): ?array
+    {
+        if (!isset($filter['ordem'])) {
+            $filter['ordem'] = 'id-desc';
         }
 
-        $campos =  null;
-        $parse = [
-            'name_Pais' => 'pais.dsIpi',
-            'nmPais' => 'pais.nmPais',
-            'name' => 'pais.nmPais',
-            'id' => 'pais.id',
-        ];
+        $ordem = $filter['ordem'];
+        $parse = [];
 
-        $ordem = $consulta['ordem'] ?? 'id-desc';
+        $query = Pais::query();
 
-        if (!(isset($consulta['ordem']) && strlen($consulta['ordem']) > 0)) {
-
-            $ordem = $consulta['ordem'] = 'id-desc';
-        }
-
-        $registro = \DB::table('pais');
-
-        if (is_array($consulta) && count($consulta) > 0) {
-            foreach ($consulta as $key => $val) {
+        if (is_array($filter) && count($filter) > 0) {
+            foreach ($filter as $key => $val) {
 
                 switch (trim($key)) {
                     case 'id':
+                    case 'codigo_to_search':
+                        $val = (string) $val;
+
                         if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-                            $val = explode(',', $val);
-
-                            $registro->whereIn('pais.id', $val);
+                            $val = trim($val, ',');
                         }
-                        break;
-                    case 'tipo':
-                        if (is_string($val)) {
 
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-                            $val = explode(',', $val);
+                        $val = array_map(function ($item) {
+                            return trim($item);
+                        }, explode(',', $val));
 
-                            $registro->whereIn('pais.tpCalculo', $val);
-                        }
+                        $query->whereIn('id', $val);
                         break;
                     case 'nmPais':
                     case 'name':
                         if (is_string($val)) {
-
-                            if ($val[0] == ',') {
-                                $val = substr($val, 1);
-                            }
-                            if ($val[strlen($val) - 1] == ',') {
-                                $val = substr($val, 0, -1);
-                            }
-
-                            $registro->where('pais.nmPais', 'like', '%' . $val . '%');
+                            $val = trim($val, ',');
                         }
+
+                        $query->where('nmPais', 'like', '%' . $val . '%');
+
                         break;
                     case 'limite':
                         $val = (int) $val;
                         if (is_integer($val) && $val > 0) {
-
-                            $registro->limit($val);
+                            $query->limit($val);
                         }
+
                         break;
                     case 'ordem':
 
+                        $val = trim($val, ',');
+                        $ordens = explode(',', $val);
 
-                        if ($val[0] == ',') {
-                            $val = substr($val, 1);
-                        }
-                        if ($val[strlen($val) - 1] == ',') {
-                            $val = substr($val, 0, -1);
-                        }
+                        foreach ($ordens as $ord) {
+                            $atual = explode('-', $ord);
+                            $campo = $parse[$atual[0]] ?? null;
 
-                        $val = explode(',', $val);
-                        for ($i = 0; !($i == count($val)); $i++) {
-                            $atual = explode('-', $val[$i]);
-                            if (array_key_exists(trim($atual[0]), $parse)) {
-
-                                $parsed = $parse[trim($atual[0])];
-
-                                if ($parsed) {
-
-                                    $registro->orderBy($parsed, $atual[1]);
-                                }
+                            if ($campo && isset($atual[1])) {
+                                $query->orderBy($campo, $atual[1]);
                             }
                         }
 
@@ -145,7 +127,7 @@ class CountryRepository implements CountryRepositoryInterface
 
                     case 'campos':
                         if (is_array($val) && count($val) > 0) {
-                            //$campos = $this->montaCamposConsulta($registro, $val);
+                            //$campos = $this->montaCamposConsulta($query, $val);
 
                         }
                         break;
@@ -153,36 +135,34 @@ class CountryRepository implements CountryRepositoryInterface
             }
         }
 
-        if ($campos) {
-            $registro->select($campos);
-        } else {
-            $registro->select('pais.*');
-        }
+        $ordemArr = explode('-', $ordem);
+        $oremCampo = $ordemArr[0] ?? 'id';
+        $oremTipo = $ordemArr[1] ?? 'desc';
 
-        $ordemArr   = explode('-', $ordem);
-        $oremCampo  = $ordemArr[0];
-        $oremTipo  = $ordemArr[1];
+        $usePaginate = (int) ($filter['usePaginate'] ?? 0);
+        $nrItensPerPage = isset($filter['nr_itens_per_page']) && $filter['nr_itens_per_page'] > 0
+            ? $filter['nr_itens_per_page']
+            : self::ITENS_PER_PAGE;
 
-        $usePaginate = $consulta['usePaginate'] ?? 0;
-        $usePaginate = (int) $usePaginate;
-        $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::ITENS_PER_PAGE;
+        $query->where('active', 'yes')->orderBy($oremCampo, $oremTipo);
 
-        if ($usePaginate > 0) {
-            $registro   = $registro->where('pais.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
-        } else {
-            $registro = $registro->where('pais.active', '=', 'yes')->get();
-        }
+        $registro = $usePaginate
+            ? $query->paginate($nrItensPerPage)
+            : $query->get();
 
-        if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
+        if (!empty($filter['to_require'])) {
             $dataToRequest = [];
 
             foreach ($registro as $reg) {
-                $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
+                $dataToRequest[] = [
+                    'label' => $reg->nmPais,
+                    'value' => $reg->id,
+                ];
             }
 
             $registro = $dataToRequest;
         }
 
-        return  $registro;
+        return ['registro' => $registro];
     }
 }

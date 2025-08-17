@@ -329,24 +329,18 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/icms/destroy/{id}/{id_assistente?}', ['as' => 'icms.destroy', 'uses' => 'Admin\IcmsController@destroy']);
 	Route::post('/icms/destroy/{id}/{id_assistente?}', ['as' => 'icms.destroy', 'uses' => 'Admin\IcmsController@destroy']);
 
-	Route::get('/pais/index/{id_assistente?}', ['as' => 'pais.index', 'uses' => 'Admin\PaisController@index']);
-	Route::post('/pais/index/{id_assistente?}', ['as' => 'pais.index', 'uses' => 'Admin\PaisController@index']);
-	Route::get('/pais/json/{id_assistente?}', ['as' => 'pais.json', 'uses' => 'Admin\PaisController@json']);
-	Route::post('/pais/json/{id_assistente?}', ['as' => 'pais.json', 'uses' => 'Admin\PaisController@json']);
-	Route::get('/pais/create/{id_assistente?}', ['as' => 'pais.create', 'uses' => 'Admin\PaisController@create']);
-	Route::post('/pais/create/{id_assistente?}', ['as' => 'pais.create', 'uses' => 'Admin\PaisController@create']);
-	Route::post('/pais/store/{id_assistente?}', ['as' => 'pais.store', 'uses' => 'Admin\PaisController@store']);
-	Route::get('/pais/edit/{id}/{id_assistente?}', ['as' => 'pais.edit', 'uses' => 'Admin\PaisController@edit']);
-	Route::post('/pais/edit/{id}/{id_assistente?}', ['as' => 'pais.edit', 'uses' => 'Admin\PaisController@edit']);
-	Route::put('/pais/update/{id}/{id_assistente?}', ['as' => 'pais.update', 'uses' => 'Admin\PaisController@update']);
-	Route::get('/pais/show/{id}/{id_assistente?}', ['as' => 'pais.show', 'uses' => 'Admin\PaisController@show']);
-	Route::post('/pais/show/{id}/{id_assistente?}', ['as' => 'pais.show', 'uses' => 'Admin\PaisController@show']);
-	Route::get('/pais/info/{id}/{id_assistente?}', ['as' => 'pais.info', 'uses' => 'Admin\PaisController@info']);
-	Route::post('/pais/info/{id}/{id_assistente?}', ['as' => 'pais.info', 'uses' => 'Admin\PaisController@info']);
-	Route::get('/pais/head/{id_assistente?}', ['as' => 'pais.head', 'uses' => 'Admin\PaisController@head']);
-	Route::post('/pais/head/{id_assistente?}', ['as' => 'pais.head', 'uses' => 'Admin\PaisController@head']);
-	Route::get('/pais/destroy/{id}/{id_assistente?}', ['as' => 'pais.destroy', 'uses' => 'Admin\PaisController@destroy']);
-	Route::post('/pais/destroy/{id}/{id_assistente?}', ['as' => 'pais.destroy', 'uses' => 'Admin\PaisController@destroy']);
+	Route::get('/pais/index/{id_assistente?}', ['as' => 'pais.index', 'uses' => 'Admin\V1\Country\CountryController@index']);
+	Route::post('/pais/index/{id_assistente?}', ['as' => 'pais.index', 'uses' => 'Admin\V1\Country\CountryController@index']);
+	Route::get('/pais/json/{id_assistente?}', ['as' => 'pais.json', 'uses' => 'Admin\V1\Country\CountryController@index']);
+	Route::post('/pais/json/{id_assistente?}', ['as' => 'pais.json', 'uses' => 'Admin\V1\Country\CountryController@index']);
+	Route::post('/pais/store/{id_assistente?}', ['as' => 'pais.store', 'uses' => 'Admin\V1\Country\CountryController@store']);
+	Route::put('/pais/update/{id}/{id_assistente?}', ['as' => 'pais.update', 'uses' => 'Admin\V1\Country\CountryController@update']);
+	Route::get('/pais/show/{id}/{id_assistente?}', ['as' => 'pais.show', 'uses' => 'Admin\V1\Country\CountryController@show']);
+	Route::post('/pais/show/{id}/{id_assistente?}', ['as' => 'pais.show', 'uses' => 'Admin\V1\Country\CountryController@show']);
+	Route::get('/pais/info/{id}/{id_assistente?}', ['as' => 'pais.info', 'uses' => 'Admin\V1\Country\CountryController@show']);
+	Route::post('/pais/info/{id}/{id_assistente?}', ['as' => 'pais.info', 'uses' => 'Admin\V1\Country\CountryController@show']);
+	Route::get('/pais/destroy/{id}/{id_assistente?}', ['as' => 'pais.destroy', 'uses' => 'Admin\V1\Country\CountryController@destroy']);
+	Route::post('/pais/destroy/{id}/{id_assistente?}', ['as' => 'pais.destroy', 'uses' => 'Admin\V1\Country\CountryController@destroy']);
 
 	Route::get('/estado/index/{id_assistente?}', ['as' => 'estado.index', 'uses' => 'Admin\EstadoController@index']);
 	Route::post('/estado/index/{id_assistente?}', ['as' => 'estado.index', 'uses' => 'Admin\EstadoController@index']);

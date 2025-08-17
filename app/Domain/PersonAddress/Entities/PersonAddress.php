@@ -172,6 +172,7 @@ class PersonAddress extends BaseEntity
             ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
             ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
             ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['importancia', 'importance'], 'callback' => fn($value) => $entity->importance(new PersonAddressImportance((string)$value))],
         ];
 
         foreach ($mapping as $map) {
