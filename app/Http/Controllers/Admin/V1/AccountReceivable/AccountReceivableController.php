@@ -14,6 +14,7 @@ use App\Http\Requests\V1\AccountReceivable\StoreAccountReceivableRequest;
 use App\Http\Requests\V1\AccountReceivable\UpdateAccountReceivableRequest;
 use App\Http\Resources\V1\AccountReceivable\AccountReceivableCollection;
 use App\Http\Resources\V1\AccountReceivable\AccountReceivableResource;
+use App\Http\Resources\V1\AccountReceivable\GetAllAccountReceivableResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -35,7 +36,7 @@ class AccountReceivableController extends Controller
     public function index(GetAllAccountReceivableRequest $request): JsonResponse
     {
         $data = $this->service->getAll($request->all());
-        return ApiResponseClass::sendRequest(new AccountReceivableCollection($data), '', JsonResponse::HTTP_OK);
+        return ApiResponseClass::sendRequest(new GetAllAccountReceivableResource($data), '', JsonResponse::HTTP_OK);
     }
 
     /**
@@ -47,7 +48,7 @@ class AccountReceivableController extends Controller
     public function store(StoreAccountReceivableRequest $request): JsonResponse
     {
         $data = $this->service->store(CreateAccountReceivableCommand::build($request->validated()));
-        return ApiResponseClass::sendRequest(new AccountReceivableCollection($data), 'Account receivable created successful', JsonResponse::HTTP_CREATED);
+        return ApiResponseClass::sendRequest(new GetAllAccountReceivableResource($data), 'Account receivable created successful', JsonResponse::HTTP_CREATED);
     }
 
     /**

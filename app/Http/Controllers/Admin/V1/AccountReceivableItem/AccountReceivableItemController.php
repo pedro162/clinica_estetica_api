@@ -11,7 +11,7 @@ use App\Http\Requests\V1\AccountReceivableItem\GetAllAccountReceivableItemReques
 use App\Http\Requests\V1\AccountReceivableItem\ShowAccountReceivableItemRequest;
 use App\Http\Requests\V1\AccountReceivableItem\StoreAccountReceivableItemRequest;
 use App\Http\Requests\V1\AccountReceivableItem\UpdateAccountReceivableItemRequest;
-use App\Http\Resources\V1\AccountReceivableItem\AccountReceivableItemCollection;
+use App\Http\Resources\V1\AccountReceivableItem\GetAllAccountReceivableItemResource;
 use App\Http\Resources\V1\AccountReceivableItem\AccountReceivableItemResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,7 +33,7 @@ class AccountReceivableItemController extends Controller
     public function index(GetAllAccountReceivableItemRequest $request)
     {
         $data = $this->service->getAll($request->all());
-        return ApiResponseClass::sendRequest(new AccountReceivableItemCollection($data), '', 200);
+        return ApiResponseClass::sendRequest(new GetAllAccountReceivableItemResource($data), '', 200);
     }
 
     /**

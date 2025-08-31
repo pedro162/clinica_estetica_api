@@ -6,6 +6,7 @@ use App\FormaPagamento;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
+use App\Domain\FinancialOperator\Entities\FinancialOperator;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBalance;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBillingCode;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBranchId;
@@ -19,6 +20,7 @@ use App\Domain\PaymentMethod\ValueObjects\PaymentMethodId;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodName;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodPaymentType;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodType;
+use App\Domain\PaymentPlan\Entities\PaymentPlan;
 
 class PaymentMethod extends BaseEntity
 {
@@ -34,6 +36,20 @@ class PaymentMethod extends BaseEntity
     protected PaymentMethodHasDownPayment $hasDownPayment;
     protected PaymentMethodHasFinancialOperator $hasFinancialOperator;
     protected PaymentMethodBranchId $branchId;
+
+    /**
+     * Financial Operators associated with the Payment Method
+     *
+     * @var array<FinancialOperator>
+     */
+    protected array $financialOperators;
+
+    /**
+     * Payment Plans associated with the Payment Method
+     *
+     * @var array<PaymentPlan>
+     */
+    protected array $paymentPlans;
 
     public function id(PaymentMethodId $id): PaymentMethod
     {
@@ -165,6 +181,28 @@ class PaymentMethod extends BaseEntity
     public function getType(): ?PaymentMethodType
     {
         return $this->type ?? null;
+    }
+
+    public function addPaymentPlan(PaymentPlan $paymentPlan): PaymentMethod
+    {
+        $this->paymentPlans[] = $paymentPlan;
+        return $this;
+    }
+
+    public function getPaymentPlans(): ?array
+    {
+        return $this->paymentPlans ?? null;
+    }
+
+    public function addFinancialOperator(FinancialOperator $financialOperator): PaymentMethod
+    {
+        $this->financialOperators[] = $financialOperator;
+        return $this;
+    }
+
+    public function getFinancialOperators(): ?array
+    {
+        return $this->financialOperators ?? null;
     }
 
     public static function buildEntity(array $data): PaymentMethod

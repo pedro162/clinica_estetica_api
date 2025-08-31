@@ -12,7 +12,7 @@ use App\Http\Requests\V1\Country\GetAllCountryRequest;
 use App\Http\Requests\V1\Country\ShowCountryRequest;
 use App\Http\Requests\V1\Country\StoreCountryRequest;
 use App\Http\Requests\V1\Country\UpdateCountryRequest;
-use App\Http\Resources\V1\Country\CountryCollection;
+use App\Http\Resources\V1\Country\GetAllCountryResource;
 use App\Http\Resources\V1\Country\CountryResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,7 +37,7 @@ class CountryController extends Controller
         $data = $this->service->getAll($dataRequest);
 
         return ApiResponseClass::sendRequest(
-            new CountryCollection($data),
+            new GetAllCountryResource($data),
             '',
             200
         );

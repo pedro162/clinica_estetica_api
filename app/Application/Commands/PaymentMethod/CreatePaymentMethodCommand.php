@@ -2,8 +2,10 @@
 
 namespace App\Application\Commands\PaymentMethod;
 
+use App\Application\Commands\FinancialOperator\CreateFinancialOperatorCommand;
 use App\Utilitarios;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CreatePaymentMethodCommand
 {
@@ -24,6 +26,8 @@ class CreatePaymentMethodCommand
     protected string $hasCashAdjustment;
     protected string $hasDownPayment;
     protected string $hasFinancialOperator;
+    protected array $financeOperators;
+    protected array $paymentPlans;
 
     public function id(string $id): CreatePaymentMethodCommand
     {
@@ -201,6 +205,28 @@ class CreatePaymentMethodCommand
         return $this->hasFinancialOperator ?? null;
     }
 
+    public function addFinanceOperators(array $financeOperators): CreatePaymentMethodCommand
+    {
+        $this->financeOperators[] = CreateFinancialOperatorCommand::build($financeOperators);
+        return $this;
+    }
+
+    public function getFinanceOperators(): ?array
+    {
+        return $this->financeOperators ?? null;
+    }
+
+    public function addPaymentPlans(array $paymentPlans): CreatePaymentMethodCommand
+    {
+        $this->paymentPlans[] = CreateFinancialOperatorCommand::build($paymentPlans);
+        return $this;
+    }
+
+    public function getPaymentPlans(): ?array
+    {
+        return $this->paymentPlans ?? null;
+    }
+
     public static function build(array $data): CreatePaymentMethodCommand
     {
         $entity = (new self());
@@ -236,6 +262,9 @@ class CreatePaymentMethodCommand
 
     public function getDataProperties(): array
     {
+        $financeOperators = array_map(fn($item) => $item->getDataProperties(), $this->getFinanceOperators() ?? []);
+        $paymentPlans = array_map(fn($item) => $item->getDataProperties(), $this->getPaymentPlans() ?? []);
+
         $data = [
             'id' => $this->id ?? '',
             'name' => $this->name ?? '',
@@ -254,6 +283,8 @@ class CreatePaymentMethodCommand
             'hasCashAdjustment' => $this->hasCashAdjustment ?? '',
             'hasDownPayment' => $this->hasDownPayment ?? '',
             'hasFinancialOperator' => $this->hasFinancialOperator ?? '',
+            'financeOperators' => $financeOperators ?? [],
+            'paymentPlans' => $paymentPlans ?? [],
         ];
 
         return array_filter($data, fn($value) => $value !== null && !empty($value));

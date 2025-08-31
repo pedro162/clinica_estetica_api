@@ -37,6 +37,10 @@ class StorePaymentMethodRequest extends FormRequest
             'hasOperadorFinanceiro' => 'sometimes|in:yes,no',
             'user_id' => 'sometimes|exists:App\User,id',
             'user_update_id' => 'sometimes|exists:App\User,id',
+            'operador_financeiro_id' => 'sometimes|array',
+            'operador_financeiro_id.*' => 'distinct|exists:App\OperadorFinanceiro,id',
+            'plano_pagamento_id' => 'sometimes|array',
+            'plano_pagamento_id.*' => 'distinct|exists:App\PlanoPagamento,id',
         ];
     }
 }

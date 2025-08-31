@@ -12,7 +12,7 @@ use App\Http\Requests\V1\PaymentPlan\GetAllPaymentPlanRequest;
 use App\Http\Requests\V1\PaymentPlan\ShowPaymentPlanRequest;
 use App\Http\Requests\V1\PaymentPlan\StorePaymentPlanRequest;
 use App\Http\Requests\V1\PaymentPlan\UpdatePaymentPlanRequest;
-use App\Http\Resources\V1\PaymentPlan\PaymentPlanCollection;
+use App\Http\Resources\V1\PaymentPlan\GetAllPaymentPlanResource;
 use App\Http\Resources\V1\PaymentPlan\PaymentPlanResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -34,7 +34,7 @@ class PaymentPlanController extends Controller
     public function index(GetAllPaymentPlanRequest $request)
     {
         $data = $this->service->getAll($request->all());
-        return ApiResponseClass::sendRequest(new PaymentPlanCollection($data), '', 200);
+        return ApiResponseClass::sendRequest(new GetAllPaymentPlanResource($data), '', 200);
     }
 
     /**
