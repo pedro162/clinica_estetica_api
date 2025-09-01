@@ -58,94 +58,42 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
     public function store(
         CreateAccountReceivableCommand $command
     ): ?Collection {
-        try {
+        $propertiesData = $command->getDataProperties();
 
-            \DB::beginTransaction();
-            $propertiesData = $command->getDataProperties();
+        $result = $this->accountReceivableHelper->gerarCobranca(
+            (int)$propertiesData['personId'],
+            (float) $propertiesData['grossValue'],
+            (int) $propertiesData['paymentMethodId'],
+            (int) $propertiesData['paymentPlanId'],
+            isset($propertiesData['financialOperatorId']) ? (int) $propertiesData['financialOperatorId'] : null,
+            $propertiesData
+        );
 
-            $result = $this->accountReceivableHelper->gerarCobranca(
-                (int)$propertiesData['personId'],
-                (float) $propertiesData['grossValue'],
-                (int) $propertiesData['paymentMethodId'],
-                (int) $propertiesData['paymentPlanId'],
-                (int) $propertiesData['financialOperatorId'],
-                $propertiesData
-            );
+        $resultAccountReceivable = $result['data_cob_receber'] ?? [];
+        $createdRecords = collect();
 
-            $resultAccountReceivable = $result['data_cob_receber'] ?? [];
-            $createdRecords = collect();
-
-            foreach ($resultAccountReceivable as $accountReceivable) {
-                $createdRecords->push($accountReceivable);
-            }
-
-            \DB::commit();
-
-            return $createdRecords;
-        } catch (CobrancaReceberException $e) {
-            \DB::rollback();
-
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
+        foreach ($resultAccountReceivable as $accountReceivable) {
+            $createdRecords->push($accountReceivable);
         }
+
+        return $createdRecords;
     }
 
     public function update(
         CreateAccountReceivableCommand $command
     ): void {
-        try {
-
-            \DB::beginTransaction();
-            $this->updateAccountReceivableHandler->handler($command);
-            \DB::commit();
-        } catch (CobrancaReceberException $e) {
-            \DB::rollback();
-
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        $this->updateAccountReceivableHandler->handler($command);
     }
 
     public function getAll(array $data = []): ?Collection
     {
-        try {
-
-            \DB::beginTransaction();
-            $result = $this->getAllAccountReceivableHandler->handler($data);
-            \DB::commit();
-
-            return $result;
-        } catch (CobrancaReceberException $e) {
-            \DB::rollback();
-
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->getAllAccountReceivableHandler->handler($data);
     }
 
     public function findById(
         CreateAccountReceivableCommand $command
     ): ?ContaReceber {
-        try {
-            \DB::beginTransaction();
-            $result = $this->getAccountReceivableByIdHandler->handler($command);
-            \DB::commit();
-
-            return $result;
-        } catch (CobrancaReceberException $e) {
-            \DB::rollback();
-
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->getAccountReceivableByIdHandler->handler($command);
     }
 
     protected function accountReceivableParseData(array $data)
@@ -177,32 +125,8 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
 
     public function payOff(CreateAccountReceivableCommand $command, array $data = []): ?ContaReceber
     {
-        try {
-            \DB::beginTransaction();
-            $dataCommand = $command->getDataProperties();
-            $newData = array_merge($dataCommand, $data);
-            $result = $this->accountReceivableHelper->baixar($newData, $newData['id']);
-            \DB::commit();
-
-            return $result;
-        } catch (CobrancaReceberException $e) {
-            \DB::rollback();
-            Log::info("It was no possible to pay off the account receivable: ", [
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-                'code' => $e->getCode(),
-            ]);
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            Log::info("It was no possible to pay off the account receivable: ", [
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-                'code' => $e->getCode(),
-            ]);
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        $dataCommand = $command->getDataProperties();
+        $newData = array_merge($dataCommand, $data);
+        return $this->accountReceivableHelper->baixar($newData, $newData['id']);
     }
 }
