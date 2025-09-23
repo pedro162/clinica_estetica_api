@@ -2,16 +2,7 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use \App\ContaReceber;
-use \App\ContaReceberItem;
 use App\Domain\Parameter\Entities\Parameter;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\Helpers\ContaReceberCartao;
-use \App\Helpers\ContaReceberCartaoHelper;
-use \App\Pessoa;
 use \App\Parametro;
 use App\Domain\Parameter\ValueObjects\ParameterId;
 use App\Domain\Parameter\ValueObjects\ParameterName;

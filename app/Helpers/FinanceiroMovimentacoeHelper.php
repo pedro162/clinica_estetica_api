@@ -2,22 +2,9 @@
 
 namespace App\Helpers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use \App\Utilitarios;
-use \App\ContaReceber;
 use \App\ContaReceber as CobrancaReceber;
-use \App\ContaReceberItem;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\ContaReceberCartao;
-use \App\Helpers\ContaReceberCartaoHelper;
-use \App\Helpers\ContaReceberItemHelper;
 use \App\Helpers\CaixaHelper;
-use \App\Pessoa;
-use \App\Caixa;
 use \App\FinanceiroMovimentacoe;
 use \App\Exceptions\FinanceiroMovimentacoeException;
 use App\Helpers\BaseHelper;

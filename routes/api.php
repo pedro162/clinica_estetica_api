@@ -205,7 +205,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/plano_pagamento/info/{id}/{id_assistente?}', ['as' => 'plano_pagamento.info', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@show']);
 	Route::get('/plano_pagamento/destroy/{id}/{id_assistente?}', ['as' => 'plano_pagamento.destroy', 'uses' => 'Admin\V1\PaymentPlan\PaymentPlanController@destroy']);
 
-
 	Route::get('/prazo_pagamento/index/{id_assistente?}', ['as' => 'prazo_pagamento.index', 'uses' => 'Admin\PrazoPagamentoController@index']);
 	Route::post('/prazo_pagamento/index/{id_assistente?}', ['as' => 'prazo_pagamento.index', 'uses' => 'Admin\PrazoPagamentoController@index']);
 	Route::get('/prazo_pagamento/json/{id_assistente?}', ['as' => 'prazo_pagamento.json', 'uses' => 'Admin\PrazoPagamentoController@json']);
@@ -232,7 +231,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/forma_pagamento/plano/pagamento/json/{id_assistente?}', ['as' => 'forma_pagamento.plano.pagamento.json', 'uses' => 'Admin\FormaPagamentoController@planoPagamentoJson']);
 	Route::post('/forma_pagamento/operador/financeiro/json/{id_assistente?}', ['as' => 'forma_pagamento.operador.financeiro.json', 'uses' => 'Admin\FormaPagamentoController@operadorJson']);
 
-
 	Route::get('/operador_financeiro/index/{id_assistente?}', ['as' => 'operador_financeiro.index', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@index']);
 	Route::post('/operador_financeiro/index/{id_assistente?}', ['as' => 'operador_financeiro.index', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@index']);
 	Route::get('/operador_financeiro/json/{id_assistente?}', ['as' => 'operador_financeiro.json', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@index']);
@@ -244,6 +242,17 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/operador_financeiro/info/{id}/{id_assistente?}', ['as' => 'operador_financeiro.info', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@show']);
 	Route::post('/operador_financeiro/info/{id}/{id_assistente?}', ['as' => 'operador_financeiro.info', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@show']);
 	Route::get('/operador_financeiro/destroy/{id}/{id_assistente?}', ['as' => 'operador_financeiro.destroy', 'uses' => 'Admin\V1\FinancialOperator\FinancialOperatorController@destroy']);
+
+	Route::get('/bandeiras-cartoes/index/{id_assistente?}', ['as' => 'bandeira_cartao.index', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@index']);
+	Route::post('/bandeiras-cartoes/index/{id_assistente?}', ['as' => 'bandeira_cartao.index', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@index']);
+	Route::get('/bandeiras-cartoes/json/{id_assistente?}', ['as' => 'bandeira_cartao.json', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@index']);
+	Route::post('/bandeiras-cartoes/json/{id_assistente?}', ['as' => 'bandeira_cartao.json', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@index']);
+	Route::post('/bandeiras-cartoes/store/{id_assistente?}', ['as' => 'bandeira_cartao.store', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@store']);
+	Route::put('/bandeiras-cartoes/update/{id}/{id_assistente?}', ['as' => 'bandeira_cartao.update', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@update']);
+	Route::get('/bandeiras-cartoes/show/{id}/{id_assistente?}', ['as' => 'bandeira_cartao.show', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@show']);
+	Route::get('/bandeiras-cartoes/info/{id}/{id_assistente?}', ['as' => 'bandeira_cartao.info', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@show']);
+	Route::post('/bandeiras-cartoes/info/{id}/{id_assistente?}', ['as' => 'bandeira_cartao.info', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@show']);
+	Route::get('/bandeiras-cartoes/destroy/{id}/{id_assistente?}', ['as' => 'operador_financeiro.destroy', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@destroy']);
 
 	Route::get('/nfe/index/{id_assistente?}', ['as' => 'nfe.index', 'uses' => 'Admin\NfeController@index']);
 	Route::get('/nfe/create/{id_assistente?}', ['as' => 'nfe.create', 'uses' => 'Admin\NfeController@create']);

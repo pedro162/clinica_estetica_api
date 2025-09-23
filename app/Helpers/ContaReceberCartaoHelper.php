@@ -2,19 +2,16 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use \App\ContaReceber;
 use \App\ContaReceberItem;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
 use \App\ContaReceberCartao;
 use \App\Pessoa;
 use \App\BandeiraCartao;
+use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;
 use \App\Exceptions\CobrancaReceberException;
 
 class ContaReceberCartaoHelper
 {
+    public function __construct(protected AccountReceivableRepositoryInterface $accountReceivableRepository) {}
 
     public function gerarCarteiraCartao(int $idCobrancaReceberItem, int $idBandeira, array $dados): array
     {
