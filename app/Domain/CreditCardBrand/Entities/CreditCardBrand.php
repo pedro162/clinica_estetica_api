@@ -75,6 +75,19 @@ class CreditCardBrand extends BaseEntity
         return $entity;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'id' => isset($this->id) ? (string)$this->id : null,
+            'name' => isset($this->name) ? (string)$this->name : null,
+            'standard' => isset($this->standard) ? (string)$this->standard : null,
+            'active' => isset($this->active) ? (string)$this->active : null,
+            'userId' => isset($this->userId) ? (string)$this->userId : null,
+            'userUpdateId' => isset($this->userUpdateId) ? (string)$this->userUpdateId : null,
+            'tenantId' => isset($this->tenantId) ? (string)$this->tenantId : null,
+        ];
+    }
+
     public function build(): BandeiraCartao
     {
         $data = [

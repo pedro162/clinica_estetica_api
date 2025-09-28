@@ -14,7 +14,7 @@ class CreditCardBrandIsStandard
 
     public function __construct(string $value)
     {
-        if (empty($value) || in_array($value, self::ACCEPTED_VALUES)) {
+        if (empty($value) || !in_array($value, self::ACCEPTED_VALUES)) {
             throw new \InvalidArgumentException("The standard attribute cannot be empty");
         }
 
