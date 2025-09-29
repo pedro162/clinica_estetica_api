@@ -25,6 +25,22 @@ class CreateCreditCardBrandCommandTest extends TestCase
             $this->assertEquals($value, $entity->toArray()[$key]);
         }
     }
+    /**
+     * 
+     * @param array<mixed> $data
+     * @dataProvider entityDataProvider
+     * @return void
+     */
+    public function test_create_a_new_credit_card_brand_teste_command($data): void
+    {
+        $entity = CreateCreditCardBrandCommand::build($data);
+        $this->assertInstanceOf(CreateCreditCardBrandCommand::class, $entity);
+
+        foreach ($data as $key => $value) {
+            $this->assertArrayHasKey($key, $entity->toArray());
+            $this->assertEquals($value, $entity->toArray()[$key]);
+        }
+    }
 
     /**
      * 

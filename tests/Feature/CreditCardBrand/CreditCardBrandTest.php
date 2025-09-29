@@ -45,7 +45,7 @@ class CreditCardBrandTest extends TestCase
                 'data' => [
                     'name' => $this->payload->name,
                 ]
-            ])->assertJsonPath('data.type', $this->payload->type);
+            ])->assertJsonPath('data.name', $this->payload->name);
     }
 
     public function testUpdateACreditCardBrand()
@@ -72,6 +72,17 @@ class CreditCardBrandTest extends TestCase
 
         $this->assertDatabaseHas($this->paymentMethod->getTable(), [
             'id' => $this->paymentMethod->id
+        ]);
+    }
+
+    public function testDeleteACreditCardBrand()
+    {
+        $response = $this->getJson(route('bandeira_cartao.destroy', ['id' => $this->paymentMethod->id]))
+            ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
+
+        $this->assertDatabaseHas($this->paymentMethod->getTable(), [
+            'id' => $this->paymentMethod->id,
+            'active' => 'no'
         ]);
     }
 }

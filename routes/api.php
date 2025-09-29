@@ -252,7 +252,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/bandeiras-cartoes/show/{id}/{id_assistente?}', ['as' => 'bandeira_cartao.show', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@show']);
 	Route::get('/bandeiras-cartoes/info/{id}/{id_assistente?}', ['as' => 'bandeira_cartao.info', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@show']);
 	Route::post('/bandeiras-cartoes/info/{id}/{id_assistente?}', ['as' => 'bandeira_cartao.info', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@show']);
-	Route::get('/bandeiras-cartoes/destroy/{id}/{id_assistente?}', ['as' => 'operador_financeiro.destroy', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@destroy']);
+	Route::get('/bandeiras-cartoes/destroy/{id}/{id_assistente?}', ['as' => 'bandeira_cartao.destroy', 'uses' => 'Admin\V1\CreditCardBrand\CreditCardBrandController@destroy']);
 
 	Route::get('/nfe/index/{id_assistente?}', ['as' => 'nfe.index', 'uses' => 'Admin\NfeController@index']);
 	Route::get('/nfe/create/{id_assistente?}', ['as' => 'nfe.create', 'uses' => 'Admin\NfeController@create']);

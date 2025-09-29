@@ -4,7 +4,6 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          stopOnFailure="false"
-         cacheDirectory=".phpunit.cache"
 >
     <source>
         <include>
@@ -20,6 +19,7 @@
             <clover outputFile="./coverage/clover.xml"/>
             <php outputFile="./coverage/php/coverage.php"/>
             <text outputFile="./coverage/text/coverage.txt"/>
+            <xml outputDirectory="./coverage/xml"/>
             <xml outputFile="./coverage/xml/coverage.xml"/>
         </report>
     </coverage>

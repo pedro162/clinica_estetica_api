@@ -48,8 +48,6 @@ class CreditCardBrandController extends Controller
         $data = $this->service->store($entity);
         $entity->id((string) $data->id);
 
-        $this->syncFinanceOperator($entity, $requestData ?? []);
-        $this->syncPaymentPlan($entity, $requestData ?? []);
         return ApiResponseClass::sendRequest(new CreditCardBrandResource($data), 'CreditCardBrand Created Successful', 201);
     }
 
@@ -81,9 +79,6 @@ class CreditCardBrandController extends Controller
 
         $entity = CreateCreditCardBrandCommand::build($requestData);
         $this->service->update($entity);
-        $this->syncFinanceOperator($entity, $requestData ?? []);
-        $this->syncPaymentPlan($entity, $requestData ?? []);
-
         return ApiResponseClass::sendRequest(new CreditCardBrandResource([]), '', JsonResponse::HTTP_NO_CONTENT);
     }
 
