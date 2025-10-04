@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        DB::listen(function ($query) {
+            $connectionName = $query->connectionName; // ex: mysql
+            $config = $query->connection->getConfig();
+
+            $type = $query->connection->transactionLevel() ? 'write (transaction)' : ($config['read'] ?? false ? 'read' : 'write');
+
+            $host = $config['host'] ?? 'unknown';
+
+            Log::info("Query executada na conexão: {$connectionName}, tipo: {$type}, host: {$host}", [
+                'sql' => $query->sql,
+                'bindings' => $query->bindings,
+                'time' => $query->time,
+            ]);
+        });
+
+
         Model::unguard(); // opcional
         Schema::defaultStringLength(191);
 

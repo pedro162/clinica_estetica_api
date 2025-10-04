@@ -58,7 +58,24 @@ services:
       - "3308:3306"
     networks:
       - laravel
-  
+  db_read:
+    image: mysql:8.0
+    container_name: laravel_db_read
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: clinica_estetica
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    command: --server-id=2 --relay-log=mysql-relay-bin --read-only=1
+    depends_on:
+      - db
+    ports:
+      - "3309:3306"
+    networks:
+      - laravel
+    volumes:
+      - db_read_data:/var/lib/mysql
   redis:
     image: redis:latest
     container_name: laravel_redis
@@ -141,6 +158,7 @@ services:
       - laravel
 volumes:
   db_data:
+  db_read_data:
 
 networks:
   laravel:

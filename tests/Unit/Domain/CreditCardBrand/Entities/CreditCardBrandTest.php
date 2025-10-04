@@ -9,6 +9,7 @@ class CreditCardBrandTest extends TestCase
 {
     //XDEBUG_MODE=coverage ./vendor/bin/phpunit coverage
     //XDEBUG_MODE=coverage php artisan test
+    //XDEBUG_TRIGGER=1 ./vendor/bin/phpunit --filter CreditCardBrandTest
 
 
     /**
