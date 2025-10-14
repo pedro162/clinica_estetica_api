@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Domain\Service\ValueObjects;
+
+class ServiceType
+{
+    private string $value;
+
+    public function __construct(string $value)
+    {
+        if (!empty($value)) {
+            if (!in_array($value, ['banco', 'convencional'])) {
+                throw new \InvalidArgumentException("The cashier type is invalid. It should be either (banco, convencional)");
+            }
+        }
+
+        $this->value = $value;
+    }
+
+    public function __toString()
+    {
+        return $this->value;
+    }
+}
