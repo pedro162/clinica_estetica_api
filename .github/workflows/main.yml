@@ -47,6 +47,7 @@ jobs:
       
       - name: Remove old .env.testing if exists
         run: rm -f .env.testing
+        
       - name: Copy environment file to test
         run: cp .env.testing.pipeline .env.testing
       
@@ -74,9 +75,6 @@ jobs:
           
       - name: Test MySQL connection
         run: mysql -h 127.0.0.1 -P 3306 -uroot -proot -e "SHOW DATABASES;"
-
-      - name: Show .env for debug
-        run: cat .env
         
       - name: Show .env.testing for debug
         run: cat .env.testing
