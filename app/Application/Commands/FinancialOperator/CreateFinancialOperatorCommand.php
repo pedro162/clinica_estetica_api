@@ -4,6 +4,7 @@ namespace App\Application\Commands\FinancialOperator;
 
 use App\Utilitarios;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CreateFinancialOperatorCommand
 {
@@ -238,6 +239,7 @@ class CreateFinancialOperatorCommand
         foreach ($mapping as $map) {
             foreach ($map['keys'] as $key) {
                 if (isset($data[$key])) {
+
                     $map['callback']($data[$key]);
                     break;
                 }

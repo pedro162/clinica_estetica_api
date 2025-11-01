@@ -2,22 +2,15 @@
 
 namespace App\Validators;
 
-use \App\Utilitarios;
-use \App\ContaReceber;
-use \App\ContaReceberItem;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\Helpers\ContaReceberCartao;
-use \App\Helpers\ContaReceberCartaoHelper;
-use \App\Pessoa;
 use \App\Caixa;
 use \App\Exceptions\CobrancaReceberException;
 
-class CaixaValidator{
+class CaixaValidator
+{
 
-    
-    public function validarCaixaBaixar(int $id, array $dados = []){
+
+    public function validarCaixaBaixar(int $id, array $dados = [])
+    {
 
         $erros = [];
 
@@ -32,7 +25,7 @@ class CaixaValidator{
         $registro = Caixa::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
-        if(! $registro){
+        if (! $registro) {
             throw new CobrancaReceberException('Registro não identificao. Tente novamente ou entre em contato com o suporte.');
         }
 

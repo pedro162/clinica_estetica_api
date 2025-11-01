@@ -26,4 +26,12 @@ interface PaymentMethodApplicationServiceInterface
     ): void;
 
     public function getAll(array $data = []): ?Collection;
+
+    public function syncFinancialOperators(
+        CreatePaymentMethodCommand $command
+    ): void;
+
+    public function syncPaymentPlans(
+        CreatePaymentMethodCommand $command
+    ): void;
 }

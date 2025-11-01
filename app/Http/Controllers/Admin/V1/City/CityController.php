@@ -11,7 +11,7 @@ use App\Http\Requests\V1\City\GetAllCityRequest;
 use App\Http\Requests\V1\City\ShowCityRequest;
 use App\Http\Requests\V1\City\StoreCityRequest;
 use App\Http\Requests\V1\City\UpdateCityRequest;
-use App\Http\Resources\V1\City\CityCollection;
+use App\Http\Resources\V1\City\GetAllCityResource;
 use App\Http\Resources\V1\City\CityResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,7 +33,7 @@ class CityController extends Controller
     public function index(GetAllCityRequest $request)
     {
         $data = $this->service->getAll($request->all());
-        return ApiResponseClass::sendRequest(new CityCollection($data), '', 200);
+        return ApiResponseClass::sendRequest(new GetAllCityResource($data), '', 200);
     }
 
     /**

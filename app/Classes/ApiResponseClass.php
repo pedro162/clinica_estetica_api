@@ -14,7 +14,7 @@ class ApiResponseClass
         throw new HttpResponseException(response()->json([
             'message' => $message,
             'error' => $message,
-            'errors' => $message
+            'errors' => [$message]
         ], $code));
     }
 

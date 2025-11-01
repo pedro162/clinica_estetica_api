@@ -12,7 +12,7 @@ use App\Http\Requests\V1\PersonAddress\GetAllPersonAddressRequest;
 use App\Http\Requests\V1\PersonAddress\ShowPersonAddressRequest;
 use App\Http\Requests\V1\PersonAddress\StorePersonAddressRequest;
 use App\Http\Requests\V1\PersonAddress\UpdatePersonAddressRequest;
-use App\Http\Resources\V1\PersonAddress\PersonAddressCollection;
+use App\Http\Resources\V1\PersonAddress\GetAllPersonAddressResource;
 use App\Http\Resources\V1\PersonAddress\PersonAddressResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,7 +38,7 @@ class PersonAddressController extends Controller
     public function index(GetAllPersonAddressRequest $request)
     {
         $data = $this->service->getAll($request->all());
-        return ApiResponseClass::sendRequest(new PersonAddressCollection($data), '', 200);
+        return ApiResponseClass::sendRequest(new GetAllPersonAddressResource($data), '', 200);
     }
 
     /**

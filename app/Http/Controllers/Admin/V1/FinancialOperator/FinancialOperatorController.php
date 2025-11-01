@@ -11,7 +11,7 @@ use App\Http\Requests\V1\FinancialOperator\GetAllFinancialOperatorRequest;
 use App\Http\Requests\V1\FinancialOperator\ShowFinancialOperatorRequest;
 use App\Http\Requests\V1\FinancialOperator\StoreFinancialOperatorRequest;
 use App\Http\Requests\V1\FinancialOperator\UpdateFinancialOperatorRequest;
-use App\Http\Resources\V1\FinancialOperator\FinancialOperatorCollection;
+use App\Http\Resources\V1\FinancialOperator\GetAllFinancialOperatorResource;
 use App\Http\Resources\V1\FinancialOperator\FinancialOperatorResource;
 
 class FinancialOperatorController extends Controller
@@ -31,7 +31,7 @@ class FinancialOperatorController extends Controller
     public function index(GetAllFinancialOperatorRequest $request)
     {
         $data = $this->service->getAll($request->all());
-        return ApiResponseClass::sendRequest(new FinancialOperatorCollection($data), '', 200);
+        return ApiResponseClass::sendRequest(new GetAllFinancialOperatorResource($data), '', 200);
     }
 
     /**

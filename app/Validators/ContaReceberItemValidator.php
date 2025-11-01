@@ -2,15 +2,7 @@
 
 namespace App\Validators;
 
-use \App\Utilitarios;
-use \App\ContaReceber;
 use \App\ContaReceberItem;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\Helpers\ContaReceberCartao;
-use \App\Helpers\ContaReceberCartaoHelper;
-use \App\Pessoa;
 use \App\Caixa;
 use Illuminate\Support\Facades\Validator;
 use \App\Exceptions\CobrancaReceberException;

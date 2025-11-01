@@ -65,4 +65,18 @@ class PaymentMethodApplicationService implements PaymentMethodApplicationService
 
         return $this->getPaymentMethodByIdHandler->handler($command);
     }
+
+    public function syncFinancialOperators(
+        CreatePaymentMethodCommand $command
+    ): void {
+
+        $this->updatePaymentMethodHandler->syncFinancialOperators($command);
+    }
+
+    public function syncPaymentPlans(
+        CreatePaymentMethodCommand $command
+    ): void {
+
+        $this->updatePaymentMethodHandler->syncPaymentPlans($command);
+    }
 }

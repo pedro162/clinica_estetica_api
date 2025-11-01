@@ -3,7 +3,26 @@
          xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
+         stopOnFailure="false"
 >
+    <source>
+        <include>
+            <directory>./app</directory>
+        </include>
+        <exclude>
+            <directory>./vendor</directory>
+        </exclude>
+    </source>
+    <coverage>
+        <report>
+            <html outputDirectory="./coverage/html"/>
+            <clover outputFile="./coverage/clover.xml"/>
+            <php outputFile="./coverage/php/coverage.php"/>
+            <text outputFile="./coverage/text/coverage.txt"/>
+            <xml outputDirectory="./coverage/xml"/>
+            <xml outputFile="./coverage/xml/coverage.xml"/>
+        </report>
+    </coverage>
     <testsuites>
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>

@@ -2,23 +2,12 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use \App\ContaReceber;
-use \App\ContaReceberItem;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\Helpers\ContaReceberCartao;
-use \App\Helpers\ContaReceberCartaoHelper;
-use \App\Pessoa;
 use \App\Caixa;
 use \App\Exceptions\CobrancaReceberException;
 use App\Helpers\BaseHelper;
 
 class CaixaHelper extends BaseHelper
 {
-
-
     public function atualizar(array $dados, int $id)
     {
 

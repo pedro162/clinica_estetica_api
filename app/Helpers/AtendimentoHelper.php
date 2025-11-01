@@ -133,7 +133,6 @@ class AtendimentoHelper extends BaseHelper
         $dadosRequest['descricao']          = ucfirst($dados['tipo'] ?? 'consulta');
         $dadosRequest['data']               = $dados['dt_inicio'];
         $dadosRequest['hora']               = $dados['hr_inicio'];
-        $dadosRequest['name_atendido']      = $dados['name_atendido'];
         $dadosRequest['status']             = 'pendente';
         $dadosRequest['pessoa_id']          = $profissional->pessoa_id;
         $dadosRequest['referencia']         = 'atendimentos';
