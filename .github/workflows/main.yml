@@ -74,7 +74,7 @@ jobs:
           echo "DB_PASSWORD=root" >> .env.testing
 
       - name: Generate application key
-        run: php artisan key:generate
+        run: php artisan key:generate --env=testing
 
       - name: Wait for MySQL
         run: |
@@ -93,6 +93,9 @@ jobs:
 
       - name: Show .env for debug
         run: cat .env
+        
+      - name: Show .env.testing for debug
+        run: cat .env.testing
 
       - name: Clear Laravel caches
         run: |
@@ -109,7 +112,7 @@ jobs:
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
           DB_PASSWORD: root
-        run: php artisan migrate --force
+        run: php artisan migrate --env=testing --force
 
       - name: Run tests
         env:
