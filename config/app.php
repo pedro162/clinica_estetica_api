@@ -176,6 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\City\CityServiceProvider::class,
         App\Providers\Cashier\CashierServiceProvider::class,
+        App\Providers\CreditCardBrand\CreditCardBrandServiceProvider::class,
         App\Providers\AccountReceivable\AccountReceivableServiceProvider::class,
         App\Providers\AccountReceivableItem\AccountReceivableItemServiceProvider::class,
         App\Providers\PaymentMethod\PaymentMethodServiceProvider::class,

@@ -12,10 +12,11 @@ use App\Http\Requests\V1\PaymentMethod\GetAllPaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\ShowPaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\StorePaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\UpdatePaymentMethodRequest;
-use App\Http\Resources\V1\PaymentMethod\PaymentMethodCollection;
+use App\Http\Resources\V1\PaymentMethod\GetAllPaymentMethodResource;
 use App\Http\Resources\V1\PaymentMethod\PaymentMethodResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PaymentMethodController extends Controller
 {
@@ -34,7 +35,7 @@ class PaymentMethodController extends Controller
     public function index(GetAllPaymentMethodRequest $request)
     {
         $data = $this->service->getAll($request->all());
-        return ApiResponseClass::sendRequest(new PaymentMethodCollection($data), '', 200);
+        return ApiResponseClass::sendRequest(new GetAllPaymentMethodResource($data), '', 200);
     }
 
     /**
@@ -45,7 +46,13 @@ class PaymentMethodController extends Controller
      */
     public function store(StorePaymentMethodRequest $request)
     {
-        $data = $this->service->store(CreatePaymentMethodCommand::build($request->validated()));
+        $requestData = $request->validated();
+        $entity = CreatePaymentMethodCommand::build($requestData);
+        $data = $this->service->store($entity);
+        $entity->id((string) $data->id);
+
+        $this->syncFinanceOperator($entity, $requestData ?? []);
+        $this->syncPaymentPlan($entity, $requestData ?? []);
         return ApiResponseClass::sendRequest(new PaymentMethodResource($data), 'PaymentMethod Created Successful', 201);
     }
 
@@ -82,10 +89,51 @@ class PaymentMethodController extends Controller
      */
     public function update(UpdatePaymentMethodRequest $request, $id)
     {
-        $data = $request->validated();
-        $data['id'] = $id;
-        $data = $this->service->update(CreatePaymentMethodCommand::build($data));
+        $requestData = $request->validated();
+        $requestData['id'] = $id;
+
+        $entity = CreatePaymentMethodCommand::build($requestData);
+        $data = $this->service->update($entity);
+        $this->syncFinanceOperator($entity, $requestData ?? []);
+        $this->syncPaymentPlan($entity, $requestData ?? []);
+
         return response()->noContent();
+    }
+
+    /**
+     * Sync financial operators
+     *
+     * @param CreatePaymentMethodCommand $entity
+     * @param array $data
+     * @return void
+     */
+    protected function syncFinanceOperator(CreatePaymentMethodCommand $entity, array $data): void
+    {
+        $ids = $data['operador_financeiro_id'] ?? [];
+
+        foreach ($ids as $id) {
+            $entity->addFinanceOperators(['id' => $id]);
+        }
+
+        $this->service->syncFinancialOperators($entity);
+    }
+
+    /**
+     * Sync payment plans
+     *
+     * @param CreatePaymentMethodCommand $entity
+     * @param array $data
+     * @return void
+     */
+    protected function syncPaymentPlan(CreatePaymentMethodCommand $entity, array $data): void
+    {
+        $ids = $data['plano_pagamento_id'] ?? [];
+
+        foreach ($ids as $id) {
+            $entity->addPaymentPlans(['id' => $id]);
+        }
+
+        $this->service->syncPaymentPlans($entity);
     }
 
     /**

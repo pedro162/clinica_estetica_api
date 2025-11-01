@@ -4,7 +4,6 @@ namespace App\Application\Services\AccountReceivableItem;
 
 use App\Application\Commands\AccountReceivable\CreateAccountReceivableCommand;
 use App\Application\Commands\AccountReceivableItem\CreateAccountReceivableItemCommand;
-use App\Application\Handlers\AccountReceivable\CreateAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivable\GetAccountReceivableByIdHandler;
 use App\Application\Handlers\AccountReceivable\UpdateAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHandler;
@@ -13,13 +12,9 @@ use App\Application\Handlers\AccountReceivableItem\GetAccountReceivableItemByIdH
 use App\Application\Handlers\AccountReceivableItem\UpdateAccountReceivableItemHandler;
 use App\ContaReceber;
 use App\ContaREceberItem;
-use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;
-use App\Domain\AccountReceivableItem\Entities\AccountReceivableItem;
 use App\Exceptions\CobrancaReceberException;
 use App\FormaPagamento;
-use App\Helpers\ContaReceberCartaoHelper;
 use App\Helpers\ContaReceberItemHelper;
-use App\Pessoa;
 use App\Utilitarios;
 use App\Validators\AccountReceivable\AccountReceivableValidator;
 use Illuminate\Support\Collection;

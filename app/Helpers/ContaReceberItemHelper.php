@@ -289,7 +289,7 @@ class ContaReceberItemHelper
 
                 if (!empty($val['is_cartao']) && $val['is_cartao']) {
 
-                    $objCobCartHelper   = new ContaReceberCartaoHelper();
+                    $objCobCartHelper   = app(ContaReceberCartaoHelper::class);
                     $idBandeira         = $data['bandeira_cartao_id'] ?? 1; //Gravar a bandeira do cartão na tabela de cobranças
                     $dataCartoes        = $objCobCartHelper->gerarCarteiraCartao(
                         $accountReceivableItem->id,

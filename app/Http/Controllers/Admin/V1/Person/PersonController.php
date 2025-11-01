@@ -19,7 +19,7 @@ use App\Http\Requests\V1\Person\GetAllPersonRequest;
 use App\Http\Requests\V1\Person\ShowPersonRequest;
 use App\Http\Requests\V1\Person\StorePersonRequest;
 use App\Http\Requests\V1\Person\UpdatePersonRequest;
-use App\Http\Resources\V1\Person\PersonCollection;
+use App\Http\Resources\V1\Person\GetAllPersonResource;
 use App\Http\Resources\V1\Person\PersonResource;
 use App\Logradouro;
 use App\Telefone;
@@ -53,7 +53,7 @@ class PersonController extends Controller
     public function index(GetAllPersonRequest $request)
     {
         $data = $this->service->getAll($request->all());
-        return ApiResponseClass::sendRequest(new PersonCollection($data), '', 200);
+        return ApiResponseClass::sendRequest(new GetAllPersonResource($data), '', 200);
     }
 
     /**

@@ -11,7 +11,7 @@ use App\Http\Requests\V1\Cashier\GetAllCashierRequest;
 use App\Http\Requests\V1\Cashier\ShowCashierRequest;
 use App\Http\Requests\V1\Cashier\StoreCashierRequest;
 use App\Http\Requests\V1\Cashier\UpdateCashierRequest;
-use App\Http\Resources\V1\Cashier\CashierCollection;
+use App\Http\Resources\V1\Cashier\GetAllCashierResource;
 use App\Http\Resources\V1\Cashier\CashierResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,7 +33,7 @@ class CashierController extends Controller
     public function index(GetAllCashierRequest $request)
     {
         $data = $this->service->getAll($request->all());
-        return ApiResponseClass::sendRequest(new CashierCollection($data), '', 200);
+        return ApiResponseClass::sendRequest(new GetAllCashierResource($data), '', 200);
     }
 
     /**
