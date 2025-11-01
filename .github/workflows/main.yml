@@ -82,6 +82,9 @@ jobs:
       - name: Show .env.testing for debug
         run: cat .env.testing
 
+      - name: Show .env for debug
+        run: cat .env.testing
+
       - name: Clear Laravel caches
         run: |
           php artisan config:clear
