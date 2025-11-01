@@ -88,6 +88,9 @@ jobs:
           php artisan cache:clear
           php artisan config:cache
           rm -rf bootstrap/cache/*.php
+      
+      - name: Debug DB configuration from Laravel
+        run: php -r "print_r(config('database.connections.mysql'));"
         
       - name: Run migrations
         env:
