@@ -49,7 +49,15 @@ jobs:
       #  run: cp .env.testing.pipeline .env.testing
       - name: Remove old .env.testing if exists
         run: rm -f .env.testing
-        
+      
+
+      - name: Clear Laravel caches
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan config:cache
+          rm -rf bootstrap/cache/*.php
+          
       - name: Create testing environment
         run: |
           echo "APP_ENV=testing" > .env
