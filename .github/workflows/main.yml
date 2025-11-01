@@ -1,4 +1,4 @@
-n tname: Laravel CI
+name: Laravel CI
 
 on: [push, pull_request]
 
