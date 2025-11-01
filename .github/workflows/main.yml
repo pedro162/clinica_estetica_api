@@ -1,4 +1,4 @@
-name: Laravel CI
+n tname: Laravel CI
 
 on: [push, pull_request]
 
@@ -33,7 +33,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "7.4"
+          php-version: "8.1"
           extensions: mbstring, pdo, pdo_mysql
           coverage: none
 
