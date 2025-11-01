@@ -50,6 +50,9 @@ jobs:
         
       - name: Copy environment file to test
         run: cp .env.testing.pipeline .env.testing
+        
+      - name: Copy environment .env file to test
+        run: cp .env.testing.pipeline .env
       
       - name: Clear Laravel caches
         run: |
