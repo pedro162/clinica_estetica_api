@@ -87,6 +87,7 @@ jobs:
           php artisan config:clear
           php artisan cache:clear
           php artisan config:cache
+          rm -rf bootstrap/cache/*.php
         
       - name: Run migrations
         env:
