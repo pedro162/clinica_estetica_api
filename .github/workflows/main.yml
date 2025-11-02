@@ -73,12 +73,18 @@ jobs:
           
       - name: Test MySQL connection
         run: mysql -h 127.0.0.1 -P 3306 -uroot -proot -e "SHOW DATABASES;"
-        
-      - name: Show .env.testing for debug
-        run: cat .env.testing
 
-      - name: Show .env for debug
-        run: cat .env
+      - name: Override database config for testing
+        run: |
+          php artisan config:clear
+          php -r '
+          $config = include "config/database.php";
+          $config["connections"]["mysql"]["read"]["username"] = getenv("DB_USERNAME");
+          $config["connections"]["mysql"]["read"]["password"] = getenv("DB_PASSWORD");
+          $config["connections"]["mysql"]["write"]["username"] = getenv("DB_USERNAME");
+          $config["connections"]["mysql"]["write"]["password"] = getenv("DB_PASSWORD");
+          file_put_contents("config/database.php", "<?php\n\nreturn " . var_export($config, true) . ";");
+          '
             
       - name: Run migrations
         env:
