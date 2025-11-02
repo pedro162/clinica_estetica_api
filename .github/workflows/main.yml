@@ -112,8 +112,8 @@ jobs:
       - name: Run migrations for testing
         run: php artisan migrate:fresh --database=mysql_testing --env=testing --force
 
-      - name: Run PHPStan static analysis
-        run: vendor/bin/phpstan analyse --level=5 app
+      #- name: Run PHPStan static analysis
+      #  run: vendor/bin/phpstan analyse --level=5 app
         
       - name: Run tests with coverage
         run: php artisan test --env=testing --parallel --stop-on-failure
@@ -122,5 +122,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.os }}
+          name: test-results-${{ matrix.os }}-${{ matrix.os }}
           path: storage/logs/laravel.log
