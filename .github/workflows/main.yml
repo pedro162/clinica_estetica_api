@@ -157,17 +157,6 @@ jobs:
           mkdir -p coverage/html
           mkdir -p coverage/xml
           XDEBUG_MODE=coverage ./vendor/bin/phpunit --configuration phpunit.xml --stop-on-failure
-
-      - name: Upload Laravel logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: laravel-logs-${{ matrix.os }}-${{ matrix.php }}-${{ matrix.mysql }}
-          path: | 
-            storage/logs/laravel.log
-            coverage/
-            junit/
-          if-no-files-found: warn
             
       - name: Upload coverage reports
         if: always()
