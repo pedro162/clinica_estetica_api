@@ -153,6 +153,9 @@ jobs:
       - name: Run PHPUnit tests with coverage
         run: |
           mkdir -p coverage
+          mkdir -p coverage/text
+          mkdir -p coverage/html
+          mkdir -p coverage/xml
           XDEBUG_MODE=coverage ./vendor/bin/phpunit coverage \
             --configuration phpunit.xml \
             --coverage-html coverage/html \
