@@ -1,11 +1,6 @@
-name: Laravel CI
+name: Test
 
-on:
-  workflow_call:
-    inputs:
-      env:
-        required: true
-        type: string
+on: [push, pull_request]
 
 jobs:
   # =========================
