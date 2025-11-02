@@ -140,3 +140,8 @@ jobs:
             coverage/
             junit/results.xml
           if-no-files-found: warn
+          
+      - name: Call Deploy workflow
+        uses: ./.github/workflows/deploy.yml
+        with:
+          env: ${{ inputs.env }}
