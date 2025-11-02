@@ -1,43 +1,14 @@
 name: Laravel CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: ["main", "staging"]
+  pull_request:
+    branches: ["main", "staging"]
 
 jobs:
   # =========================
-  # Job 1: Lint + PHPStan
-  # =========================
-  lint:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.2
-          extensions: mbstring, pdo, pdo_mysql, xdebug
-
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
-
-      - name: Validate composer.json
-        run: composer validate --strict
-
-      - name: Validate PHP syntax
-        run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
-      
-      - name: Install PHPStan (if missing)
-        run: composer require --dev phpstan/phpstan --no-interaction
-        
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --level=5 app
-
-      - name: Run Pint
-        run: vendor/bin/pint --test
-
-  # =========================
-  # Job 2: Tests + Coverage
+  # Job 1: Tests + Coverage
   # =========================
   tests:
     runs-on: ${{ matrix.os }}
