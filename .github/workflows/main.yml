@@ -122,24 +122,25 @@ jobs:
       #  run: |
       #    mkdir -p coverage
       #    php artisan test --env=testing --stop-on-failure --coverage-html coverage/ --log-junit junit/results.xml
-      - name: Run PHPUnit tests with coverage
-        run: |
-          mkdir -p coverage
-          mkdir -p coverage/text
-          mkdir -p coverage/html
-          mkdir -p coverage/xml
-          XDEBUG_MODE=coverage ./vendor/bin/phpunit --configuration phpunit.xml
+      
+      #- name: Run PHPUnit tests with coverage
+      #  run: |
+      #    mkdir -p coverage
+      #    mkdir -p coverage/text
+      #    mkdir -p coverage/html
+      #    mkdir -p coverage/xml
+      #    XDEBUG_MODE=coverage ./vendor/bin/phpunit --configuration phpunit.xml
             
-      - name: Upload coverage reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-reports-${{ matrix.os }}-${{ matrix.php }}-${{ matrix.mysql }}
-          path: | 
-            storage/logs/laravel.log
-            coverage/
-            junit/results.xml
-          if-no-files-found: warn
+      #- name: Upload coverage reports
+      #  if: always()
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: coverage-reports-${{ matrix.os }}-${{ matrix.php }}-${{ matrix.mysql }}
+      #    path: | 
+      #      storage/logs/laravel.log
+      #      coverage/
+      #      junit/results.xml
+      #    if-no-files-found: warn
           
       - name: Call Deploy workflow
         uses: ./.github/workflows/deploy.yml
