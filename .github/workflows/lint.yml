@@ -39,6 +39,9 @@ jobs:
       #- name: Run Pint
       #  run: vendor/bin/pint --test
 
+  # =========================
+  # Job 2: Tests
+  # =========================
         
   tests:
     needs: lint
@@ -46,7 +49,11 @@ jobs:
     with:
       env: ${{ inputs.env }}
     secrets: inherit
-    
+
+  # =========================
+  # Job 3: Deploy
+  # =========================
+  
   deploy:
     needs: tests
     uses: ./.github/workflows/deploy.yml
