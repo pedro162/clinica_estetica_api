@@ -82,7 +82,21 @@ jobs:
         run: mysql -h $CI_DB_HOST -P $CI_DB_PORT -u$CI_DB_USERNAME -p$CI_DB_PASSWORD -e "SHOW DATABASES;"
 
       - name: Run migrations for testing
+        env:
+          CI_DB_CONNECTION: mysql_testing
+          CI_DB_HOST: 127.0.0.1
+          CI_DB_PORT: 3306
+          CI_DB_DATABASE: clinida_estetica_testing
+          CI_DB_USERNAME: root
+          CI_DB_PASSWORD: root
         run: php artisan migrate --database=mysql_testing --env=testing --force
 
       - name: Run tests
+        env:
+          CI_DB_CONNECTION: mysql_testing
+          CI_DB_HOST: 127.0.0.1
+          CI_DB_PORT: 3306
+          CI_DB_DATABASE: clinida_estetica_testing
+          CI_DB_USERNAME: root
+          CI_DB_PASSWORD: root
         run: php artisan test --env=testing
