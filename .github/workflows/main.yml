@@ -122,5 +122,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.os }}-${{ matrix.os }}
-          path: storage/logs/laravel.log
+          name: test-results-${{ matrix.os }}-${{ matrix.mysql }}
+          path: | 
+            storage/logs/laravel.log
+            coverage/
