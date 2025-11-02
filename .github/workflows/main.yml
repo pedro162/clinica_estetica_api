@@ -1,14 +1,11 @@
 name: Laravel CI
 
 on:
-  push:
-    branches: ["main", "staging"]
-  pull_request:
-    branches: ["main", "staging"]
-  workflow_run:
-    workflows: ["Lint analisy"]
-    types:
-      -  completed
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
 
 jobs:
   # =========================
