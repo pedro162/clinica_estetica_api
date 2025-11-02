@@ -83,7 +83,7 @@ jobs:
         run: cat .env.testing
 
       - name: Show .env for debug
-        run: cat .env.testing
+        run: cat .env
 
       - name: Clear Laravel caches
         run: |
