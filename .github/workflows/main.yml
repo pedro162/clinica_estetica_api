@@ -68,6 +68,7 @@ jobs:
           --health-timeout=5s
           --health-retries=3
     env:
+      XDEBUG_MODE: coverage
       DB_CONNECTION: mysql_testing
       CI_DB_CONNECTION: mysql_testing
       CI_DB_HOST: 127.0.0.1
