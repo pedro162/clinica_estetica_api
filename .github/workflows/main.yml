@@ -111,9 +111,6 @@ jobs:
 
       - name: Run migrations for testing
         run: php artisan migrate:fresh --database=mysql_testing --env=testing --force
-
-      #- name: Run PHPStan static analysis
-      #  run: vendor/bin/phpstan analyse --level=5 app
         
       - name: Run tests with coverage
         run: |
