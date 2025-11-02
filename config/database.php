@@ -122,6 +122,24 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],*/
+         'mysql_testing' => [
+            'driver' => 'mysql',
+            'host' => env('CI_DB_HOST', '127.0.0.1'),
+            'port' => env('CI_DB_PORT', '3306'),
+            'database' => env('CI_DB_DATABASE', 'clinida_estetica_testing'),
+            'username' => env('CI_DB_USERNAME', 'root'),
+            'password' => env('CI_DB_PASSWORD', 'root'),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL_'),

@@ -4,28 +4,42 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
 
 class AddTenantIdToAllTables extends Migration
 {
     public function up()
     {
-        // Obtenha todas as tabelas do banco de dados
-        $tables = DB::select('SHOW TABLES');
+        // Pega a conexão atual e o nome do banco usado
+        $connection = DB::connection();
+        $databaseName = $connection->getDatabaseName();
 
-        foreach ($tables as $table) { //env('DB_DATABASE')
-            $tableName = $table->{'Tables_in_' . Config::get('database.connections.mysql.database')};
+        // Obtenha todas as tabelas do banco
+        $tables = $connection->select('SHOW TABLES');
 
-            // Ignore as tabelas que não são relevantes
-            if (in_array($tableName, ['migrations', 'password_resets', 'failed_jobs', 'personal_access_tokens', 'simple_tenant_databases'])) {
+        foreach ($tables as $table) {
+            // Pega o nome da tabela de forma dinâmica
+            $tableName = $table->{'Tables_in_' . $databaseName};
+
+            // Ignore tabelas que não precisam da coluna tenant_id
+            if (in_array($tableName, [
+                'migrations', 
+                'password_resets', 
+                'failed_jobs', 
+                'personal_access_tokens', 
+                'simple_tenant_databases'
+            ])) {
                 continue;
             }
 
             Schema::table($tableName, function (Blueprint $table) use ($tableName) {
-                // Adicione a coluna tenant_id se ela não existir
+                // Adiciona a coluna tenant_id se não existir
                 if (!Schema::hasColumn($tableName, 'tenant_id')) {
                     $table->unsignedBigInteger('tenant_id')->nullable()->index();
-                    $table->foreign('tenant_id')->references('id')->on('simple_tenant_databases')->onDelete('cascade')->onUpdate('cascade');
+                    $table->foreign('tenant_id')
+                          ->references('id')
+                          ->on('simple_tenant_databases')
+                          ->onDelete('cascade')
+                          ->onUpdate('cascade');
                 }
             });
         }
@@ -33,28 +47,29 @@ class AddTenantIdToAllTables extends Migration
 
     public function down()
     {
-        $tables = DB::select('SHOW TABLES');
+        $connection = DB::connection();
+        $databaseName = $connection->getDatabaseName();
+        $tables = $connection->select('SHOW TABLES');
 
         foreach ($tables as $table) {
-            try {
-                $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
+            $tableName = $table->{'Tables_in_' . $databaseName};
 
-                // Ignore as tabelas que não são relevantes
-                if (in_array($tableName, ['migrations', 'password_resets', 'failed_jobs', 'personal_access_tokens', 'simple_tenant_databases'])) {
-                    continue;
-                }
-
-                Schema::table($tableName, function (Blueprint $table) use ($tableName) {
-                    // Remova a coluna tenant_id se ela existir
-                    if (Schema::hasColumn($tableName, 'tenant_id')) {
-                        $table->dropForeign(['pessoas_tenant_id_index']);
-                        $table->dropIndex('parametros_tenant_id_index');
-                        $table->dropColumn(['tenant_id']);
-                    }
-                });
-            } catch (\Illuminate\Database\QueryException $e) {
-                //
+            if (in_array($tableName, [
+                'migrations', 
+                'password_resets', 
+                'failed_jobs', 
+                'personal_access_tokens', 
+                'simple_tenant_databases'
+            ])) {
+                continue;
             }
+
+            Schema::table($tableName, function (Blueprint $table) use ($tableName) {
+                if (Schema::hasColumn($tableName, 'tenant_id')) {
+                    $table->dropForeign([$tableName . '_tenant_id_foreign']); // Ajusta nome do índice gerado
+                    $table->dropColumn(['tenant_id']);
+                }
+            });
         }
     }
 }
