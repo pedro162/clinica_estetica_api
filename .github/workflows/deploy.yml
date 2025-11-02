@@ -1,11 +1,10 @@
 name: Deploy to AWS
 
 on:
-  workflow_call:
-    inputs:
-      env:
-        required: true
-        type: string
+  push:
+    branches:
+      - staging
+      - main
 
 env:
   AWS_REGION: us-east-1
