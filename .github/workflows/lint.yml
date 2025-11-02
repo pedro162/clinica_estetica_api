@@ -35,8 +35,13 @@ jobs:
 
       - name: Run Pint
         run: vendor/bin/pint --test
-
-      - name: Call Tests workflow
-        uses: ./.github/workflows/main.yml
-        with:
-          env: testing
+        
+  tests:
+    needs: lint
+    uses: ./.github/workflows/main.yml
+    secrets: inherit
+    
+  deploy:
+    needs: tests
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
