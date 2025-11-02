@@ -99,4 +99,4 @@ jobs:
           CI_DB_DATABASE: clinida_estetica_testing
           CI_DB_USERNAME: root
           CI_DB_PASSWORD: root
-        run: php artisan --env=testing
+        run: php artisan test --env=testing
