@@ -44,7 +44,14 @@ jobs:
           php-version: "8.2"
           extensions: mbstring, pdo, pdo_mysql
           coverage: none
-
+          
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+          
       - name: Install Composer dependencies
         run: |
           composer install --prefer-dist --no-progress --no-suggest
@@ -62,6 +69,8 @@ jobs:
         run: |
           php artisan config:clear
           php artisan cache:clear
+          php artisan route:clear
+          php artisan view:clear
           rm -rf bootstrap/cache/*.php
 
       - name: Generate application key
@@ -88,5 +97,15 @@ jobs:
       - name: Run migrations for testing
         run: php artisan migrate:fresh --database=mysql_testing --env=testing --force
 
-      - name: Run tests
-        run: php artisan test --env=testing
+      - name: Run PHPStan static analysis
+        run: vendor/bin/phpstan analyse --level=5 app
+        
+      - name: Run tests with coverage
+        run: php artisan test --env=testing --stop-on-failure
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: storage/logs/laravel.log
