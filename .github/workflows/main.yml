@@ -65,6 +65,9 @@ jobs:
 
       - name: Generate application key
         run: php artisan key:generate --env=testing
+        
+      - name: Generate Passport keys
+        run: php artisan passport:keys --force
 
       - name: Wait for MySQL
         run: |
@@ -99,4 +102,4 @@ jobs:
           CI_DB_DATABASE: clinida_estetica_testing
           CI_DB_USERNAME: root
           CI_DB_PASSWORD: root
-        run: php artisan test --env=testing
+        run: DB_CONNECTION=mysql_testing DB_HOST=127.0.0.1 DB_PORT=3306 DB_DATABASE=clinida_estetica_testing DB_USERNAME=root DB_PASSWORD=root php artisan test --env=testing
