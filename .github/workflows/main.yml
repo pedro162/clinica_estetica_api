@@ -156,12 +156,7 @@ jobs:
           mkdir -p coverage/text
           mkdir -p coverage/html
           mkdir -p coverage/xml
-          XDEBUG_MODE=coverage ./vendor/bin/phpunit coverage \
-            --configuration phpunit.xml \
-            --coverage-html coverage/html \
-            --coverage-clover coverage/clover.xml \
-            --log-junit junit/results.xml \
-            --stop-on-failure
+          XDEBUG_MODE=coverage ./vendor/bin/phpunit --configuration phpunit.xml --stop-on-failure
 
       - name: Upload Laravel logs
         if: always()
