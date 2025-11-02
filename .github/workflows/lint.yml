@@ -45,6 +45,7 @@ jobs:
         
   tests:
     needs: lint
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
     uses: ./.github/workflows/main.yml
     with:
       env: ${{ inputs.env }}
@@ -56,6 +57,7 @@ jobs:
   
   deploy:
     needs: tests
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
     uses: ./.github/workflows/deploy.yml
     with:
       env: ${{ inputs.env }}
