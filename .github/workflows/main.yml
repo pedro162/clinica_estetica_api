@@ -89,7 +89,7 @@ jobs:
           CI_DB_DATABASE: clinida_estetica_testing
           CI_DB_USERNAME: root
           CI_DB_PASSWORD: root
-        run: php artisan migrate --database=mysql_testing --env=testing --force
+        run: php artisan migrate:fresh --database=mysql_testing --env=testing --force
 
       - name: Run tests
         env:
