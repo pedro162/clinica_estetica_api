@@ -4,11 +4,23 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
 
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+        php: [8.1, 8.2, 8.3]
+        mysql: [5.7, 8.0]
+        include:
+          - php: 8.3
+            mysql: 8.0
+            os: ubuntu-24.04
+            
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:${{ matrix.mysql }}
         env:
           MYSQL_ROOT_PASSWORD: root # Senha do root aqui
           MYSQL_DATABASE: clinida_estetica_testing # Nome do banco de dados
@@ -38,13 +50,21 @@ jobs:
       - name: Validate syntax
         run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
 
-      - name: Setup PHP
+      - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: ${{ matrix.php }}
           extensions: mbstring, pdo, pdo_mysql
           coverage: none
           
+      - name: Install Composer dependencies
+        run: |
+          composer install --prefer-dist --no-progress --no-suggest
+          composer dump-autoload
+          
+      - name: Install PHPStan (if missing)
+        run: composer require --dev phpstan/phpstan --no-interaction
+
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
@@ -52,11 +72,6 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
           
-      - name: Install Composer dependencies
-        run: |
-          composer install --prefer-dist --no-progress --no-suggest
-          composer dump-autoload
-
       #- name: Copy environment file
       #  run: cp .env.testing .env
       
