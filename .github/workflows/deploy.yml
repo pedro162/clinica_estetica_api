@@ -1,14 +1,11 @@
 name: Deploy to AWS
 
 on:
-  push:
-    branches: ["main", "staging"]
-  pull_request:
-    branches: ["main", "staging"]
-  workflow_run:
-    workflows: ["Laravel CI"]
-    types:
-      -  completed
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
 
 env:
   AWS_REGION: us-east-1
