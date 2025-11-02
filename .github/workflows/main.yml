@@ -156,7 +156,7 @@ jobs:
           mkdir -p coverage/text
           mkdir -p coverage/html
           mkdir -p coverage/xml
-          XDEBUG_MODE=coverage ./vendor/bin/phpunit --configuration phpunit.xml --stop-on-failure
+          XDEBUG_MODE=coverage ./vendor/bin/phpunit --configuration phpunit.xml
             
       - name: Upload coverage reports
         if: always()
