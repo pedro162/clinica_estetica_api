@@ -160,12 +160,24 @@ jobs:
             --log-junit junit/results.xml \
             --stop-on-failure
 
-      - name: Upload test results
+      - name: Upload Laravel logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.os }}-${{ matrix.php }}-${{ matrix.mysql }}
+          name: laravel-logs-${{ matrix.os }}-${{ matrix.php }}-${{ matrix.mysql }}
           path: | 
             storage/logs/laravel.log
             coverage/
             junit/
+          if-no-files-found: warn
+            
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports-${{ matrix.os }}-${{ matrix.php }}-${{ matrix.mysql }}
+          path: | 
+            storage/logs/laravel.log
+            coverage/
+            junit/
+          if-no-files-found: warn
