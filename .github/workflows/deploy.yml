@@ -1,10 +1,10 @@
 name: Deploy to AWS
 
 on:
-  push:
-    branches:
-      - staging
-      - main
+  workflow_run:
+    workflows: ["Test"]
+    types:
+      - completed
 
 env:
   AWS_REGION: us-east-1
@@ -15,6 +15,7 @@ env:
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.ref == 'refs/heads/staging' }}
     name: Deploy to AWS
     runs-on: ubuntu-latest
 
