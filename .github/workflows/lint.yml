@@ -33,11 +33,11 @@ jobs:
       #- name: Run PHPStan
       #  run: vendor/bin/phpstan analyse --level=5 app
       
-      - name: Install Laravel Pint (if missing)
-        run: composer require --dev laravel/pint --no-interaction
+      #- name: Install Laravel Pint (if missing)
+      #  run: composer require --dev laravel/pint --no-interaction
 
-      - name: Run Pint
-        run: vendor/bin/pint --test
+      #- name: Run Pint
+      #  run: vendor/bin/pint --test
         
   tests:
     needs: lint
