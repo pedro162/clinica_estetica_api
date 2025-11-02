@@ -3,7 +3,40 @@ name: Laravel CI
 on: [push, pull_request]
 
 jobs:
-  test:
+  # =========================
+  # Job 1: Lint + PHPStan
+  # =========================
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, pdo, pdo_mysql
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Validate PHP syntax
+        run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --level=5 app
+
+      - name: Run Pint
+        run: vendor/bin/pint --test
+
+  # =========================
+  # Job 2: Tests + Coverage
+  # =========================
+  tests:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
 
@@ -72,9 +105,6 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
           
-      #- name: Copy environment file
-      #  run: cp .env.testing .env
-      
       - name: Prepare environment files
         run: |
           cp .env.testing.pipeline .env.testing
@@ -115,7 +145,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           mkdir -p coverage
-          php artisan test --env=testing --coverage-html coverage/ --stop-on-failure
+          php artisan test --env=testing --stop-on-failure --coverage-html coverage/ --log-junit junit/results.xml
 
       - name: Upload test results
         if: always()
@@ -125,3 +155,4 @@ jobs:
           path: | 
             storage/logs/laravel.log
             coverage/
+            junit/
