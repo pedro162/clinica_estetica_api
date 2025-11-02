@@ -27,17 +27,17 @@ jobs:
       - name: Validate PHP syntax
         run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
       
-      #- name: Install PHPStan (if missing)
-      #  run: composer require --dev phpstan/phpstan --no-interaction
+      - name: Install PHPStan (if missing)
+        run: composer require --dev phpstan/phpstan --no-interaction
         
-      #- name: Run PHPStan
-      #  run: vendor/bin/phpstan analyse --level=5 app
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --level=5 app
       
-      #- name: Install Laravel Pint (if missing)
-      #  run: composer require --dev laravel/pint --no-interaction
+      - name: Install Laravel Pint (if missing)
+        run: composer require --dev laravel/pint --no-interaction
 
-      #- name: Run Pint
-      #  run: vendor/bin/pint --test
+      - name: Run Pint
+        run: vendor/bin/pint --test
 
   # =========================
   # Job 2: Tests
