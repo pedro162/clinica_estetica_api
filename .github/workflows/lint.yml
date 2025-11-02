@@ -38,27 +38,3 @@ jobs:
 
       - name: Run Pint
         run: vendor/bin/pint --test
-
-  # =========================
-  # Job 2: Tests
-  # =========================
-        
-  tests:
-    needs: lint
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
-    uses: ./.github/workflows/main.yml
-    with:
-      env: ${{ inputs.env }}
-    secrets: inherit
-
-  # =========================
-  # Job 3: Deploy
-  # =========================
-  
-  deploy:
-    needs: tests
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
-    uses: ./.github/workflows/deploy.yml
-    with:
-      env: ${{ inputs.env }}
-    secrets: inherit
