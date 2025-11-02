@@ -116,7 +116,9 @@ jobs:
       #  run: vendor/bin/phpstan analyse --level=5 app
         
       - name: Run tests with coverage
-        run: php artisan test --env=testing --coverage-html coverage/ --stop-on-failure
+        run: |
+          mkdir -p coverage
+          php artisan test --env=testing --coverage-html coverage/ --stop-on-failure
 
       - name: Upload test results
         if: always()
