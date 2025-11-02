@@ -39,9 +39,13 @@ jobs:
   tests:
     needs: lint
     uses: ./.github/workflows/main.yml
+    with:
+      env: ${{ inputs.env }}
     secrets: inherit
     
   deploy:
     needs: tests
     uses: ./.github/workflows/deploy.yml
+    with:
+      env: ${{ inputs.env }}
     secrets: inherit
