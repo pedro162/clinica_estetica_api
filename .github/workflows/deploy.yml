@@ -14,8 +14,8 @@ env:
   CONTAINER_NAME_APP: clinica_estetica_api
 
 jobs:
-  deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.ref == 'refs/heads/staging' }}
+  deploy_production:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.ref == 'refs/heads/main' }}
     name: Deploy to AWS
     runs-on: ubuntu-latest
 
