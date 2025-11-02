@@ -177,7 +177,7 @@ jobs:
         with:
           name: coverage-reports-${{ matrix.os }}-${{ matrix.php }}-${{ matrix.mysql }}
           path: | 
-            storage/logs/laravel.log
-            coverage/
-            junit/
+            coverage/html
+            coverage/clover.xml
+            junit/results.xml
           if-no-files-found: warn
