@@ -45,20 +45,15 @@ jobs:
       #- name: Copy environment file
       #  run: cp .env.testing .env
       
-      - name: Remove old .env.testing if exists
-        run: rm -f .env.testing
-        
-      - name: Copy environment file to test
-        run: cp .env.testing.pipeline .env.testing
-        
-      - name: Copy environment .env file to test
-        run: cp .env.testing.pipeline .env
+      - name: Prepare environment files
+        run: |
+          cp .env.testing.pipeline .env.testing
+          cp .env.testing.pipeline .env
       
       - name: Clear Laravel caches
         run: |
           php artisan config:clear
           php artisan cache:clear
-          php artisan config:cache
           rm -rf bootstrap/cache/*.php
 
       - name: Generate application key
@@ -84,13 +79,6 @@ jobs:
 
       - name: Show .env for debug
         run: cat .env
-
-      - name: Clear Laravel caches
-        run: |
-          php artisan config:clear
-          php artisan cache:clear
-          php artisan config:cache
-          rm -rf bootstrap/cache/*.php
             
       - name: Run migrations
         env:
@@ -100,7 +88,7 @@ jobs:
           DB_DATABASE: clinida_estetica_testing
           DB_USERNAME: root
           DB_PASSWORD: root
-        run: php artisan migrate --env=testing --force
+        run: php artisan migrate --force
 
       - name: Run tests
         env:
