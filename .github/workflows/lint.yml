@@ -1,6 +1,11 @@
 name: Lint analisy
 
-on: [push, pull_request]
+on:
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
 
 jobs:
   # =========================
