@@ -6,11 +6,7 @@ on:
       branch:
         required: true
         type: string
-      conclusion:
-        required: true
-        type: string
-        default: 'success'
-
+        
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY_APP: clinica_estetica_api
@@ -20,7 +16,7 @@ env:
 
 jobs:
   deploy_production:
-    if: ${{ inputs.conclusion == 'success' && inputs.branch == 'main' }}
+    if: ${{inputs.branch == 'main' }}
     name: Deploy to AWS
     runs-on: ubuntu-latest
 
