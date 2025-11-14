@@ -7,9 +7,9 @@ on:
         required: true
         type: string
       conclusion:
-        required: true
-        type: string
-        default: 'success'
+        required: true
+        type: string
+        default: 'success'
 
 env:
   AWS_REGION: us-east-1
