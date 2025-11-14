@@ -11,7 +11,6 @@ on:
 
 jobs:
   lint:
-    if: ${{ (github.ref_name != 'staging' && github.ref_name != 'master') || github.event_name == 'pull_request' }}
     uses: ./.github/workflows/lint.yml
     secrets: inherit
     with:
