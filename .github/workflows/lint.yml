@@ -37,7 +37,10 @@ jobs:
       - name: Install Composer dependencies
         # Se as dependências estiverem no cache, este passo será muito mais rápido
         run: composer install --prefer-dist --no-progress --no-interaction
-
+      
+      - name: Install PHPStan (if missing)
+        run: composer require --dev phpstan/phpstan --no-interaction
+        
       - name: Validate composer.json
         run: composer validate --strict
 
