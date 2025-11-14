@@ -37,9 +37,6 @@ jobs:
       - name: Install Composer dependencies
         # Se as dependências estiverem no cache, este passo será muito mais rápido
         run: composer install --prefer-dist --no-progress --no-interaction
-      
-      - name: Install PHPStan (if missing)
-        run: composer require --dev phpstan/phpstan --no-interaction
         
       - name: Validate composer.json
         run: composer validate --strict
@@ -47,10 +44,16 @@ jobs:
       # Esta verificação é redundante se você usa PHPStan e Pint, mas é rápido e pode ser mantida
       - name: Validate PHP syntax
         run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
+            
+      - name: Install PHPStan (if missing)
+        run: composer require --dev phpstan/phpstan --no-interaction
         
       - name: Run PHPStan (Level 5)
         # O shivammathur instala o PHPStan no PATH, então não precisa do vendor/bin/
         run: phpstan analyse --level=5 app
+            
+      - name: Install Laravel Pint (if missing)
+        run: composer require --dev laravel/pint --no-interaction
         
       - name: Run Pint (Test mode)
         # O shivammathur instala o Pint no PATH
