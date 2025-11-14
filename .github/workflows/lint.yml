@@ -45,15 +45,15 @@ jobs:
       - name: Validate PHP syntax
         run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
             
-      - name: Install PHPStan (if missing)
-        run: composer require --dev phpstan/phpstan --no-interaction
+      #- name: Install PHPStan (if missing)
+      #  run: composer require --dev phpstan/phpstan --no-interaction
         
       - name: Run PHPStan (Level 5)
         # O shivammathur instala o PHPStan no PATH, então não precisa do vendor/bin/
         run: phpstan analyse --level=5 app
             
-      - name: Install Laravel Pint (if missing)
-        run: composer require --dev laravel/pint --no-interaction
+      #- name: Install Laravel Pint (if missing)
+      #  run: composer require --dev laravel/pint --no-interaction
         
       - name: Run Pint (Test mode)
         # O shivammathur instala o Pint no PATH
