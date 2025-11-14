@@ -10,18 +10,11 @@ on:
       - master
 
 jobs:
-  lint_test:
+  lint:
     uses: ./.github/workflows/lint-test.yml
     secrets: inherit
     with:
       branch: ${{ github.ref_name }}  
-  
-  lint:
-    needs: [lint_test]
-    uses: ./.github/workflows/lint.yml
-    secrets: inherit
-    with:
-      branch: ${{ github.ref_name }}
       
   test:
     if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'staging' || github.base_ref == 'master') }}
