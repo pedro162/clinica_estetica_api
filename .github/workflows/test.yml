@@ -1,10 +1,11 @@
-name: Test
+name: Test suite
 
 on:
-  workflow_run:
-    workflows: ["Lint analisy"]
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
 
 jobs:
   # =========================
