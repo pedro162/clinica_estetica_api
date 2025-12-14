@@ -670,3 +670,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/parametro/info/{id}', ['as' => 'parametro.info', 'uses' => 'Admin\ParametroController@info']);
 	Route::get('/parametro/destroy/{id}', ['as' => 'parametro.destroy', 'uses' => 'Admin\ParametroController@destroy']);
 });
+Route::middleware('auth:api')->get('/debug', function (Request $request) {
+	return response()->json([
+		'user' => $request->user(),
+		'token' => $request->bearerToken()
+	]);
+});

@@ -46,6 +46,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
+        Route::middleware([])->group(base_path('routes/metrics.php'));
+
         //
     }
 
