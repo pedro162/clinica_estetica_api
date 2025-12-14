@@ -187,6 +187,7 @@ return [
         App\Providers\Contact\ContactServiceProvider::class,
         App\Providers\Country\CountryServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
+        App\Providers\PrometheusServiceProvider::class,
     ],
 
     /*

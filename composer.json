@@ -13,6 +13,10 @@
     "laravel/tinker": "^2.0",
     "nfephp-org/sped-da": "^1.1",
     "nfephp-org/sped-nfe": "^5.1",
+    "open-telemetry/api": "^1.7",
+    "open-telemetry/sdk": "^1.9",
+    "predis/predis": "^3.3",
+    "promphp/prometheus_client_php": "^2.14",
     "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.0"
   },
   "require-dev": {
@@ -52,7 +56,8 @@
     "preferred-install": "dist",
     "sort-packages": true,
     "allow-plugins": {
-      "php-http/discovery": true
+      "php-http/discovery": true,
+      "tbachert/spi": true
     }
   },
   "extra": {
