@@ -126,11 +126,12 @@ services:
       - laravel
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v2.53.0
     container_name: prometheus
     volumes:
       - ./metrics/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./metrics/prometheus/alerts.yml:/etc/prometheus/alerts.yml
+      - prometheus-data:/prometheus
     ports:
       - "9090:9090"    
     command:
@@ -139,20 +140,25 @@ services:
       - laravel
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:10.4.1
     container_name: grafana
     ports:
       - "3001:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./metrics/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./metrics/grafana/dashboards:/etc/grafana/provisioning/dashboards
     depends_on:
       - prometheus
     networks:
       - laravel
   alertmanager:
-    image: prom/alertmanager
+    image: prom/alertmanager:v0.27.0
     ports:
       - "9093:9093"
     volumes:
       - ./metrics/alertmanager:/etc/alertmanager
+      - alertmanager-data:/alertmanager
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
     networks:
@@ -160,6 +166,9 @@ services:
 volumes:
   db_data:
   db_read_data:
+  grafana-storage:
+  prometheus-data:
+  alertmanager-data:
 
 networks:
   laravel:
