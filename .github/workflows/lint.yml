@@ -1,6 +1,11 @@
-name: Lint analisy
+name: Lint and Static Analysis
 
-on: [push, pull_request]
+on:
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
 
 jobs:
   # =========================
@@ -11,54 +16,45 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        # Não precisa do fetch-depth: 0 se você não estiver usando git-history, o padrão (1) é mais rápido.
 
-      - name: Setup PHP 8.2
+      - name: Setup PHP 8.2 and tools
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
           extensions: mbstring, pdo, pdo_mysql, xdebug
+          # Instalando ferramentas diretamente no cache do setup-php
+          tools: phpstan, pint # Assume que phpstan/phpstan e laravel/pint estão no require-dev
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
 
       - name: Install Composer dependencies
+        # Se as dependências estiverem no cache, este passo será muito mais rápido
         run: composer install --prefer-dist --no-progress --no-interaction
-
+        
       - name: Validate composer.json
         run: composer validate --strict
 
+      # Esta verificação é redundante se você usa PHPStan e Pint, mas é rápido e pode ser mantida
       - name: Validate PHP syntax
         run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
-      
-      - name: Install PHPStan (if missing)
-        run: composer require --dev phpstan/phpstan --no-interaction
+            
+      #- name: Install PHPStan (if missing)
+      #  run: composer require --dev phpstan/phpstan --no-interaction
         
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --level=5 app
-      
-      - name: Install Laravel Pint (if missing)
-        run: composer require --dev laravel/pint --no-interaction
-
-      - name: Run Pint
-        run: vendor/bin/pint --test
-
-  # =========================
-  # Job 2: Tests
-  # =========================
+      - name: Run PHPStan (Level 5)
+        # O shivammathur instala o PHPStan no PATH, então não precisa do vendor/bin/
+        run: phpstan analyse --level=5 app
+            
+      #- name: Install Laravel Pint (if missing)
+      #  run: composer require --dev laravel/pint --no-interaction
         
-  tests:
-    needs: lint
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
-    uses: ./.github/workflows/main.yml
-    with:
-      env: ${{ inputs.env }}
-    secrets: inherit
-
-  # =========================
-  # Job 3: Deploy
-  # =========================
-  
-  deploy:
-    needs: tests
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
-    uses: ./.github/workflows/deploy.yml
-    with:
-      env: ${{ inputs.env }}
-    secrets: inherit
+      - name: Run Pint (Test mode)
+        # O shivammathur instala o Pint no PATH
+        run: pint --test

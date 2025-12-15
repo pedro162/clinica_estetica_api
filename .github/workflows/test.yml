@@ -1,9 +1,9 @@
-name: Laravel CI
+name: Test suite
 
 on:
   workflow_call:
     inputs:
-      env:
+      branch:
         required: true
         type: string
 
@@ -12,6 +12,7 @@ jobs:
   # Job 1: Tests + Coverage
   # =========================
   tests:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
 

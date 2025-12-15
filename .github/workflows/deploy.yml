@@ -3,10 +3,10 @@ name: Deploy to AWS
 on:
   workflow_call:
     inputs:
-      env:
+      branch:
         required: true
         type: string
-
+        
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY_APP: clinica_estetica_api
@@ -15,7 +15,8 @@ env:
   CONTAINER_NAME_APP: clinica_estetica_api
 
 jobs:
-  deploy:
+  deploy_production:
+    if: ${{inputs.branch == 'main' }}
     name: Deploy to AWS
     runs-on: ubuntu-latest
 
