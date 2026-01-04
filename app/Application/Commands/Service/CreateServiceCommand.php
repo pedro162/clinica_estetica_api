@@ -12,8 +12,8 @@ class CreateServiceCommand
     protected string $userId;
     protected string $userUpdateId;
     protected string $tenantId;
-    protected string $stateId;
     protected string $active;
+    protected string $unit;
 
     public function id(string $id): CreateServiceCommand
     {
@@ -69,9 +69,9 @@ class CreateServiceCommand
         return $this;
     }
 
-    public function stateId(string $stateId): CreateServiceCommand
+    public function unit(string $unit): CreateServiceCommand
     {
-        $this->stateId = $stateId;
+        $this->unit = $unit;
         return $this;
     }
 
@@ -120,9 +120,9 @@ class CreateServiceCommand
         return $this->active ?? null;
     }
 
-    public function getStateId(): ?string
+    public function getUnit(): ?string
     {
-        return $this->stateId ?? null;
+        return $this->unit ?? null;
     }
 
     public static function build(array $data): CreateServiceCommand
@@ -138,6 +138,7 @@ class CreateServiceCommand
             ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId((string) $value)],
             ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId((string) $value)],
             ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId((string) $value)],
+            ['keys' => ['unit', 'unidade'], 'callback' => fn($value) => $entity->unit((string) $value)],
         ];
 
         foreach ($mapping as $map) {
@@ -154,17 +155,19 @@ class CreateServiceCommand
 
     public function getDataProperties(): array
     {
-        return [
+        $data = [
             'id' => (string)($this->id ?? ''),
             'name' => (string)($this->name ?? ''),
             'description' => (string)($this->description ?? ''),
             'type' => (string)($this->type ?? ''),
             'value' => (float)($this->value ?? 0),
             'tenantId' => (string)($this->tenantId ?? ''),
-            'stateId' => (string)($this->stateId ?? ''),
             'userId' => (string)($this->userId ?? ''),
             'userUpdateId' => (string)($this->userUpdateId ?? ''),
             'active' => (string)($this->active ?? ''),
+            'unit' => (string)($this->unit ?? ''),
         ];
+
+        return  array_filter($data, fn($value) => $value !== null && trim($value) != '');
     }
 }

@@ -23,7 +23,7 @@ class UpdateServiceRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|min:1|max:255',
+            'name' => 'sometimes|min:1|max:255',
             'descricao' => 'sometimes|nullable|min:1|max:255',
             'unidade' => 'sometimes|nullable|min:1|max:255',
             'type' => 'sometimes|nullable|in:mensalidade,outros',

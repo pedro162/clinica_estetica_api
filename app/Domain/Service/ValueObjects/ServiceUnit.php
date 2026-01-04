@@ -2,16 +2,14 @@
 
 namespace App\Domain\Service\ValueObjects;
 
-class ServiceType
+class ServiceUnit
 {
     private string $value;
 
     public function __construct(string $value)
     {
-        if (!empty($value)) {
-            if (!in_array($value, ['mensalidade', 'outros'])) {
-                throw new \InvalidArgumentException("The service type is invalid. It should be either (mensalidade, outros)");
-            }
+        if (!(isset($value) && strlen(trim($value)) > 0)) {
+            throw new \InvalidArgumentException("The service unit cannot be empty");
         }
 
         $this->value = $value;
