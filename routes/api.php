@@ -575,6 +575,12 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/agenda/info/{id}', ['as' => 'agenda.info', 'uses' => 'Admin\AgendaController@info']);
 	Route::get('/agenda/destroy/{id}', ['as' => 'agenda.destroy', 'uses' => 'Admin\AgendaController@destroy']);
 
+	Route::get('/v1/services', ['as' => 'services.index', 'uses' => GetAllServiceController::class]);
+	Route::get('/v1/services/{id}', ['as' => 'services.show', 'uses' => GetByIdServiceController::class]);
+	Route::post('/v1/services', ['as' => 'services.store', 'uses' => StoreServiceController::class]);
+	Route::put('/v1/services/{id}', ['as' => 'services.update', 'uses' => UpdateServiceController::class]);
+	Route::delete('/v1/services/{id}', ['as' => 'services.destroy', 'uses' => DeleteServiceController::class]);
+
 	Route::get('/servico/json', ['as' => 'servico.index', 'uses' => GetAllServiceController::class]);
 	Route::post('/servico/json', ['as' => 'servico.index', 'uses' => GetAllServiceController::class]);
 	Route::post('/servico/store', ['as' => 'servico.store', 'uses' => StoreServiceController::class]);

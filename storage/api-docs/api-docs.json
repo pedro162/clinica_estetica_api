@@ -1,0 +1,149 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Central de Serviços API",
+        "description": "API responsável pela centralização e orquestração de serviços",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/services": {
+            "get": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "Get all services",
+                "description": "Retrieve a list of all services",
+                "operationId": "9c523614ff172daa18f7c24ed92eb22b",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ServiceResponseSchema"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ServiceResponseSchema": {
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Premium Service"
+                    },
+                    "descricao": {
+                        "type": "string",
+                        "example": "Premium Service Description"
+                    },
+                    "unidade": {
+                        "type": "string",
+                        "example": "unit"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "mensalidade"
+                    },
+                    "active": {
+                        "type": "string",
+                        "example": "yes"
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_update_id": {
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "tenant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vrServico": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 99.9
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-10-04T18:25:28.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-10-04T18:25:28.000000Z"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "passport": {
+                "type": "oauth2",
+                "description": "OAuth2 via Laravel Passport",
+                "flows": {
+                    "password": {
+                        "tokenUrl": "/oauth/token",
+                        "scopes": {}
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Service",
+            "description": "Service"
+        }
+    ]
+}

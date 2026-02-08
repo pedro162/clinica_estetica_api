@@ -1,3 +1,18 @@
+# ===============================
+# STAGE 1 — Build dos assets (Vite)
+# ===============================
+FROM node:20-slim AS assets-builder
+WORKDIR /app
+
+# Copia apenas o necessário para instalar dependências (Cache)
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Copia o restante e gera o build
+COPY . .
+RUN npm run build
+
+# --- ESTÁGIO 2: AMBIENTE PHP (FINAL) ---
 FROM php:8.2-fpm
 
 # Criar um usuário não-root
@@ -34,7 +49,16 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 
 # Copiar arquivos do projeto
-COPY . .
+#COPY . .
+
+#COPY --from=assets-builder /app/public/build /var/www/public/build
+
+# 1. Copiar os arquivos do projeto (Exceto o build)
+COPY --chown=laravel:laravel . .
+
+# 2. Copiar o BUILD gerado no estágio 1 (Isso garante que ele venha por cima)
+# Esta linha é crucial e deve vir APÓS o COPY . .
+COPY --from=assets-builder --chown=laravel:laravel /app/public/build ./public/build
 
 # Criar o diretório /var/run/php caso não exista e depois ajustar permissões
 RUN mkdir -p /var/run/php && chown -R laravel:laravel /var/run/php \
@@ -47,6 +71,9 @@ RUN mkdir -p /var/run/php && chown -R laravel:laravel /var/run/php \
 COPY ./.docker/supervisor/supervisord.conf /etc/supervisor/
 COPY ./.docker/supervisor/conf.d/laravel-worker.conf /etc/supervisor/conf.d/
 
+# Copia a configuração que libera o acesso à porta 9000
+COPY .docker/php/docker-php-fpm.conf /usr/local/etc/php-fpm.d/zz-docker.conf
+
 RUN mkdir -p /var/log/php-fpm && chown -R laravel:laravel /var/log/php-fpm
 
 # Ajustar permissões para o usuário laravel poder acessar os diretórios do PHP-FPM
@@ -55,6 +82,10 @@ RUN chown -R laravel:laravel /var/run/php /var/log
 RUN touch /var/log/supervisord.log && \
     chown laravel:laravel /var/log/supervisord.log
 
+# --- A MÁGICA PARA PRODUÇÃO ---
+# Aqui pegamos os arquivos que o Node gerou no Estágio 1 e injetamos no PHP.
+# Isso garante que o Breeze funcione em Produção/Homologação sem precisar de Node.js lá.
+#COPY --from=assets-builder --chown=laravel:laravel /app/public/build /var/www/public/build
 
 # Trocar para o usuário não-root
 USER laravel
@@ -63,5 +94,5 @@ USER laravel
 EXPOSE 9000
 
 # Comando padrão para iniciar Supervisor (que gerencia PHP-FPM e workers)
-CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+#CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 CMD ["php-fpm"]
