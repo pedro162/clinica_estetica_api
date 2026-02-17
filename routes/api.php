@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\V1\Seller\DeleteSellerController;
+use App\Http\Controllers\Admin\V1\Seller\GetAllSellerController;
+use App\Http\Controllers\Admin\V1\Seller\GetByIdSellerController;
+use App\Http\Controllers\Admin\V1\Seller\StoreSellerController;
+use App\Http\Controllers\Admin\V1\Seller\UpdateSellerController;
 use App\Http\Controllers\Admin\V1\Service\DeleteServiceController;
 use App\Http\Controllers\Admin\V1\Service\GetAllServiceController;
 use App\Http\Controllers\Admin\V1\Service\GetByIdServiceController;
@@ -617,15 +622,19 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/ordem/servico/item/info/{id}', ['as' => 'ordem.servico.item.info', 'uses' => 'Admin\ServicoItemController@info']);
 	Route::get('/ordem/servico/item/destroy/{id}', ['as' => 'ordem.servico.item.destroy', 'uses' => 'Admin\ServicoItemController@destroy']);
 
-	Route::get('/rca/json', ['as' => 'rca.json', 'uses' => 'Admin\RcaController@json']);
-	Route::post('/rca/json', ['as' => 'rca.json', 'uses' => 'Admin\RcaController@json']);
-	Route::post('/rca/store', ['as' => 'rca.store', 'uses' => 'Admin\RcaController@store']);
-	Route::get('/rca/edit/{id}', ['as' => 'rca.edit', 'uses' => 'Admin\RcaController@edit']);
-	Route::post('/rca/edit/{id}', ['as' => 'rca.edit', 'uses' => 'Admin\RcaController@edit']);
-	Route::put('/rca/update/{id}', ['as' => 'rca.update', 'uses' => 'Admin\RcaController@update']);
-	Route::get('/rca/info/{id}', ['as' => 'rca.info', 'uses' => 'Admin\RcaController@info']);
-	Route::post('/rca/info/{id}', ['as' => 'rca.info', 'uses' => 'Admin\RcaController@info']);
-	Route::get('/rca/destroy/{id}', ['as' => 'rca.destroy', 'uses' => 'Admin\RcaController@destroy']);
+	Route::get('/rca/json', ['as' => 'rca.json', 'uses' => GetAllSellerController::class]);
+	Route::post('/rca/json', ['as' => 'rca.json', 'uses' => GetAllSellerController::class]);
+	Route::post('/rca/store', ['as' => 'rca.store', 'uses' => StoreSellerController::class]);
+	Route::put('/rca/update/{id}', ['as' => 'rca.update', 'uses' => UpdateSellerController::class]);
+	Route::get('/rca/info/{id}', ['as' => 'rca.info', 'uses' => GetByIdSellerController::class]);
+	Route::post('/rca/info/{id}', ['as' => 'rca.info', 'uses' => GetByIdSellerController::class]);
+	Route::get('/rca/destroy/{id}', ['as' => 'rca.destroy', 'uses' => DeleteSellerController::class]);
+
+	Route::get('/v1/sellers', ['as' => 'sellers.index', 'uses' => GetAllSellerController::class]);
+	Route::get('/v1/sellers/{id}', ['as' => 'sellers.show', 'uses' => GetByIdSellerController::class]);
+	Route::post('/v1/sellers', ['as' => 'sellers.store', 'uses' => StoreSellerController::class]);
+	Route::put('/v1/sellers/{id}', ['as' => 'sellers.update', 'uses' => UpdateSellerController::class]);
+	Route::delete('/v1/sellers/{id}', ['as' => 'sellers.destroy', 'uses' => DeleteSellerController::class]);
 
 	Route::get('/ordem/servico/cobranca/json', ['as' => 'ordem.servico.cobranca.json', 'uses' => 'Admin\OrdemServicoCobrancaController@json']);
 	Route::post('/ordem/servico/cobranca/json', ['as' => 'ordem.servico.cobranca.json', 'uses' => 'Admin\OrdemServicoCobrancaController@json']);
