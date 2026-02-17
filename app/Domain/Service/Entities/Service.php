@@ -10,6 +10,7 @@ use App\Domain\Service\ValueObjects\ServiceId;
 use App\Domain\Service\ValueObjects\ServiceDescription;
 use App\Domain\Service\ValueObjects\ServiceName;
 use App\Domain\Service\ValueObjects\ServiceType;
+use App\Domain\Service\ValueObjects\ServiceUnit;
 use App\Domain\Service\ValueObjects\ServiceValue;
 
 class Service extends BaseEntity
@@ -19,6 +20,7 @@ class Service extends BaseEntity
     protected ServiceType $type;
     protected ServiceDescription $description;
     protected ServiceValue $value;
+    protected ServiceUnit $unit;
 
     public function id(ServiceId $id): Service
     {
@@ -29,6 +31,17 @@ class Service extends BaseEntity
     public function getId(): ?ServiceId
     {
         return $this->id ?? null;
+    }
+
+    public function unit(ServiceUnit $unit): Service
+    {
+        $this->unit = $unit;
+        return $this;
+    }
+
+    public function getUnit(): ?ServiceUnit
+    {
+        return $this->unit ?? null;
     }
 
     public function name(ServiceName $name): Service
@@ -88,6 +101,7 @@ class Service extends BaseEntity
             ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
             ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
             ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['unit', 'unidade'], 'callback' => fn($value) => $entity->unit(new ServiceUnit((string)$value))],
         ];
 
         foreach ($mapping as $map) {
@@ -114,6 +128,7 @@ class Service extends BaseEntity
             'active' => isset($this->active) ? (string)$this->active : null,
             'user_id' => isset($this->userId) ? (string)$this->userId : null,
             'user_update_id' => isset($this->userUpdateId) ? (string)$this->userUpdateId : null,
+            'unidade' => isset($this->unit) ? (string)$this->unit : null,
         ];
 
         $data = array_filter($data, function ($value) {
