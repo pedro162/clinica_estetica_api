@@ -9,8 +9,8 @@ class ServiceType
     public function __construct(string $value)
     {
         if (!empty($value)) {
-            if (!in_array($value, ['banco', 'convencional'])) {
-                throw new \InvalidArgumentException("The cashier type is invalid. It should be either (banco, convencional)");
+            if (!in_array($value, ['mensalidade', 'outros'])) {
+                throw new \InvalidArgumentException("The service type is invalid. It should be either (mensalidade, outros)");
             }
         }
 

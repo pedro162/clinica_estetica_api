@@ -28,7 +28,7 @@ class StoreServiceRequest extends FormRequest
             'descricao' => 'sometimes|nullable|min:1|max:255',
             'unidade' => 'sometimes|nullable|min:1|max:255',
             'type' => 'sometimes|nullable|in:mensalidade,outros',
-            'vrServico' => 'sometimes|min:0',
+            'vrServico' => 'required|min:0',
             'active' => 'sometimes|in:yes,no',
             'user_id' => 'sometimes|exists:App\User,id',
             'user_update_id' => 'sometimes|exists:App\User,id',

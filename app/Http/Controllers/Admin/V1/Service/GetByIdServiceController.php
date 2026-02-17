@@ -9,76 +9,31 @@ use App\Domain\Service\Repositories\ServiceRepositoryInterface;
 use App\Exceptions\ServicoException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Service\DestroyServiceRequest;
-use App\Http\Requests\V1\Service\GetAllServiceRequest;
 use App\Http\Requests\V1\Service\ShowServiceRequest;
-use App\Http\Requests\V1\Service\StoreServiceRequest;
 use App\Http\Requests\V1\Service\UpdateServiceRequest;
-use App\Http\Resources\V1\Service\GetAllServiceResource;
 use App\Http\Resources\V1\Service\ServiceResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
-class ServiceController extends Controller
+class GetByIdServiceController extends Controller
 {
-
-
     public function __construct(
         protected ServiceApplicationServiceInterface $service,
         protected ServiceRepositoryInterface $personRepository
     ) {}
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(GetAllServiceRequest $request)
-    {
-        try {
-            DB::beginTransaction();
-            $data = $this->service->getAll($request->all());
-            DB::commit();
-            return ApiResponseClass::sendRequest(new GetAllServiceResource($data), '', JsonResponse::HTTP_OK);
-        } catch (ServicoException $e) {
-            DB::rollback();
-
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            DB::rollback();
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\V1\Service\StoreServiceRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreServiceRequest $request)
-    {
-        try {
-            DB::beginTransaction();
-            $data = $this->service->store(CreateServiceCommand::build($request->validated()));
-            DB::commit();
-            return ApiResponseClass::sendRequest(new ServiceResource($data->refresh()), 'Service Created Successful', JsonResponse::HTTP_CREATED);
-        } catch (ServicoException $e) {
-            DB::rollback();
-
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            DB::rollback();
-            ApiResponseClass::throw($e, $e->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
      * Display the specified resource.
      *
+     * @param  \App\Http\Requests\V1\Service\ShowServiceRequest  $request
+     * 
      * @param  int  $id
-     * @return \App\Http\Requests\V1\Service\ShowServiceRequest
+     * 
+     * @return JsonResponse
+     * 
+     * @throws HttpResponseException
      */
-    public function show(ShowServiceRequest $request, $id)
+    public function __invoke(ShowServiceRequest $request, $id): JsonResponse
     {
         try {
             DB::beginTransaction();
@@ -100,10 +55,14 @@ class ServiceController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\V1\Service\UpdateServiceRequest $request
+     * 
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 
+     * @return JsonResponse
+     * 
+     * @throws HttpResponseException
      */
-    public function update(UpdateServiceRequest $request, $id)
+    public function update(UpdateServiceRequest $request, $id): JsonResponse
     {
         try {
             DB::beginTransaction();
@@ -129,9 +88,11 @@ class ServiceController extends Controller
      *
      * @param  \App\Http\Requests\V1\Service\DestroyServiceRequest $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
+     * 
+     * @throws HttpResponseException
      */
-    public function destroy(DestroyServiceRequest $request, $id)
+    public function destroy(DestroyServiceRequest $request, $id): JsonResponse
     {
         try {
             DB::beginTransaction();

@@ -1,3 +1,13 @@
+# --- ESTÁGIO 1: CONSTRUÇÃO DOS ATIVOS (NODE.JS) ---
+# Este estágio baixa as dependências de front-end e compila o CSS/JS (Vite)
+FROM node:20-slim AS assets-builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# --- ESTÁGIO 2: AMBIENTE PHP (FINAL) ---
 FROM php:8.2-fpm
 
 # Criar usuário não-root (laravel) para rodar PHP/Nginx com menos privilégios
@@ -77,6 +87,11 @@ RUN mkdir -p \
 COPY .docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["sh", "/usr/local/bin/entrypoint.sh"]
+
+# --- A MÁGICA PARA PRODUÇÃO ---
+# Aqui pegamos os arquivos que o Node gerou no Estágio 1 e injetamos no PHP.
+# Isso garante que o Breeze funcione em Produção/Homologação sem precisar de Node.js lá.
+COPY --from=assets-builder --chown=laravel:laravel /app/public/build /var/www/public/build
 
 # Expor porta do Nginx
 EXPOSE 80

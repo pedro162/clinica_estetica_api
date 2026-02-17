@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  # Serviço da Aplicação PHP
+  app:
+    build: 
+      context: .
+      dockerfile: .docker/Dockerfile
+    image: localhost:5000/laravel-app:latest
+
+  # Serviço do Nginx
+  web:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.nginx
+    image: localhost:5000/laravel-nginx:latest
+
+  # Serviço da Fila (Queue) - Se você quiser escalar a fila no Swarm também
+  queue:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.queue
+    image: localhost:5000/laravel-queue:latest
