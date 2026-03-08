@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\FormularioException;
+use App\Formulario;
+use App\FormularioGrupo;
+use App\Helpers\FormularioHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Formulario;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\FormularioException;
-use \App\FormularioGrupo;
-use Illuminate\Support\Facades\Auth;
-use \App\Helpers\FormularioHelper;
 
 class FormularioController extends Controller
 {
-
-
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +19,7 @@ class FormularioController extends Controller
      */
     public function index(Request $request)
     {
-        try{
+        try {
             \DB::beginTransaction();
 
             $consulta = $request->all();
@@ -35,13 +30,13 @@ class FormularioController extends Controller
             \DB::commit();
 
             return view('admin.formulario.index', compact('registro', 'consulta'));
-        }catch(FormularioException $e){
+        } catch (FormularioException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -64,7 +59,7 @@ class FormularioController extends Controller
     public function store(Request $request)
     {
 
-        try{
+        try {
 
 
             set_time_limit(9000000);
@@ -72,16 +67,16 @@ class FormularioController extends Controller
             \DB::beginTransaction();
 
             $this->validaRequest($request);
-            
+
             $dados = $request->all();
             $objFormularioHelper = new FormularioHelper();
             $registro = $objFormularioHelper->store($dados);
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
 
-        }catch (FormularioException $e) {
+        } catch (FormularioException $e) {
             \DB::rollback();
             return response()->json(['mensagem' => $e->getMessage()], 404);
         } catch (\Error $e) {
@@ -89,7 +84,7 @@ class FormularioController extends Controller
             return response()->json(['mensagem' => $e->getMessage()], 404);
         } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -101,7 +96,7 @@ class FormularioController extends Controller
      */
     public function show(Request $request, $id, $idAssistente)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
@@ -111,43 +106,43 @@ class FormularioController extends Controller
             $callBack = $dados['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-            if( (!isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            if ((!isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['error' => 'Parâmetro inválido']], 400);
             }
 
-            if( (!isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            if ((!isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['error' => 'Parâmetro inválido']], 400);
             }
 
             $registro = Formulario::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if(! $registro){
+            if (! $registro) {
                 throw new FormularioException('Registro não encontrado');
             }
             \DB::commit();
 
             return view('admin.formulario.container', compact('registro', 'idAssistente', 'callBack'));
-        
-        }catch(FormularioException $e){
+
+        } catch (FormularioException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-       
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
 
     public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
 
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new FormularioException('Parâmetro ínválido');
             }
 
@@ -156,26 +151,26 @@ class FormularioController extends Controller
             $registro = Formulario::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
-            if($registro == null){
+            if ($registro == null) {
                 throw new FormularioException(' não encontrado');
             }
             $registro->grupo;
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
 
-        }catch(FormularioException $e){
+        } catch (FormularioException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
@@ -189,25 +184,25 @@ class FormularioController extends Controller
      */
     public function edit(Request $request, $id, $idAssistente)
     {
-        try{
-            
+        try {
+
             $dadosRequest = $request->all();
 
             $callBack = $dadosRequest['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-            if(! isset($id)){
+            if (! isset($id)) {
                 $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
             }
 
-            if($id <= 0){
+            if ($id <= 0) {
 
-                
+
 
             }
 
-            
 
-         }catch(\Exception $e){
+
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
@@ -225,7 +220,7 @@ class FormularioController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try{
+        try {
 
             $this->validaRequest($request);
 
@@ -238,8 +233,8 @@ class FormularioController extends Controller
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
             $dataGrupos     = $dados['grupos'] ?? [];
 
-            if( (!isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            if ((!isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['error' => 'Parâmetro inválido']], 400);
             }
 
             $registro = Formulario::where('active', '=', 'yes')->where('id', '=', $id)->first();
@@ -250,16 +245,16 @@ class FormularioController extends Controller
             $registro->update($dadosRequest);
 
 
-            if(! $registro){
+            if (! $registro) {
                 throw new FormularioException('Registro não encontrado');
             }
             $gruposForm = $registro->grupo;
-            
+
             $idGruposUpdated = [];
-            foreach($dataGrupos as $key=>$val){
-                if(isset($val['id']) && $val['id'] > 0){
+            foreach ($dataGrupos as $key => $val) {
+                if (isset($val['id']) && $val['id'] > 0) {
                     $grupo = FormularioGrupo::where('active', '=', 'yes')->where('id', '=', $val['id'])->first();
-                    if($grupo){
+                    if ($grupo) {
                         $idGruposUpdated[$val['id']] = $val['id'];
                         $dadosRequest = [];
                         $dadosRequest['name']               = $val['name'];
@@ -268,43 +263,43 @@ class FormularioController extends Controller
                         $dadosRequest['user_update_id']     = \Auth::User()->id;
                         $grupo->update($dadosRequest);
                     }
-                }else{
-                    
-                    $dadosRequest = [];            
+                } else {
+
+                    $dadosRequest = [];
                     $dadosRequest['name']               = $val['name'];
                     $dadosRequest['nr_ordem']           = $val['nr_ordem'];
                     $dadosRequest['formulario_id']      = $registro->id;
                     $dadosRequest['props_grupo']        = $val['props_grupo'] ?? null;
                     $dadosRequest['user_id']            = \Auth::User()->id;//trocar pelo id do usuario logado
                     $dadosRequest['active']             = 'yes';
-                    
+
                     $formGroup                          = FormularioGrupo::create($dadosRequest);
-                    if(! $formGroup){
+                    if (! $formGroup) {
                         throw new FormularioException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
                     }
 
                 }
-            
+
             }
 
-            if($gruposForm){
-                foreach($gruposForm as $grupo){
-                    if(isset($grupo->id) && $grupo->id > 0 && !in_array($grupo->id, $idGruposUpdated)){
-                        $grupo->update(['active'=>'no']);
+            if ($gruposForm) {
+                foreach ($gruposForm as $grupo) {
+                    if (isset($grupo->id) && $grupo->id > 0 && !in_array($grupo->id, $idGruposUpdated)) {
+                        $grupo->update(['active' => 'no']);
                     }
                 }
             }
-            
+
             \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(FormularioException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+
+        } catch (FormularioException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-       
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
 
     }
@@ -317,36 +312,36 @@ class FormularioController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
-            if($id <= 0){
-                 return response()->json([['mensagem'=>'Parâmetro inválido', 'class'=>'warning'], 400]);
+            if ($id <= 0) {
+                return response()->json([['mensagem' => 'Parâmetro inválido', 'class' => 'warning'], 400]);
 
             }
 
             $registro = Formulario::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
-            if(! $registro){
-                return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
-            }else{
+            if (! $registro) {
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
+            } else {
 
-                $registro = $registro->update(['active'=>'no']);
+                $registro = $registro->update(['active' => 'no']);
 
             }
 
-            if($registro == null){
+            if ($registro == null) {
 
                 //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
                 //return redirect()->back();
-                 return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
             }
 
             \DB::commit();
-            return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
-        
-        }catch (FormularioException $e) {
+            return response()->json(['mensagem' => 'Registro deletado com sucesso', 'class' => 'success'], 200);
+
+        } catch (FormularioException $e) {
             \DB::rollback();
             return response()->json(['mensagem' => $e->getMessage()], 404);
         } catch (\Error $e) {
@@ -354,16 +349,16 @@ class FormularioController extends Controller
             return response()->json(['mensagem' => $e->getMessage()], 404);
         } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
     public function head(Request $request)
     {
-        
+
     }
 
-    
+
     /**
      * Return a listing of the resource in json.
      *
@@ -372,8 +367,8 @@ class FormularioController extends Controller
      */
     public function json(Request $request)
     {
-        try{
-            
+        try {
+
             //$this->validaRequest($request);
 
             \DB::beginTransaction();
@@ -383,36 +378,36 @@ class FormularioController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
 
-        }catch(FormularioException $e){
+        } catch (FormularioException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'name'=> 'required|max:255|min:2',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255|min:2',
         ], [
             'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
             'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
             'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
+            foreach ($errors->all() as $mensagem) {
                 $msg .= $mensagem.'<br/>';
             }
-            
+
             throw new FormularioException($msg);
         }
 

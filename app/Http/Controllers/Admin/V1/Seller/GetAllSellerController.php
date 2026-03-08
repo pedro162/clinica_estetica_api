@@ -51,15 +51,16 @@ class GetAllSellerController extends Controller
     public function __construct(
         protected SellerApplicationServiceInterface $service,
         protected SellerRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
      *
      * @param GetAllSellerRequest $request
-     * 
+     *
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(GetAllSellerRequest $request): JsonResponse

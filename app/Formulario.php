@@ -2,16 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use \App\FormularioGrupo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Formulario extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    protected $table = "formularios";
-    protected $primaryKey = "id";
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $table = 'formularios';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'id',
         'name',
@@ -26,6 +26,7 @@ class Formulario extends Model
 
     public function grupo()
     {
-        return $this->hasMany(FormularioGrupo::class, 'formulario_id', 'id')->where('formulario_grupos.active', '=', 'yes');;
+        return $this->hasMany(FormularioGrupo::class, 'formulario_id', 'id')->where('formulario_grupos.active', '=', 'yes');
+        ;
     }
 }

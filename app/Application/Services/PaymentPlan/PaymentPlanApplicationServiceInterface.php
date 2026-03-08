@@ -4,7 +4,6 @@ namespace App\Application\Services\PaymentPlan;
 
 use App\Application\Commands\PaymentPlan\CreatePaymentPlanCommand;
 use App\PlanoPagamento;
-use App\Domain\PaymentPlan\Entities\PaymentPlan;
 use Illuminate\Support\Collection;
 
 interface PaymentPlanApplicationServiceInterface

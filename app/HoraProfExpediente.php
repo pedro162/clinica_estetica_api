@@ -2,17 +2,17 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\DiasProfExpediente;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class HoraProfExpediente extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
 
-    protected $table = "hora_prof_expedientes";
-    protected $primaryKey = "id";
+    protected $table = 'hora_prof_expedientes';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'name',
         'hora',

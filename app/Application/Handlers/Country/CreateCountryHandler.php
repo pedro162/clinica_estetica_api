@@ -3,9 +3,9 @@
 namespace App\Application\Handlers\Country;
 
 use App\Application\Commands\Country\CreateCountryCommand;
-use App\Pais;
 use App\Domain\Country\Entities\Country;
 use App\Domain\Country\Repositories\CountryRepositoryInterface;
+use App\Pais;
 
 class CreateCountryHandler
 {

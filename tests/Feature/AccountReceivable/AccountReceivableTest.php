@@ -9,12 +9,10 @@ use App\FormaPagamento;
 use App\OperadorFinanceiro;
 use App\PlanoPagamento;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Artisan;
 
 class AccountReceivableTest extends TestCase
 {
@@ -206,7 +204,7 @@ class AccountReceivableTest extends TestCase
             'id' => $accountReceivable->id
         ]), [
             'caixa_id' => $cash->id,
-            'ds_observacao' => "Test payoff",
+            'ds_observacao' => 'Test payoff',
             'vr_pago' => $accountReceivable->vrLiquido,
             'vr_final' => $accountReceivable->vrLiquido,
         ]);

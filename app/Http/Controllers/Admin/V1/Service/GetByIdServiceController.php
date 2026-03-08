@@ -20,17 +20,18 @@ class GetByIdServiceController extends Controller
     public function __construct(
         protected ServiceApplicationServiceInterface $service,
         protected ServiceRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Http\Requests\V1\Service\ShowServiceRequest  $request
-     * 
+     *
      * @param  int  $id
-     * 
+     *
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(ShowServiceRequest $request, $id): JsonResponse
@@ -55,11 +56,11 @@ class GetByIdServiceController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\V1\Service\UpdateServiceRequest $request
-     * 
+     *
      * @param  int  $id
-     * 
+     *
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function update(UpdateServiceRequest $request, $id): JsonResponse
@@ -89,7 +90,7 @@ class GetByIdServiceController extends Controller
      * @param  \App\Http\Requests\V1\Service\DestroyServiceRequest $request
      * @param  int  $id
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function destroy(DestroyServiceRequest $request, $id): JsonResponse

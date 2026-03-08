@@ -6,7 +6,6 @@ use App\Utilitarios;
 
 class CreateAccountReceivableItemCommand
 {
-
     protected string $id;
     protected string $description;
     protected string $document;
@@ -426,7 +425,7 @@ class CreateAccountReceivableItemCommand
         $discountValue = Utilitarios::removeMaskMoney($data['discountValue'] ?? $data['vrDesconto'] ?? 0);
         $interestValue = Utilitarios::removeMaskMoney($data['interestValue'] ?? $data['vrJuros'] ?? 0);
 
-        $entity = (new self)
+        $entity = (new self())
             ->id((string)($data['id'] ?? 0))
             ->description((string)($data['description'] ?? $data['descricao'] ?? ''))
             ->tenantId((string)($data['tenantId'] ?? ''))

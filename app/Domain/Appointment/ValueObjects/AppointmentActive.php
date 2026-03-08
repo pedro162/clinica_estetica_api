@@ -9,7 +9,7 @@ class AppointmentActive
     public function __construct(string $value)
     {
         if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("Appointment active status cannot be empty");
+            throw new \InvalidArgumentException('Appointment active status cannot be empty');
         }
         $this->value = $value;
     }

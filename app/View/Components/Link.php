@@ -20,18 +20,15 @@ class Link extends Component
      * @return void
      */
     public function __construct(
-        
-        $type='',
-        $onClick='',
-        $href='',
-        $class='',
-        $style='',
-        $id='',
-        $icone='',
-        $label=''
-
-    )
-    {
+        $type = '',
+        $onClick = '',
+        $href = '',
+        $class = '',
+        $style = '',
+        $id = '',
+        $icone = '',
+        $label = ''
+    ) {
         $this->type     = $type;
         $this->onClick  = $onClick;
         $this->href     = $href;

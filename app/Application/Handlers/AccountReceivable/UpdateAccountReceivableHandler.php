@@ -4,7 +4,9 @@ namespace App\Application\Handlers\AccountReceivable;
 
 use App\Application\Commands\AccountReceivable\CreateAccountReceivableCommand;
 use App\Domain\AccountReceivable\Entities\AccountReceivable;
-use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;;
+use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;
+
+;
 
 class UpdateAccountReceivableHandler
 {

@@ -8,7 +8,9 @@ use App\ContaReceberItem;
 use App\Domain\AccountReceivableItem\Entities\AccountReceivableItem;
 use App\Domain\AccountReceivableItem\Repositories\AccountReceivableItemRepositoryInterface;
 use App\Domain\AccountReceivableItem\ValueObjects\AccountReceivableItemId;
-use Illuminate\Support\Facades\Auth;;
+use Illuminate\Support\Facades\Auth;
+
+;
 
 class AccountReceivableItemRepository implements AccountReceivableItemRepositoryInterface
 {
@@ -147,7 +149,7 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
         if (!empty($consulta['to_require'])) {
             $registros->load(['contaReceber.pessoa']);
 
-            $dataToRequest = $registros->map(fn($registro) => [
+            $dataToRequest = $registros->map(fn ($registro) => [
                 'label' => $registro->contaReceber->pessoa->name,
                 'value' => $registro->id,
             ])->toArray();

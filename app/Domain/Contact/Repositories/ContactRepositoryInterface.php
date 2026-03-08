@@ -2,9 +2,9 @@
 
 namespace App\Domain\Contact\Repositories;
 
-use App\Telefone;
 use App\Domain\Contact\Entities\Contact;
 use App\Domain\Contact\ValueObjects\ContactId;
+use App\Telefone;
 
 interface ContactRepositoryInterface
 {

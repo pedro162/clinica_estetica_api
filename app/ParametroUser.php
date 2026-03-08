@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ParametroUser extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
     protected $primaryKey    = 'id';
     protected $table         = 'parametro_users';
     protected $fillable     = [

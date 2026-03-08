@@ -2,21 +2,16 @@
 
 namespace Tests\Feature\Person;
 
-use App\Application\Handlers\Person\CreatePersonHandler;
 use App\Application\Services\Person\PersonApplicationService;
-use App\Domain\Person\Entities\Person;
 use App\Grupo;
-use App\Infrastructure\Persistence\Eloquent\EloquentPersonRepository;
 use App\Logradouro;
 use App\Pessoa;
 use App\Telefone;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use Tests\Feature\SetupTest;
 
 class PersonServiceTest extends TestCase
 {

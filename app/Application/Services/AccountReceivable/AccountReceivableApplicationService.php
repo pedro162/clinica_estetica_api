@@ -3,26 +3,16 @@
 namespace App\Application\Services\AccountReceivable;
 
 use App\Application\Commands\AccountReceivable\CreateAccountReceivableCommand;
-use App\Application\Commands\AccountReceivableItem\CreateAccountReceivableItemCommand;
 use App\Application\Handlers\AccountReceivable\CreateAccountReceivableHandler;
-use App\Application\Handlers\AccountReceivable\GetAllAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivable\GetAccountReceivableByIdHandler;
+use App\Application\Handlers\AccountReceivable\GetAllAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivable\UpdateAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHandler;
-use App\Classes\ApiResponseClass;
 use App\ContaReceber;
-use App\Domain\AccountReceivable\Entities\AccountReceivable;
-use App\Exceptions\CobrancaReceberException;
-use App\FormaPagamento;
 use App\Helpers\ContaReceberHelper;
 use App\Helpers\ContaReceberItemHelper;
-use App\Pessoa;
-use App\Utilitarios;
 use App\Validators\AccountReceivable\AccountReceivableValidator;
-use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class AccountReceivableApplicationService implements AccountReceivableApplicationServiceInterface
 {
@@ -100,7 +90,7 @@ class AccountReceivableApplicationService implements AccountReceivableApplicatio
     {
         return [
             'pessoa_id' => $data['pessoa_id'] ?? null,
-            'descricao' => $data['descricao'] ?? "Recita financeira",
+            'descricao' => $data['descricao'] ?? 'Recita financeira',
             'documento' => $data['documento'] ?? null,
             'dtVencimentoOriginal' => $data['dtVencimentoOriginal'],
             'dtVencimento' => $data['dtVencimento'] ?? null,

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\EspecialidadeException;
+use App\Helpers\EspecialidadeHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Exceptions\EspecialidadeException;
 use Illuminate\Support\Facades\Validator;
-use App\Especialidade;
-use \App\Helpers\EspecialidadeHelper;
 
 class EspecialidadeController extends Controller
 {

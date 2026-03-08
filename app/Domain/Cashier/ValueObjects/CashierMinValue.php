@@ -9,7 +9,7 @@ class CashierMinValue
     public function __construct(string $value)
     {
         if ($value < 0) {
-            throw new \InvalidArgumentException("The cashier min value cannot be native");
+            throw new \InvalidArgumentException('The cashier min value cannot be native');
         }
 
         $this->value = $value;

@@ -2,13 +2,14 @@
 
 namespace App;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\BelongsToTenant;
 
 class Ipi extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
     protected $fillable = [
 
         'dsIpi',
@@ -32,5 +33,5 @@ class Ipi extends Model
 
     ];
 
-    protected $table = "ipis";
+    protected $table = 'ipis';
 }

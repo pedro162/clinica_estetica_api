@@ -2,16 +2,13 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use \App\ContaReceber as CobrancaReceber;
-use \App\Helpers\CaixaHelper;
-use \App\FinanceiroMovimentacoe;
-use \App\Exceptions\FinanceiroMovimentacoeException;
-use App\Helpers\BaseHelper;
+use App\ContaReceber as CobrancaReceber;
+use App\Exceptions\FinanceiroMovimentacoeException;
+use App\FinanceiroMovimentacoe;
+use App\Utilitarios;
 
 class FinanceiroMovimentacoeHelper extends BaseHelper
 {
-
     public function store(array $dados)
     {
 
@@ -347,7 +344,7 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
         if ($campos) {
             $registro->select($campos);
         } else {
-            $registro->select('fm.*',  \DB::raw($sqlDsReferencia), 'cx.name as caixa_name', 'cx.filial_id');
+            $registro->select('fm.*', \DB::raw($sqlDsReferencia), 'cx.name as caixa_name', 'cx.filial_id');
         }
 
 

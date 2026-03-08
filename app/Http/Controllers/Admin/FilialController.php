@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\FilialException;
+use App\Filial;
+use App\Helpers\FilialHelper;
 use App\Http\Controllers\Controller;
+use App\Pessoa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Exceptions\FilialException;
-use \App\Filial;
-use \App\Pessoa;
-use \App\Helpers\FilialHelper;
 
 class FilialController extends Controller
 {
@@ -18,7 +18,9 @@ class FilialController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function index(Request $request) {}
+    public function index(Request $request)
+    {
+    }
 
     public function json(Request $request)
     {
@@ -51,7 +53,9 @@ class FilialController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function create(Request $request, $idAssistente) {}
+    public function create(Request $request, $idAssistente)
+    {
+    }
 
 
     /**
@@ -105,7 +109,9 @@ class FilialController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {}
+    public function show($id)
+    {
+    }
 
 
     public function info(Request $request, $id)
@@ -216,20 +222,20 @@ class FilialController extends Controller
             $pessoaFilial   = Filial::where('pessoa_id', '=', $dados['pessoa_id'])->where('active', '=', 'yes')->first();
 
             if (!$registro) {
-                $erros[] = "Registro não identificado";
+                $erros[] = 'Registro não identificado';
             }
 
             if (!$pessoa) {
-                $erros[] = "Pessoa não identificada";
+                $erros[] = 'Pessoa não identificada';
             }
 
             if ($registro && $pessoaFilial && $registro->id != $pessoaFilial->id) {
-                $erros[] = "Já existe uma pessoa para esta filial";
+                $erros[] = 'Já existe uma pessoa para esta filial';
             }
 
             if ($erros) {
 
-                throw new FilialException(implode("<br/><br/>", $erros));
+                throw new FilialException(implode('<br/><br/>', $erros));
             }
 
             $dadosFilial                        = [];

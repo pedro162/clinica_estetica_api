@@ -2,14 +2,9 @@
 
 namespace Tests\Feature\Country;
 
-use App\Domain\Country\Entities\Country;
-use App\Estado;
-use App\User;
 use App\Pais;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 

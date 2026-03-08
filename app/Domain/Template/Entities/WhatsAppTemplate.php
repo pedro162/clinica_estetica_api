@@ -3,7 +3,6 @@
 namespace App\Domain\Template\Entities;
 
 use App\Domain\Template\Interfaces\TemplateInterface;
-use App\Domain\Template\Entities\Template;
 use App\Domain\Template\ValueObjects\TemplateLanguage;
 
 class WhatsAppTemplate extends Template implements TemplateInterface

@@ -5,17 +5,17 @@ namespace App\Domain\PersonAddress\Entities;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
-use App\Domain\PersonAddress\ValueObjects\PersonAddressState;
-use App\Domain\PersonAddress\ValueObjects\PersonAddressNeighborHood;
-use App\Domain\PersonAddress\ValueObjects\PersonAddressNumber;
-use App\Domain\PersonAddress\ValueObjects\PersonAddressId;
-use App\Domain\PersonAddress\ValueObjects\PersonAddressStreet;
+use App\Domain\PersonAddress\ValueObjects\PersonAddressBlock;
 use App\Domain\PersonAddress\ValueObjects\PersonAddressCity;
 use App\Domain\PersonAddress\ValueObjects\PersonAddressComplement;
-use App\Domain\PersonAddress\ValueObjects\PersonAddressType;
-use App\Domain\PersonAddress\ValueObjects\PersonAddressBlock;
+use App\Domain\PersonAddress\ValueObjects\PersonAddressId;
 use App\Domain\PersonAddress\ValueObjects\PersonAddressImportance;
+use App\Domain\PersonAddress\ValueObjects\PersonAddressNeighborHood;
+use App\Domain\PersonAddress\ValueObjects\PersonAddressNumber;
 use App\Domain\PersonAddress\ValueObjects\PersonAddressPostalCode;
+use App\Domain\PersonAddress\ValueObjects\PersonAddressState;
+use App\Domain\PersonAddress\ValueObjects\PersonAddressStreet;
+use App\Domain\PersonAddress\ValueObjects\PersonAddressType;
 use App\Logradouro;
 
 class PersonAddress extends BaseEntity
@@ -158,21 +158,21 @@ class PersonAddress extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new PersonAddressId($value))],
-            ['keys' => ['logradouro', 'street'], 'callback' => fn($value) => $entity->street(new PersonAddressStreet((string)$value))],
-            ['keys' => ['cep', 'postalCode'], 'callback' => fn($value) => $entity->postalCode(new PersonAddressPostalCode((string)$value))],
-            ['keys' => ['bloco', 'block'], 'callback' => fn($value) => $entity->block(new PersonAddressBlock((string)$value))],
-            ['keys' => ['cidade', 'city'], 'callback' => fn($value) => $entity->city(new PersonAddressCity((string)$value))],
-            ['keys' => ['numero', 'number'], 'callback' => fn($value) => $entity->number(new PersonAddressNumber((string)$value))],
-            ['keys' => ['estado', 'state'], 'callback' => fn($value) => $entity->state(new PersonAddressState((string)$value))],
-            ['keys' => ['bairro', 'neighborhood'], 'callback' => fn($value) => $entity->neighborhood(new PersonAddressNeighborHood((string)$value))],
-            ['keys' => ['complemento', 'complement'], 'callback' => fn($value) => $entity->complement(new PersonAddressComplement((string)$value))],
-            ['keys' => ['tipo', 'type'], 'callback' => fn($value) => $entity->type(new PersonAddressType((string)$value))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
-            ['keys' => ['importancia', 'importance'], 'callback' => fn($value) => $entity->importance(new PersonAddressImportance((string)$value))],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new PersonAddressId($value))],
+            ['keys' => ['logradouro', 'street'], 'callback' => fn ($value) => $entity->street(new PersonAddressStreet((string)$value))],
+            ['keys' => ['cep', 'postalCode'], 'callback' => fn ($value) => $entity->postalCode(new PersonAddressPostalCode((string)$value))],
+            ['keys' => ['bloco', 'block'], 'callback' => fn ($value) => $entity->block(new PersonAddressBlock((string)$value))],
+            ['keys' => ['cidade', 'city'], 'callback' => fn ($value) => $entity->city(new PersonAddressCity((string)$value))],
+            ['keys' => ['numero', 'number'], 'callback' => fn ($value) => $entity->number(new PersonAddressNumber((string)$value))],
+            ['keys' => ['estado', 'state'], 'callback' => fn ($value) => $entity->state(new PersonAddressState((string)$value))],
+            ['keys' => ['bairro', 'neighborhood'], 'callback' => fn ($value) => $entity->neighborhood(new PersonAddressNeighborHood((string)$value))],
+            ['keys' => ['complemento', 'complement'], 'callback' => fn ($value) => $entity->complement(new PersonAddressComplement((string)$value))],
+            ['keys' => ['tipo', 'type'], 'callback' => fn ($value) => $entity->type(new PersonAddressType((string)$value))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['importancia', 'importance'], 'callback' => fn ($value) => $entity->importance(new PersonAddressImportance((string)$value))],
         ];
 
         foreach ($mapping as $map) {

@@ -2,8 +2,6 @@
 
 namespace App\Application\Handlers\PaymentPlan;
 
-use App\Application\Commands\PaymentPlan\CreatePaymentPlanCommand;
-use App\Domain\PaymentPlan\Entities\PaymentPlan;
 use App\Domain\PaymentPlan\Repositories\PaymentPlanRepositoryInterface;
 use Illuminate\Support\Collection;
 

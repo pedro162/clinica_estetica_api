@@ -4,24 +4,19 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Notification\Entities\Notification;
 use App\Domain\Notification\Repositories\NotificationRepositoryInterface;
-use App\Domain\Notification\ValueObjects\NotificationDocument;
-use App\Domain\Notification\ValueObjects\NotificationEmail;
-use App\Domain\Notification\ValueObjects\NotificationExtraDocument;
 use App\Domain\Notification\ValueObjects\NotificationId;
 use App\Domain\Notification\ValueObjects\NotificationMessage;
 use App\Domain\Notification\ValueObjects\NotificationOriginContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationSentDate;
-use App\Domain\Notification\ValueObjects\NotificationSex;
 use App\Domain\Notification\ValueObjects\NotificationShippingState;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\Notification\ValueObjects\NotificationTemplateId;
 use App\Domain\Notification\ValueObjects\NotificationTenantId;
 use App\Domain\Notification\ValueObjects\NotificationTitle;
-use Illuminate\Support\Facades\DB;
 use App\Notification as NotificationModel;
-use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EloquentNotificationRepository implements NotificationRepositoryInterface
 {
@@ -37,7 +32,9 @@ class EloquentNotificationRepository implements NotificationRepositoryInterface
         $templateId =  (string) $notification->getTemplateId();
         $templateId = (int) $templateId;
 
-        if (!$templateId > 0) $templateId = null;
+        if (!$templateId > 0) {
+            $templateId = null;
+        }
 
         if ($notificationId > 0) {
             //update

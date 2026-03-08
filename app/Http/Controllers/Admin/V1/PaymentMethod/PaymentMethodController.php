@@ -6,7 +6,6 @@ use App\Application\Commands\PaymentMethod\CreatePaymentMethodCommand;
 use App\Application\Services\PaymentMethod\PaymentMethodApplicationServiceInterface;
 use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\PaymentMethod\CreatePaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\DestroyPaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\GetAllPaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\ShowPaymentMethodRequest;
@@ -14,9 +13,6 @@ use App\Http\Requests\V1\PaymentMethod\StorePaymentMethodRequest;
 use App\Http\Requests\V1\PaymentMethod\UpdatePaymentMethodRequest;
 use App\Http\Resources\V1\PaymentMethod\GetAllPaymentMethodResource;
 use App\Http\Resources\V1\PaymentMethod\PaymentMethodResource;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class PaymentMethodController extends Controller
 {

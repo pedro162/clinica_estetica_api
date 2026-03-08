@@ -9,7 +9,7 @@ class SellerAccessAllRcas
     public function __construct(int $value)
     {
         if (in_array($value, [0, 1]) === false) {
-            throw new \InvalidArgumentException("Seller access all RCAs must be either 0 or 1");
+            throw new \InvalidArgumentException('Seller access all RCAs must be either 0 or 1');
         }
 
         $this->value = $value;

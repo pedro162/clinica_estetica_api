@@ -3,9 +3,11 @@
 namespace App\Application\Handlers\Seller;
 
 use App\Application\Commands\Seller\CreateSellerCommand;
-use App\Rca;
 use App\Domain\Seller\Entities\Seller;
-use App\Domain\Seller\Repositories\SellerRepositoryInterface;;
+use App\Domain\Seller\Repositories\SellerRepositoryInterface;
+use App\Rca;
+
+;
 
 class CreateSellerHandler
 {

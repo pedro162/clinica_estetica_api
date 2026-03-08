@@ -11,8 +11,8 @@ use App\Http\Requests\V1\FinancialOperator\GetAllFinancialOperatorRequest;
 use App\Http\Requests\V1\FinancialOperator\ShowFinancialOperatorRequest;
 use App\Http\Requests\V1\FinancialOperator\StoreFinancialOperatorRequest;
 use App\Http\Requests\V1\FinancialOperator\UpdateFinancialOperatorRequest;
-use App\Http\Resources\V1\FinancialOperator\GetAllFinancialOperatorResource;
 use App\Http\Resources\V1\FinancialOperator\FinancialOperatorResource;
+use App\Http\Resources\V1\FinancialOperator\GetAllFinancialOperatorResource;
 
 class FinancialOperatorController extends Controller
 {

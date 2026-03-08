@@ -6,7 +6,7 @@ class Utilitarios
 {
     public static function loadEnderecoApi($cep)
     {
-        $cep = preg_replace("/[^0-9]/", '', trim($cep));
+        $cep = preg_replace('/[^0-9]/', '', trim($cep));
         if (strlen($cep) == 0) {
             return false;
         }
@@ -52,7 +52,7 @@ class Utilitarios
         return true;
     }
 
-    static function getFormTable(array $dados): array
+    public static function getFormTable(array $dados): array
     {
         if (count($dados) == 0) {
             return [];
@@ -76,7 +76,7 @@ class Utilitarios
         return $supArr;
     }
 
-    static function removeMaskMoney($valor)
+    public static function removeMaskMoney($valor)
     {
         if (!(strlen(trim($valor)) > 0)) {
             return false;
@@ -90,7 +90,7 @@ class Utilitarios
     }
 
 
-    static function difDate($dtInicio, $dtFim, $tipoRetorno = 'd')
+    public static function difDate($dtInicio, $dtFim, $tipoRetorno = 'd')
     {
         $dtInit = new \DateTime($dtInicio);
         $dtEnd  = new \DateTime($dtFim);
@@ -122,7 +122,7 @@ class Utilitarios
                 return true;
             }
         } else {
-            if ((count($dtExplode) == 3)  && checkdate($dtExplode[1],  $dtExplode[0], $dtExplode[2])) {
+            if ((count($dtExplode) == 3)  && checkdate($dtExplode[1], $dtExplode[0], $dtExplode[2])) {
                 return true;
             }
         }

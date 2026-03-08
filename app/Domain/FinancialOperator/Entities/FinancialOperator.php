@@ -2,23 +2,23 @@
 
 namespace App\Domain\FinancialOperator\Entities;
 
-use App\OperadorFinanceiro;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorBranchId;
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorId;
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorTariffValue;
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorDiscountValue;
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorDiscountPercentage;
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorCurrentRemittanceNumber;
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorOurNumber;
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorProtestDaysQuantity;
 use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorAssumeDuplicata;
 use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorBoletoUpdateLocationType;
+use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorBranchId;
+use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorCurrentRemittanceNumber;
+use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorDiscountPercentage;
+use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorDiscountValue;
+use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorId;
 use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorIsDefault;
 use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorIsReleased;
+use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorOurNumber;
 use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorPersonId;
+use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorProtestDaysQuantity;
+use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorTariffValue;
+use App\OperadorFinanceiro;
 
 class FinancialOperator extends BaseEntity
 {
@@ -194,23 +194,23 @@ class FinancialOperator extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new FinancialOperatorId($value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['branchId', 'filial_id'], 'callback' => fn($value) => $entity->branchId(new FinancialOperatorBranchId((string)$value))],
-            ['keys' => ['tariffValue', 'vrTarifa'], 'callback' => fn($value) => $entity->tariffValue(new FinancialOperatorTariffValue((string)$value))],
-            ['keys' => ['discountValue', 'vrDesconto'], 'callback' => fn($value) => $entity->discountValue(new FinancialOperatorDiscountValue((string)$value))],
-            ['keys' => ['discountPercentage', 'vrPorcentagemDesconto'], 'callback' => fn($value) => $entity->discountPercentage(new FinancialOperatorDiscountPercentage((string)$value))],
-            ['keys' => ['currentRemittanceNumber', 'nrRemessaAtual'], 'callback' => fn($value) => $entity->currentRemittanceNumber(new FinancialOperatorCurrentRemittanceNumber((string)$value))],
-            ['keys' => ['ourNumber', 'nrNossoNumero'], 'callback' => fn($value) => $entity->ourNumber(new FinancialOperatorOurNumber((string)$value))],
-            ['keys' => ['protestDaysQuantity', 'qtdDiasProtesto'], 'callback' => fn($value) => $entity->protestDaysQuantity(new FinancialOperatorProtestDaysQuantity((string)$value))],
-            ['keys' => ['assumeDuplicata', 'isAssumeDuplicata'], 'callback' => fn($value) => $entity->assumeDuplicata(new FinancialOperatorAssumeDuplicata((string)$value))],
-            ['keys' => ['boletoUpdateLocationType', 'tpLocalAtualizacaoBoleto'], 'callback' => fn($value) => $entity->boletoUpdateLocationType(new FinancialOperatorBoletoUpdateLocationType((string)$value))],
-            ['keys' => ['isDefault', 'isPadrao'], 'callback' => fn($value) => $entity->isDefault(new FinancialOperatorIsDefault((string)$value))],
-            ['keys' => ['isReleased', 'isLiberado'], 'callback' => fn($value) => $entity->isReleased(new FinancialOperatorIsReleased((string)$value))],
-            ['keys' => ['personId', 'pessoa_id'], 'callback' => fn($value) => $entity->personId(new FinancialOperatorPersonId((string)$value))],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new FinancialOperatorId($value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn ($value) => $entity->branchId(new FinancialOperatorBranchId((string)$value))],
+            ['keys' => ['tariffValue', 'vrTarifa'], 'callback' => fn ($value) => $entity->tariffValue(new FinancialOperatorTariffValue((string)$value))],
+            ['keys' => ['discountValue', 'vrDesconto'], 'callback' => fn ($value) => $entity->discountValue(new FinancialOperatorDiscountValue((string)$value))],
+            ['keys' => ['discountPercentage', 'vrPorcentagemDesconto'], 'callback' => fn ($value) => $entity->discountPercentage(new FinancialOperatorDiscountPercentage((string)$value))],
+            ['keys' => ['currentRemittanceNumber', 'nrRemessaAtual'], 'callback' => fn ($value) => $entity->currentRemittanceNumber(new FinancialOperatorCurrentRemittanceNumber((string)$value))],
+            ['keys' => ['ourNumber', 'nrNossoNumero'], 'callback' => fn ($value) => $entity->ourNumber(new FinancialOperatorOurNumber((string)$value))],
+            ['keys' => ['protestDaysQuantity', 'qtdDiasProtesto'], 'callback' => fn ($value) => $entity->protestDaysQuantity(new FinancialOperatorProtestDaysQuantity((string)$value))],
+            ['keys' => ['assumeDuplicata', 'isAssumeDuplicata'], 'callback' => fn ($value) => $entity->assumeDuplicata(new FinancialOperatorAssumeDuplicata((string)$value))],
+            ['keys' => ['boletoUpdateLocationType', 'tpLocalAtualizacaoBoleto'], 'callback' => fn ($value) => $entity->boletoUpdateLocationType(new FinancialOperatorBoletoUpdateLocationType((string)$value))],
+            ['keys' => ['isDefault', 'isPadrao'], 'callback' => fn ($value) => $entity->isDefault(new FinancialOperatorIsDefault((string)$value))],
+            ['keys' => ['isReleased', 'isLiberado'], 'callback' => fn ($value) => $entity->isReleased(new FinancialOperatorIsReleased((string)$value))],
+            ['keys' => ['personId', 'pessoa_id'], 'callback' => fn ($value) => $entity->personId(new FinancialOperatorPersonId((string)$value))],
         ];
 
         foreach ($mapping as $map) {

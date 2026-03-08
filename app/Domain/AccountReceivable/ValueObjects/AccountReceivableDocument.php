@@ -9,7 +9,7 @@ class AccountReceivableDocument
     public function __construct(string $value)
     {
         if (empty($value)) {
-            throw new \InvalidArgumentException("The account receivable document cannot be empty");
+            throw new \InvalidArgumentException('The account receivable document cannot be empty');
         }
         $this->value = $value;
     }

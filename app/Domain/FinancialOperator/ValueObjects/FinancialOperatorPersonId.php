@@ -9,7 +9,7 @@ class FinancialOperatorPersonId
     public function __construct(string $value)
     {
         if ((int) $value < 0) {
-            throw new \InvalidArgumentException("The person ID cannot be negative");
+            throw new \InvalidArgumentException('The person ID cannot be negative');
         }
 
         $this->value = $value;

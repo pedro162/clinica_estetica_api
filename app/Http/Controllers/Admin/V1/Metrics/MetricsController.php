@@ -8,7 +8,9 @@ use Prometheus\RenderTextFormat;
 
 class MetricsController extends Controller
 {
-    public function __construct(private CollectorRegistry $registry) {}
+    public function __construct(private CollectorRegistry $registry)
+    {
+    }
 
     public function index()
     {

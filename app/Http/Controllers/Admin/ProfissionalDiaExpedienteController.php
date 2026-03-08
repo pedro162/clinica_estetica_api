@@ -2,19 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\ProfissionalHorarioExcepton;
+use App\Helpers\ProfissionalDiaExpedienteHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Formulario;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\ProfissionalHorarioExcepton;
-use \App\Pessoa;
-use \App\Filial;
-use \App\Profissional;
-use \App\Utilitarios;
-use \App\Helpers\ProfissionalDiaExpedienteHelper;
-use Illuminate\Support\Facades\Auth;
 
 class ProfissionalDiaExpedienteController extends Controller
 {
@@ -75,7 +67,7 @@ class ProfissionalDiaExpedienteController extends Controller
         }
     }
 
-    
+
 
     /**
      * Display the specified resource.
@@ -207,7 +199,7 @@ class ProfissionalDiaExpedienteController extends Controller
                 return response()->json([['mensagem' => 'Parâmetro inválido', 'class' => 'warning'], 400]);
             }
 
-           
+
             $objOrdemHelper = new ProfissionalDiaExpedienteHelper();
             $registro       = $objOrdemHelper->destroy($id);
 
@@ -273,11 +265,11 @@ class ProfissionalDiaExpedienteController extends Controller
 
     protected function validaRequest(Request $request)
     {
-         $validator = Validator::make($request->all(), [
-            'nr_dia' => 'required|min:1',
+        $validator = Validator::make($request->all(), [
+           'nr_dia' => 'required|min:1',
         ], [
-            'nr_dia.required' => 'O campo "Dia" é obrigatório.',
-            'nr_dia.min' => 'O "Dia" deve conter pelo menos :min caracteres.',
+           'nr_dia.required' => 'O campo "Dia" é obrigatório.',
+           'nr_dia.min' => 'O "Dia" deve conter pelo menos :min caracteres.',
         ]);
 
         if ($validator->fails()) {

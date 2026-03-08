@@ -21,7 +21,7 @@ trait TraitBlocoIV
         $bruto = $valor + $desconto - $frete;
 
         $aFont = ['font' => $this->fontePadrao, 'size' => 8, 'style' => ''];
-        $texto = "Qtde total de itens";
+        $texto = 'Qtde total de itens';
         $this->pdf->textBox(
             $this->margem,
             $y,
@@ -49,7 +49,7 @@ trait TraitBlocoIV
             false
         );
 
-        $texto = "Valor Total R$";
+        $texto = 'Valor Total R$';
         $this->pdf->textBox(
             $this->margem,
             $y + $y1,
@@ -78,7 +78,7 @@ trait TraitBlocoIV
             false
         );
 
-        $texto = "Desconto R$";
+        $texto = 'Desconto R$';
         $this->pdf->textBox(
             $this->margem,
             $y + $y1 + $y2,
@@ -107,7 +107,7 @@ trait TraitBlocoIV
             false
         );
 
-        $texto = "Frete R$";
+        $texto = 'Frete R$';
         $this->pdf->textBox(
             $this->margem,
             $y + $y1 + $y2 + $y3,
@@ -140,7 +140,7 @@ trait TraitBlocoIV
             $fsize = 8;
         }
         $aFont = ['font' => $this->fontePadrao, 'size' => $fsize, 'style' => 'B'];
-        $texto = "Valor a Pagar R$";
+        $texto = 'Valor a Pagar R$';
         $this->pdf->textBox(
             $this->margem,
             $y + $y1 + $y2 + $y3 + $y4,

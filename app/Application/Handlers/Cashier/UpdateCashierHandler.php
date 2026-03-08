@@ -4,7 +4,9 @@ namespace App\Application\Handlers\Cashier;
 
 use App\Application\Commands\Cashier\CreateCashierCommand;
 use App\Domain\Cashier\Entities\Cashier;
-use App\Domain\Cashier\Repositories\CashierRepositoryInterface;;
+use App\Domain\Cashier\Repositories\CashierRepositoryInterface;
+
+;
 
 class UpdateCashierHandler
 {

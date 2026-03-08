@@ -9,7 +9,6 @@ use App\Application\Handlers\FinancialOperator\GetAllFinancialOperatorHandler;
 use App\Application\Handlers\FinancialOperator\GetFinancialOperatorByIdHandler;
 use App\Application\Handlers\FinancialOperator\UpdateFinancialOperatorHandler;
 use App\OperadorFinanceiro;
-use App\Domain\FinancialOperator\Entities\FinancialOperator;
 use Illuminate\Support\Collection;
 
 class FinancialOperatorApplicationService implements FinancialOperatorApplicationServiceInterface

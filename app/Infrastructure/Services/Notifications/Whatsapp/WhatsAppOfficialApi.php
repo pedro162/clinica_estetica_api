@@ -4,16 +4,12 @@ namespace App\Infrastructure\Services\Notifications\Whatsapp;
 
 use App\Application\Commands\CreateHttpCommand;
 use App\Application\Handlers\CreateHttpHandler;
-use App\Application\Handlers\HttpRequestResponseHandler;
 use App\Application\Services\HttpApplicationService;
-use App\Domain\Http\Interfaces\HttpRequesResponseInterace;
-use App\Domain\Notification\Interfaces\NotificationInterface;
-use App\Domain\Notification\Entities\Notification;
 use App\Domain\Http\Entities\Http;
-use App\Domain\Http\ValueObjects\HttpBody;
-use App\Http as HttpModel;
-use Illuminate\Support\Facades\Http as HttpClientRequest;
+use App\Domain\Notification\Entities\Notification;
+use App\Domain\Notification\Interfaces\NotificationInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentHttpRepository;
+use Illuminate\Support\Facades\Http as HttpClientRequest;
 
 class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
 {
@@ -67,7 +63,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
                 $url = $this->buildUrlRequest() . '/' . $this->whatsAppBusinessAccountId . '/uploads?file_length=' . $size . '&file_type=' . $type;
                 $curl = curl_init();
 
-                curl_setopt_array($curl, array(
+                curl_setopt_array($curl, [
                     CURLOPT_URL => $url,
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
@@ -76,7 +72,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
                     CURLOPT_FOLLOWLOCATION => true,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => 'POST',
-                ));
+                ]);
 
                 $response = curl_exec($curl);
 
@@ -96,7 +92,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
 
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
+        curl_setopt_array($curl, [
             CURLOPT_URL => 'https://graph.facebook.com/{{api-version}}/<SESSION_ID>',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
@@ -105,12 +101,12 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => "<file contents here>",
-            CURLOPT_HTTPHEADER => array(
+            CURLOPT_POSTFIELDS => '<file contents here>',
+            CURLOPT_HTTPHEADER => [
                 'file_offset: 0',
                 'Content-Type: text/plain'
-            ),
-        ));
+            ],
+        ]);
 
         $response = curl_exec($curl);
 
@@ -134,11 +130,11 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
         //Documentation: https://www.postman.com/meta/workspace/whatsapp-business-platform/request/13382743-83c3aeef-04be-420d-8ad0-689ca4477ee4
         $url = $this->buildUrlRequest() . '/' . $this->whatsAppBusinessAccountId . '/messages';
         $accessToken = $this->accessToken;
-        $message = "Show me Cyber Monday deals!";
-        $image = "SVG";
+        $message = 'Show me Cyber Monday deals!';
+        $image = 'SVG';
         $data = [
-            "prefilled_message" => $message,
-            "generate_qr_image" => $image
+            'prefilled_message' => $message,
+            'generate_qr_image' => $image
         ];
         $response = HttpClientRequest::withHeaders([
             'Authorization: Bearer ' . $accessToken,
@@ -179,11 +175,11 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
         $to = (string) $notification->getTargetContactAddress();
         $to = str_replace(['+'], [''], $to);
         $data = [
-            "messaging_product" => "whatsapp",
-            "to" => $to,
-            "type" => "text",
-            "text" => [
-                "body" => "Olá Pedro" //(string)$notification->getMessage()
+            'messaging_product' => 'whatsapp',
+            'to' => $to,
+            'type' => 'text',
+            'text' => [
+                'body' => 'Olá Pedro' //(string)$notification->getMessage()
             ]
         ];
 
@@ -200,7 +196,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
             'Content-Type: application/json'
         ]);
 
-        //---Save the HTTP request        
+        //---Save the HTTP request
         $httpCommand = (new CreateHttpCommand())
             ->httpId(0)
             ->httpCode('200')
@@ -219,7 +215,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
         curl_close($ch);
         $response_array = json_decode($response, true);
 
-        //---Save the HTTP response        
+        //---Save the HTTP response
         $httpCommand = (new CreateHttpCommand())
             ->httpId(0)
             ->httpCode($httpCode)
@@ -230,7 +226,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
         $resp = $objHttpService->createHttp($httpCommand);
 
         if ($err) {
-            throw new \Exception("cURL Error #:" . $err);
+            throw new \Exception('cURL Error #:' . $err);
         }
 
         if ($httpCode >= 400) {
@@ -330,10 +326,10 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
         }
 
         $data = [
-            "messaging_product" => "whatsapp",
-            "to" => $to,
-            "type" => $typeMessage,
-            "template" => [
+            'messaging_product' => 'whatsapp',
+            'to' => $to,
+            'type' => $typeMessage,
+            'template' => [
                 'name' => (string)$template,
                 'language' => [
                     'code' => (string)$language
@@ -355,7 +351,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
             'Authorization: Bearer ' . $accessToken,
             'Content-Type: application/json'
         ]);
-        //---Save the HTTP request        
+        //---Save the HTTP request
         $httpCommand = (new CreateHttpCommand())
             ->httpId(0)
             ->httpCode('200')
@@ -374,7 +370,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
         curl_close($ch);
         $response_array = json_decode($response, true);
 
-        //---Save the HTTP response        
+        //---Save the HTTP response
         $httpCommand = (new CreateHttpCommand())
             ->httpId(0)
             ->httpCode($httpCode)
@@ -385,7 +381,7 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
         $resp = $objHttpService->createHttp($httpCommand);
 
         if ($err) {
-            throw new \Exception("cURL Error #:" . $err);
+            throw new \Exception('cURL Error #:' . $err);
         }
 
         if ($httpCode >= 400) {
@@ -426,28 +422,28 @@ class WhatsAppOfficialApi implements NotificationInterface, WhatsAppInterface
             'components' => [
 
                 [
-                    "type" => "BODY",
-                    "text" => "Thank you for your order, {{1}}! Your confirmation number is {{2}}. If you have any questions, please use the buttons below to contact support. Thank you for being a customer!",
-                    "example" => [
-                        "body_text" => [
+                    'type' => 'BODY',
+                    'text' => 'Thank you for your order, {{1}}! Your confirmation number is {{2}}. If you have any questions, please use the buttons below to contact support. Thank you for being a customer!',
+                    'example' => [
+                        'body_text' => [
                             [
-                                "Pablo", "860198-230332"
+                                'Pablo', '860198-230332'
                             ]
                         ]
                     ]
                 ],
                 [
-                    "type" => "BUTTONS",
-                    "buttons" => [
+                    'type' => 'BUTTONS',
+                    'buttons' => [
                         [
-                            "type" => "PHONE_NUMBER",
-                            "text" => "Call",
-                            "phone_number" => "15550051310"
+                            'type' => 'PHONE_NUMBER',
+                            'text' => 'Call',
+                            'phone_number' => '15550051310'
                         ],
                         [
-                            "type" => "URL",
-                            "text" => "Contact Support",
-                            "url" => "https://www.luckyshrub.com/support"
+                            'type' => 'URL',
+                            'text' => 'Contact Support',
+                            'url' => 'https://www.luckyshrub.com/support'
                         ]
                     ]
                 ]

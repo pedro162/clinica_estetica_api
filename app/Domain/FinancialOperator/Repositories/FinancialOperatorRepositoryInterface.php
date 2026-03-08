@@ -2,9 +2,9 @@
 
 namespace App\Domain\FinancialOperator\Repositories;
 
-use App\OperadorFinanceiro;
 use App\Domain\FinancialOperator\Entities\FinancialOperator;
 use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorId;
+use App\OperadorFinanceiro;
 
 interface FinancialOperatorRepositoryInterface
 {

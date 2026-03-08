@@ -2,11 +2,7 @@
 
 namespace App\Helpers;
 
-use \App\Formulario;
-use \App\Exceptions\FormularioGrupoException;
-use \App\FormularioGrupo;
-use \App\FormularioItem;
-use \App\Utilitarios;
+use App\Utilitarios;
 
 class FormularioGrupoHelper
 {

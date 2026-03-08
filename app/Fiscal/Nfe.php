@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Fiscal;
-use App\Interaces\Nfe as NfeInterface;
-use App\Fiscal\FacadeNfe;
-use \stdClass;
 
 class Nfe
 {
@@ -16,7 +13,7 @@ class Nfe
         $this->objFacadeNfe = $obj;
     }
 
-    public function infNfe(Array $dados)
+    public function infNfe(array $dados)
     {
         //contêm os dados dos campos, nomeados conforme manual
 
@@ -28,9 +25,9 @@ class Nfe
         $this->objFacadeNfe->taginfNFe($std);
     }
 
-    public function Emitente(Array $dados)
+    public function Emitente(array $dados)
     {
-        
+
         //Node com os dados do emitente
         $std            = new \stdClass();
         $std->xNome     = $dados['xNome'];
@@ -40,18 +37,18 @@ class Nfe
         $std->IM        = $dados['IM'];
         $std->CNAE      = $dados['CNAE'];
         $std->CRT       = $dados['CRT'];
-        
-        if(isset($dados['CPF']) && $dados['CPF']){
+
+        if (isset($dados['CPF']) && $dados['CPF']) {
             $std->CPF       = $dados['CPF'];
-        }else{
+        } else {
             $std->CNPJ      = $dados['CNPJ']; //indicar apenas um CNPJ ou CPF
         }
-        
+
 
         $this->objFacadeNfe->tagemit($std);
-    } 
+    }
 
-    public function enderecoEmitente(Array $dados)
+    public function enderecoEmitente(array $dados)
     {
         //Node com o endereço do emitente
         $std = new \stdClass();
@@ -70,7 +67,7 @@ class Nfe
         $this->objFacadeNfe->tagenderEmit($std);
     }
 
-    public function Destinatario(Array $dados)
+    public function Destinatario(array $dados)
     {
         //Node com os dados do destinatário
         $std = new \stdClass();
@@ -80,10 +77,10 @@ class Nfe
         $std->ISUF          = $dados['ISUF'];
         $std->IM            = $dados['IM'];
         $std->email         = $dados['email'];
-        
-        if(isset($dados['CPF']) && $dados['CPF']){
+
+        if (isset($dados['CPF']) && $dados['CPF']) {
             $std->CPF       = $dados['CPF'];
-        }else{
+        } else {
             $std->CNPJ      = $dados['CNPJ']; //indicar apenas um CNPJ ou CPF
         }
         //$std->CNPJ          = $dados['CNPJ']; //indicar apenas um CNPJ ou CPF ou idEstrangeiro
@@ -91,9 +88,9 @@ class Nfe
         $std->idEstrangeiro = $dados['idEstrangeiro'];
 
         $this->objFacadeNfe->tagdest($std);
-    } 
+    }
 
-    public function enderecoDestinatario(Array $dados)
+    public function enderecoDestinatario(array $dados)
     {
         //Node de endereço do destinatário
         $std            = new \stdClass();
@@ -113,7 +110,7 @@ class Nfe
     }
 
 
-    public function IdentificacaoDaNota(Array $dados)
+    public function IdentificacaoDaNota(array $dados)
     {
         //Node de identificação da NFe
 
@@ -133,7 +130,7 @@ class Nfe
         $std->tpNF      = $dados['tpNF']; //0 = Entrada       1 = Saída//Tipo de Operação da NF-e
         $std->idDest    = $dados['idDest'];//Operação de Destino (idDest)
         $std->cMunFG    = $dados['cMunFG'];//cMunFG - Código do município de ocorrência do fato gerador do ICMS do transporte da NF-e
-        $std->tpImp     = $dados['tpImp']; //Descrição Ele Pai Tipo Ocor. Tam. Dec. Observação 25 B21 tpImp Formato do DANFE 
+        $std->tpImp     = $dados['tpImp']; //Descrição Ele Pai Tipo Ocor. Tam. Dec. Observação 25 B21 tpImp Formato do DANFE
         $std->tpEmis    = $dados['tpEmis'];//Na NF-e existe o campo tpEmis - Tipo de Emissão da NF-e. Esse campo pode ser preenchido com os seguintes valores:
         /*
          1 = Emissão normal (não em contingência)
@@ -154,13 +151,13 @@ class Nfe
         3 = NF-e de ajuste.
         4 = Devolução de mercadoria.
         */
-        
+
         $std->indFinal  = $dados['indFinal']; //Operação com Consumidor Final
         /*
         A tag IndFinal deverá ser preenchida com “0 – Normal” quando a operação não for realizada com consumidor final.
         A tag IndFinal deverá ser preenchida com “1 – Consumidor Final” quando a operação for realizada com consumidor final.
         */
-        
+
         $std->indPres    = $dados['indPres']; //Como informar a tag indPres (Indicador de presença consumidor da
         $std->procEmi    = $dados['procEmi']; // Processo de emissão da NF-e
         /*
@@ -170,27 +167,27 @@ class Nfe
         3 = Emissão NF-e pelo contribuinte com aplicativo fornecido pelo Fisco.
         */
         $std->verProc    = $dados['verProc']; // Versão do Processo de emissão da NF-e
-        $std->dhCont     = $dados['dhCont']; 
-        $std->xJust      = $dados['xJust']; 
-        
+        $std->dhCont     = $dados['dhCont'];
+        $std->xJust      = $dados['xJust'];
+
 
         $this->objFacadeNfe->tagide($std);
-    } 
+    }
 
-    /** 
+    /**
      * Node referente a NFe referenciada
      */
-    public function nfReferenciada(Array $dados)
+    public function nfReferenciada(array $dados)
     {
         //
 
         $std = new \stdClass();
         $std->refNFe    = $dados['refNFe'];
-        
-        $this->objFacadeNfe->tagrefNFe($std);
-    } 
 
-    public function nfReferenciadaDetalhes(Array $dados)
+        $this->objFacadeNfe->tagrefNFe($std);
+    }
+
+    public function nfReferenciadaDetalhes(array $dados)
     {
         //
 
@@ -201,17 +198,17 @@ class Nfe
         $std->mod   = $dados['mod'];
         $std->serie = $dados['serie'];
         $std->nNF   = $dados['nNF'];
-        
-        $this->objFacadeNfe->tagrefNF($std);
-    } 
 
-    /** 
+        $this->objFacadeNfe->tagrefNF($std);
+    }
+
+    /**
      * Node de dados do produto/serviço
      */
-    public function Produto(Array $dados)
+    public function Produto(array $dados)
     {
         //
-       
+
         $std = new \stdClass();
         $std->item      = $dados['item']; //item da NFe
         $std->cProd     = $dados['cProd'];
@@ -240,37 +237,37 @@ class Nfe
         $std->nItemPed  = $dados['nItemPed'];
         $std->nFCI      = $dados['nFCI'];
         $this->objFacadeNfe->tagprod($std);
-    } 
+    }
 
     /**
      * Informções adicionais para o item da nota
      */
-    public function infoAdocionaisProduto(Array $dados)
+    public function infoAdocionaisProduto(array $dados)
     {
         $std = new \stdClass();
         $std->item    = $dados['infAdProd'];
         $std->infAdProd    = $dados['infAdProd'];
-        
+
         $this->objFacadeNfe->taginfAdProd($std);
-    } 
+    }
 
 
     /**
      * Node com a Nomenclatura de Valor Aduaneiro e Estatística do item da NFe
      */
-    public function nomeclaturaAdicAtuaneiro(Array $dados)
+    public function nomeclaturaAdicAtuaneiro(array $dados)
     {
         $std = new \stdClass();
         $std->item  = $dados['item']; //item da NFe
         $std->NVE   = $dados['NVE'];
 
         $this->objFacadeNfe->tagNVE($std);
-    } 
+    }
 
     /**
      * Node de detalhamento do Especificador da Substituição Tributária do item da NFe
      */
-    public function cest(Array $dados)
+    public function cest(array $dados)
     {
         $std = new \stdClass();
 
@@ -280,12 +277,12 @@ class Nfe
         $std->CNPJFab   = $dados['CNPJFab']; //incluido no layout 4.00
 
         $this->objFacadeNfe->tagCEST($std);
-    } 
+    }
 
-     /**
-     * Node com o número do RECOPI
-     */
-    public function recopi(Array $dados)
+    /**
+    * Node com o número do RECOPI
+    */
+    public function recopi(array $dados)
     {
         $std = new \stdClass();
 
@@ -293,16 +290,16 @@ class Nfe
         $std->nRECOPI   = $dados['nRECOPI'];
         $this->objFacadeNfe->tagRECOPI($std);
     }
-    
-     /**
-     * Node com informações da Declaração de Importação do item da NFe
-     */
-    public function declaracaoImportacao(Array $dados)
+
+    /**
+    * Node com informações da Declaração de Importação do item da NFe
+    */
+    public function declaracaoImportacao(array $dados)
     {
         $std = new \stdClass();
 
         $std->item              = $dados['item']; //item da NFe
-        $std->nDI               = $dados['nDI'];  
+        $std->nDI               = $dados['nDI'];
         $std->dDI               = $dados['dDI'];
         $std->xLocDesemb        = $dados['xLocDesemb'];
         $std->UFDesemb          = $dados['UFDesemb'];
@@ -317,16 +314,16 @@ class Nfe
     }
 
 
-    /** 
+    /**
      * NOTA: Ajustado para NT 2018.005 Node indicativo de local de retirada diferente do endereço do emitente
      */
-    public function localRetirada(Array $dados)
+    public function localRetirada(array $dados)
     {
-        
+
         $std = new \stdClass();
-        if(isset($dados['CPF']) && $dados['CPF']){
+        if (isset($dados['CPF']) && $dados['CPF']) {
             $std->CPF       = $dados['CPF'];//indicar apenas um CNPJ ou CPF
-        }else{
+        } else {
             $std->CNPJ      = $dados['CNPJ']; //indicar apenas um CNPJ ou CPF
         }
         $std->IE        = $dados['IE'];
@@ -347,16 +344,16 @@ class Nfe
         $this->objFacadeNfe->tagretirada($std);
     }
 
-    /** 
+    /**
      * NOTA: Ajustado para NT 2018.005 Node indicativo de local de retirada diferente do endereço do emitente
      */
-    public function localEntrega(Array $dados)
+    public function localEntrega(array $dados)
     {
-        
+
         $std = new \stdClass();
-        if(isset($dados['CPF']) && $dados['CPF']){
+        if (isset($dados['CPF']) && $dados['CPF']) {
             $std->CPF       = $dados['CPF'];//indicar apenas um CNPJ ou CPF
-        }else{
+        } else {
             $std->CNPJ      = $dados['CNPJ']; //indicar apenas um CNPJ ou CPF
         }
         $std->IE        = $dados['IE'];
@@ -380,7 +377,7 @@ class Nfe
     /**
      * Node inicial dos Tributos incidentes no Produto ou Serviço do item da NFe
      */
-    public function imposto(Array $dados)
+    public function imposto(array $dados)
     {
         //
         $std = new \stdClass();
@@ -388,12 +385,12 @@ class Nfe
         $std->vTotTrib = $dados['vTotTrib'];
 
         $this->objFacadeNfe->tagimposto($std);
-    } 
+    }
 
     /**
      * NOTA: Ajustado conforme NT 2018.005_1.10 Node com informações do ICMS do item da NFe
      */
-    public function icms(Array $dados)
+    public function icms(array $dados)
     {
         $std = new \stdClass();
         $std->item          = $dados['item']; //item da NFe
@@ -434,14 +431,14 @@ class Nfe
         $std->vICMSSubstituto  = $dados['vICMSSubstituto']; //NT2018.005_1.10_Fevereiro de 2019
 
         $this->objFacadeNfe->tagICMS($std);
-    } 
+    }
 
     /**
      * Node com informações da partilha do ICMS entre a UF de origem e UF de destino ou a UF definida na legislação
      */
-    public function imcsPartilha(Array $dados)
+    public function imcsPartilha(array $dados)
     {
-        
+
         $std = new \stdClass();
         $std->item          = $dados['item']; //item da NFe
         $std->orig          = $dados['orig'];
@@ -454,7 +451,8 @@ class Nfe
         $std->modBCST       = $dados['modBCST'];
         $std->pMVAST        = $dados['pMVAST'];
         $std->pRedBCST      = $dados['pRedBCST'];
-        $std->vBCST         = $dados['vBCST'];;
+        $std->vBCST         = $dados['vBCST'];
+        ;
         $std->pICMSST       = $dados['pICMSST'];
         $std->vICMSST       = $dados['vICMSST'];
         $std->pBCOp         = $dados['pBCOp'];
@@ -467,56 +465,56 @@ class Nfe
      * Node de registro de pessoas autorizadas a acessar a NFe
      * Indicar um CNPJ ou CPF
      */
-    public function autorizaPessoaAcessXml(Array $dados)
+    public function autorizaPessoaAcessXml(array $dados)
     {
         $std = new \stdClass();
-        if(isset($dados['CPF']) && $dados['CPF']){
+        if (isset($dados['CPF']) && $dados['CPF']) {
             $std->CPF       = $dados['CPF'];//indicar apenas um CNPJ ou CPF
-        }else{
+        } else {
             $std->CNPJ      = $dados['CNPJ']; //indicar apenas um CNPJ ou CPF
         }
-     
+
         $this->objFacadeNfe->tagautXML($std);
     }
 
-    public function IcmsSn(Array $dados)
+    public function IcmsSn(array $dados)
     {
 
-    } 
+    }
 
 
-    public function PisConfins(Array $dados)
+    public function PisConfins(array $dados)
     {
 
-    } 
+    }
 
-    public function Totais(Array $dados)
+    public function Totais(array $dados)
     {
 
-    } 
+    }
 
 
-    public function Transporte(Array $dados)
+    public function Transporte(array $dados)
     {
 
-    } 
+    }
 
 
 
-    public function Pagamento(Array $dados)
+    public function Pagamento(array $dados)
     {
 
-    } 
+    }
 
 
-    public function EnviarAltorizar(Array $dados)
+    public function EnviarAltorizar(array $dados)
     {
 
-    } 
+    }
 
-    public function setErrors(String $erro):bool
+    public function setErrors(String $erro): bool
     {
-        if(strlen(trim($erro))){
+        if (strlen(trim($erro))) {
             return false;
         }
 
@@ -527,26 +525,36 @@ class Nfe
 
 
     //-------------------------------------------------------------------------------------------------------
-    public function config($razaoSocial, $siglauf, $cnpj, $tokenIbpt, $csc, $cscId, $chemes="PL_009_V4", $versao='4.00', $dtAtualizaçao= null, $tpAmbiente=2, $proxyConf = [
-            "proxyIp"   => "",
-            "proxyPort" => "",
-            "proxyUser" => "",
-            "proxyPass" => ""
+    public function config(
+        $razaoSocial,
+        $siglauf,
+        $cnpj,
+        $tokenIbpt,
+        $csc,
+        $cscId,
+        $chemes = 'PL_009_V4',
+        $versao = '4.00',
+        $dtAtualizaçao = null,
+        $tpAmbiente = 2,
+        $proxyConf = [
+            'proxyIp'   => '',
+            'proxyPort' => '',
+            'proxyUser' => '',
+            'proxyPass' => ''
         ]
-    )
-    {
+    ) {
         $arr = [
-            "atualizacao" => $dtAtualizaçao ?? date('Y-m-d H:i:s'),
-            "tpAmb"       => $tpAmbiente,
-            "razaosocial" => $razaoSocial,
-            "cnpj"        => $cnpj,
-            "siglaUF"     => $siglauf,
-            "schemes"     => $chemes,
-            "versao"      => $versao,
-            "tokenIBPT"   => $tokenIbpt,
-            "CSC"         => $csc,//"GPB0JBWLUR6HWFTVEAS6RJ69GPCROFPBBB8G"
-            "CSCid"       => $cscId,//"000001",
-            "proxyConf"   => $proxyConf,
+            'atualizacao' => $dtAtualizaçao ?? date('Y-m-d H:i:s'),
+            'tpAmb'       => $tpAmbiente,
+            'razaosocial' => $razaoSocial,
+            'cnpj'        => $cnpj,
+            'siglaUF'     => $siglauf,
+            'schemes'     => $chemes,
+            'versao'      => $versao,
+            'tokenIBPT'   => $tokenIbpt,
+            'CSC'         => $csc,//"GPB0JBWLUR6HWFTVEAS6RJ69GPCROFPBBB8G"
+            'CSCid'       => $cscId,//"000001",
+            'proxyConf'   => $proxyConf,
         ];
         $configJson = json_encode($arr);
 

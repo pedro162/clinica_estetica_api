@@ -4,7 +4,6 @@ namespace App\Application\Services\CreditCardBrand;
 
 use App\Application\Commands\CreditCardBrand\CreateCreditCardBrandCommand;
 use App\BandeiraCartao;
-use App\Domain\CreditCardBrand\Entities\CreditCardBrand;
 use Illuminate\Support\Collection;
 
 interface CreditCardBrandApplicationServiceInterface

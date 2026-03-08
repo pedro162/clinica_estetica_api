@@ -18,7 +18,8 @@ class DeleteServiceController extends Controller
     public function __construct(
         protected ServiceApplicationServiceInterface $service,
         protected ServiceRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -26,7 +27,7 @@ class DeleteServiceController extends Controller
      * @param  \App\Http\Requests\V1\Service\DestroyServiceRequest $request
      * @param  int  $id
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(DestroyServiceRequest $request, $id): JsonResponse

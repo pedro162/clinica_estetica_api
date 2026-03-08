@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Commands\CreditCardBrand;
 
-use App\Application\Commands\FinancialOperator\CreateFinancialOperatorCommand;
-
 class CreateCreditCardBrandCommand
 {
     protected string $id;
@@ -110,14 +108,14 @@ class CreateCreditCardBrandCommand
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id((string)$value)],
-            ['keys' => ['name'], 'callback' => fn($value) => $entity->name((string)$value)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId((string)$value)],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId((string)$value)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId((string)$value)],
-            ['keys' => ['standard', 'standard'], 'callback' => fn($value) => $entity->standard((string)$value)],
-            ['keys' => ['personAuthorId', 'pessoa_autor_id'], 'callback' => fn($value) => $entity->personAuthorId((string)$value)],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id((string)$value)],
+            ['keys' => ['name'], 'callback' => fn ($value) => $entity->name((string)$value)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId((string)$value)],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId((string)$value)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId((string)$value)],
+            ['keys' => ['standard', 'standard'], 'callback' => fn ($value) => $entity->standard((string)$value)],
+            ['keys' => ['personAuthorId', 'pessoa_autor_id'], 'callback' => fn ($value) => $entity->personAuthorId((string)$value)],
         ];
 
         foreach ($mapping as $map) {
@@ -145,7 +143,7 @@ class CreateCreditCardBrandCommand
             'standard' => $this->getStandard() ?? '',
         ];
 
-        return array_filter($data, fn($value) => $value !== null && !empty($value));
+        return array_filter($data, fn ($value) => $value !== null && !empty($value));
     }
 
     public function toArray(): array

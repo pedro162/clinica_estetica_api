@@ -2,14 +2,14 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use \App\OrdemServico;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MotivoCancelamentoOrdemServico extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
 
     protected $table = 'motivo_cancelamento_ordem_servicos';
     protected $primaryKey = 'id';

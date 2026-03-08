@@ -9,7 +9,7 @@ class FinancialOperatorOurNumber
     public function __construct(string $value)
     {
         if (trim($value) == '') {
-            throw new \InvalidArgumentException("The our number value cannot be empty");
+            throw new \InvalidArgumentException('The our number value cannot be empty');
         }
 
         $this->value = $value;

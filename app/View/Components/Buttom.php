@@ -19,17 +19,14 @@ class Buttom extends Component
      * @return void
      */
     public function __construct(
-        
-        $type='',
-        $onClick='',
-        $class='',
-        $style='',
-        $id='',
-        $icone='',
-        $label=''
-
-    )
-    {
+        $type = '',
+        $onClick = '',
+        $class = '',
+        $style = '',
+        $id = '',
+        $icone = '',
+        $label = ''
+    ) {
         $this->type     = $type;
         $this->onClick  = $onClick;
         $this->class    = $class;

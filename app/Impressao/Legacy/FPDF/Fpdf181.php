@@ -4,8 +4,8 @@ namespace App\Impressao\Legacy\FPDF;
 
 class Fpdf181
 {
-    const FPDF_VERSION = '1.81';
-    const FPDF_FONTPATH = 'font/';
+    public const FPDF_VERSION = '1.81';
+    public const FPDF_FONTPATH = 'font/';
 
     protected $page;               // current page number
     protected $n;                  // current object number
@@ -1278,7 +1278,7 @@ class Fpdf181
     protected function loadFont($font)
     {
         // Load a font definition file from the font directory
-        if (strpos($font, '/') !== false || strpos($font, "\\") !== false) {
+        if (strpos($font, '/') !== false || strpos($font, '\\') !== false) {
             $this->error('Incorrect font definition file name: ' . $font);
         }
         include($this->fontpath . $font);
@@ -1958,7 +1958,7 @@ class Fpdf181
         $s .= "endcmap\n";
         $s .= "CMapName currentdict /CMap defineresource pop\n";
         $s .= "end\n";
-        $s .= "end";
+        $s .= 'end';
         return $s;
     }
 

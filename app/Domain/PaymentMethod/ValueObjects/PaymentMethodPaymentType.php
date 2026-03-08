@@ -16,7 +16,7 @@ class PaymentMethodPaymentType
     {
         if (empty($value)) {
             if (!in_array($value, self::TYPES_AVAILABLE)) {
-                throw new \InvalidArgumentException("The payment type is invalid. It should be either (".implode(', ', self::TYPES_AVAILABLE).")");
+                throw new \InvalidArgumentException('The payment type is invalid. It should be either ('.implode(', ', self::TYPES_AVAILABLE).')');
             }
         }
 

@@ -11,7 +11,7 @@ class PersonBirthOrFoundation
     public function __construct(string $value)
     {
         if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("Birth/foundation field cannot be empty");
+            throw new \InvalidArgumentException('Birth/foundation field cannot be empty');
         }
 
         $this->value = new DateTimeImmutable($value);

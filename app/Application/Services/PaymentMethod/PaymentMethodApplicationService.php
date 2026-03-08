@@ -9,7 +9,6 @@ use App\Application\Handlers\PaymentMethod\GetAllPaymentMethodHandler;
 use App\Application\Handlers\PaymentMethod\GetPaymentMethodByIdHandler;
 use App\Application\Handlers\PaymentMethod\UpdatePaymentMethodHandler;
 use App\FormaPagamento;
-use App\Domain\PaymentMethod\Entities\PaymentMethod;
 use Illuminate\Support\Collection;
 
 class PaymentMethodApplicationService implements PaymentMethodApplicationServiceInterface

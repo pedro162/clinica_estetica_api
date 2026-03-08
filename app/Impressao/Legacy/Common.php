@@ -4,7 +4,6 @@ namespace App\Impressao\Legacy;
 
 class Common
 {
-
     /**
      * Extrai o valor do node DOM
      * @param  object $theObj Instancia de DOMDocument ou DOMElement
@@ -46,8 +45,8 @@ class Common
         }
         $vct = $theObj->getElementsByTagName($keyName)->item(0);
         if (isset($vct)) {
-            $theDate = explode("-", $vct->nodeValue);
-            return $extraText . $theDate[2] . "/" . $theDate[1] . "/" . $theDate[0];
+            $theDate = explode('-', $vct->nodeValue);
+            return $extraText . $theDate[2] . '/' . $theDate[1] . '/' . $theDate[0];
         }
         return '';
     }
@@ -89,9 +88,9 @@ class Common
         if ($data == '') {
             return '';
         }
-        $needle = "/";
-        if (strstr($data, "-")) {
-            $needle = "-";
+        $needle = '/';
+        if (strstr($data, '-')) {
+            $needle = '-';
         }
         $dt = explode($needle, $data);
         return "$dt[2]/$dt[1]/$dt[0]";
@@ -171,7 +170,7 @@ class Common
         }
         //cria uma variável grande o suficiente para conter os dados
         $sRetorno = '';
-        $sRetorno = str_pad($sRetorno, $tCampo + $tMask, " ", STR_PAD_LEFT);
+        $sRetorno = str_pad($sRetorno, $tCampo + $tMask, ' ', STR_PAD_LEFT);
         //pega o tamanho da string de retorno
         $tRetorno = strlen($sRetorno);
         //se houve entrada de dados

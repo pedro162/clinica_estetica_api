@@ -2,9 +2,8 @@
 
 namespace App\Helpers;
 
-use \App\Caixa;
-use \App\Exceptions\CobrancaReceberException;
-use App\Helpers\BaseHelper;
+use App\Caixa;
+use App\Exceptions\CobrancaReceberException;
 
 class CaixaHelper extends BaseHelper
 {

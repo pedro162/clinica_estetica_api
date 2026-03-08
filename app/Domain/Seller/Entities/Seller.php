@@ -2,18 +2,18 @@
 
 namespace App\Domain\Seller\Entities;
 
-use App\Rca;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
-use App\Domain\Seller\ValueObjects\SellerId;
-use App\Domain\Seller\ValueObjects\SellerBranchId;
-use App\Domain\Seller\ValueObjects\SellerPersonId;
 use App\Domain\Seller\ValueObjects\SellerAccessAllRcas;
-use App\Domain\Seller\ValueObjects\SellerStatus;
-use App\Domain\Seller\ValueObjects\SellerGoalPositivacao;
-use App\Domain\Seller\ValueObjects\SellerGoalMargem;
+use App\Domain\Seller\ValueObjects\SellerBranchId;
 use App\Domain\Seller\ValueObjects\SellerGoalFaturamento;
+use App\Domain\Seller\ValueObjects\SellerGoalMargem;
+use App\Domain\Seller\ValueObjects\SellerGoalPositivacao;
+use App\Domain\Seller\ValueObjects\SellerId;
+use App\Domain\Seller\ValueObjects\SellerPersonId;
+use App\Domain\Seller\ValueObjects\SellerStatus;
+use App\Rca;
 
 class Seller extends BaseEntity
 {
@@ -167,18 +167,18 @@ class Seller extends BaseEntity
         $entity = new self();
 
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($v) => $entity->id(new SellerId($v))],
-            ['keys' => ['branchId', 'filial_id'], 'callback' => fn($v) => $entity->branchId(new SellerBranchId((string)$v))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($v) => $entity->tenantId(new BaseEntityTenantId((string)$v))],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($v) => $entity->userId(new BaseEntityUserId((string)$v))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($v) => $entity->userUpdateId(new BaseEntityUserId((string)$v))],
-            ['keys' => ['personId', 'pessoa_id'], 'callback' => fn($v) => $entity->personId(new SellerPersonId((string)$v))],
-            ['keys' => ['accessAll', 'accessAllRcas', 'acessaTodosRcas'], 'callback' => fn($v) => $entity->accessAll(new SellerAccessAllRcas((int)$v))],
-            ['keys' => ['status', 'situacao'], 'callback' => fn($v) => $entity->status(new SellerStatus((string)$v))],
-            ['keys' => ['positivityGoal', 'metaPositivacao'], 'callback' => fn($v) => $entity->positivityGoal(new SellerGoalPositivacao((float)$v))],
-            ['keys' => ['marginGoal', 'metaMargem'], 'callback' => fn($v) => $entity->marginGoal(new SellerGoalMargem((float)$v))],
-            ['keys' => ['revenueGoal', 'metaFaturamento'], 'callback' => fn($v) => $entity->revenueGoal(new SellerGoalFaturamento((float)$v))],
-            ['keys' => ['active'], 'callback' => fn($v) => $entity->active((string)$v)],
+            ['keys' => ['id'], 'callback' => fn ($v) => $entity->id(new SellerId($v))],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn ($v) => $entity->branchId(new SellerBranchId((string)$v))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($v) => $entity->tenantId(new BaseEntityTenantId((string)$v))],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($v) => $entity->userId(new BaseEntityUserId((string)$v))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($v) => $entity->userUpdateId(new BaseEntityUserId((string)$v))],
+            ['keys' => ['personId', 'pessoa_id'], 'callback' => fn ($v) => $entity->personId(new SellerPersonId((string)$v))],
+            ['keys' => ['accessAll', 'accessAllRcas', 'acessaTodosRcas'], 'callback' => fn ($v) => $entity->accessAll(new SellerAccessAllRcas((int)$v))],
+            ['keys' => ['status', 'situacao'], 'callback' => fn ($v) => $entity->status(new SellerStatus((string)$v))],
+            ['keys' => ['positivityGoal', 'metaPositivacao'], 'callback' => fn ($v) => $entity->positivityGoal(new SellerGoalPositivacao((float)$v))],
+            ['keys' => ['marginGoal', 'metaMargem'], 'callback' => fn ($v) => $entity->marginGoal(new SellerGoalMargem((float)$v))],
+            ['keys' => ['revenueGoal', 'metaFaturamento'], 'callback' => fn ($v) => $entity->revenueGoal(new SellerGoalFaturamento((float)$v))],
+            ['keys' => ['active'], 'callback' => fn ($v) => $entity->active((string)$v)],
         ];
 
         foreach ($mapping as $map) {
@@ -209,7 +209,7 @@ class Seller extends BaseEntity
             'tenant_id' => isset($this->tenantId) ? (string)$this->tenantId : null,
         ];
 
-        $data = array_filter($data, fn($v) => $v !== null);
+        $data = array_filter($data, fn ($v) => $v !== null);
 
         return new Rca($data);
     }

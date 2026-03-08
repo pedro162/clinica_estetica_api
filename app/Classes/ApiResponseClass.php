@@ -3,8 +3,8 @@
 namespace App\Classes;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use \Illuminate\Http\JsonResponse;
 use Throwable;
 
 class ApiResponseClass
@@ -17,7 +17,7 @@ class ApiResponseClass
      * @param integer $code
      * @throws HttpResponseException
      */
-    public static function throw(\Exception $e, $message = "Something went wrong! Proccess not completed", $code = 500): never
+    public static function throw(\Exception $e, $message = 'Something went wrong! Proccess not completed', $code = 500): never
     {
         Log::info($e);
 

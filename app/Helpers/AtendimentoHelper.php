@@ -2,39 +2,30 @@
 
 namespace App\Helpers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Atendimento;
-use App\Pessoa;
-use App\Profissional;
-use App\Filial;
 use App\Agenda;
 use App\Application\Commands\CreateAppointmentCommand;
-use App\Application\Commands\CreateNotificationCommand;
 use App\Application\Handlers\CreateAppointmentHandler;
 use App\Application\Handlers\CreateNotificationHandler;
 use App\Application\Handlers\CreateNotificationVariableHandler;
 use App\Application\Services\AppointmentApplicationService;
 use App\Application\Services\NotificationApplicationService;
+use App\Atendimento;
 use App\Domain\Appointment\Entities\Appointment;
-use App\Domain\Notification\Entities\Notification;
-use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
-use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
-use App\HoraProfExpediente;
 use App\Exceptions\AtendimentoException;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use App\Helpers\BaseHelper;
+use App\Filial;
+use App\HoraProfExpediente;
 use App\Infrastructure\Persistence\Eloquent\EloquentAppointmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentNotificationVariableRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentTemplateRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentTemplateVariableRepository;
 use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
+use App\Pessoa;
+use App\Profissional;
 
 class AtendimentoHelper extends BaseHelper
 {
-    const USE_NOTIFICATION_SERVICE = TRUE;
+    public const USE_NOTIFICATION_SERVICE = true;
 
     public function store(array $dados)
     {
@@ -254,10 +245,10 @@ class AtendimentoHelper extends BaseHelper
         $registro->join('pessoas', function ($join) {
 
             $join->on('pessoas.id', '=', 'atendimentos.pessoa_id');
-        })->join("profissionals as p", function ($join) {
+        })->join('profissionals as p', function ($join) {
             $join->on('p.id', '=', 'atendimentos.profissional_id');
-        })->join("pessoas as ppf", function ($join) {
-            $join->on("ppf.id", '=', 'p.pessoa_id');
+        })->join('pessoas as ppf', function ($join) {
+            $join->on('ppf.id', '=', 'p.pessoa_id');
         });
 
         if (is_array($consulta) && count($consulta) > 0) {
@@ -413,6 +404,7 @@ class AtendimentoHelper extends BaseHelper
 
                             $registro->where('pessoas.name', 'like', '%' . $val . '%');
                         }
+                        // no break
                     case 'name_pessoa':
                         if (is_string($val)) {
 

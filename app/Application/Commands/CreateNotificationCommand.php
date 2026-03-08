@@ -4,7 +4,6 @@ namespace App\Application\Commands;
 
 class CreateNotificationCommand
 {
-
     protected string $notificationId;
     protected string $notificationTemplateId;
     protected string $notificationTitle;

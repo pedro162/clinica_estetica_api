@@ -5,7 +5,6 @@ namespace App\Application\Services;
 use App\Application\Commands\CreateAppointmentCommand;
 use App\Application\Handlers\CreateAppointmentHandler;
 use App\Domain\Appointment\Entities\Appointment;
-use App\Funcionario;
 
 class AppointmentApplicationService
 {

@@ -3,9 +3,10 @@
 namespace App\Application\Handlers\FinancialOperator;
 
 use App\Application\Commands\FinancialOperator\CreateFinancialOperatorCommand;
+use App\Domain\FinancialOperator\Repositories\FinancialOperatorRepositoryInterface;
 use App\OperadorFinanceiro;
-use App\Domain\FinancialOperator\Entities\FinancialOperator;
-use App\Domain\FinancialOperator\Repositories\FinancialOperatorRepositoryInterface;;
+
+;
 
 use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorId;
 

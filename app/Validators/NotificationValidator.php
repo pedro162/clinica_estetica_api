@@ -2,13 +2,11 @@
 
 namespace App\Validators;
 
-use \App\Exceptions\NotificationException;
+use App\Exceptions\NotificationException;
 use Illuminate\Support\Facades\Validator;
 
 class NotificationValidator
 {
-
-
     public static function validationCreate(array $dados = [])
     {
 

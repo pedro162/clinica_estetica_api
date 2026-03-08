@@ -2,27 +2,15 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use \App\PessoaFormularioResposta;
-use \App\Helpers\ContaReceberHelper;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\MotivoCancelamentoOrdemServico;
-use \App\PessoaFormulario;
-use \App\Filial;
-use \App\Pessoa;
-use \App\Profissional;
-use \App\Formulario;
-use \App\Helpers\PessoaFichaRespostaHelper;
-use \App\Exceptions\PessoaFichaExcepton;
-use Exception;
-use Illuminate\Support\Facades\Auth;
-use App\Helpers\BaseHelper;
+use App\Exceptions\PessoaFichaExcepton;
+use App\Filial;
+use App\Formulario;
+use App\Pessoa;
+use App\PessoaFormulario;
+use App\Profissional;
 
 class PessoaFichaHelper extends BaseHelper
 {
-
     /**
      * Update the specified resource in storage.
      *

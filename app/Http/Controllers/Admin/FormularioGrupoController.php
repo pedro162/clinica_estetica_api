@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\FormularioGrupoException;
+use App\FormularioGrupo;
+use App\FormularioItem;
+use App\Helpers\FormularioGrupoHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Formulario;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\FormularioGrupoException;
-use \App\FormularioGrupo;
-use \App\FormularioItem;
-use Illuminate\Support\Facades\Auth;
-use App\Helpers\FormularioGrupoHelper;
-
 
 class FormularioGrupoController extends Controller
 {
@@ -63,7 +58,7 @@ class FormularioGrupoController extends Controller
                     $this->validaDadosItemRequest($datIt);
                 }
             } else {
-                throw new FormularioGrupoException("Informe os campos do formulário, por favor.");
+                throw new FormularioGrupoException('Informe os campos do formulário, por favor.');
             }
 
             $dadosRequest = [];
@@ -227,7 +222,7 @@ class FormularioGrupoController extends Controller
                     $this->validaDadosItemRequest($datIt);
                 }
             } else {
-                throw new FormularioGrupoException("Informe os campos do formulário, por favor.");
+                throw new FormularioGrupoException('Informe os campos do formulário, por favor.');
             }
 
 

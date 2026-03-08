@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Service;
 
-use App\Servico;
 use App\Domain\Service\Entities\Service;
 use App\Domain\Service\Repositories\ServiceRepositoryInterface;
 use App\Domain\Service\ValueObjects\ServiceId;
+use App\Servico;
 use Illuminate\Support\Facades\Auth;
 
 class ServiceRepository implements ServiceRepositoryInterface

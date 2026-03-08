@@ -8,7 +8,9 @@ use App\Caixa;
 use App\Domain\Cashier\Entities\Cashier;
 use App\Domain\Cashier\Repositories\CashierRepositoryInterface;
 use App\Domain\Cashier\ValueObjects\CashierId;
-use Illuminate\Support\Facades\Auth;;
+use Illuminate\Support\Facades\Auth;
+
+;
 
 class CashierRepository implements CashierRepositoryInterface
 {
@@ -119,7 +121,7 @@ class CashierRepository implements CashierRepositoryInterface
 
         // Retorno formatado para <select> ou autocomplete
         if (!empty($filter['to_require'])) {
-            $result = $result->map(fn($r) => [
+            $result = $result->map(fn ($r) => [
                 'label' => $r->name,
                 'value' => $r->id,
             ]);

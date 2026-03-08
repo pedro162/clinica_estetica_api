@@ -2,7 +2,9 @@
 
 namespace App\Application\Handlers\Country;
 
-use App\Domain\Country\Repositories\CountryRepositoryInterface;;
+use App\Domain\Country\Repositories\CountryRepositoryInterface;
+
+;
 
 use Illuminate\Support\Collection;
 

@@ -4,8 +4,6 @@ namespace Tests\Feature\PaymentPlan;
 
 use App\PlanoPagamento;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
 use Laravel\Passport\Passport;
 use Tests\TestCase;

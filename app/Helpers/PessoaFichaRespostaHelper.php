@@ -2,21 +2,13 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use \App\PessoaFormularioResposta;
-use \App\Helpers\ContaReceberHelper;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\MotivoCancelamentoOrdemServico;
-use \App\PessoaFormulario;
-use \App\FormularioItem;
-use \App\Exceptions\PessoaFichaExcepton;
+use App\Exceptions\PessoaFichaExcepton;
+use App\FormularioItem;
+use App\PessoaFormulario;
+use App\PessoaFormularioResposta;
 
 class PessoaFichaRespostaHelper
 {
-
-
     public function create(PessoaFormulario $objPessaForm, int $idItem, array $data)
     {
         $formularioItem = FormularioItem::where('id', '=', $idItem)->where('active', '=', 'yes')->first();

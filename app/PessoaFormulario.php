@@ -2,21 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\EventoAgenda;
-use App\Pessoa;
-use App\Profissional;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\PessoaFormularioResposta;
-use App\Formulario;
-use App\Filial;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PessoaFormulario extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    protected $table = "pessoa_formularios";
-    protected $primaryKey = "id";
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $table = 'pessoa_formularios';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'observacao',
         'caminho_ficha',

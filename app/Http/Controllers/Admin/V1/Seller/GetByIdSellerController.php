@@ -8,9 +8,7 @@ use App\Classes\ApiResponseClass;
 use App\Domain\Seller\Repositories\SellerRepositoryInterface;
 use App\Exceptions\ServicoException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Seller\DestroySellerRequest;
 use App\Http\Requests\V1\Seller\ShowSellerRequest;
-use App\Http\Requests\V1\Seller\UpdateSellerRequest;
 use App\Http\Resources\V1\Seller\SellerResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -20,17 +18,18 @@ class GetByIdSellerController extends Controller
     public function __construct(
         protected SellerApplicationServiceInterface $service,
         protected SellerRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Http\Requests\V1\Seller\ShowSellerRequest  $request
-     * 
+     *
      * @param  int  $id
-     * 
+     *
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(ShowSellerRequest $request, $id): JsonResponse

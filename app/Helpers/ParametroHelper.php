@@ -3,18 +3,16 @@
 namespace App\Helpers;
 
 use App\Domain\Parameter\Entities\Parameter;
-use \App\Parametro;
 use App\Domain\Parameter\ValueObjects\ParameterId;
 use App\Domain\Parameter\ValueObjects\ParameterName;
 use App\Domain\Parameter\ValueObjects\ParameterTenantId;
 use App\Domain\Parameter\ValueObjects\ParameterType;
-use \App\Exceptions\CobrancaReceberException;
-use App\Helpers\BaseHelper;
+use App\Exceptions\CobrancaReceberException;
 use App\Infrastructure\Persistence\Eloquent\Parameter\ParameterRepository;
+use App\Parametro;
 
 class ParametroHelper extends BaseHelper
 {
-
     public function updater(array $dados, int $id)
     {
         $id             = $id ?? $dados['id'];

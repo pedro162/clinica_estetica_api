@@ -18,17 +18,18 @@ class UpdateSellerController extends Controller
     public function __construct(
         protected SellerApplicationServiceInterface $service,
         protected SellerRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\V1\Seller\UpdateSellerRequest $request
-     * 
+     *
      * @param  int  $id
-     * 
+     *
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(UpdateSellerRequest $request, $id): JsonResponse

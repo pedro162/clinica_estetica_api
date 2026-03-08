@@ -122,7 +122,7 @@ class DaCommon extends Common
             error_reporting(E_ALL);
             ini_set('display_errors', 'On');
             set_error_handler(function (int $errnum, string $errmsg, string $errfile, int $errline) {
-                throw new \Exception("Erro identificado $errnum: '$errmsg' $errfile [linha:" . $errline . "]");
+                throw new \Exception("Erro identificado $errnum: '$errmsg' $errfile [linha:" . $errline . ']');
             });
         } else {
             //desativar modo debug

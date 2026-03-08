@@ -8,18 +8,14 @@ use App\Application\Handlers\AccountReceivable\GetAccountReceivableByIdHandler;
 use App\Application\Handlers\AccountReceivable\GetAllAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivable\UpdateAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHandler;
-use \App\Utilitarios;
-use \App\ContaReceber;
-use \App\ContaReceber as CobrancaReceber;
-use \App\FormaPagamento;
-use \App\Helpers\ContaReceberItemHelper;
-use \App\Pessoa;
-use \App\OrdemServico;
-use \App\Exceptions\CobrancaReceberException;
-use App\Helpers\BaseHelper;
+use App\ContaReceber;
+use App\ContaReceber as CobrancaReceber;
+use App\Exceptions\CobrancaReceberException;
+use App\FormaPagamento;
+use App\OrdemServico;
+use App\Pessoa;
+use App\Utilitarios;
 use App\Validators\AccountReceivable\AccountReceivableValidator;
-use Illuminate\Support\Facades\Log;
-use Exception;
 
 class ContaReceberHelper extends BaseHelper
 {
@@ -89,7 +85,7 @@ class ContaReceberHelper extends BaseHelper
     {
         return [
             'pessoa_id' => $data['pessoa_id'] ?? null,
-            'descricao' => $data['descricao'] ?? "Recita financeira",
+            'descricao' => $data['descricao'] ?? 'Recita financeira',
             'documento' => $data['documento'] ?? null,
             'dtVencimentoOriginal' => $data['dtVencimentoOriginal'],
             'dtVencimento' => $data['dtVencimento'] ?? null,
@@ -126,7 +122,8 @@ class ContaReceberHelper extends BaseHelper
             throw new CobrancaReceberException(implode('<br/>', $erros));
         }
 
-        $installMentsQuantity         = $paymentPlanObject->installMentsQuantitys ?? 1;;
+        $installMentsQuantity         = $paymentPlanObject->installMentsQuantitys ?? 1;
+        ;
         $installMents       = [];
         $qtdDiasIntervalo   = $paymentPlanObject->qtdDiasIntervaloParcelas ?? 0;
         $qtdDiasPriParcela  = $paymentPlanObject->qtd_dias_pri_parcela ?? 0;
@@ -153,10 +150,10 @@ class ContaReceberHelper extends BaseHelper
         }
 
         for ($i = 0; !($i == $installMentsQuantity); $i++) {
-            $dtVencimento = $objDtVencimento->format("Y-m-d H:i:s");
+            $dtVencimento = $objDtVencimento->format('Y-m-d H:i:s');
             $installMents[] = $this->accountReceivableParseData([
                 'pessoa_id' => $personObject->id,
-                'descricao' => $dados['descricao'] ?? $dados['description'] ?? "Recita financeira",
+                'descricao' => $dados['descricao'] ?? $dados['description'] ?? 'Recita financeira',
                 'documento' => $dados['documento'] ?? $dados['document'] ?? null,
                 'dtVencimentoOriginal' => $dtVencimento,
                 'dtVencimento' => $dtVencimento,
@@ -294,7 +291,7 @@ class ContaReceberHelper extends BaseHelper
 
         $dataParcela = [
             'pessoa_id' => $registro->pessoa->id,
-            'descricao' => $dados['descricao'] ?? "Recita financeira",
+            'descricao' => $dados['descricao'] ?? 'Recita financeira',
             'documento' => $dados['documento'] ?? null,
             'dtVencimentoOriginal' => $registro->dtVencimentoOriginal,
             'dtVencimento' => $registro->dtVencimento,
@@ -491,7 +488,7 @@ class ContaReceberHelper extends BaseHelper
 
         if (isset($data['com_ordem_servico'])) {
             $registro->leftJoin('ordem_servicos as os', function ($join) {
-                $join->on('os.id', '=', 'cr.referencia_id')->on('cr.referencia', '=',  \DB::raw('"ordem_servicos"'));
+                $join->on('os.id', '=', 'cr.referencia_id')->on('cr.referencia', '=', \DB::raw('"ordem_servicos"'));
             })->join('profissionals as prof', function ($join) {
                 $join->on('prof.id', '=', 'os.profissional_id');
             })->join('pessoas as pprof', function ($join) {

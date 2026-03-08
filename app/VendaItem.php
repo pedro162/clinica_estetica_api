@@ -4,12 +4,12 @@ namespace App;
 
 use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
-use \App\Venda;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VendaItem extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
 
     protected $fillable = [
         'venda_id',

@@ -10,7 +10,7 @@ class AccountReceivableStatus
     {
         if (!empty($value)) {
             if (!in_array($value, ['aberto', 'pago', 'devolvido', 'estornado'])) {
-                throw new \InvalidArgumentException("The cashier type is invalid. It should be either (aberto, pago, devolvido, estornado)");
+                throw new \InvalidArgumentException('The cashier type is invalid. It should be either (aberto, pago, devolvido, estornado)');
             }
         }
 

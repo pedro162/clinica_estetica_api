@@ -8,13 +8,7 @@ use App\Application\Commands\CreateHttpCommand;
 use App\Domain\Http\Entities\Http;
 use App\Domain\Http\Interfaces\HttpInterface;
 use App\Domain\Http\Repositories\HttpRepositoryInterface;
-use App\Domain\Http\ValueObjects\HttpDocument;
-use App\Domain\Http\ValueObjects\HttpEmail;
-use App\Domain\Http\ValueObjects\HttpExtraDocument;
 use App\Domain\Http\ValueObjects\HttpId;
-use App\Domain\Http\ValueObjects\HttpName;
-use App\Domain\Http\ValueObjects\HttpOptionalName;
-use App\Domain\Http\ValueObjects\HttpSex;
 
 class HttpRequestResponseHandler
 {

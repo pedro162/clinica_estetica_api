@@ -2,19 +2,17 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\ContaReceberItem;
-use App\ContaReceber;
-use App\Pessoa;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ContaReceberCartao extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    protected $primaryKey = "id";
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $primaryKey = 'id';
 
-    protected $table = "conta_receber_cartaos";
+    protected $table = 'conta_receber_cartaos';
 
     protected $fillable = [
         'nr_doc',

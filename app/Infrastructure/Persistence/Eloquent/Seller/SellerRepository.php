@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Seller;
 
-use App\Rca;
 use App\Domain\Seller\Entities\Seller;
 use App\Domain\Seller\Repositories\SellerRepositoryInterface;
 use App\Domain\Seller\ValueObjects\SellerId;
+use App\Rca;
 use Illuminate\Support\Facades\Auth;
 
 class SellerRepository implements SellerRepositoryInterface
@@ -70,7 +70,7 @@ class SellerRepository implements SellerRepositoryInterface
         $ordem = $filter['ordem'];
         $parse = [];
 
-        $query = Rca::query();
+        $query = Rca::query()->with(['pessoa', 'filial']);
 
         if (!empty($filter)) {
             foreach ($filter as $key => $val) {
@@ -96,9 +96,7 @@ class SellerRepository implements SellerRepositoryInterface
                         $query->where('vrRca', '<=', $val);
                         break;
 
-                    case 'nome_item':
                     case 'name':
-                    case 'name_servico':
 
                         if (is_string($val)) {
                             $val = trim($val, ',');
@@ -160,7 +158,7 @@ class SellerRepository implements SellerRepositoryInterface
 
             foreach ($registro as $reg) {
                 $dataToRequest[] = [
-                    'label' => $reg->name,
+                    'label' => $reg->pessoa->name,
                     'value' => $reg->id,
                 ];
             }

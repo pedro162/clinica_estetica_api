@@ -9,7 +9,7 @@ class FinancialOperatorTariffValue
     public function __construct(float $value)
     {
         if ($value < 0) {
-            throw new \InvalidArgumentException("The tariff value cannot be negative");
+            throw new \InvalidArgumentException('The tariff value cannot be negative');
         }
 
         $this->value = $value;

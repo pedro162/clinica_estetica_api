@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\MotivoCancelamentoOrdemServico;
 use Illuminate\Http\Request;
-use \App\MotivoCancelamentoOrdemServico;
-use \App\Exceptions\MotivoCancelamentoMotivoCancelamentoOrdemServicoException;
 
 class MotivoCancelamentoOrdemServicoController extends Controller
 {
@@ -16,7 +15,7 @@ class MotivoCancelamentoOrdemServicoController extends Controller
      */
     public function index(Request $request)
     {
-       
+
     }
 
     /**
@@ -26,7 +25,7 @@ class MotivoCancelamentoOrdemServicoController extends Controller
      */
     public function create(Request $request, $idAssistente)
     {
-        
+
     }
 
     /**
@@ -38,7 +37,7 @@ class MotivoCancelamentoOrdemServicoController extends Controller
     public function store(Request $request)
     {
 
-        try{
+        try {
 
 
             set_time_limit(9000000);
@@ -51,31 +50,31 @@ class MotivoCancelamentoOrdemServicoController extends Controller
 
             $dadosRequest = [];
 
-            $dadosRequest['motivo']           = $dados['motivo'];  
+            $dadosRequest['motivo']           = $dados['motivo'];
             $dadosRequest['user_id']          = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']           = 'yes';
-            
+
             $form = MotivoCancelamentoOrdemServico::create($dadosRequest);
 
             \DB::commit();
-            
-            if(! $form){
+
+            if (! $form) {
                 throw new MotivoCancelamentoOrdemServicoException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
             }
 
-            return response()->json(['mensagem'=>$form, 'class'=>'success'], 200);
+            return response()->json(['mensagem' => $form, 'class' => 'success'], 200);
 
-        }catch(MotivoCancelamentoOrdemServicoException $e){
+        } catch (MotivoCancelamentoOrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
@@ -87,20 +86,20 @@ class MotivoCancelamentoOrdemServicoController extends Controller
      */
     public function show(Request $request, $id, $idAssistente)
     {
-        
+
     }
 
 
     public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
 
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new MotivoCancelamentoOrdemServicoException('Parâmetro ínválido');
             }
 
@@ -108,26 +107,26 @@ class MotivoCancelamentoOrdemServicoController extends Controller
 
             $registro = MotivoCancelamentoOrdemServico::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
-           
-            if($registro == null){
+
+            if ($registro == null) {
                 throw new MotivoCancelamentoOrdemServicoException(' não encontrado');
             }
-           
+
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
 
-        }catch(MotivoCancelamentoOrdemServicoException $e){
+        } catch (MotivoCancelamentoOrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
@@ -141,25 +140,25 @@ class MotivoCancelamentoOrdemServicoController extends Controller
      */
     public function edit(Request $request, $id, $idAssistente)
     {
-        try{
-            
+        try {
+
             $dadosRequest = $request->all();
 
             $callBack = $dadosRequest['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-            if(! isset($id)){
+            if (! isset($id)) {
                 $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
             }
 
-            if($id <= 0){
+            if ($id <= 0) {
 
-                
+
 
             }
 
-            
 
-         }catch(\Exception $e){
+
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
@@ -177,7 +176,7 @@ class MotivoCancelamentoOrdemServicoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try{
+        try {
 
             $this->validaRequest($request);
 
@@ -189,8 +188,8 @@ class MotivoCancelamentoOrdemServicoController extends Controller
             $callBack       = $dados['callBack'] ?? '';
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-            if( (!isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            if ((!isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['error' => 'Parâmetro inválido']], 400);
             }
 
             $registro = MotivoCancelamentoOrdemServico::where('active', '=', 'yes')->where('id', '=', $id)->first();
@@ -200,25 +199,25 @@ class MotivoCancelamentoOrdemServicoController extends Controller
             $registro->update($dadosRequest);
 
 
-            if(! $registro){
+            if (! $registro) {
                 throw new MotivoCancelamentoOrdemServicoException('Registro não encontrado');
             }
-            
-            
+
+
             \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(MotivoCancelamentoOrdemServicoException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+
+        } catch (MotivoCancelamentoOrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
 
     }
@@ -232,56 +231,56 @@ class MotivoCancelamentoOrdemServicoController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
-            if($id <= 0){
-                 return response()->json([['mensagem'=>'Parâmetro inválido', 'class'=>'warning'], 400]);
+            if ($id <= 0) {
+                return response()->json([['mensagem' => 'Parâmetro inválido', 'class' => 'warning'], 400]);
 
             }
 
             $registro = MotivoCancelamentoOrdemServico::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
-            if(! $registro){
-                return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
-            }else{
+            if (! $registro) {
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
+            } else {
 
-                $registro = $registro->update(['active'=>'no']);
+                $registro = $registro->update(['active' => 'no']);
 
             }
 
-            if($registro == null){
+            if ($registro == null) {
 
                 //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
                 //return redirect()->back();
-                 return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
             }
 
             \DB::commit();
-            return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
-        
-        }catch(MotivoCancelamentoOrdemServicoException $e){
+            return response()->json(['mensagem' => 'Registro deletado com sucesso', 'class' => 'success'], 200);
+
+        } catch (MotivoCancelamentoOrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
     public function head(Request $request)
     {
-        
-        
+
+
     }
 
-    
+
     /**
      * Return a listing of the resource in json.
      *
@@ -290,8 +289,8 @@ class MotivoCancelamentoOrdemServicoController extends Controller
      */
     public function json(Request $request)
     {
-        try{
-            
+        try {
+
             //$this->validaRequest($request);
 
             \DB::beginTransaction();
@@ -306,86 +305,86 @@ class MotivoCancelamentoOrdemServicoController extends Controller
             $registro = \DB::table('motivo_cancelamento_ordem_servicos as mtc');
 
             $campos =  null;
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('mtc.id', $val);
                             }
                             break;
-                            case 'nome_movivo':
-                                if(is_string($val)){
-                                    
-                                    if($val[0] == ','){
-                                        $val = substr($val, 1);
-                                    } 
-                                    if($val[strlen($val) - 1] == ','){
-                                        $val = substr($val, 0, -1);
-                                    }
-                                    
-                                    $registro->where('mtc.motivo', 'like' , '%'.$val.'%');
-                                }
-                            break;
-                            case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                    $registro->limit($val);
-                                }
-                                break;
-                            case 'ordem':
+                        case 'nome_movivo':
+                            if (is_string($val)) {
 
-                                
-                                if($val[0] == ','){
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
+                                $registro->where('mtc.motivo', 'like', '%'.$val.'%');
+                            }
+                            break;
+                        case 'limite':
+                            $val = (int) $val;
+                            if (is_integer($val) && $val > 0) {
 
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
+                                $registro->limit($val);
+                            }
+                            break;
+                        case 'ordem':
+
+
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $val = explode(',', $val);
+                            for ($i = 0; !($i == count($val)); $i++) {
+                                $atual = explode('-', $val[$i]);
+                                if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                    $parsed = $parse[trim($atual[0])];
+
+                                    if ($parsed) {
+
+                                        $registro->orderBy($parsed, $atual[1]);
                                     }
-                                    
-                                    
                                 }
 
-                                break;
 
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    $campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
+                            }
+
+                            break;
+
+                        case 'campos':
+                            if (is_array($val) && count($val) > 0) {
+                                $campos = $this->montaCamposConsulta($registro, $val);
+
+                            }
                             break;
 
                     }
                 }
             }
-            if($campos){
+            if ($campos) {
                 $registro->select($campos);
 
-            }else{
+            } else {
                 $registro->select('mtc.*');
 
             }
@@ -395,15 +394,15 @@ class MotivoCancelamentoOrdemServicoController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
 
-        }catch(MotivoCancelamentoOrdemServicoException $e){
+        } catch (MotivoCancelamentoOrdemServicoException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -411,20 +410,20 @@ class MotivoCancelamentoOrdemServicoController extends Controller
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'motivo'=> 'required|min:1',
+        $validator = Validator::make($request->all(), [
+            'motivo' => 'required|min:1',
         ], [
             'motivo.required' => 'O campo "Descrição" é obrigatório.',
             'motivo.min' => 'O "Descrição" deve conter pelo menos :min caracteres.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
+            foreach ($errors->all() as $mensagem) {
                 $msg .= $mensagem.'<br/>';
             }
-            
+
             throw new MotivoCancelamentoOrdemServicoException($msg);
         }
 

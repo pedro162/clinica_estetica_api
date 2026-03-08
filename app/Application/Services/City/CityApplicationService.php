@@ -8,7 +8,6 @@ use App\Application\Handlers\City\GetAllCityHandler;
 use App\Application\Handlers\City\GetCityByIdHandler;
 use App\Application\Handlers\City\UpdateCityHandler;
 use App\Cidade;
-use App\Domain\City\Entities\City;
 use Illuminate\Support\Collection;
 
 class CityApplicationService implements CityApplicationServiceInterface

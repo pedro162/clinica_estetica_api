@@ -2,16 +2,6 @@
 
 namespace App\Helpers;
 
-use \App\Pessoa;
-use \App\Grupo;
-use \App\Telefone;
-use \App\Logradouro;
-use \App\Utilitarios;
-use App\Exceptions\PessoaException;
-use App\Exceptions\GrupoException;
-use Illuminate\Support\Facades\Validator;
-use App\Helpers\BaseHelper;
-
 class GrupoHelper extends BaseHelper
 {
     public function json(array $dados)

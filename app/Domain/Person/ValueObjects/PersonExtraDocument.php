@@ -11,7 +11,7 @@ class PersonExtraDocument
         if ((isset($value) && strlen(trim($value)) > 0)) {
             $hasNotOnlyNumber = preg_match('/\D/', $value);
             if ($hasNotOnlyNumber) {
-                throw new \InvalidArgumentException("Person extra document should contain only numbers");
+                throw new \InvalidArgumentException('Person extra document should contain only numbers');
             }
         }
         $this->value = $value;

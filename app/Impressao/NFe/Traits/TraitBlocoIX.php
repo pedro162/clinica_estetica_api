@@ -36,7 +36,7 @@ trait TraitBlocoIX
             $y + 3,
             $this->wPrint,
             $this->bloco9H - 4,
-            str_replace(";", "\n", $this->infCpl),
+            str_replace(';', "\n", $this->infCpl),
             $aFont,
             'T',
             'L',

@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Application\Handlers\CreateNotificationHandler;
 use App\Application\Services\NotificationApplicationService;
-use App\Domain\Notification\Entities\Notification;
 use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +13,10 @@ use Illuminate\Queue\SerializesModels;
 
 class SendNotification implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     protected $notification_id;
     /**
      * Create a new job instance.

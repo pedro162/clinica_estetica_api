@@ -3,12 +3,12 @@
 namespace App\Application\Handlers;
 
 use App\Application\Commands\CreateNotificationVariableCommand;
-use App\Domain\NotificationVariable\ValueObjects\NotificationVariableTemplateVariableId;
 use App\Domain\NotificationVariable\Entities\NotificationVariable;
 use App\Domain\NotificationVariable\Repositories\NotificationVariableRepositoryInterface;
 use App\Domain\NotificationVariable\ValueObjects\NotificationId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableSyntax;
+use App\Domain\NotificationVariable\ValueObjects\NotificationVariableTemplateVariableId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableValue;
 
 class CreateNotificationVariableHandler

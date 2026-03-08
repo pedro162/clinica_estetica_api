@@ -14,7 +14,7 @@ class PratoController extends Controller
      */
     public function index()
     {
-    	return view('site.cardapio.index');
+        return view('site.cardapio.index');
     }
 
     /**

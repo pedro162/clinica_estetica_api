@@ -7,9 +7,8 @@ use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
 use App\Domain\Country\ValueObjects\CountryCode;
 use App\Domain\Country\ValueObjects\CountryId;
-use App\Domain\Country\ValueObjects\CountryName;
-use App\Domain\Country\ValueObjects\CountryTenantId;
 use App\Domain\Country\ValueObjects\CountryIsDefault;
+use App\Domain\Country\ValueObjects\CountryName;
 use App\Pais;
 
 class Country extends BaseEntity
@@ -67,14 +66,14 @@ class Country extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new CountryId($value))],
-            ['keys' => ['name', 'nmPais'], 'callback' => fn($value) => $entity->name(new CountryName((string)$value))],
-            ['keys' => ['code', 'cdPais'], 'callback' => fn($value) => $entity->code(new CountryCode((string)$value))],
-            ['keys' => ['isDefault', 'padrao'], 'callback' => fn($value) => $entity->isDefault(new CountryIsDefault($value === 'yes' || $value === true  ? true : false))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new CountryId($value))],
+            ['keys' => ['name', 'nmPais'], 'callback' => fn ($value) => $entity->name(new CountryName((string)$value))],
+            ['keys' => ['code', 'cdPais'], 'callback' => fn ($value) => $entity->code(new CountryCode((string)$value))],
+            ['keys' => ['isDefault', 'padrao'], 'callback' => fn ($value) => $entity->isDefault(new CountryIsDefault($value === 'yes' || $value === true ? true : false))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
         ];
 
         foreach ($mapping as $map) {

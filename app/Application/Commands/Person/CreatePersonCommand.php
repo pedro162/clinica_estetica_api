@@ -88,19 +88,19 @@ class CreatePersonCommand extends BasePersonCommand
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->personId($value)],
-            ['keys' => ['name'], 'callback' => fn($value) => $entity->personName((string)$value)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->personTenantId((string)$value)],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->personActive((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->personUserId((string)$value)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->personUserUpdateId((string)$value)],
-            ['keys' => ['type', 'tipo'], 'callback' => fn($value) => $entity->personType((string)$value)],
-            ['keys' => ['documento', 'document'], 'callback' => fn($value) => $entity->personDocument((string)$value)],
-            ['keys' => ['documento_complementar', 'extraDocument'], 'callback' => fn($value) => $entity->personExtraDocument((string)$value)],
-            ['keys' => ['nascimento_fundacao', 'birthOrFoundation'], 'callback' => fn($value) => $entity->personBirthOrFoundation((string)$value)],
-            ['keys' => ['email'], 'callback' => fn($value) => $entity->personEmail((string)$value)],
-            ['keys' => ['name_opcional', 'optionalName'], 'callback' => fn($value) => $entity->personOptionalName((string)$value)],
-            ['keys' => ['sexo', 'sex'], 'callback' => fn($value) => $entity->personSex((string)$value)],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->personId($value)],
+            ['keys' => ['name'], 'callback' => fn ($value) => $entity->personName((string)$value)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->personTenantId((string)$value)],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->personActive((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->personUserId((string)$value)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->personUserUpdateId((string)$value)],
+            ['keys' => ['type', 'tipo'], 'callback' => fn ($value) => $entity->personType((string)$value)],
+            ['keys' => ['documento', 'document'], 'callback' => fn ($value) => $entity->personDocument((string)$value)],
+            ['keys' => ['documento_complementar', 'extraDocument'], 'callback' => fn ($value) => $entity->personExtraDocument((string)$value)],
+            ['keys' => ['nascimento_fundacao', 'birthOrFoundation'], 'callback' => fn ($value) => $entity->personBirthOrFoundation((string)$value)],
+            ['keys' => ['email'], 'callback' => fn ($value) => $entity->personEmail((string)$value)],
+            ['keys' => ['name_opcional', 'optionalName'], 'callback' => fn ($value) => $entity->personOptionalName((string)$value)],
+            ['keys' => ['sexo', 'sex'], 'callback' => fn ($value) => $entity->personSex((string)$value)],
         ];
 
         foreach ($mapping as $map) {
@@ -133,6 +133,6 @@ class CreatePersonCommand extends BasePersonCommand
             'sex' => $this->personSex ?? '',
         ];
 
-        return  array_filter($data, fn($value) => $value !== null && trim($value) != '');
+        return  array_filter($data, fn ($value) => $value !== null && trim($value) != '');
     }
 }

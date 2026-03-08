@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Eloquent\PaymentMethod;
 
 use App\Domain\FinancialOperator\Entities\FinancialOperator;
-use App\FormaPagamento;
 use App\Domain\PaymentMethod\Entities\PaymentMethod;
 use App\Domain\PaymentMethod\Repositories\PaymentMethodRepositoryInterface;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodId;
 use App\Domain\PaymentPlan\Entities\PaymentPlan;
+use App\FormaPagamento;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class PaymentMethodRepository implements PaymentMethodRepositoryInterface
 {
@@ -54,7 +53,7 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
     public function addFinancialOperator(PaymentMethod $parameter, array $data = []): void
     {
         $financialOperators = $parameter->getFinancialOperators();
-        $ids = array_map(fn(FinancialOperator $item) => (string)$item->getId(), $financialOperators);
+        $ids = array_map(fn (FinancialOperator $item) => (string)$item->getId(), $financialOperators);
         $paymentMethod = FormaPagamento::find((string)$parameter->getId());
         $paymentMethod->adicionarOperador($ids);
     }
@@ -62,7 +61,7 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
     public function removeFinancialOperator(PaymentMethod $parameter, array $data = []): void
     {
         $financialOperators = $parameter->getFinancialOperators();
-        $ids = array_map(fn(FinancialOperator $item) => (string)$item->getId(), $financialOperators);
+        $ids = array_map(fn (FinancialOperator $item) => (string)$item->getId(), $financialOperators);
         $paymentMethod = FormaPagamento::find((string)$parameter->getId());
         $paymentMethod->removeOperador($ids);
     }
@@ -70,7 +69,7 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
     public function syncFinancialOperator(PaymentMethod $parameter, array $data = []): void
     {
         $financialOperators = $parameter->getFinancialOperators();
-        $ids = array_map(fn(FinancialOperator $item) => (string)$item->getId(), $financialOperators);
+        $ids = array_map(fn (FinancialOperator $item) => (string)$item->getId(), $financialOperators);
         $paymentMethod = FormaPagamento::find((string)$parameter->getId());
         $updateData = [];
         $userId   = Auth::user()->id;
@@ -85,7 +84,7 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
     public function addPaymentPlan(PaymentMethod $parameter, array $data = []): void
     {
         $paymentPlans = $parameter->getPaymentPlans();
-        $ids = array_map(fn(PaymentPlan $item) => (string)$item->getId(), $paymentPlans);
+        $ids = array_map(fn (PaymentPlan $item) => (string)$item->getId(), $paymentPlans);
         $paymentMethod = FormaPagamento::find((string)$parameter->getId());
         $paymentMethod->adicionarPlanoPagamento($ids);
     }
@@ -93,7 +92,7 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
     public function removePaymentPlan(PaymentMethod $parameter, array $data = []): void
     {
         $paymentPlans = $parameter->getPaymentPlans();
-        $ids = array_map(fn(PaymentPlan $item) => (string)$item->getId(), $paymentPlans);
+        $ids = array_map(fn (PaymentPlan $item) => (string)$item->getId(), $paymentPlans);
         $paymentMethod = FormaPagamento::find((string)$parameter->getId());
         $paymentMethod->removePlanoPagamento($ids);
     }
@@ -101,7 +100,7 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
     public function syncPaymentPlan(PaymentMethod $parameter, array $data = []): void
     {
         $paymentPlans = $parameter->getPaymentPlans();
-        $ids = array_map(fn(PaymentPlan $item) => (string)$item->getId(), $paymentPlans);
+        $ids = array_map(fn (PaymentPlan $item) => (string)$item->getId(), $paymentPlans);
         $paymentMethod = FormaPagamento::find((string)$parameter->getId());
 
         $updateData = [];

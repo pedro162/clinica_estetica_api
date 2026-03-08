@@ -4,7 +4,6 @@ namespace App\Application\Services\Service;
 
 use App\Application\Commands\Service\CreateServiceCommand;
 use App\Servico as ServiceModel;
-use App\Domain\Service\Entities\Service;
 use Illuminate\Support\Collection;
 
 interface ServiceApplicationServiceInterface

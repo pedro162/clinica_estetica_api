@@ -2,11 +2,11 @@
 
 namespace App\Domain\Contact\Entities;
 
-use App\Telefone;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
 use App\Domain\Contact\ValueObjects\ContactId;
+use App\Telefone;
 
 class Contact extends BaseEntity
 {
@@ -27,11 +27,11 @@ class Contact extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new ContactId($value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new ContactId($value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
         ];
 
         foreach ($mapping as $map) {

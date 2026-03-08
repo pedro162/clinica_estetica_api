@@ -6,15 +6,12 @@ use App\Application\Commands\Cashier\CreateCashierCommand;
 use App\Application\Services\Cashier\CashierApplicationServiceInterface;
 use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Cashier\CreateCashierRequest;
 use App\Http\Requests\V1\Cashier\GetAllCashierRequest;
 use App\Http\Requests\V1\Cashier\ShowCashierRequest;
 use App\Http\Requests\V1\Cashier\StoreCashierRequest;
 use App\Http\Requests\V1\Cashier\UpdateCashierRequest;
-use App\Http\Resources\V1\Cashier\GetAllCashierResource;
 use App\Http\Resources\V1\Cashier\CashierResource;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Http\Resources\V1\Cashier\GetAllCashierResource;
 
 class CashierController extends Controller
 {

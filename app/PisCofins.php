@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PisCofins extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
 
     protected $fillable = [
         'id',
@@ -24,6 +25,6 @@ class PisCofins extends Model
         'tenant_id'
     ];
 
-    protected $table = "pis_cofins";
+    protected $table = 'pis_cofins';
     protected $primaryKey = 'id';
 }

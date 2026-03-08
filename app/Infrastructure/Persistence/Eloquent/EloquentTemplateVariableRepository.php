@@ -4,18 +4,13 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\TemplateVariable\Entities\TemplateVariable;
 use App\Domain\TemplateVariable\Repositories\TemplateVariableRepositoryInterface;
-use App\Domain\TemplateVariable\ValueObjects\TemplateVariableDocument;
-use App\Domain\TemplateVariable\ValueObjects\TemplateVariableEmail;
-use App\Domain\TemplateVariable\ValueObjects\TemplateVariableExtraDocument;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableId;
-use App\Domain\TemplateVariable\ValueObjects\TemplateVariableMessage;
-use App\Domain\TemplateVariable\ValueObjects\TemplateVariableSex;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableSyntax;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableTemplateId;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableValue;
-use Illuminate\Support\Facades\DB;
 use App\TemplateVariable as TemplateVariableModel;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class EloquentTemplateVariableRepository implements TemplateVariableRepositoryInterface
 {

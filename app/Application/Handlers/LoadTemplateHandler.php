@@ -4,11 +4,11 @@ namespace App\Application\Handlers;
 
 use App\Application\Commands\CreateTemplateCommand;
 use App\Domain\Template\Entities\Template;
-use App\Domain\Template\Repositories\TemplateRepositoryInterface;;
+use App\Domain\Template\Repositories\TemplateRepositoryInterface;
+
+;
 
 use App\Domain\Template\ValueObjects\TemplateId;
-use App\Domain\Template\ValueObjects\TemplateBody;
-use App\Domain\Template\ValueObjects\TemplateTitle;
 
 class LoadTemplateHandler
 {

@@ -2,13 +2,14 @@
 
 namespace App;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\BelongsToTenant;
 
 class NotificationVariable extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
     protected $primaryKey    = 'id';
     protected $table         = 'notification_variables';
     protected $fillable     = [

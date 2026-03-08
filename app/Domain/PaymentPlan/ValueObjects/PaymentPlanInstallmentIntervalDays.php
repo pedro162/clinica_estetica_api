@@ -9,7 +9,7 @@ class PaymentPlanInstallmentIntervalDays
     public function __construct(int $value)
     {
         if ((int) $value < 0) {
-            throw new \InvalidArgumentException("The installment days interval field should be a positive number");
+            throw new \InvalidArgumentException('The installment days interval field should be a positive number');
         }
 
         $this->value = $value;

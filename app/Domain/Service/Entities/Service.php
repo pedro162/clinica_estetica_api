@@ -2,16 +2,16 @@
 
 namespace App\Domain\Service\Entities;
 
-use App\Servico;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
-use App\Domain\Service\ValueObjects\ServiceId;
 use App\Domain\Service\ValueObjects\ServiceDescription;
+use App\Domain\Service\ValueObjects\ServiceId;
 use App\Domain\Service\ValueObjects\ServiceName;
 use App\Domain\Service\ValueObjects\ServiceType;
 use App\Domain\Service\ValueObjects\ServiceUnit;
 use App\Domain\Service\ValueObjects\ServiceValue;
+use App\Servico;
 
 class Service extends BaseEntity
 {
@@ -92,16 +92,16 @@ class Service extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new ServiceId($value))],
-            ['keys' => ['name'], 'callback' => fn($value) => $entity->name(new ServiceName((string)$value))],
-            ['keys' => ['description', 'descricao'], 'callback' => fn($value) => $entity->description(new ServiceDescription((string)$value))],
-            ['keys' => ['value', 'vrServico'], 'callback' => fn($value) => $entity->value(new ServiceValue((float)$value))],
-            ['keys' => ['type'], 'callback' => fn($value) => $entity->type(new ServiceType((string)$value))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
-            ['keys' => ['unit', 'unidade'], 'callback' => fn($value) => $entity->unit(new ServiceUnit((string)$value))],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new ServiceId($value))],
+            ['keys' => ['name'], 'callback' => fn ($value) => $entity->name(new ServiceName((string)$value))],
+            ['keys' => ['description', 'descricao'], 'callback' => fn ($value) => $entity->description(new ServiceDescription((string)$value))],
+            ['keys' => ['value', 'vrServico'], 'callback' => fn ($value) => $entity->value(new ServiceValue((float)$value))],
+            ['keys' => ['type'], 'callback' => fn ($value) => $entity->type(new ServiceType((string)$value))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['unit', 'unidade'], 'callback' => fn ($value) => $entity->unit(new ServiceUnit((string)$value))],
         ];
 
         foreach ($mapping as $map) {

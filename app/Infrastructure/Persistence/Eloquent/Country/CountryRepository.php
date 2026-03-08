@@ -6,11 +6,7 @@ namespace App\Infrastructure\Persistence\Eloquent\Country;
 
 use App\Domain\Country\Entities\Country;
 use App\Domain\Country\Repositories\CountryRepositoryInterface;
-use App\Domain\Country\ValueObjects\CountryCode;
 use App\Domain\Country\ValueObjects\CountryId;
-use App\Domain\Country\ValueObjects\CountryIsDefault;
-use App\Domain\Country\ValueObjects\CountryName;
-use App\Domain\Country\ValueObjects\CountryTenantId;
 use App\Pais;
 use Illuminate\Support\Facades\Auth;
 

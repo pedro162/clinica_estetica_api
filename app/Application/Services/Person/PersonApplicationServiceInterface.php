@@ -4,7 +4,6 @@ namespace App\Application\Services\Person;
 
 use App\Application\Commands\Person\CreatePersonCommand;
 use App\Pessoa;
-use App\Domain\Person\Entities\Person;
 use Illuminate\Support\Collection;
 
 interface PersonApplicationServiceInterface

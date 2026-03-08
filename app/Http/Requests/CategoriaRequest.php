@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
+use Auth;
 use Illuminate\Foundation\Http\FormRequest;
-use \Auth;
 
 class CategoriaRequest extends FormRequest
 {
@@ -14,7 +14,7 @@ class CategoriaRequest extends FormRequest
      */
     public function authorize()
     {
-        if(Auth::check()){
+        if (Auth::check()) {
             return true;
         }
         return false;
@@ -28,14 +28,14 @@ class CategoriaRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=>'required'
+            'name' => 'required'
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required'=>'Informe o nome da categoria'
+            'name.required' => 'Informe o nome da categoria'
         ];
     }
 }

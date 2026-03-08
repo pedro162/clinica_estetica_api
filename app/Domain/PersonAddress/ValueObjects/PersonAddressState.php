@@ -9,7 +9,7 @@ class PersonAddressState
     public function __construct(string $value)
     {
         if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("The address state field is not valid");
+            throw new \InvalidArgumentException('The address state field is not valid');
         }
 
         $this->value = $value;

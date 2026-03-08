@@ -15,49 +15,49 @@ class Table extends Component
     protected $callbackPesquisa;
     protected $urlPesquisa;
 
-      /*
-      Ex de formado do array de dados passado
-        $tituloColunas =[
-            'dados'=>[
+    /*
+    Ex de formado do array de dados passado
+      $tituloColunas =[
+          'dados'=>[
 
-                ['nmColuna'=>'Código',
-                'class_cel'=>'class',
-                'style_cel'=>'style_cel',]
-            ],
+              ['nmColuna'=>'Código',
+              'class_cel'=>'class',
+              'style_cel'=>'style_cel',]
+          ],
 
-            'style_row'=>'style_row',
-            'class_row'=>'style_row',
-            'onClick'=>null,
+          'style_row'=>'style_row',
+          'class_row'=>'style_row',
+          'onClick'=>null,
 
+    ];
+
+      $dados = [
+          [
+              'row'=>[
+                  'id'=>null
+                  'dados'=>[
+
+                      [
+                          'val'=>'val',
+                          'class'=>'class',
+                          'style_cel'=>'style_cel',
+
+                      ]
+                  ],
+                  'acoes'=>[
+                      'label'=>'Label',
+                      'link'=>'/produto/head/1'
+                      'style_action'=>'estilo',
+                      'class_action'=>'estilo',
+                      'onClick'=>null
+                  ],
+                  'style_row'=>'style_row',
+                  'class_row'=>'class_row',
+
+              ],
+
+          ]
       ];
-
-        $dados = [
-            [
-                'row'=>[
-                    'id'=>null
-                    'dados'=>[
-                    
-                        [
-                            'val'=>'val',
-                            'class'=>'class',
-                            'style_cel'=>'style_cel',
-                            
-                        ]
-                    ],
-                    'acoes'=>[
-                        'label'=>'Label',
-                        'link'=>'/produto/head/1'
-                        'style_action'=>'estilo',
-                        'class_action'=>'estilo',
-                        'onClick'=>null
-                    ],
-                    'style_row'=>'style_row',
-                    'class_row'=>'class_row',
-
-                ],
-                
-            ]
-        ];
     */
 
 
@@ -66,7 +66,7 @@ class Table extends Component
      *
      * @return void
      */
-    public function __construct($tituloColunas,$dados, $calback = null, $idTable = null, $selectorsLine=false, $pesquisar=0, $callbackPesquisa=null, $urlPesquisa = null)
+    public function __construct($tituloColunas, $dados, $calback = null, $idTable = null, $selectorsLine = false, $pesquisar = 0, $callbackPesquisa = null, $urlPesquisa = null)
     {
         $this->setColunas($tituloColunas);
         $this->setDados($dados);
@@ -76,10 +76,10 @@ class Table extends Component
         $this->setPesquisar($pesquisar);
         $this->setCallbackPesquisa($callbackPesquisa);
         $this->setUrlPesquisa($urlPesquisa);
-        
+
     }
 
-  
+
 
     /**
      * Get the view / contents that represent the component.
@@ -162,7 +162,7 @@ class Table extends Component
     /**
      *  Retorna um boleano indicando se deve ser apenas captura o clicado
      */
-     public function setPesquisar($pesquisar)
+    public function setPesquisar($pesquisar)
     {
         $this->pesquisar = $pesquisar;
         return true;
@@ -178,7 +178,7 @@ class Table extends Component
     /**
      *  Aramzena o callback para o item clicado na pesquisa
      */
-     public function setCallbackPesquisa($callbackPesquisa)
+    public function setCallbackPesquisa($callbackPesquisa)
     {
         $this->callbackPesquisa = $callbackPesquisa;
         return true;
@@ -194,7 +194,7 @@ class Table extends Component
     /**
      *  Aramzena a url para pesquisar o item clicado na pesquisa
      */
-     public function setUrlPesquisa($urlPesquisa)
+    public function setUrlPesquisa($urlPesquisa)
     {
         $this->urlPesquisa = $urlPesquisa;
         return true;

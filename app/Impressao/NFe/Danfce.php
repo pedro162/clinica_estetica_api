@@ -13,23 +13,31 @@ namespace App\Impressao\NFe;
  * @link      http://github.com/nfephp-org/sped-da for the canonical source repository
  */
 
-use \DateTime;
-use \Exception;
-use InvalidArgumentException;
+use App\Impressao\Common\DaCommon;
 use App\Impressao\Legacy\Dom;
 use App\Impressao\Legacy\Pdf;
-use App\Impressao\Common\DaCommon;
-use Com\Tecnick\Barcode\Barcode;
+use Exception;
+use InvalidArgumentException;
 
 class Danfce extends DaCommon
 {
+    use Traits\TraitBlocoI;
+    use Traits\TraitBlocoII;
+    use Traits\TraitBlocoIII;
+    use Traits\TraitBlocoIV;
+    use Traits\TraitBlocoV;
+    use Traits\TraitBlocoVI;
+    use Traits\TraitBlocoVII;
+    use Traits\TraitBlocoVIII;
+    use Traits\TraitBlocoIX;
+    use Traits\TraitBlocoX;
     protected $papel;
     protected $paperwidth = 80;
     protected $descPercent = 0.38;
     protected $xml; // string XML NFe
     protected $dom;
     protected $logomarca = ''; // path para logomarca em jpg
-    protected $formatoChave = "#### #### #### #### #### #### #### #### #### #### ####";
+    protected $formatoChave = '#### #### #### #### #### #### #### #### #### #### ####';
     protected $nfeProc;
     protected $infProt;
     protected $nfe;
@@ -62,7 +70,7 @@ class Danfce extends DaCommon
     protected $hLinha = 3;
     protected $aFontTit = ['font' => 'times', 'size' => 9, 'style' => 'B'];
     protected $aFontTex = ['font' => 'times', 'size' => 8, 'style' => ''];
-    protected $via = "Via Consumidor";
+    protected $via = 'Via Consumidor';
     protected $offline_double = true;
     protected $canceled = false;
     protected $submessage = null;
@@ -79,17 +87,6 @@ class Danfce extends DaCommon
     protected $bloco8H = 50.0; //informações do consumidor
     protected $bloco9H = 4.0; //informações sobre tributos
     protected $bloco10H = 5.0; //informações do integrador
-
-    use Traits\TraitBlocoI;
-    use Traits\TraitBlocoII;
-    use Traits\TraitBlocoIII;
-    use Traits\TraitBlocoIV;
-    use Traits\TraitBlocoV;
-    use Traits\TraitBlocoVI;
-    use Traits\TraitBlocoVII;
-    use Traits\TraitBlocoVIII;
-    use Traits\TraitBlocoIX;
-    use Traits\TraitBlocoX;
 
     /**
      * Construtor
@@ -116,7 +113,7 @@ class Danfce extends DaCommon
     public function setPaperWidth($width = 80)
     {
         if ($width < 58) {
-            throw new Exception("Largura insuficiente para a impressão do documento");
+            throw new Exception('Largura insuficiente para a impressão do documento');
         }
         $this->paperwidth = $width;
     }
@@ -129,7 +126,7 @@ class Danfce extends DaCommon
     public function setMargins($width = 2)
     {
         if ($width > 4 || $width < 0) {
-            throw new Exception("As margens devem estar entre 0 e 4 mm.");
+            throw new Exception('As margens devem estar entre 0 e 4 mm.');
         }
         $this->margem = $width;
     }
@@ -171,7 +168,7 @@ class Danfce extends DaCommon
      */
     public function setViaEstabelecimento()
     {
-        $this->via = "Via Estabelecimento";
+        $this->via = 'Via Estabelecimento';
     }
 
     /**
@@ -272,7 +269,7 @@ class Danfce extends DaCommon
         }
         if ($this->canceled) {
             $this->pdf->setTextColor(120, 120, 120);
-            $texto = "CANCELADA";
+            $texto = 'CANCELADA';
             $aFont = ['font' => $this->fontePadrao, 'size' => 24, 'style' => 'B'];
             $this->pdf->textBox(
                 $this->margem,
@@ -374,40 +371,40 @@ class Danfce extends DaCommon
     {
         $this->dom = new Dom();
         $this->dom->loadXML($this->xml);
-        $this->ide = $this->dom->getElementsByTagName("ide")->item(0);
-        $mod = $this->getTagValue($this->ide, "mod");
-        if ($this->getTagValue($this->ide, "mod") != '65') {
-            throw new \Exception("O xml do DANFE deve ser uma NFC-e modelo 65");
+        $this->ide = $this->dom->getElementsByTagName('ide')->item(0);
+        $mod = $this->getTagValue($this->ide, 'mod');
+        if ($this->getTagValue($this->ide, 'mod') != '65') {
+            throw new \Exception('O xml do DANFE deve ser uma NFC-e modelo 65');
         }
         $this->tpAmb = $this->getTagValue($this->ide, 'tpAmb');
-        $this->nfeProc = $this->dom->getElementsByTagName("nfeProc")->item(0) ?? null;
-        $this->infProt = $this->dom->getElementsByTagName("infProt")->item(0) ?? null;
-        $this->nfe = $this->dom->getElementsByTagName("NFe")->item(0);
-        $this->infNFe = $this->dom->getElementsByTagName("infNFe")->item(0);
-        $this->emit = $this->dom->getElementsByTagName("emit")->item(0);
-        $this->enderEmit = $this->dom->getElementsByTagName("enderEmit")->item(0);
-        $this->det = $this->dom->getElementsByTagName("det");
-        $this->dest = $this->dom->getElementsByTagName("dest")->item(0);
-        $this->enderDest = $this->dom->getElementsByTagName("enderDest")->item(0);
-        $this->imposto = $this->dom->getElementsByTagName("imposto")->item(0);
-        $this->ICMSTot = $this->dom->getElementsByTagName("ICMSTot")->item(0);
-        $this->tpImp = $this->ide->getElementsByTagName("tpImp")->item(0)->nodeValue;
-        $this->infAdic = $this->dom->getElementsByTagName("infAdic")->item(0);
-        $this->tpEmis = $this->dom->getValue($this->ide, "tpEmis");
+        $this->nfeProc = $this->dom->getElementsByTagName('nfeProc')->item(0) ?? null;
+        $this->infProt = $this->dom->getElementsByTagName('infProt')->item(0) ?? null;
+        $this->nfe = $this->dom->getElementsByTagName('NFe')->item(0);
+        $this->infNFe = $this->dom->getElementsByTagName('infNFe')->item(0);
+        $this->emit = $this->dom->getElementsByTagName('emit')->item(0);
+        $this->enderEmit = $this->dom->getElementsByTagName('enderEmit')->item(0);
+        $this->det = $this->dom->getElementsByTagName('det');
+        $this->dest = $this->dom->getElementsByTagName('dest')->item(0);
+        $this->enderDest = $this->dom->getElementsByTagName('enderDest')->item(0);
+        $this->imposto = $this->dom->getElementsByTagName('imposto')->item(0);
+        $this->ICMSTot = $this->dom->getElementsByTagName('ICMSTot')->item(0);
+        $this->tpImp = $this->ide->getElementsByTagName('tpImp')->item(0)->nodeValue;
+        $this->infAdic = $this->dom->getElementsByTagName('infAdic')->item(0);
+        $this->tpEmis = $this->dom->getValue($this->ide, 'tpEmis');
         $this->infCpl = '';
         if (!empty($this->infAdic)) {
-            if (!empty($this->infAdic->getElementsByTagName("infCpl")->item(0))) {
-                $this->infCpl = $this->infAdic->getElementsByTagName("infCpl")->item(0)->nodeValue;
+            if (!empty($this->infAdic->getElementsByTagName('infCpl')->item(0))) {
+                $this->infCpl = $this->infAdic->getElementsByTagName('infCpl')->item(0)->nodeValue;
             }
         }
         //se for o layout 4.0 busca pelas tags de detalhe do pagamento
         //senão, busca pelas tags de pagamento principal
-        if ($this->infNFe->getAttribute("versao") == "4.00") {
-            $this->pag = $this->dom->getElementsByTagName("detPag");
-            $tagPag = $this->dom->getElementsByTagName("pag")->item(0);
-            $this->vTroco = $this->getTagValue($tagPag, "vTroco");
+        if ($this->infNFe->getAttribute('versao') == '4.00') {
+            $this->pag = $this->dom->getElementsByTagName('detPag');
+            $tagPag = $this->dom->getElementsByTagName('pag')->item(0);
+            $this->vTroco = $this->getTagValue($tagPag, 'vTroco');
         } else {
-            $this->pag = $this->dom->getElementsByTagName("pag");
+            $this->pag = $this->dom->getElementsByTagName('pag');
         }
         $this->qrCode = !empty($this->dom->getElementsByTagName('qrCode')->item(0)->nodeValue)
             ? $this->dom->getElementsByTagName('qrCode')->item(0)->nodeValue : null;
@@ -419,15 +416,15 @@ class Danfce extends DaCommon
                 $this->canceled = true;
             } elseif (!empty($retEvento = $this->nfeProc->getElementsByTagName('retEvento')->item(0))) {
                 $infEvento = $retEvento->getElementsByTagName('infEvento')->item(0);
-                $cStat = $this->getTagValue($infEvento, "cStat");
-                $tpEvento = $this->getTagValue($infEvento, "tpEvento");
+                $cStat = $this->getTagValue($infEvento, 'cStat');
+                $tpEvento = $this->getTagValue($infEvento, 'tpEvento');
                 $dhEvento = date(
-                    "d/m/Y H:i:s",
+                    'd/m/Y H:i:s',
                     $this->toTimestamp(
-                        $this->getTagValue($infEvento, "dhRegEvento")
+                        $this->getTagValue($infEvento, 'dhRegEvento')
                     )
                 );
-                $nProt = $this->getTagValue($infEvento, "nProt");
+                $nProt = $this->getTagValue($infEvento, 'nProt');
                 if (($tpEvento == '110111' || $tpEvento == '110112')
                     && ($cStat == '101'
                         || $cStat == '151'

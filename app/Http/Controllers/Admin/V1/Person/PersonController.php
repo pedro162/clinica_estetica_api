@@ -11,9 +11,7 @@ use App\Domain\Person\ValueObjects\PersonDocument;
 use App\Domain\PersonAddress\Entities\PersonAddress;
 use App\Domain\PersonAddress\Repositories\PersonAddressRepositoryInterface;
 use App\Exceptions\PessoaException;
-use App\Grupo;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Person\CreatePersonRequest;
 use App\Http\Requests\V1\Person\DestroyPersonRequest;
 use App\Http\Requests\V1\Person\GetAllPersonRequest;
 use App\Http\Requests\V1\Person\ShowPersonRequest;
@@ -21,10 +19,6 @@ use App\Http\Requests\V1\Person\StorePersonRequest;
 use App\Http\Requests\V1\Person\UpdatePersonRequest;
 use App\Http\Resources\V1\Person\GetAllPersonResource;
 use App\Http\Resources\V1\Person\PersonResource;
-use App\Logradouro;
-use App\Telefone;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PersonController extends Controller
 {

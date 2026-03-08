@@ -10,17 +10,15 @@ use App\Application\Handlers\CreateNotificationVariableHandler;
 use App\Application\Handlers\DeleteNotificationHandler;
 use App\Application\Handlers\FindNotificationByIdHandler;
 use App\Domain\Appointment\Entities\Appointment;
-use App\Domain\Factories\TemplateFactory;
 use App\Domain\Notification\Entities\Notification;
 use App\Domain\Notification\Interfaces\NotificationInterface;
 use App\Domain\Notification\ValueObjects\NotificationId;
-use App\Domain\NotificationVariable\ValueObjects\NotificationId as NotificationVariableId;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\NotificationVariable\Repositories\NotificationVariableRepositoryInterface;
+use App\Domain\NotificationVariable\ValueObjects\NotificationId as NotificationVariableId;
 use App\Domain\Template\Entities\Template;
 use App\Domain\Template\Entities\WhatsAppTemplate;
-use App\Domain\Template\Interfaces\TemplateInterface;
 use App\Domain\Template\Repositories\TemplateRepositoryInterface;
 use App\Domain\Template\ValueObjects\TemplateId;
 use App\Domain\Template\ValueObjects\TemplateLanguage;
@@ -35,11 +33,9 @@ use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentNotificationVariableRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentTemplateRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentTemplateVariableRepository;
-use App\Infrastructure\Services\Notifications\NotificationServiceInterface;
 use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 use App\Jobs\SendNotification;
 use Exception;
-use Mockery\CountValidator\Exact;
 
 class NotificationApplicationService
 {
@@ -112,7 +108,7 @@ class NotificationApplicationService
         $notification = $notificationRepository->findById(new NotificationId($notification_id));
 
         if (!$notification) {
-            throw new Exception("The notification was not found.");
+            throw new Exception('The notification was not found.');
         }
 
         $notificationVariablesObj = new EloquentNotificationVariableRepository();
@@ -178,7 +174,7 @@ class NotificationApplicationService
             ->notificationShippingState('waiting');
         $newNotification = $this->createNotification($command);
         if (!$newNotification) {
-            throw new Exception("Was no possible to create the notification.");
+            throw new Exception('Was no possible to create the notification.');
         }
         $variablesOptions = [
             '{{1}}' => (string)$appointment->getName(),
@@ -187,8 +183,8 @@ class NotificationApplicationService
             '{{4}}' => (string)$appointment->getStartHour(),
             '{{5}}' => (string)'Skin care',
             '{{6}}' => (string)'Rua das Amoras, Brazil',
-            '{{7}}' => (string)"+55(98)984257623",
-            '{{8}}' => (string)"http://localhost:3000",
+            '{{7}}' => (string)'+55(98)984257623',
+            '{{8}}' => (string)'http://localhost:3000',
         ];
 
         if (isset($templateVariables) && is_array($templateVariables) && count($templateVariables) > 0) {
@@ -205,7 +201,7 @@ class NotificationApplicationService
                         ->notificationVariableTemplateId((string)$variable->getId());
                     $newNotificationVariable = $this->createNotificationVariableHandler->handler($command);
                     if (!$newNotificationVariable) {
-                        throw new Exception("Was no possible to create the massage variable.");
+                        throw new Exception('Was no possible to create the massage variable.');
                     }
 
                     $newNotification->addVariable($newNotificationVariable);
@@ -262,25 +258,25 @@ class NotificationApplicationService
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue((string) "Skin care"));
+        $varOj->setValue(new TemplateVariableValue((string) 'Skin care'));
         $varOj->setVariable(new TemplateVariableSyntax('{{5}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue((string) "Rua das Amoras, Brazil"));
+        $varOj->setValue(new TemplateVariableValue((string) 'Rua das Amoras, Brazil'));
         $varOj->setVariable(new TemplateVariableSyntax('{{6}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue((string) "+55(98)984257623"));
+        $varOj->setValue(new TemplateVariableValue((string) '+55(98)984257623'));
         $varOj->setVariable(new TemplateVariableSyntax('{{7}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue((string) "http://localhost:3000"));
+        $varOj->setValue(new TemplateVariableValue((string) 'http://localhost:3000'));
         $varOj->setVariable(new TemplateVariableSyntax('{{8}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);

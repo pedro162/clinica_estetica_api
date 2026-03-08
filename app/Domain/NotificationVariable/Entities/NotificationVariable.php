@@ -2,11 +2,9 @@
 
 namespace App\Domain\NotificationVariable\Entities;
 
-use App\Domain\NotificationVariable\Interfaces\NotificationVariableInterface;
 use App\Domain\NotificationVariable\ValueObjects\NotificationId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableSyntax;
-use App\Domain\NotificationVariable\ValueObjects\NotificationVariableNotificationId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableTemplateVariableId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableValue;
 

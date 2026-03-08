@@ -23,4 +23,6 @@ use OpenApi\Annotations as OA;
  *     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-10-04T18:25:28.000000Z"),
  * )
  */
-class ServiceResponseSchema {}
+class ServiceResponseSchema
+{
+}

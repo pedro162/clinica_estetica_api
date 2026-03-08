@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\City;
 
+use App\Cidade;
 use App\Domain\City\Entities\City;
 use App\Domain\City\Repositories\CityRepositoryInterface;
-use App\Domain\City\ValueObjects\CityCode;
 use App\Domain\City\ValueObjects\CityId;
-use App\Domain\City\ValueObjects\CityIsDefault;
-use App\Domain\City\ValueObjects\CityName;
-use App\Domain\City\ValueObjects\CityTenantId;
-use App\Cidade;
 use Illuminate\Support\Facades\Auth;
 
 class CityRepository implements CityRepositoryInterface

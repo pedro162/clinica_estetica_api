@@ -15,7 +15,7 @@ class Select extends Component
     protected $type;
     protected $id;
     protected $options;
-    protected $classContainer; 
+    protected $classContainer;
 
     /**
      * Create a new component instance.
@@ -23,7 +23,6 @@ class Select extends Component
      * @return void
      */
     public function __construct(
-
         $label       =  '',
         $value       =  '',
         $name        =  '',
@@ -34,16 +33,15 @@ class Select extends Component
         $id          =  '',
         $options     =  [],
         $classContainer = ''
-    )
-    {
-        $this->label      = $label; 
-        $this->value      = $value; 
-        $this->name       = $name; 
-        $this->class      = $class; 
-        $this->onChange   = $onChange; 
-        $this->onClick    = $onClick; 
-        $this->type       = $type; 
-        $this->id         = $id; 
+    ) {
+        $this->label      = $label;
+        $this->value      = $value;
+        $this->name       = $name;
+        $this->class      = $class;
+        $this->onChange   = $onChange;
+        $this->onClick    = $onClick;
+        $this->type       = $type;
+        $this->id         = $id;
         $this->options    = $options;
         $this->classContainer = $classContainer;
     }
@@ -61,47 +59,47 @@ class Select extends Component
 
     public function getLabel()
     {
-        return $this->label;   
+        return $this->label;
     }
 
     public function getValue()
     {
-        return $this->value;   
+        return $this->value;
     }
 
     public function getName()
     {
-        return $this->name;   
+        return $this->name;
     }
 
     public function getClass()
     {
-        return $this->class;   
+        return $this->class;
     }
 
     public function getOnChange()
     {
-        return $this->onChange;   
+        return $this->onChange;
     }
 
     public function getOnClick()
     {
-        return $this->onClick;   
+        return $this->onClick;
     }
 
     public function getType()
     {
-        return $this->type;   
+        return $this->type;
     }
 
     public function getId()
     {
-        return $this->id;   
+        return $this->id;
     }
 
     public function getOptions()
     {
-        return $this->options;   
+        return $this->options;
     }
 
     public function getClassContainer()

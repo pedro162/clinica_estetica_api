@@ -4,7 +4,6 @@ namespace App\Application\Services\Seller;
 
 use App\Application\Commands\Seller\CreateSellerCommand;
 use App\Rca;
-use App\Domain\Seller\Entities\Seller;
 use Illuminate\Support\Collection;
 
 interface SellerApplicationServiceInterface

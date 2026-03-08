@@ -2,15 +2,15 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Estado;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Icms extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    
+    use SoftDeletes;
+    use BelongsToTenant;
+
     protected $fillable = [
         'id',
         'nmIcms',

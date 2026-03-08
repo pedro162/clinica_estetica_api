@@ -1,17 +1,17 @@
 <?php
+
 /*
  * Author Newton Pasqualini Filho (newtonpasqualini at gmail dot com)
  */
 
 namespace App\Impressao\NFe;
 
+use App\Impressao\Common\DaCommon;
 use App\Impressao\Legacy\Dom;
 use App\Impressao\Legacy\Pdf;
-use App\Impressao\Common\DaCommon;
 
 class DanfeSimples extends DaCommon
 {
-
     /**
      * Tamanho do Papel
      *
@@ -294,7 +294,7 @@ class DanfeSimples extends DaCommon
         $this->pdf->cell(
             ($this->maxW - ($this->margesq * 2)),
             $pequeno ? 5 : 6,
-            "DANFE SIMPLIFICADO - ETIQUETA",
+            'DANFE SIMPLIFICADO - ETIQUETA',
             1,
             1,
             'C',
@@ -305,7 +305,7 @@ class DanfeSimples extends DaCommon
         $dataEmissao = date('d/m/Y', strtotime("{$this->nfeArray['NFe']['infNFe']['ide']['dhEmi']}"));
         $c1 = ($this->maxW - ($this->margesq * 2)) / 4;
         $this->pdf->setFont('Arial', 'B', $pequeno ? 8 : 10);
-        $this->pdf->cell($c1, $pequeno ? 4 : 5, "TIPO NF", 1, 0, 'C', 1);
+        $this->pdf->cell($c1, $pequeno ? 4 : 5, 'TIPO NF', 1, 0, 'C', 1);
         $this->pdf->setFont('Arial', '', 10);
         $this->pdf->cell(
             $c1,
@@ -318,32 +318,32 @@ class DanfeSimples extends DaCommon
             1
         );
         $this->pdf->setFont('Arial', 'B', $pequeno ? 8 : 10);
-        $this->pdf->cell($c1, $pequeno ? 4 : 5, "DATA EMISSAO", 1, 0, 'C', 1);
+        $this->pdf->cell($c1, $pequeno ? 4 : 5, 'DATA EMISSAO', 1, 0, 'C', 1);
         $this->pdf->setFont('Arial', '', 10);
         $this->pdf->cell($c1, $pequeno ? 4 : 5, "{$dataEmissao}", 1, 1, 'C', 1);
 
         // LINHA 3
         $this->pdf->setFont('Arial', 'B', $pequeno ? 8 : 10);
-        $this->pdf->cell($c1, $pequeno ? 4 : 5, "NUMERO", 1, 0, 'C', 1);
+        $this->pdf->cell($c1, $pequeno ? 4 : 5, 'NUMERO', 1, 0, 'C', 1);
         $this->pdf->setFont('Arial', '', 10);
         $this->pdf->cell($c1, $pequeno ? 4 : 5, "{$this->nfeArray['NFe']['infNFe']['ide']['nNF']}", 1, 0, 'C', 1);
         $this->pdf->setFont('Arial', 'B', $pequeno ? 8 : 10);
-        $this->pdf->cell($c1, $pequeno ? 4 : 5, "SERIE", 1, 0, 'C', 1);
+        $this->pdf->cell($c1, $pequeno ? 4 : 5, 'SERIE', 1, 0, 'C', 1);
         $this->pdf->setFont('Arial', '', 10);
         $this->pdf->cell($c1, $pequeno ? 4 : 5, "{$this->nfeArray['NFe']['infNFe']['ide']['serie']}", 1, 1, 'C', 1);
 
         // LINHA 4
         $chave = substr($this->nfeArray['NFe']['infNFe']['@attributes']['Id'], 3);
         $this->pdf->setFont('Arial', 'B', $pequeno ? 7 : 10);
-        $this->pdf->cell($c1, $pequeno ? 4 : 5, "CHAVE DE ACESSO", 1, 0, 'C', 1);
+        $this->pdf->cell($c1, $pequeno ? 4 : 5, 'CHAVE DE ACESSO', 1, 0, 'C', 1);
         $this->pdf->setFont('Arial', '', $pequeno ? 8 : 10);
         $this->pdf->cell(($c1 * 3), $pequeno ? 4 : 5, "{$chave}", 1, 1, 'C', 1);
 
         // LINHA 5
         $this->pdf->setFont('Arial', 'B', $pequeno ? 8 : 10);
-        $this->pdf->cell($c1, $pequeno ? 4 : 5, "PROTOCOLO", 1, 0, 'C', 1);
+        $this->pdf->cell($c1, $pequeno ? 4 : 5, 'PROTOCOLO', 1, 0, 'C', 1);
         $this->pdf->setFont('Arial', '', 10);
-        $dataProto = date("d/m/Y H:i:s", strtotime($this->nfeArray['protNFe']['infProt']['dhRecbto']));
+        $dataProto = date('d/m/Y H:i:s', strtotime($this->nfeArray['protNFe']['infProt']['dhRecbto']));
         $this->pdf->cell(
             ($c1 * 3),
             $pequeno ? 4 : 5,
@@ -373,7 +373,7 @@ class DanfeSimples extends DaCommon
 
         // LINHA 6
         $this->pdf->setFont('Arial', 'B', $pequeno ? 10 : 12);
-        $this->pdf->cell(($c1 * 4), $pequeno ? 5 : 6, "EMITENTE", 1, 1, 'C', 1);
+        $this->pdf->cell(($c1 * 4), $pequeno ? 5 : 6, 'EMITENTE', 1, 1, 'C', 1);
 
         // LINHA 7
         $this->pdf->setFont('Arial', '', $pequeno ? 9 : 10);
@@ -411,7 +411,7 @@ class DanfeSimples extends DaCommon
 
         // LINHA 10
         $this->pdf->setFont('Arial', 'B', $pequeno ? 10 : 12);
-        $this->pdf->cell(($c1 * 4), $pequeno ? 5 : 6, "DESTINATARIO", 1, 1, 'C', 1);
+        $this->pdf->cell(($c1 * 4), $pequeno ? 5 : 6, 'DESTINATARIO', 1, 1, 'C', 1);
 
         // LINHA 11
         $this->pdf->setFont('Arial', '', $pequeno ? 9 : 10);
@@ -476,7 +476,7 @@ class DanfeSimples extends DaCommon
             && isset($this->nfeArray['NFe']['infNFe']['transp']['transporta'])
         ) {
             $this->pdf->setFont('Arial', 'B', $pequeno ? 10 : 12);
-            $this->pdf->cell(($c1 * 4), $pequeno ? 5 : 6, "TRANSPORTADORA", 1, 1, 'C', 1);
+            $this->pdf->cell(($c1 * 4), $pequeno ? 5 : 6, 'TRANSPORTADORA', 1, 1, 'C', 1);
             $this->pdf->setFont('Arial', '', $pequeno ? 9 : 10);
             $this->pdf->cell(
                 ($c1 * 4),
@@ -517,14 +517,14 @@ class DanfeSimples extends DaCommon
         );
 
         $this->pdf->setFont('Arial', 'B', $pequeno ? 10 : 12);
-        $this->pdf->cell(($c1 * 2), $pequeno ? 5 : 6, "TOTAL DA NF-e", 1, 0, 'C', 1);
+        $this->pdf->cell(($c1 * 2), $pequeno ? 5 : 6, 'TOTAL DA NF-e', 1, 0, 'C', 1);
         $this->pdf->setFont('Arial', '', $pequeno ? 8 : 10);
         $vNF = number_format($this->nfeArray['NFe']['infNFe']['total']['ICMSTot']['vNF'], 2, ',', '.');
         $this->pdf->cell(($c1 * 2), $pequeno ? 5 : 6, "R$ {$vNF}", 1, 1, 'C', 1);
 
         if (isset($this->nfeArray['NFe']['infNFe']['infAdic'])) {
             $this->pdf->setFont('Arial', 'B', $pequeno ? 10 : 12);
-            $this->pdf->cell(($c1 * 4), $pequeno ? 5 : 6, "DADOS ADICIONAIS", 1, 1, 'C', 1);
+            $this->pdf->cell(($c1 * 4), $pequeno ? 5 : 6, 'DADOS ADICIONAIS', 1, 1, 'C', 1);
             $this->pdf->setFont('Arial', '', $pequeno ? 8 : 10);
             $this->pdf->multiCell(
                 ($c1 * 4),

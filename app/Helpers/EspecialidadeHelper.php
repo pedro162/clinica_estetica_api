@@ -2,18 +2,11 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Especialidade;
 use App\Exceptions\EspecialidadeException;
-use \App\Filial;
-use \App\Pessoa;
-use \App\Especialidade;
-use App\Helpers\BaseHelper;
 
 class EspecialidadeHelper extends BaseHelper
 {
-
     public function info($dados, $id)
     {
         $id = $id ?? $dados['id'];

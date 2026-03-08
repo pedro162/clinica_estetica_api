@@ -15,23 +15,22 @@ namespace App\Impressao\NFe;
  * @author    Roberto L. Machado <linux.rlm at gmail dot com>
  */
 
-use \Exception;
+use App\Impressao\Common\DaCommon;
 use App\Impressao\Legacy\Dom;
 use App\Impressao\Legacy\Pdf;
-use App\Impressao\Common\DaCommon;
 
 class Daevento extends DaCommon
 {
     public $chNFe;
 
     protected $yDados = 0;
-    protected $dadosEmitente = array();
+    protected $dadosEmitente = [];
     protected $xml;
     protected $errMsg = '';
     protected $errStatus = false;
     protected $version = '0.1.4';
     protected $wCanhoto;
-    protected $formatoChave = "#### #### #### #### #### #### #### #### #### #### ####";
+    protected $formatoChave = '#### #### #### #### #### #### #### #### #### #### ####';
     protected $id;
     protected $tpAmb;
     protected $cOrgao;
@@ -105,40 +104,40 @@ class Daevento extends DaCommon
     {
         $this->dom = new Dom();
         $this->dom->loadXML($xml);
-        $this->procEventoNFe = $this->dom->getElementsByTagName("procEventoNFe")->item(0);
-        $this->evento = $this->dom->getElementsByTagName("evento")->item(0);
-        $this->infEvento = $this->evento->getElementsByTagName("infEvento")->item(0);
-        $this->retEvento = $this->dom->getElementsByTagName("retEvento")->item(0);
-        $this->rinfEvento = $this->retEvento->getElementsByTagName("infEvento")->item(0);
-        $this->tpEvento = $this->infEvento->getElementsByTagName("tpEvento")->item(0)->nodeValue;
+        $this->procEventoNFe = $this->dom->getElementsByTagName('procEventoNFe')->item(0);
+        $this->evento = $this->dom->getElementsByTagName('evento')->item(0);
+        $this->infEvento = $this->evento->getElementsByTagName('infEvento')->item(0);
+        $this->retEvento = $this->dom->getElementsByTagName('retEvento')->item(0);
+        $this->rinfEvento = $this->retEvento->getElementsByTagName('infEvento')->item(0);
+        $this->tpEvento = $this->infEvento->getElementsByTagName('tpEvento')->item(0)->nodeValue;
         if (!in_array($this->tpEvento, ['110110', '110111'])) {
             $this->errMsg = 'Evento não implementado ' . $this->tpEvento . ' !!';
             $this->errStatus = true;
             return false;
         }
-        $this->id = str_replace('ID', '', $this->infEvento->getAttribute("Id"));
-        $this->chNFe = $this->infEvento->getElementsByTagName("chNFe")->item(0)->nodeValue;
-        $this->dadosEmitente['CNPJ'] = $this->infEvento->getElementsByTagName("CNPJ")->item(0)->nodeValue;
-        $this->tpAmb = $this->infEvento->getElementsByTagName("tpAmb")->item(0)->nodeValue;
-        $this->cOrgao = $this->infEvento->getElementsByTagName("cOrgao")->item(0)->nodeValue;
-        $this->xCorrecao = $this->infEvento->getElementsByTagName("xCorrecao")->item(0);
+        $this->id = str_replace('ID', '', $this->infEvento->getAttribute('Id'));
+        $this->chNFe = $this->infEvento->getElementsByTagName('chNFe')->item(0)->nodeValue;
+        $this->dadosEmitente['CNPJ'] = $this->infEvento->getElementsByTagName('CNPJ')->item(0)->nodeValue;
+        $this->tpAmb = $this->infEvento->getElementsByTagName('tpAmb')->item(0)->nodeValue;
+        $this->cOrgao = $this->infEvento->getElementsByTagName('cOrgao')->item(0)->nodeValue;
+        $this->xCorrecao = $this->infEvento->getElementsByTagName('xCorrecao')->item(0);
         $this->xCorrecao = (empty($this->xCorrecao) ? '' : $this->xCorrecao->nodeValue);
         $this->xCorrecao = str_replace(';', ";\n", $this->xCorrecao);
-        $this->xCondUso = $this->infEvento->getElementsByTagName("xCondUso")->item(0);
+        $this->xCondUso = $this->infEvento->getElementsByTagName('xCondUso')->item(0);
         $this->xCondUso = (empty($this->xCondUso) ? '' : $this->xCondUso->nodeValue);
-        $this->xJust = $this->infEvento->getElementsByTagName("xJust")->item(0);
+        $this->xJust = $this->infEvento->getElementsByTagName('xJust')->item(0);
         $this->xJust = (empty($this->xJust) ? '' : $this->xJust->nodeValue);
-        $this->dhEvento = $this->infEvento->getElementsByTagName("dhEvento")->item(0)->nodeValue;
-        $this->cStat = $this->rinfEvento->getElementsByTagName("cStat")->item(0)->nodeValue;
-        $this->xMotivo = $this->rinfEvento->getElementsByTagName("xMotivo")->item(0)->nodeValue;
-        $this->CNPJDest = !empty($this->rinfEvento->getElementsByTagName("CNPJDest")->item(0)->nodeValue) ?
-            $this->rinfEvento->getElementsByTagName("CNPJDest")->item(0)->nodeValue :
+        $this->dhEvento = $this->infEvento->getElementsByTagName('dhEvento')->item(0)->nodeValue;
+        $this->cStat = $this->rinfEvento->getElementsByTagName('cStat')->item(0)->nodeValue;
+        $this->xMotivo = $this->rinfEvento->getElementsByTagName('xMotivo')->item(0)->nodeValue;
+        $this->CNPJDest = !empty($this->rinfEvento->getElementsByTagName('CNPJDest')->item(0)->nodeValue) ?
+            $this->rinfEvento->getElementsByTagName('CNPJDest')->item(0)->nodeValue :
             '';
-        $this->CPFDest = !empty($this->rinfEvento->getElementsByTagName("CPFDest")->item(0)->nodeValue) ?
-            $this->rinfEvento->getElementsByTagName("CPFDest")->item(0)->nodeValue :
+        $this->CPFDest = !empty($this->rinfEvento->getElementsByTagName('CPFDest')->item(0)->nodeValue) ?
+            $this->rinfEvento->getElementsByTagName('CPFDest')->item(0)->nodeValue :
             '';
-        $this->dhRegEvento = $this->rinfEvento->getElementsByTagName("dhRegEvento")->item(0)->nodeValue;
-        $this->nProt = $this->rinfEvento->getElementsByTagName("nProt")->item(0)->nodeValue;
+        $this->dhRegEvento = $this->rinfEvento->getElementsByTagName('dhRegEvento')->item(0)->nodeValue;
+        $this->nProt = $this->rinfEvento->getElementsByTagName('nProt')->item(0)->nodeValue;
     }
 
     /**
@@ -283,26 +282,26 @@ class Daevento extends DaCommon
             $tw = $w;
         }
         // Nome emitente
-        $aFont = array(
+        $aFont = [
             'font' => $this->fontePadrao,
             'size' => 12,
             'style' => 'B'
-        );
+        ];
         $texto = (isset($this->dadosEmitente['razao']) ? $this->dadosEmitente['razao'] : '');
         $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         // endereço
         $y1 = $y1 + 6;
-        $aFont = array(
+        $aFont = [
             'font' => $this->fontePadrao,
             'size' => 8,
             'style' => ''
-        );
+        ];
         $lgr = (isset($this->dadosEmitente['logradouro']) ? $this->dadosEmitente['logradouro'] : '');
         $nro = (isset($this->dadosEmitente['numero']) ? $this->dadosEmitente['numero'] : '');
         $cpl = (isset($this->dadosEmitente['complemento']) ? $this->dadosEmitente['complemento'] : '');
         $bairro = (isset($this->dadosEmitente['bairro']) ? $this->dadosEmitente['bairro'] : '');
         $CEP = (isset($this->dadosEmitente['CEP']) ? $this->dadosEmitente['CEP'] : '');
-        $CEP = $this->formatField($CEP, "#####-###");
+        $CEP = $this->formatField($CEP, '#####-###');
         $mun = (isset($this->dadosEmitente['municipio']) ? $this->dadosEmitente['municipio'] : '');
         $UF = (isset($this->dadosEmitente['UF']) ? $this->dadosEmitente['UF'] : '');
         $fone = (isset($this->dadosEmitente['telefone']) ? $this->dadosEmitente['telefone'] : '');
@@ -318,15 +317,15 @@ class Daevento extends DaCommon
         if ($email != '') {
             $email = 'Email: ' . $email;
         }
-        $texto = "";
-        $tmp_txt = trim(($lgr != '' ? "$lgr, " : '') . ($nro != 0 ? $nro : "SN") . ($cpl != '' ? " - $cpl" : ''));
+        $texto = '';
+        $tmp_txt = trim(($lgr != '' ? "$lgr, " : '') . ($nro != 0 ? $nro : 'SN') . ($cpl != '' ? " - $cpl" : ''));
         $tmp_txt = ($tmp_txt == 'SN' ? '' : $tmp_txt);
         $texto .= ($texto != '' && $tmp_txt != '' ? "\n" : '') . $tmp_txt;
-        $tmp_txt = trim($bairro . ($bairro != '' && $CEP != '' ? " - " : '') . $CEP);
+        $tmp_txt = trim($bairro . ($bairro != '' && $CEP != '' ? ' - ' : '') . $CEP);
         $texto .= ($texto != '' && $tmp_txt != '' ? "\n" : '') . $tmp_txt;
         $tmp_txt = $mun;
-        $tmp_txt .= ($tmp_txt != '' && $UF != '' ? " - " : '') . $UF;
-        $tmp_txt .= ($tmp_txt != '' && $fone != '' ? " " : '') . $fone;
+        $tmp_txt .= ($tmp_txt != '' && $UF != '' ? ' - ' : '') . $UF;
+        $tmp_txt .= ($tmp_txt != '' && $fone != '' ? ' ' : '') . $fone;
         $texto .= ($texto != '' && $tmp_txt != '' ? "\n" : '') . $tmp_txt;
         $tmp_txt = $email;
         $texto .= ($texto != '' && $tmp_txt != '' ? "\n" : '') . $tmp_txt;
@@ -336,22 +335,22 @@ class Daevento extends DaCommon
         $x += $w;
         $this->pdf->textBox($x, $y, $w2, $h);
         $y1 = $y + $h;
-        $aFont = array(
+        $aFont = [
             'font' => $this->fontePadrao,
             'size' => 16,
             'style' => 'B'
-        );
+        ];
         if ($this->tpEvento == '110110') {
             $texto = 'Representação Gráfica de CC-e';
         } else {
             $texto = 'Representação Gráfica de Evento';
         }
         $this->pdf->textBox($x, $y + 2, $w2, 8, $texto, $aFont, 'T', 'C', 0, '');
-        $aFont = array(
+        $aFont = [
             'font' => $this->fontePadrao,
             'size' => 12,
             'style' => 'I'
-        );
+        ];
         if ($this->tpEvento == '110110') {
             $texto = '(Carta de Correção Eletrônica)';
         } elseif ($this->tpEvento == '110111') {
@@ -359,11 +358,11 @@ class Daevento extends DaCommon
         }
         $this->pdf->textBox($x, $y + 7, $w2, 8, $texto, $aFont, 'T', 'C', 0, '');
         $texto = 'ID do Evento: ' . $this->id;
-        $aFont = array(
+        $aFont = [
             'font' => $this->fontePadrao,
             'size' => 10,
             'style' => ''
-        );
+        ];
         $this->pdf->textBox($x, $y + 15, $w2, 8, $texto, $aFont, 'T', 'L', 0, '');
         $texto = 'Criado em : ' . \DateTime::createFromFormat("Y-m-d\TH:i:sP", $this->dhEvento)->format('d/m/Y H:i:s');
         $this->pdf->textBox($x, $y + 20, $w2, 8, $texto, $aFont, 'T', 'L', 0, '');
@@ -393,17 +392,17 @@ class Daevento extends DaCommon
         $x = $oldX;
         $y = $y1;
         if ($this->CNPJDest != '') {
-            $texto = 'CNPJ do Destinatário: ' . $this->formatField($this->CNPJDest, "##.###.###/####-##");
+            $texto = 'CNPJ do Destinatário: ' . $this->formatField($this->CNPJDest, '##.###.###/####-##');
         }
         if ($this->CPFDest != '') {
-            $texto = 'CPF do Destinatário: ' . $this->formatField($this->CPFDest, "###.###.###-##");
+            $texto = 'CPF do Destinatário: ' . $this->formatField($this->CPFDest, '###.###.###-##');
         }
         $aFont = ['font' => $this->fontePadrao, 'size' => 12, 'style' => 'B'];
         $this->pdf->textBox($x + 2, $y + 13, $w2, 8, $texto, $aFont, 'T', 'L', 0, '');
         $numNF = substr($this->chNFe, 25, 9);
         $serie = substr($this->chNFe, 22, 3);
-        $numNF = $this->formatField($numNF, "###.###.###");
-        $texto = "Nota Fiscal: " . $numNF . '  -   Série: ' . $serie;
+        $numNF = $this->formatField($numNF, '###.###.###');
+        $texto = 'Nota Fiscal: ' . $numNF . '  -   Série: ' . $serie;
         $this->pdf->textBox($x + 2, $y + 19, $w2, 8, $texto, $aFont, 'T', 'L', 0, '');
         $bW = 87;
         $bH = 15;
@@ -437,11 +436,11 @@ class Daevento extends DaCommon
             $h = 5;
             $w = $maxW - (2 * $x);
             $this->pdf->setTextColor(90, 90, 90);
-            $texto = "SEM VALOR FISCAL";
+            $texto = 'SEM VALOR FISCAL';
             $aFont = ['font' => $this->fontePadrao, 'size' => 48, 'style' => 'B'];
             $this->pdf->textBox($x, $y, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
             $aFont = ['font' => $this->fontePadrao, 'size' => 30, 'style' => 'B'];
-            $texto = "AMBIENTE DE HOMOLOGAÇÃO";
+            $texto = 'AMBIENTE DE HOMOLOGAÇÃO';
             $this->pdf->textBox($x, $y + 14, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
             $this->pdf->setTextColor(0, 0, 0);
         }
@@ -485,25 +484,25 @@ class Daevento extends DaCommon
     {
         $w = $this->wPrint;
         if ($this->tpEvento == '110110') {
-            $texto = "Este documento é uma representação gráfica da CC-e "
-                . "e foi impresso apenas para sua informação e não possui validade "
+            $texto = 'Este documento é uma representação gráfica da CC-e '
+                . 'e foi impresso apenas para sua informação e não possui validade '
                 . "fiscal.\n A CC-e deve ser recebida e mantida em arquivo eletrônico XML "
-                . "e pode ser consultada através dos Portais das SEFAZ.";
+                . 'e pode ser consultada através dos Portais das SEFAZ.';
         } elseif ($this->tpEvento == '110111') {
-            $texto = "Este documento é uma representação gráfica do evento de NFe e "
-                . "foi impresso apenas para sua informação e não possui validade "
+            $texto = 'Este documento é uma representação gráfica do evento de NFe e '
+                . 'foi impresso apenas para sua informação e não possui validade '
                 . "fiscal.\n O Evento deve ser recebido e mantido em arquivo "
-                . "eletrônico XML e pode ser consultada através dos Portais "
-                . "das SEFAZ.";
+                . 'eletrônico XML e pode ser consultada através dos Portais '
+                . 'das SEFAZ.';
         }
         $aFont = ['font' => $this->fontePadrao, 'size' => 10, 'style' => 'I'];
         $this->pdf->textBox($x, $y, $w, 20, $texto, $aFont, 'T', 'C', 0, '', false);
         $y = $this->hPrint - 4;
-        $texto = "Impresso em  " . date('d/m/Y   H:i:s') . ' ' . $this->creditos;
+        $texto = 'Impresso em  ' . date('d/m/Y   H:i:s') . ' ' . $this->creditos;
         $w = $this->wPrint - 4;
         $aFont = ['font' => $this->fontePadrao, 'size' => 6, 'style' => 'I'];
         $this->pdf->textBox($x, $y, $w, 4, $texto, $aFont, 'T', 'L', 0, '');
-        $texto = $this->powered ? "Powered by NFePHP®" : '';
+        $texto = $this->powered ? 'Powered by NFePHP®' : '';
         $aFont = ['font' => $this->fontePadrao, 'size' => 6, 'style' => 'I'];
         $this->pdf->textBox($x, $y, $w, 4, $texto, $aFont, 'T', 'R', 0, 'http://www.nfephp.org');
     }

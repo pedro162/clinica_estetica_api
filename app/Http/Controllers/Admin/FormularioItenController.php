@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\FormularioItenException;
+use App\FormularioGrupo;
+use App\FormularioItem;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Formulario;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\FormularioItenException;
-use \App\FormularioGrupo;
-use \App\FormularioItem;
-use Illuminate\Support\Facades\Auth;
 
 class FormularioItenController extends Controller
 {
@@ -309,7 +305,7 @@ class FormularioItenController extends Controller
                 });
 
             /**
-             * ->join('forma_pagamentos as fp', function($join){                
+             * ->join('forma_pagamentos as fp', function($join){
                 $join->on('fp.id', '=', 'conta_recebers.forma_pagamento_id');
 
             });

@@ -2,9 +2,9 @@
 
 namespace App\Domain\FinancialMovements\Repositories;
 
-use App\FinanceiroMovimentacoe;
 use App\Domain\FinancialMovements\Entities\FinancialMovements;
 use App\Domain\FinancialMovements\ValueObjects\FinancialMovementsId;
+use App\FinanceiroMovimentacoe;
 
 interface FinancialMovementsRepositoryInterface
 {

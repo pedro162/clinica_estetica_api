@@ -20,7 +20,6 @@
             <php outputFile="./coverage/php/coverage.php"/>
             <text outputFile="./coverage/text/coverage.txt"/>
             <xml outputDirectory="./coverage/xml"/>
-            <xml outputFile="./coverage/xml/coverage.xml"/>
         </report>
     </coverage>
     <testsuites>
@@ -31,11 +30,6 @@
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
     <php>
         <server name="APP_ENV" value="testing"/>
         <server name="BCRYPT_ROUNDS" value="4"/>

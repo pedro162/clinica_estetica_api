@@ -2,15 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EventoAgenda extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    protected $table = "evento_agendas";
-    protected $primaryKey = "id";
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $table = 'evento_agendas';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'id',
         'name',

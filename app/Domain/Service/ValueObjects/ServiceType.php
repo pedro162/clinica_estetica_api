@@ -10,7 +10,7 @@ class ServiceType
     {
         if (!empty($value)) {
             if (!in_array($value, ['mensalidade', 'outros'])) {
-                throw new \InvalidArgumentException("The service type is invalid. It should be either (mensalidade, outros)");
+                throw new \InvalidArgumentException('The service type is invalid. It should be either (mensalidade, outros)');
             }
         }
 

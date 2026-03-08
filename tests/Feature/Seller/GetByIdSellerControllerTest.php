@@ -1,22 +1,20 @@
 <?php
 
-namespace Tests\Feature\Service;
+namespace Tests\Feature\Seller;
 
-use App\Application\Services\Service\ServiceApplicationService;
+use App\Application\Services\Seller\SellerApplicationService;
 use App\Rca;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use Tests\Feature\SetupTest;
 
-class GetByIdServiceControllerTest extends TestCase
+class GetByIdSellerControllerTest extends TestCase
 {
     //use RefreshDatabase;
 
-    protected ServiceApplicationService $sellerApplicationService;
+    protected SellerApplicationService $sellerApplicationService;
     protected Rca $payload;
     protected Rca $seller;
 
@@ -29,7 +27,7 @@ class GetByIdServiceControllerTest extends TestCase
         Passport::actingAs($user, ['*']);
     }
 
-    public function testGetAServicesById()
+    public function testGetASellerById()
     {
         $data = $this->seller->toArray();
         $response = $this->getJson(route('sellers.info', ['id' => $this->seller->id]));

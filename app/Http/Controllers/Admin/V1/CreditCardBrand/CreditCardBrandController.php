@@ -11,8 +11,8 @@ use App\Http\Requests\V1\CreditCardBrand\GetAllCreditCardBrandRequest;
 use App\Http\Requests\V1\CreditCardBrand\ShowCreditCardBrandRequest;
 use App\Http\Requests\V1\CreditCardBrand\StoreCreditCardBrandRequest;
 use App\Http\Requests\V1\CreditCardBrand\UpdateCreditCardBrandRequest;
-use App\Http\Resources\V1\CreditCardBrand\GetAllCreditCardBrandResource;
 use App\Http\Resources\V1\CreditCardBrand\CreditCardBrandResource;
+use App\Http\Resources\V1\CreditCardBrand\GetAllCreditCardBrandResource;
 use Illuminate\Http\JsonResponse;
 
 class CreditCardBrandController extends Controller

@@ -2,11 +2,8 @@
 
 namespace App\Application\Commands;
 
-use App\Application\Commands\BaseHttpCommand;
-
 class CreateHttpCommand
 {
-
     protected string $httpId;
     protected string $httpCode;
     protected string $httpDataRequest;

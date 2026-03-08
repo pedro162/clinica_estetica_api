@@ -2,11 +2,9 @@
 
 namespace App\Domain\PaymentMethod\Repositories;
 
-use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorId;
-use App\FormaPagamento;
 use App\Domain\PaymentMethod\Entities\PaymentMethod;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodId;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanId;
+use App\FormaPagamento;
 
 /**
  * Interface for Payment Method Repository

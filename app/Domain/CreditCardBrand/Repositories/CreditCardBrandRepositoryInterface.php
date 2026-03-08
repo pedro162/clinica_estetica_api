@@ -2,9 +2,9 @@
 
 namespace App\Domain\CreditCardBrand\Repositories;
 
+use App\BandeiraCartao;
 use App\Domain\CreditCardBrand\Entities\CreditCardBrand;
 use App\Domain\CreditCardBrand\ValueObjects\CreditCardBrandId;
-use App\BandeiraCartao;
 
 interface CreditCardBrandRepositoryInterface
 {

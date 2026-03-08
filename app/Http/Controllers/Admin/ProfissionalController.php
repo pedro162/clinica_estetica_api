@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Exceptions\ProfissionalException;
-use Illuminate\Support\Facades\Validator;
-use App\Profissional;
 use App\Especialidade;
-
+use App\Exceptions\ProfissionalException;
+use App\Http\Controllers\Controller;
+use App\Profissional;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProfissionalController extends Controller
 {

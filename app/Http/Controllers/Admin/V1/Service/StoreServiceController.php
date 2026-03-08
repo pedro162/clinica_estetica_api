@@ -18,15 +18,16 @@ class StoreServiceController extends Controller
     public function __construct(
         protected ServiceApplicationServiceInterface $service,
         protected ServiceRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\V1\Service\StoreServiceRequest  $request
-     * 
+     *
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(StoreServiceRequest $request): JsonResponse

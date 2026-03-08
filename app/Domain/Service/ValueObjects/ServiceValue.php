@@ -9,7 +9,7 @@ class ServiceValue
     public function __construct(float $value)
     {
         if ($value < 0) {
-            throw new \InvalidArgumentException("The service value should be a positive number");
+            throw new \InvalidArgumentException('The service value should be a positive number');
         }
 
         $this->value = $value;

@@ -12,7 +12,7 @@ namespace App\Impressao\Legacy;
  * @link       http://github.com/nfephp-org/nfephp for the canonical source repository
  */
 
-use \DOMDocument;
+use DOMDocument;
 use InvalidArgumentException;
 
 class Dom extends DOMDocument
@@ -30,7 +30,7 @@ class Dom extends DOMDocument
     }
     public function loadXMLString($xmlString = '')
     {
-        $msg = "O arquivo indicado não é um XML ou contêm B.O.M. no inicio do arquivo !";
+        $msg = 'O arquivo indicado não é um XML ou contêm B.O.M. no inicio do arquivo !';
         if (substr($xmlString, 0, 1) != '<') {
             throw new InvalidArgumentException($msg);
         }
@@ -99,7 +99,7 @@ class Dom extends DOMDocument
     {
         $node = $this->getElementsByTagName($nodeName)->item(0);
         if (!empty($node)) {
-            $chaveId = $node->getAttribute("Id");
+            $chaveId = $node->getAttribute('Id');
             $chave =  preg_replace('/[^0-9]/', '', $chaveId);
             return $chave;
         }
@@ -119,15 +119,15 @@ class Dom extends DOMDocument
      * @param boolean $force força a criação do elemento mesmo sem dados e não considera como erro
      * @return void
      */
-    public function addChild(&$parent, $name, $content = '', $obrigatorio = false, $descricao = "", $force = false)
+    public function addChild(&$parent, $name, $content = '', $obrigatorio = false, $descricao = '', $force = false)
     {
         $content = trim($content);
         if ($obrigatorio && $content === '' && !$force) {
-            $this->erros[] = array(
-                "tag" => $name,
-                "desc" => $descricao,
-                "erro" => "Preenchimento Obrigatório!"
-            );
+            $this->erros[] = [
+                'tag' => $name,
+                'desc' => $descricao,
+                'erro' => 'Preenchimento Obrigatório!'
+            ];
         }
         if ($obrigatorio || $content !== '' || $force) {
             $content = htmlspecialchars($content, ENT_QUOTES);

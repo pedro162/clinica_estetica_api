@@ -3,7 +3,6 @@
 namespace App\Domain\PersonAddress\Repositories;
 
 use App\Domain\PersonAddress\Entities\PersonAddress;
-use App\Domain\PersonAddress\ValueObjects\PersonAddressDocument;
 use App\Domain\PersonAddress\ValueObjects\PersonAddressId;
 use App\Logradouro;
 

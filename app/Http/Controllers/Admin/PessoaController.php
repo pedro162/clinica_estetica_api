@@ -2,28 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\PessoaException;
+use App\FormaPagamento;
+use App\Grupo;
 use App\Http\Controllers\Controller;
+use App\Logradouro;
+use App\OperadorFinanceiro;
+use App\Pessoa;
+use App\Plano;
+use App\PlanoPagamento;
+use App\Telefone;
+use App\Utilitarios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Http\Requests\PessoaRequest;
-use \App\Pessoa;
-use \App\Grupo;
-use \App\Telefone;
-use \App\Logradouro;
-use \App\Utilitarios;
-use \App\CobrancaReceber;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\OrdemServico;
-use \App\Filial;
-use \App\VendaItem;
-use \App\Venda;
-use \App\ServicoItem;
-use \App\Servico;
-use \App\Plano;
-use App\Exceptions\PessoaException;
-use App\Helpers\PessoaHelper;
 
 class PessoaController extends Controller
 {
@@ -69,7 +60,7 @@ class PessoaController extends Controller
                 'email'
             );
 
-            $cpf = preg_replace("/[^0-9]/", '', trim($dadosPessoa['documento']));
+            $cpf = preg_replace('/[^0-9]/', '', trim($dadosPessoa['documento']));
             $dadosPessoa['documento'] = $cpf;
             if (Pessoa::where('documento', '=', $cpf)->first()) {
 

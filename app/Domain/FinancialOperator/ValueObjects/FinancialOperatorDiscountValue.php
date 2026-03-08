@@ -9,7 +9,7 @@ class FinancialOperatorDiscountValue
     public function __construct(float $value)
     {
         if ($value < 0) {
-            throw new \InvalidArgumentException("The discount value cannot be negative");
+            throw new \InvalidArgumentException('The discount value cannot be negative');
         }
 
         $this->value = $value;

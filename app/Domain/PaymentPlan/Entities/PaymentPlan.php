@@ -2,23 +2,14 @@
 
 namespace App\Domain\PaymentPlan\Entities;
 
-use App\PlanoPagamento;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanAverageDays;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanBalance;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanBillingCode;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanBranchId;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanDescription;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanFirstInstallmentDays;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanGenerateInvoiceManually;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanHasCashAdjustment;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanHasCommission;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanHasCounterAdjustment;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanHasCreditLimit;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanHasDownPayment;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanHasFinancialOperator;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanId;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanInstallmentIntervalDays;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanInstallmentQuantity;
@@ -27,9 +18,8 @@ use App\Domain\PaymentPlan\ValueObjects\PaymentPlanIsOpen;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanManualInvoiceSplit;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanMinInstallments;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanName;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanPaymentType;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanShowAtCounter;
-use App\Domain\PaymentPlan\ValueObjects\PaymentPlanType;
+use App\PlanoPagamento;
 
 class PaymentPlan extends BaseEntity
 {
@@ -206,24 +196,24 @@ class PaymentPlan extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new PaymentPlanId($value))],
-            ['keys' => ['name'], 'callback' => fn($value) => $entity->name(new PaymentPlanName((string)$value))],
-            ['keys' => ['descricao', 'description'], 'callback' => fn($value) => $entity->description(new PaymentPlanDescription((string)$value))],
-            ['keys' => ['diasmedios', 'averageDays'], 'callback' => fn($value) => $entity->averageDays(new PaymentPlanAverageDays((string)$value))],
-            ['keys' => ['qtdParcelas', 'installmentQuantity'], 'callback' => fn($value) => $entity->installmentQuantity(new PaymentPlanInstallmentQuantity((string)$value))],
-            ['keys' => ['desdobrarDuplicataManual', 'manualInvoiceSplit'], 'callback' => fn($value) => $entity->manualInvoiceSplit(new PaymentPlanManualInvoiceSplit((string)$value))],
-            ['keys' => ['gerarDuplicataManual', 'generateInvoiceManually'], 'callback' => fn($value) => $entity->generateInvoiceManually(new PaymentPlanGenerateInvoiceManually((string)$value))],
-            ['keys' => ['isAtiva', 'isActive'], 'callback' => fn($value) => $entity->isActive(new PaymentPlanIsActive((string)$value))],
-            ['keys' => ['isAberto', 'isOpen'], 'callback' => fn($value) => $entity->isOpen(new PaymentPlanIsOpen((string)$value))],
-            ['keys' => ['qtdMinParcelas', 'minInstallments'], 'callback' => fn($value) => $entity->minInstallments(new PaymentPlanMinInstallments((string)$value))],
-            ['keys' => ['qtd_dias_pri_parcela', 'firstInstallmentDays'], 'callback' => fn($value) => $entity->firstInstallmentDays(new PaymentPlanFirstInstallmentDays((string)$value))],
-            ['keys' => ['qtdDiasIntervaloParcelas', 'installmentIntervalDays'], 'callback' => fn($value) => $entity->installmentIntervalDays(new PaymentPlanInstallmentIntervalDays((string)$value))],
-            ['keys' => ['exibe_balcao', 'showAtCounter'], 'callback' => fn($value) => $entity->showAtCounter(new PaymentPlanShowAtCounter((string)$value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['branchId', 'filial_id'], 'callback' => fn($value) => $entity->branchId(new PaymentPlanBranchId((string)$value))],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new PaymentPlanId($value))],
+            ['keys' => ['name'], 'callback' => fn ($value) => $entity->name(new PaymentPlanName((string)$value))],
+            ['keys' => ['descricao', 'description'], 'callback' => fn ($value) => $entity->description(new PaymentPlanDescription((string)$value))],
+            ['keys' => ['diasmedios', 'averageDays'], 'callback' => fn ($value) => $entity->averageDays(new PaymentPlanAverageDays((string)$value))],
+            ['keys' => ['qtdParcelas', 'installmentQuantity'], 'callback' => fn ($value) => $entity->installmentQuantity(new PaymentPlanInstallmentQuantity((string)$value))],
+            ['keys' => ['desdobrarDuplicataManual', 'manualInvoiceSplit'], 'callback' => fn ($value) => $entity->manualInvoiceSplit(new PaymentPlanManualInvoiceSplit((string)$value))],
+            ['keys' => ['gerarDuplicataManual', 'generateInvoiceManually'], 'callback' => fn ($value) => $entity->generateInvoiceManually(new PaymentPlanGenerateInvoiceManually((string)$value))],
+            ['keys' => ['isAtiva', 'isActive'], 'callback' => fn ($value) => $entity->isActive(new PaymentPlanIsActive((string)$value))],
+            ['keys' => ['isAberto', 'isOpen'], 'callback' => fn ($value) => $entity->isOpen(new PaymentPlanIsOpen((string)$value))],
+            ['keys' => ['qtdMinParcelas', 'minInstallments'], 'callback' => fn ($value) => $entity->minInstallments(new PaymentPlanMinInstallments((string)$value))],
+            ['keys' => ['qtd_dias_pri_parcela', 'firstInstallmentDays'], 'callback' => fn ($value) => $entity->firstInstallmentDays(new PaymentPlanFirstInstallmentDays((string)$value))],
+            ['keys' => ['qtdDiasIntervaloParcelas', 'installmentIntervalDays'], 'callback' => fn ($value) => $entity->installmentIntervalDays(new PaymentPlanInstallmentIntervalDays((string)$value))],
+            ['keys' => ['exibe_balcao', 'showAtCounter'], 'callback' => fn ($value) => $entity->showAtCounter(new PaymentPlanShowAtCounter((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn ($value) => $entity->branchId(new PaymentPlanBranchId((string)$value))],
         ];
 
         foreach ($mapping as $map) {

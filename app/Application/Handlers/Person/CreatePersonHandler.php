@@ -3,9 +3,11 @@
 namespace App\Application\Handlers\Person;
 
 use App\Application\Commands\Person\CreatePersonCommand;
-use App\Pessoa;
 use App\Domain\Person\Entities\Person;
-use App\Domain\Person\Repositories\PersonRepositoryInterface;;
+use App\Domain\Person\Repositories\PersonRepositoryInterface;
+use App\Pessoa;
+
+;
 
 class CreatePersonHandler
 {

@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\NotificationException;
+use App\Helpers\NotificationHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Notification;
-use App\Profissional;
-use App\Filial;
-use App\Exceptions\NotificationException;
-use Illuminate\Support\Facades\Validator;
-use App\Helpers\NotificationHelper;
 
 class NotificationController extends Controller
 {

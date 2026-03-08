@@ -2,14 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Produto;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ncm extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
+
+    use SoftDeletes;
 
     protected $table = 'ncms';
     protected $primaryKey = 'id';
@@ -30,8 +32,6 @@ class Ncm extends Model
         'active',
         'tenant_id'
     ];
-
-    use SoftDeletes;
 
     public function produto()
     {

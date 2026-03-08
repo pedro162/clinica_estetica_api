@@ -9,19 +9,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Servico extends Model
 {
-	use SoftDeletes, BelongsToTenant, HasFactory;
+    use SoftDeletes;
+    use BelongsToTenant;
+    use HasFactory;
 
-	protected $primaryKey	= 'id';
-	protected $table 		= 'servicos';
-	protected $fillable 	= [
-		'name',
-		'descricao',
-		'vrServico',
-		'unidade',
-		'user_id',
-		'user_update_id',
-		'type',
-		'active',
-		'tenant_id'
-	];
+    protected $primaryKey	= 'id';
+    protected $table 		= 'servicos';
+    protected $fillable 	= [
+        'name',
+        'descricao',
+        'vrServico',
+        'unidade',
+        'user_id',
+        'user_update_id',
+        'type',
+        'active',
+        'tenant_id'
+    ];
 }

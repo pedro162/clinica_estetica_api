@@ -6,7 +6,6 @@ use App\Application\Commands\PaymentPlan\CreatePaymentPlanCommand;
 use App\Application\Services\PaymentPlan\PaymentPlanApplicationServiceInterface;
 use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\PaymentPlan\CreatePaymentPlanRequest;
 use App\Http\Requests\V1\PaymentPlan\DestroyPaymentPlanRequest;
 use App\Http\Requests\V1\PaymentPlan\GetAllPaymentPlanRequest;
 use App\Http\Requests\V1\PaymentPlan\ShowPaymentPlanRequest;
@@ -14,8 +13,6 @@ use App\Http\Requests\V1\PaymentPlan\StorePaymentPlanRequest;
 use App\Http\Requests\V1\PaymentPlan\UpdatePaymentPlanRequest;
 use App\Http\Resources\V1\PaymentPlan\GetAllPaymentPlanResource;
 use App\Http\Resources\V1\PaymentPlan\PaymentPlanResource;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PaymentPlanController extends Controller
 {

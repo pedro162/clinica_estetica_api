@@ -14,9 +14,6 @@ use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 use App\Pessoa;
 use App\Profissional;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AppointmentServiceTest extends TestCase
@@ -44,7 +41,7 @@ class AppointmentServiceTest extends TestCase
         $branch = Filial::where('id', '>', '1')->first();
         $command = new CreateAppointmentCommand();
         $command->appointmentId(0)
-            ->appointmentStartDate("2024-06-30")
+            ->appointmentStartDate('2024-06-30')
             ->appointmentPersonId(factory(Pessoa::class)->create()->id)
             ->appointmentStartHour('10:45')
             ->appointmentEndDate('')
@@ -53,7 +50,7 @@ class AppointmentServiceTest extends TestCase
             ->appointmentBranchId(factory(Filial::class)->create()->id)
             ->appointmentName('José')
             ->appointmentNickname('Pedro')
-            ->appointmentReminder("Test")
+            ->appointmentReminder('Test')
             ->appointmentPriority('alta')
             ->appointmentType('consulta')
             ->appointmentActive('yes')
@@ -71,7 +68,7 @@ class AppointmentServiceTest extends TestCase
         return $objServiceNotification->createAppointmentNotification($appointment); */
         $idAppointment = (string) $appointment->getId();
         $idAppointment = (int) $idAppointment;
-        $this->assertGreaterThan(0, 1, "it was not possible to create the appointment");
+        $this->assertGreaterThan(0, 1, 'it was not possible to create the appointment');
     }
 
     /**

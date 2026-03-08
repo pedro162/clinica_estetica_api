@@ -2,19 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\ProfissionalHorarioExcepton;
+use App\Helpers\ProfissionalHorarioHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Formulario;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\ProfissionalHorarioExcepton;
-use \App\Pessoa;
-use \App\Filial;
-use \App\Profissional;
-use \App\Utilitarios;
-use \App\Helpers\ProfissionalHorarioHelper;
-use Illuminate\Support\Facades\Auth;
 
 class ProfissionalHorarioController extends Controller
 {
@@ -75,7 +67,7 @@ class ProfissionalHorarioController extends Controller
         }
     }
 
-    
+
 
     /**
      * Display the specified resource.
@@ -207,7 +199,7 @@ class ProfissionalHorarioController extends Controller
                 return response()->json([['mensagem' => 'Parâmetro inválido', 'class' => 'warning'], 400]);
             }
 
-           
+
             $objOrdemHelper = new ProfissionalHorarioHelper();
             $registro       = $objOrdemHelper->destroy($id);
 
@@ -273,11 +265,11 @@ class ProfissionalHorarioController extends Controller
 
     protected function validaRequest(Request $request)
     {
-         $validator = Validator::make($request->all(), [
-            'hora' => 'required|min:1',
+        $validator = Validator::make($request->all(), [
+           'hora' => 'required|min:1',
         ], [
-            'hora.required' => 'O campo "Horário" é obrigatório.',
-            'hora.min' => 'O "Horário" deve conter pelo menos :min caracteres.',
+           'hora.required' => 'O campo "Horário" é obrigatório.',
+           'hora.min' => 'O "Horário" deve conter pelo menos :min caracteres.',
         ]);
 
         if ($validator->fails()) {
@@ -293,6 +285,6 @@ class ProfissionalHorarioController extends Controller
         return true;
     }
 
-    
-    
+
+
 }

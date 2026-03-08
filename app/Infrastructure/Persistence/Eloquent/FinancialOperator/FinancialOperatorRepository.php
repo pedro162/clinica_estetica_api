@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\FinancialOperator;
 
-use App\OperadorFinanceiro;
 use App\Domain\FinancialOperator\Entities\FinancialOperator;
 use App\Domain\FinancialOperator\Repositories\FinancialOperatorRepositoryInterface;
 use App\Domain\FinancialOperator\ValueObjects\FinancialOperatorId;
+use App\OperadorFinanceiro;
 use Illuminate\Support\Facades\Auth;
 
 class FinancialOperatorRepository implements FinancialOperatorRepositoryInterface

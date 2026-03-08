@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
+use Auth;
 use Illuminate\Foundation\Http\FormRequest;
-use \Auth;
 
 class CobrancaReceberRequest extends FormRequest
 {
@@ -14,7 +14,7 @@ class CobrancaReceberRequest extends FormRequest
      */
     public function authorize()
     {
-        if(Auth::check()){
+        if (Auth::check()) {
             return true;
         }
         return false;

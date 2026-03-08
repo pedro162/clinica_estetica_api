@@ -2,16 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Profissional;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Especialidade extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    protected $table = "especialidades";
-    protected $primaryKey = "id";
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $table = 'especialidades';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'name',
         'user_id',

@@ -2,16 +2,12 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Estado;
-use App\Pais;
 use App\Exceptions\EstadoException;
+use App\Pais;
 
 class EstadoHelper
 {
-
     public function info($dados, $id)
     {
 
@@ -78,7 +74,7 @@ class EstadoHelper
         ];
         /*
 
-            
+
                 <!--
                     'nmEStado',
                     'codEstado',
@@ -89,7 +85,7 @@ class EstadoHelper
                     'user_update_id',
                     'active',
 
-                 
+
         */
 
 

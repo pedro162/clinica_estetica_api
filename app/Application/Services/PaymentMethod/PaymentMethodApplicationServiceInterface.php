@@ -4,7 +4,6 @@ namespace App\Application\Services\PaymentMethod;
 
 use App\Application\Commands\PaymentMethod\CreatePaymentMethodCommand;
 use App\FormaPagamento;
-use App\Domain\PaymentMethod\Entities\PaymentMethod;
 use Illuminate\Support\Collection;
 
 interface PaymentMethodApplicationServiceInterface

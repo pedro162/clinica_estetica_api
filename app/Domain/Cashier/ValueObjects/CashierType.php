@@ -10,7 +10,7 @@ class CashierType
     {
         if (!empty($value)) {
             if (!in_array($value, ['banco', 'convencional'])) {
-                throw new \InvalidArgumentException("The cashier type is invalid. It should be either (banco, convencional)");
+                throw new \InvalidArgumentException('The cashier type is invalid. It should be either (banco, convencional)');
             }
         }
 

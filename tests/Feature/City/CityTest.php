@@ -2,20 +2,15 @@
 
 namespace Tests\Feature\City;
 
-use App\Domain\City\Entities\City;
+use App\Cidade;
 use App\Estado;
 use App\User;
-use App\Cidade;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class CityTest extends TestCase
 {
-
     protected function setUp(): void
     {
         parent::setUp();

@@ -4,7 +4,6 @@ namespace App\Application\Commands;
 
 class CreateAppointmentCommand
 {
-
     protected string $appointmentId;
     protected string $appointmentStartDate;
     protected string $appointmentPersonId;

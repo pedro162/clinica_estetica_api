@@ -2,20 +2,17 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use \App\Filial;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrdemServicoCobranca extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
 
-    protected $table = "ordem_servico_cobrancas";
-    protected $primaryKey = "id";
+    protected $table = 'ordem_servico_cobrancas';
+    protected $primaryKey = 'id';
     protected $fillable = [
 
         'ordem_servico_id',

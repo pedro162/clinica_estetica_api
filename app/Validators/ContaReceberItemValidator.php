@@ -2,15 +2,13 @@
 
 namespace App\Validators;
 
-use \App\ContaReceberItem;
-use \App\Caixa;
+use App\Caixa;
+use App\ContaReceberItem;
+use App\Exceptions\CobrancaReceberException;
 use Illuminate\Support\Facades\Validator;
-use \App\Exceptions\CobrancaReceberException;
 
 class ContaReceberItemValidator
 {
-
-
     public function validarBaixar(int $id, array $dados = [])
     {
 
@@ -98,7 +96,8 @@ class ContaReceberItemValidator
                 $msg .= $mensagem . '<br/>';
             }
 
-            $errosEncontrados[] = $msg;;
+            $errosEncontrados[] = $msg;
+            ;
         }
 
         return $errosEncontrados;

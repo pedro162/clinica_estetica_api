@@ -11,9 +11,9 @@ use App\Domain\Person\ValueObjects\PersonId;
 use App\Domain\Person\ValueObjects\PersonName;
 use App\Domain\Person\ValueObjects\PersonOptionalName;
 use App\Domain\Person\ValueObjects\PersonSex;
-use Illuminate\Support\Facades\DB;
 use App\Pessoa;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class EloquentPersonRepository implements PersonRepositoryInterface
 {
@@ -36,7 +36,7 @@ class EloquentPersonRepository implements PersonRepositoryInterface
                 'sexo' => $person->getSex(),
                 'email' => $person->getEmail()
                 //'users_create_id'
-                //'users_update_id'   
+                //'users_update_id'
             ]);
         } else {
             //create

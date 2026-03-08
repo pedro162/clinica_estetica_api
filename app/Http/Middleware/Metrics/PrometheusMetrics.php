@@ -4,14 +4,14 @@ namespace App\Http\Middleware\Metrics;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Prometheus\CollectorRegistry;
-
-use function Ramsey\Uuid\v1;
+use Symfony\Component\HttpFoundation\Response;
 
 class PrometheusMetrics
 {
-    public function __construct(private CollectorRegistry $registry) {}
+    public function __construct(private CollectorRegistry $registry)
+    {
+    }
 
     /**
      * Handle an incoming request.

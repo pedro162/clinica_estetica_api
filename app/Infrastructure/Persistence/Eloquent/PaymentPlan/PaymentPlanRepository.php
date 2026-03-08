@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\PaymentPlan;
 
-use App\PlanoPagamento;
 use App\Domain\PaymentPlan\Entities\PaymentPlan;
 use App\Domain\PaymentPlan\Repositories\PaymentPlanRepositoryInterface;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanId;
+use App\PlanoPagamento;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentPlanRepository implements PaymentPlanRepositoryInterface

@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\NcmException;
 use App\Http\Controllers\Controller;
+use App\Ncm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Exceptions\NcmException;
-use Illuminate\Validation\Rule;
-use App\Ncm;
 
 class NcmController extends Controller
 {
-
     protected function ncmRequest(Request $request)
     {
-        return Validator::make($request->all(),[
-            'name'=>'required'
+        return Validator::make($request->all(), [
+            'name' => 'required'
 
-        ],[]);
+        ], []);
     }
     /**
      * Display a listing of the resource.
@@ -26,131 +24,131 @@ class NcmController extends Controller
      */
     public function index(Request $request)
     {
-        try{
+        try {
             \DB::beginTransaction();
 
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'nome_ncm'=>'ncm.name'
+                'nome_ncm' => 'ncm.name'
 
             ];
 
             $registro = \DB::table('ncms');
-            
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('ncms.id', $val);
                             }
                             break;
                         case 'ncm':
-                            if(is_string($val)){
-                                    
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                    
+
                                 $registro->whereIn('ncms.ncm', $val);
                             }
-                        break;
+                            break;
                         case 'nome_ncm':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
-                                
-                                $registro->where('ncms.nmNcm', 'like' , '%'.$val.'%');
+
+                                $registro->where('ncms.nmNcm', 'like', '%'.$val.'%');
                             }
                             break;
                         case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
+                            $val = (int) $val;
+                            if (is_integer($val) && $val > 0) {
+
+                                $registro->limit($val);
+                            }
                             break;
                         case 'ordem':
 
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
 
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
 
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
+                            $val = explode(',', $val);
+                            for ($i = 0; !($i == count($val)); $i++) {
+                                $atual = explode('-', $val[$i]);
+                                if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                    $parsed = $parse[trim($atual[0])];
+
+                                    if ($parsed) {
+
+                                        $registro->orderBy($parsed, $atual[1]);
                                     }
-                                    
-                                    
                                 }
 
-                                break;
 
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
+                            }
+
+                            break;
+
+                        case 'campos':
+                            if (is_array($val) && count($val) > 0) {
+                                //$campos = $this->montaCamposConsulta($registro, $val);
+
+                            }
                             break;
 
                     }
                 }
             }
-            if($campos){
+            if ($campos) {
                 $registro->select($campos);
-            }else{
+            } else {
                 $registro->select('ncms.*');
 
             }
-           
+
             $registro = $registro->where('ncms.active', '=', 'yes')->get();
 
-            
+
             \DB::commit();
 
             return view('admin.ncm.index', compact('registro', 'consulta'));
 
-        }catch(NcmException $e){
+        } catch (NcmException $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
 
             //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -171,7 +169,7 @@ class NcmController extends Controller
         $callBack = $dadosRequest['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
 
-        return view('admin.ncm.create', compact('callBack','idAssistente'));
+        return view('admin.ncm.create', compact('callBack', 'idAssistente'));
     }
 
     /**
@@ -182,7 +180,7 @@ class NcmController extends Controller
      */
     public function store(Request $request)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
             $dados = $request->all();
@@ -201,30 +199,30 @@ class NcmController extends Controller
             $dadosRequest['vrAliqImportada']    = $dados['vrAliqImportada'] ?? 0;
             $dadosRequest['vrAliqEstadual']     = $dados['vrAliqEstadual'] ?? 0;
             $dadosRequest['vrAliqMunicipal']    = $dados['vrAliqMunicipal'] ?? 0;
-           
+
             $registro = Ncm::create($dadosRequest);
             \DB::commit();
 
-            if($registro){
-                return response()->json(['mensagem'=>$registro, 'class'=>'sucess'], 200);
-            }else{
+            if ($registro) {
+                return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
+            } else {
                 throw new NcmException('Erro ao cadastrar NCM');
             }
 
-        }catch(NcmException $e){
+        } catch (NcmException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
+            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
     public function info(Request $request, $id, $idAssistente)
     {
-        
-        try{
+
+        try {
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
@@ -232,7 +230,7 @@ class NcmController extends Controller
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
 
-            if($id <= 0){
+            if ($id <= 0) {
 
                 throw new NcmException('Parâmetro ínválido');
 
@@ -243,7 +241,7 @@ class NcmController extends Controller
             $registro = Ncm::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
-            if($registro == null){
+            if ($registro == null) {
 
                 throw new NcmException('Ncm não encontrado');
             }
@@ -253,19 +251,19 @@ class NcmController extends Controller
             //return view('admin.produto.info', compact('registro'));
             return view('admin.ncm.info', compact('registro', 'idAssistente', 'callBack'));
 
-        }catch(NcmException $e){
-            
+        } catch (NcmException $e) {
+
             \DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
             //return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             $msg = 'Ocorreum um erro no servidor: '.$e->getMessage();
             return view('layouts._admin._error', compact('msg'));
-           // \Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+            // \Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
         }
@@ -279,17 +277,17 @@ class NcmController extends Controller
      */
     public function edit(Request $request, $id, $idAssistente)
     {
-        try{
-            
+        try {
+
             $dadosRequest = $request->all();
 
             $callBack = $dadosRequest['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-            if(! isset($id)){
+            if (! isset($id)) {
                 $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
             }
 
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new NcmException('Parâmetro ínválido');
             }
 
@@ -302,28 +300,28 @@ class NcmController extends Controller
             $registro = Ncm::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
 
-            if($registro == null){
+            if ($registro == null) {
                 throw new NcmException('Registro não encontrado');
-                
+
             }
 
             \DB::commit();
 
             return view('admin.ncm.edit', compact('registro', 'marcas', 'categorias', 'idAssistente', 'callBack'));
 
-         }catch(\NcmException $e){
+        } catch (\NcmException $e) {
             \DB::rollback();
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-             return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-             return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
 
         }
     }
@@ -357,26 +355,26 @@ class NcmController extends Controller
             $dadosRequest['vrAliqImportada']    = $dados['vrAliqImportada'] ?? 0;
             $dadosRequest['vrAliqEstadual']     = $dados['vrAliqEstadual'] ?? 0;
             $dadosRequest['vrAliqMunicipal']    = $dados['vrAliqMunicipal'] ?? 0;
-           
+
             $ncm = Ncm::where('active', '=', 'yes')->where('id', '=', $id)->first();
             $ncm->update($dadosRequest);
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$ncm, 'class'=>'sucess'], 200);
+            return response()->json(['mensagem' => $ncm, 'class' => 'sucess'], 200);
 
 
-        }catch (NcmException $th) {
+        } catch (NcmException $th) {
 
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
         }
     }
@@ -389,7 +387,7 @@ class NcmController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
@@ -403,19 +401,19 @@ class NcmController extends Controller
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>[], 'class'=>'sucess'], 200);
+            return response()->json(['mensagem' => [], 'class' => 'sucess'], 200);
 
-        }catch (NcmException $th) {
+        } catch (NcmException $th) {
 
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
         }
     }
@@ -423,15 +421,15 @@ class NcmController extends Controller
     public function head(Request $request)
     {
         $dados = $request->all();
-        
-        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
-        if($isReload){
-           
+
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload'] : false;
+        if ($isReload) {
+
             return view('admin.ncm.head_refresh', compact('isReload'));
-        }else{
+        } else {
             return view('admin.ncm.head', compact('isReload'));
         }
-        
+
     }
 
     /**
@@ -442,7 +440,7 @@ class NcmController extends Controller
      */
     public function tributar(Request $request, $id, $idAssistente)
     {
-        try{
+        try {
 
             $dados = $request->all();
 
@@ -450,12 +448,12 @@ class NcmController extends Controller
             $callBack = $dados['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-            if( (!isset($id)) || ($id <= 0)){
-               // return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            if ((!isset($id)) || ($id <= 0)) {
+                // return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
             }
 
-            if( (!isset($id)) || ($id <= 0)){
-               // return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            if ((!isset($id)) || ($id <= 0)) {
+                // return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
             }
 
             \DB::beginTransaction();
@@ -464,14 +462,14 @@ class NcmController extends Controller
             \DB::commit();
 
             return view('admin.ncm.tributar', compact('registro', 'idAssistente', 'callBack'));
-        
-        }catch(NcmException $e){
+
+        } catch (NcmException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
-       
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 }

@@ -2,25 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\FinanceiroMovimentacoeException;
+use App\Helpers\FinanceiroMovimentacoeHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Formulario;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\FinanceiroMovimentacoeException;
-use \App\FormularioGrupo;
-use \App\Servico;
-use \App\FinanceiroMovimentacoe;
-use \App\ServicoItem;
-use \App\Pessoa;
-use \App\Filial;
-use \App\Profissional;
-use \App\Rca;
-use \App\Utilitarios;
-use \App\MotivoCancelamentoFinanceiroMovimentacoe;
-use \App\Helpers\FinanceiroMovimentacoeHelper;
-use Illuminate\Support\Facades\Auth;
 
 class MovimentacoesFinanceirasController extends Controller
 {
@@ -213,7 +199,7 @@ class MovimentacoesFinanceirasController extends Controller
                 return response()->json([['mensagem' => 'Parâmetro inválido', 'class' => 'warning'], 400]);
             }
 
-           
+
             $objOrdemHelper = new FinanceiroMovimentacoeHelper();
             $registro       = $objOrdemHelper->destroy($id);
 

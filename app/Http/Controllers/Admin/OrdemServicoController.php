@@ -2,25 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\OrdemServicoException;
+use App\Helpers\OrdemServicoHelper;
 use App\Http\Controllers\Controller;
+use App\OrdemServico;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Formulario;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\OrdemServicoException;
-use \App\FormularioGrupo;
-use \App\Servico;
-use \App\OrdemServico;
-use \App\ServicoItem;
-use \App\Pessoa;
-use \App\Filial;
-use \App\Profissional;
-use \App\Rca;
-use \App\Utilitarios;
-use \App\MotivoCancelamentoOrdemServico;
-use \App\Helpers\OrdemServicoHelper;
-use Illuminate\Support\Facades\Auth;
 
 class OrdemServicoController extends Controller
 {
@@ -29,14 +16,18 @@ class OrdemServicoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) {}
+    public function index(Request $request)
+    {
+    }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, $idAssistente) {}
+    public function create(Request $request, $idAssistente)
+    {
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -158,7 +149,9 @@ class OrdemServicoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $id, $idAssistente) {}
+    public function show(Request $request, $id, $idAssistente)
+    {
+    }
 
 
     public function info(Request $request, $id)
@@ -413,7 +406,7 @@ class OrdemServicoController extends Controller
             \DB::beginTransaction();
 
             if ($id <= 0) {
-                throw new OrdemServicoException("Parâmetro inválido.");
+                throw new OrdemServicoException('Parâmetro inválido.');
             }
 
             $objOrdemHelper = new OrdemServicoHelper();
@@ -530,7 +523,9 @@ class OrdemServicoController extends Controller
         }
     }
 
-    public function head(Request $request) {}
+    public function head(Request $request)
+    {
+    }
 
 
     /**

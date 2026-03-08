@@ -190,6 +190,9 @@ return [
         App\Providers\PrometheusServiceProvider::class,
         App\Providers\Service\ServiceProvider::class,
         App\Providers\Seller\SellerProvider::class,
+        App\Providers\Neighborhood\NeighborhoodProvider::class,
+        App\Providers\Category\CategoryProvider::class,
+        App\Providers\WorkOrder\WorkOrderProvider::class,
     ],
 
     /*

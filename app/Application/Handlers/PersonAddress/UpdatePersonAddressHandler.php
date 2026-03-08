@@ -4,7 +4,9 @@ namespace App\Application\Handlers\PersonAddress;
 
 use App\Application\Commands\PersonAddress\CreatePersonAddressCommand;
 use App\Domain\PersonAddress\Entities\PersonAddress;
-use App\Domain\PersonAddress\Repositories\PersonAddressRepositoryInterface;;
+use App\Domain\PersonAddress\Repositories\PersonAddressRepositoryInterface;
+
+;
 
 class UpdatePersonAddressHandler
 {

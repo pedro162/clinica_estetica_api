@@ -2,16 +2,17 @@
 
 namespace App\Helpers;
 
-use \App\ContaReceberItem;
-use \App\ContaReceberCartao;
-use \App\Pessoa;
-use \App\BandeiraCartao;
+use App\BandeiraCartao;
+use App\ContaReceberCartao;
+use App\ContaReceberItem;
 use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;
-use \App\Exceptions\CobrancaReceberException;
+use App\Exceptions\CobrancaReceberException;
 
 class ContaReceberCartaoHelper
 {
-    public function __construct(protected AccountReceivableRepositoryInterface $accountReceivableRepository) {}
+    public function __construct(protected AccountReceivableRepositoryInterface $accountReceivableRepository)
+    {
+    }
 
     public function gerarCarteiraCartao(int $idCobrancaReceberItem, int $idBandeira, array $dados): array
     {
@@ -73,7 +74,8 @@ class ContaReceberCartaoHelper
             throw new CobrancaReceberException('O valor da cobrança do contas a receber de código nº ' . $cobrancaReceber->id . ' é inválido.');
         }
 
-        $qtdParcela         = $objPlanoPagamento->qtdParcelas ?? 1;;
+        $qtdParcela         = $objPlanoPagamento->qtdParcelas ?? 1;
+        ;
         $dataParcelas       = [];
         $qtdDiasIntervalo   = $objPlanoPagamento->qtdDiasIntervaloParcelas ?? 0;
         $qtdDiasPriParcela  = $objPlanoPagamento->qtd_dias_pri_parcela ?? 0;
@@ -90,7 +92,7 @@ class ContaReceberCartaoHelper
         $vrTotalParelasGeradas = 0;
 
         for ($i = 0; !($i == $qtdParcela); $i++) {
-            $dtVencimento = $objDtVencimento->format("Y-m-d H:i:s");
+            $dtVencimento = $objDtVencimento->format('Y-m-d H:i:s');
             $dataParcelas[] = [
                 'nr_doc' => $dados['nr_doc'] ?? $dados['documento'] ?? null,
                 'dt_emissao' => date('Y-m-d H:i:s'),

@@ -2,9 +2,6 @@
 
 namespace App\Application\Commands\PaymentPlan;
 
-use App\Utilitarios;
-use Exception;
-
 class CreatePaymentPlanCommand
 {
     protected string $id;
@@ -210,24 +207,24 @@ class CreatePaymentPlanCommand
     {
         $entity = new self();
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($v) => $entity->id($v)],
-            ['keys' => ['name'], 'callback' => fn($v) => $entity->name($v)],
-            ['keys' => ['description', 'descricao'], 'callback' => fn($v) => $entity->description($v)],
-            ['keys' => ['averageDays', 'diasmedios'], 'callback' => fn($v) => $entity->averageDays($v)],
-            ['keys' => ['installmentQuantity', 'qtdParcelas'], 'callback' => fn($v) => $entity->installmentQuantity($v)],
-            ['keys' => ['manualInvoiceSplit', 'desdobrarDuplicataManual'], 'callback' => fn($v) => $entity->manualInvoiceSplit($v)],
-            ['keys' => ['generateInvoiceManually', 'gerarDuplicataManual'], 'callback' => fn($v) => $entity->generateInvoiceManually($v)],
-            ['keys' => ['isActive', 'isAtiva'], 'callback' => fn($v) => $entity->isActive($v)],
-            ['keys' => ['isOpen', 'isAberto'], 'callback' => fn($v) => $entity->isOpen($v)],
-            ['keys' => ['minInstallments', 'qtdMinParcelas'], 'callback' => fn($v) => $entity->minInstallments($v)],
-            ['keys' => ['firstInstallmentDays', 'qtd_dias_pri_parcela'], 'callback' => fn($v) => $entity->firstInstallmentDays($v)],
-            ['keys' => ['installmentIntervalDays', 'qtdDiasIntervaloParcelas'], 'callback' => fn($v) => $entity->installmentIntervalDays($v)],
-            ['keys' => ['showAtCounter', 'exibe_balcao'], 'callback' => fn($v) => $entity->showAtCounter($v)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($v) => $entity->tenantId($v)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($v) => $entity->userId($v)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($v) => $entity->userUpdateId($v)],
-            ['keys' => ['active'], 'callback' => fn($v) => $entity->active($v)],
-            ['keys' => ['branchId', 'filial_id'], 'callback' => fn($v) => $entity->branchId($v)],
+            ['keys' => ['id'], 'callback' => fn ($v) => $entity->id($v)],
+            ['keys' => ['name'], 'callback' => fn ($v) => $entity->name($v)],
+            ['keys' => ['description', 'descricao'], 'callback' => fn ($v) => $entity->description($v)],
+            ['keys' => ['averageDays', 'diasmedios'], 'callback' => fn ($v) => $entity->averageDays($v)],
+            ['keys' => ['installmentQuantity', 'qtdParcelas'], 'callback' => fn ($v) => $entity->installmentQuantity($v)],
+            ['keys' => ['manualInvoiceSplit', 'desdobrarDuplicataManual'], 'callback' => fn ($v) => $entity->manualInvoiceSplit($v)],
+            ['keys' => ['generateInvoiceManually', 'gerarDuplicataManual'], 'callback' => fn ($v) => $entity->generateInvoiceManually($v)],
+            ['keys' => ['isActive', 'isAtiva'], 'callback' => fn ($v) => $entity->isActive($v)],
+            ['keys' => ['isOpen', 'isAberto'], 'callback' => fn ($v) => $entity->isOpen($v)],
+            ['keys' => ['minInstallments', 'qtdMinParcelas'], 'callback' => fn ($v) => $entity->minInstallments($v)],
+            ['keys' => ['firstInstallmentDays', 'qtd_dias_pri_parcela'], 'callback' => fn ($v) => $entity->firstInstallmentDays($v)],
+            ['keys' => ['installmentIntervalDays', 'qtdDiasIntervaloParcelas'], 'callback' => fn ($v) => $entity->installmentIntervalDays($v)],
+            ['keys' => ['showAtCounter', 'exibe_balcao'], 'callback' => fn ($v) => $entity->showAtCounter($v)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($v) => $entity->tenantId($v)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($v) => $entity->userId($v)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($v) => $entity->userUpdateId($v)],
+            ['keys' => ['active'], 'callback' => fn ($v) => $entity->active($v)],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn ($v) => $entity->branchId($v)],
         ];
 
         foreach ($mapping as $map) {
@@ -264,6 +261,6 @@ class CreatePaymentPlanCommand
             'active' => $this->getActive(),
         ];
 
-        return array_filter($data, fn($value) => $value !== null && $value !== '');
+        return array_filter($data, fn ($value) => $value !== null && $value !== '');
     }
 }

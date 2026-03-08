@@ -6,15 +6,12 @@ use App\Application\Commands\City\CreateCityCommand;
 use App\Application\Services\City\CityApplicationServiceInterface;
 use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\City\CreateCityRequest;
 use App\Http\Requests\V1\City\GetAllCityRequest;
 use App\Http\Requests\V1\City\ShowCityRequest;
 use App\Http\Requests\V1\City\StoreCityRequest;
 use App\Http\Requests\V1\City\UpdateCityRequest;
-use App\Http\Resources\V1\City\GetAllCityResource;
 use App\Http\Resources\V1\City\CityResource;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Http\Resources\V1\City\GetAllCityResource;
 
 class CityController extends Controller
 {

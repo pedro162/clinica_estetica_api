@@ -4,7 +4,6 @@ namespace App\Application\Commands;
 
 class CreateTemplateCommand
 {
-
     protected string $templateId;
     protected string $templateTitle;
     protected string $templateBody;

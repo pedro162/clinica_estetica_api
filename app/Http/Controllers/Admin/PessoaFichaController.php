@@ -2,25 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\PessoaFichaExcepton;
+use App\Helpers\PessoaFichaHelper;
 use App\Http\Controllers\Controller;
+use App\PessoaFormulario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Formulario;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\PessoaFichaExcepton;
-use \App\FormularioGrupo;
-use \App\Servico;
-use \App\PessoaFormulario;
-use \App\Pessoa;
-use \App\Filial;
-use \App\Profissional;
-use \App\Rca;
-use \App\Utilitarios;
-use \App\MotivoCancelamentoOrdemServico;
-use \App\Helpers\PessoaFichaHelper;
-use \App\Helpers\PessoaFichaRespostaHelper;
-use Illuminate\Support\Facades\Auth;
 
 class PessoaFichaController extends Controller
 {

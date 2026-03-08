@@ -14,7 +14,7 @@ trait TraitBlocoVI
         //$aFont = ['font'=> $this->fontePadrao, 'size' => 7, 'style' => ''];
         //$this->pdf->textBox($this->margem, $y, $this->wPrint, $this->bloco6H, '', $aFont, 'T', 'C', false, '', false);
 
-        $texto = "Consulte pela Chave de Acesso em:";
+        $texto = 'Consulte pela Chave de Acesso em:';
         $aFont = ['font' => $this->fontePadrao, 'size' => 8, 'style' => 'B'];
         $y1 = $this->pdf->textBox(
             $this->margem,
@@ -46,7 +46,7 @@ trait TraitBlocoVI
             false
         );
 
-        $chave =  str_replace('NFe', '', $this->infNFe->getAttribute("Id"));
+        $chave =  str_replace('NFe', '', $this->infNFe->getAttribute('Id'));
         $texto = $this->formatField($chave, $this->formatoChave);
         $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => ''];
         $y3 = $this->pdf->textBox(

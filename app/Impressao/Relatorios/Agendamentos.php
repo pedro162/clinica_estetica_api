@@ -2,15 +2,12 @@
 
 namespace App\Impressao\Relatorios;
 
-use InvalidArgumentException;
-use App\Impressao\Legacy\Dom;
+use App\Impressao\Legacy\Common;
 use App\Impressao\Legacy\Pdf;
-use \App\Impressao\Legacy\Common;
-
 
 class Agendamentos extends Common
 {
-    const FPDF_FONTPATH = 'font/';
+    public const FPDF_FONTPATH = 'font/';
 
     /**
      * alinhamento padrão do logo (C-Center)
@@ -98,7 +95,7 @@ class Agendamentos extends Common
      */
     protected $logomarca = '';
 
-    protected  $logomarcamarcadagua;
+    protected $logomarcamarcadagua;
     /**
      * mesagens de erro
      * @var string
@@ -198,7 +195,7 @@ class Agendamentos extends Common
      * @param string  $fonteDANFE  Nome da fonte alternativa do DAnfe
      * @param integer $mododebug   0-Não 1-Sim e 2-nada (2 default)
      */
-    public function __construct($dadosArr,  $sPathLogo = '')
+    public function __construct($dadosArr, $sPathLogo = '')
     {
         $sOrientacao = 'P';
         $sPapel = '';
@@ -338,7 +335,7 @@ class Agendamentos extends Common
         $this->pdf->setLineWidth(0.1);
         $this->pdf->setTextColor(0, 0, 0);
 
-        $fontProduto = array('font' => $this->fontePadrao, 'size' => 7, 'style' => '');
+        $fontProduto = ['font' => $this->fontePadrao, 'size' => 7, 'style' => ''];
 
         $this->textoAdic = '';
         //altura disponivel para os campos da DANFE
@@ -349,7 +346,7 @@ class Agendamentos extends Common
 
         $hDispo2 = 239; //dados produtos pag  . 2
         //Contagem da altura ocupada para impressão dos itens
-        $fontProduto = array('font' => $this->fontePadrao, 'size' => 7, 'style' => '');
+        $fontProduto = ['font' => $this->fontePadrao, 'size' => 7, 'style' => ''];
         $i = 0;
         $numlinhas = 0;
         $hUsado = $hCabecItens;
@@ -505,9 +502,9 @@ class Agendamentos extends Common
         //coluna esquerda identificação do emitente
         $w = round($maxW * 0.81, 0); //35;
         if ($this->orientacao == 'P') {
-            $aFont = array('font' => $this->fontePadrao, 'size' => 7, 'style' => 'I');
+            $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => 'I'];
         } else {
-            $aFont = array('font' => $this->fontePadrao, 'size' => 8, 'style' => 'B');
+            $aFont = ['font' => $this->fontePadrao, 'size' => 8, 'style' => 'B'];
         }
         $w1 = $w;
         $h = 30;
@@ -550,8 +547,8 @@ class Agendamentos extends Common
         // monta as informações apenas se diferente de full logo
 
         //Nome emitente
-        $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => '');
-        $texto = "Reservai";
+        $aFont = ['font' => $this->fontePadrao, 'size' => 15, 'style' => ''];
+        $texto = 'Reservai';
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         $this->pdf->textBox($x1 - 3, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
@@ -560,8 +557,8 @@ class Agendamentos extends Common
 
 
         //$y1 +=10;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
-        $texto = "Registros de Atendimentos";
+        $aFont = ['font' => $this->fontePadrao, 'size' => 10, 'style' => 'B'];
+        $texto = 'Registros de Atendimentos';
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         $this->pdf->textBox($x + 80, $y1 + 2, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
@@ -570,8 +567,8 @@ class Agendamentos extends Common
         $dtFinal = $this->dadosArr['dtFinal'];
 
         //$y1 +=10;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 9, 'style' => '');
-        $texto = "Período de " . $dtInicial . " até " . $dtFinal;
+        $aFont = ['font' => $this->fontePadrao, 'size' => 9, 'style' => ''];
+        $texto = 'Período de ' . $dtInicial . ' até ' . $dtFinal;
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         $this->pdf->textBox($x + 150, $y1 + 2, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
@@ -583,8 +580,8 @@ class Agendamentos extends Common
         $this->pdf->Line($x, $y1, $x + $maxW, $y1);
         $y1 += 2;
         //Nome emitente
-        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
-        $texto = $this->dadosArr['emitente']["nome"];
+        $aFont = ['font' => $this->fontePadrao, 'size' => 10, 'style' => 'B'];
+        $texto = $this->dadosArr['emitente']['nome'];
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
@@ -592,30 +589,30 @@ class Agendamentos extends Common
 
         //endereço
         $y1 = $y1 + 5;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 8, 'style' => '');
-        $fone = !empty($this->dadosArr['emitente']["fone"])
-            ? $this->dadosArr['emitente']["fone"]
+        $aFont = ['font' => $this->fontePadrao, 'size' => 8, 'style' => ''];
+        $fone = !empty($this->dadosArr['emitente']['fone'])
+            ? $this->dadosArr['emitente']['fone']
             : '';
-        $lgr        = $this->dadosArr['emitente']["logradouro"];
-        $nro        = $this->dadosArr['emitente']["numero"];
-        $cpl        = $this->dadosArr['emitente']["complemento"];
-        $bairro     = $this->dadosArr['emitente']["bairro"];
-        $CEP        = $this->dadosArr['emitente']["cep"];
-        $CEP        = $this->formatField($CEP, "#####-###");
-        $mun        = $this->dadosArr['emitente']["cidade"];
-        $UF         = $this->dadosArr['emitente']["uf"];
-        $IE         = $this->dadosArr['emitente']["inscricao"];
+        $lgr        = $this->dadosArr['emitente']['logradouro'];
+        $nro        = $this->dadosArr['emitente']['numero'];
+        $cpl        = $this->dadosArr['emitente']['complemento'];
+        $bairro     = $this->dadosArr['emitente']['bairro'];
+        $CEP        = $this->dadosArr['emitente']['cep'];
+        $CEP        = $this->formatField($CEP, '#####-###');
+        $mun        = $this->dadosArr['emitente']['cidade'];
+        $UF         = $this->dadosArr['emitente']['uf'];
+        $IE         = $this->dadosArr['emitente']['inscricao'];
 
-        if (!empty($this->dadosArr['emitente']["CNPJ"])) {
+        if (!empty($this->dadosArr['emitente']['CNPJ'])) {
             $cnpjcpf = $this->formatField(
-                $this->dadosArr['emitente']["CNPJ"],
-                "###.###.###/####-##"
+                $this->dadosArr['emitente']['CNPJ'],
+                '###.###.###/####-##'
             );
         } else {
-            $cnpjcpf = !empty($this->dadosArr['emitente']["CPF"]) ?
+            $cnpjcpf = !empty($this->dadosArr['emitente']['CPF']) ?
                 $this->formatField(
-                    $this->dadosArr['emitente']["CPF"],
-                    "###.###.###-##"
+                    $this->dadosArr['emitente']['CPF'],
+                    '###.###.###-##'
                 ) : '';
         }
 
@@ -627,10 +624,10 @@ class Agendamentos extends Common
                 . $CEP . "\n" . $mun . " - " . $UF . " "
                 . "Fone/Fax: " . $fone."\n";
 
-       
+
         */
-        $texto =  "CNPJ: " . $cnpjcpf . "\n"
-            . "Inscrição Estadual: " . $IE . "\n";
+        $texto =  'CNPJ: ' . $cnpjcpf . "\n"
+            . 'Inscrição Estadual: ' . $IE . "\n";
 
         $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
@@ -640,7 +637,7 @@ class Agendamentos extends Common
         $w = round($maxW * 0.19, 0); //35;
         $w2 = $w;
         //tipo de entrega
-        $aFont = array('font' => $this->fontePadrao, 'size' => 8, 'style' => '');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 8, 'style' => ''];
 
 
 
@@ -659,7 +656,7 @@ class Agendamentos extends Common
 
         //#####################################################################
         //DADOS DOS PRODUTOS / SERVIÇOS
-        $texto = "DADOS DOS AGENDAMENTOS";
+        $texto = 'DADOS DOS AGENDAMENTOS';
 
         $w = $this->wPrint;
 
@@ -679,10 +676,10 @@ class Agendamentos extends Common
         $this->pdf->setFillColor(46, 64, 84);
         $this->pdf->setTextColor(255, 255, 255);
 
-        $texto = "Código";
+        $texto = 'Código';
         $w1 = round($w * 0.10, 0);
         $h = 6;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 9, 'style' => 'B');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 9, 'style' => 'B'];
         $this->pdf->textBox($x, $y, $w1, $h, $texto, $aFont, 'C', 'C', 0, '', 0, 0, 0, 1);
 
         //DESCRIÇÃO DO PRODUTO / SERVIÇO
@@ -719,7 +716,7 @@ class Agendamentos extends Common
         // LOOP COM OS DADOS DOS PRODUTOS
         $i = 0;
         $hUsado = $h;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 7, 'style' => '');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => ''];
 
         $y += $hUsado;
         $this->valorTotalTabela = 0;
@@ -753,13 +750,13 @@ class Agendamentos extends Common
 
                     $y_linha = $y + $h;
                     // linha entre itens
-                    $this->pdf->line($oldX, $y, $w + 2,  $y);
+                    $this->pdf->line($oldX, $y, $w + 2, $y);
                     //corrige o x
                     $x = $oldX;
                     //codigo do produto
                     $texto =  $d['cod'];
                     $this->pdf->textBox($x, $y, $w1, $h, $texto, $aFont, 'T', 'C', 0, '');
-                    //DESCRIÇÃO   
+                    //DESCRIÇÃO
 
                     $x += $w1;
                     $w2 = round($w * 0.54, 0);
@@ -838,7 +835,7 @@ class Agendamentos extends Common
         $oldY = $y;
         $w = $this->wPrint;
         $totItens = count($this->dadosArr['itens']);
-        $aFont = array('font' => $this->fontePadrao, 'size' => 7, 'style' => 'B');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => 'B'];
         $i = 0;
         $this->currentpag = $pag;
         //$y+=2;
@@ -886,12 +883,12 @@ class Agendamentos extends Common
                     /*echo "this->currentpag:";
                         echo $this->currentpag;
                         echo "<br>";
-                        
+
                         echo "this->totpag:";
                         echo $this->totpag;
                         echo "<br>";
-                        
-                        
+
+
 
                         echo "hmax:";
                         echo $hmax;
@@ -935,10 +932,10 @@ class Agendamentos extends Common
     {
         $w = $this->wPrint;
 
-        $aFont = array('font' => $this->fontePadrao, 'size' => 7, 'style' => 'I');
-        $texto = "Impresso em " . date('d/m/Y') . " as " . date('H:i:s');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => 'I'];
+        $texto = 'Impresso em ' . date('d/m/Y') . ' as ' . date('H:i:s');
         $this->pdf->textBox($x, $y, $w, 0, $texto, $aFont, 'T', 'L', false);
-        $texto = $this->creditos .  "  Desenvolvido por Reservai - www.reservai.com.br";
+        $texto = $this->creditos .  '  Desenvolvido por Reservai - www.reservai.com.br';
         $this->pdf->textBox($x, $y, $w, 0, $texto, $aFont, 'T', 'R', false, '');
 
         return $y;

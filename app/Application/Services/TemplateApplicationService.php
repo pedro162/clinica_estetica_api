@@ -5,7 +5,6 @@ namespace App\Application\Services;
 use App\Application\Commands\CreateTemplateCommand;
 use App\Application\Handlers\CreateTemplateHandler;
 use App\Domain\Template\Entities\Template;
-use App\Funcionario;
 
 class TemplateApplicationService
 {

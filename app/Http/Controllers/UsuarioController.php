@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use \App\Http\Requests\UsuarioRequest;
-use \Auth;
+use App\Http\Requests\UsuarioRequest;
 use App\User;
+use Auth;
+use Illuminate\Http\Request;
+
 //aula 4 api_restful ok //instalar o postman
 class UsuarioController extends Controller
 {
@@ -14,9 +15,9 @@ class UsuarioController extends Controller
         try {
 
             $dados = $request->only('email', 'password');
-            $autenticado =false;
-            \DB::transaction(function() use (&$dados){
-                if(Auth::attempt(['email'=>$dados['email'], 'password'=>$dados['password']])){
+            $autenticado = false;
+            \DB::transaction(function () use (&$dados) {
+                if (Auth::attempt(['email' => $dados['email'], 'password' => $dados['password']])) {
                     $autenticado = true;
                 }
 
@@ -24,20 +25,20 @@ class UsuarioController extends Controller
             });
             return redirect()->route('produto.head');
 
-             \Session::flash('mensagem', ['msg'=>'Usuario ou senha inválidos', 'class'=>'alert alert-warning']);
-                return redirect()->route('admin.login');
-            
+            \Session::flash('mensagem', ['msg' => 'Usuario ou senha inválidos', 'class' => 'alert alert-warning']);
+            return redirect()->route('admin.login');
+
         } catch (\Exception $e) {
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
         }
     }
 
     public function logarApi(Request $request)
     {
-        
 
 
-        try{
+
+        try {
 
 
             set_time_limit(9000000);
@@ -45,35 +46,35 @@ class UsuarioController extends Controller
             \DB::beginTransaction();
 
             $dados = $request->only('email', 'password');
-            $autenticado =false;
+            $autenticado = false;
 
-            if(Auth::attempt(['email'=>$dados['email'], 'password'=>$dados['password']])){
+            if (Auth::attempt(['email' => $dados['email'], 'password' => $dados['password']])) {
                 $autenticado = true;
-            }else{
-                throw new Exception("Não autorizado");
+            } else {
+                throw new Exception('Não autorizado');
             }
 
-             $user = User::where('email', '=' , $dados['email'])->first();
+            $user = User::where('email', '=', $dados['email'])->first();
 
             \DB::commit();
-            
 
-            return response()->json(['mensagem'=>$user, 'class'=>'success'], 200);
 
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $user, 'class' => 'success'], 200);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
     public function sair()
     {
-    	Auth::logout();
-    	return redirect()->route('admin.login');
+        Auth::logout();
+        return redirect()->route('admin.login');
     }
 
     public function index()
@@ -81,16 +82,16 @@ class UsuarioController extends Controller
         try {
             $registos = null;
 
-            \DB::transaction(function() use (&$registos){
-                if(auth()->user()->can('usuario_listar')){
+            \DB::transaction(function () use (&$registos) {
+                if (auth()->user()->can('usuario_listar')) {
                     $registos = User::All();
-                }         
+                }
             });
-            
+
             return view('admin.usuarios.index', compact('registos'));
-            
+
         } catch (\Exception $e) {
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
         }
     }
 
@@ -105,19 +106,19 @@ class UsuarioController extends Controller
             $dados      = $request->only('name', 'email', 'password');
             $registro   = null;
 
-            \DB::transaction(function() use (&$dados, &$registro){
+            \DB::transaction(function () use (&$dados, &$registro) {
                 $registro = User::create($dados);
-                
+
             });
 
-            if($registro){
-                return response()->json(['mensagem'=>$registro, 'class' =>'success'], 201);
-            }else{
-                return response()->json(['mensagem'=>'Erro ao criar registro', 'class' => 'warning'], 400);
+            if ($registro) {
+                return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
+            } else {
+                return response()->json(['mensagem' => 'Erro ao criar registro', 'class' => 'warning'], 400);
             }
-            
+
         } catch (\Exception $e) {
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
         }
     }
 
@@ -126,7 +127,7 @@ class UsuarioController extends Controller
     {
         try {
             $usuario = null;
-            \DB::transaction(function() use (&$id, &$usuario){
+            \DB::transaction(function () use (&$id, &$usuario) {
                 $usuario = User::find($id);
 
             });
@@ -134,136 +135,136 @@ class UsuarioController extends Controller
             return view('admin.usuarios.editar', compact('usuario'));
 
         } catch (\Exception $e) {
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
         }
     }
 
     public function json(Request $request)
     {
-        try{
+        try {
             \DB::beginTransaction();
 
             $consulta = $request->all();
             $campos =  null;
             $parse = [
-                'user_name'=>'users.name'
+                'user_name' => 'users.name'
 
             ];
 
             $registro = \DB::table('users');
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('users.id', $val);
                             }
                             break;
                         case 'name':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
-                                
-                                $registro->where('users.name', 'like' , '%'.$val.'%');
+
+                                $registro->where('users.name', 'like', '%'.$val.'%');
                             }
                             break;
                         case 'user.id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
-                                
-                                $registro->where('users.id', '=' , ''.$val.'');
+
+                                $registro->where('users.id', '=', ''.$val.'');
                             }
                             break;
                         case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                   $registro->limit($val);
-                                }
+                            $val = (int) $val;
+                            if (is_integer($val) && $val > 0) {
+
+                                $registro->limit($val);
+                            }
                             break;
                         case 'ordem':
 
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
 
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
 
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
+                            $val = explode(',', $val);
+                            for ($i = 0; !($i == count($val)); $i++) {
+                                $atual = explode('-', $val[$i]);
+                                if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                    $parsed = $parse[trim($atual[0])];
+
+                                    if ($parsed) {
+
+                                        $registro->orderBy($parsed, $atual[1]);
                                     }
-                                    
-                                    
                                 }
 
-                                break;
 
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    //$campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
+                            }
+
+                            break;
+
+                        case 'campos':
+                            if (is_array($val) && count($val) > 0) {
+                                //$campos = $this->montaCamposConsulta($registro, $val);
+
+                            }
                             break;
 
                     }
                 }
             }
-            if($campos){
+            if ($campos) {
                 $registro->select($campos);
-            }else{
+            } else {
                 $registro->select('users.*');
 
             }
-           
+
             $registro = $registro->where('users.active', '=', 'yes')->get();
 
             \DB::commit();
 
             //dd( $registro);
 
-            return response()->json(['registro'=>$registro, 'class'=>'sucess'], 201);
+            return response()->json(['registro' => $registro, 'class' => 'sucess'], 201);
 
-        }catch(ContaException $e){
+        } catch (ContaException $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
@@ -275,9 +276,9 @@ class UsuarioController extends Controller
         $usuario = User::find($id);
         $dados = $request->all();
 
-        if(isset($dados['password']) && strlen('password') > 5){
+        if (isset($dados['password']) && strlen('password') > 5) {
             $dados['password'] = bcrypt($dados['password']);
-        }else{
+        } else {
             unset($dados['password']);
         }
 
@@ -287,7 +288,7 @@ class UsuarioController extends Controller
     public function deletar($id)
     {
         User::find($id)->delete();
-        \Session::flash('mensagem', ['msg'=>'Registro atualizado com sucesso!', 'class'=>'success']);
+        \Session::flash('mensagem', ['msg' => 'Registro atualizado com sucesso!', 'class' => 'success']);
         return redirect('admin.usurarios');
     }
 

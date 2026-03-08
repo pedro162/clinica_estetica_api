@@ -2,35 +2,35 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Estado;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Logradouro extends Model
 {
-	use SoftDeletes, BelongsToTenant;
-	protected $fillable =
-	[
-		'id',
-		'cep',
-		'cidade',
-		'logradouro',
-		'complemento',
-		'numero',
-		'bloco',
-		'tipo',
-		'importancia',
-		'user_id',
-		'user_update_id',
-		'active',
-		'bairro',
-		'estado',
-		'tenant_id'
-	];
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $fillable =
+        [
+            'id',
+            'cep',
+            'cidade',
+            'logradouro',
+            'complemento',
+            'numero',
+            'bloco',
+            'tipo',
+            'importancia',
+            'user_id',
+            'user_update_id',
+            'active',
+            'bairro',
+            'estado',
+            'tenant_id'
+        ];
 
-	public function estado_logradouro()
-	{
-		return $this->belongsTo(Estado::class, 'estado', 'id');
-	}
+    public function estado_logradouro()
+    {
+        return $this->belongsTo(Estado::class, 'estado', 'id');
+    }
 }

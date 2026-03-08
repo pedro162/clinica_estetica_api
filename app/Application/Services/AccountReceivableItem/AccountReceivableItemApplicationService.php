@@ -7,8 +7,8 @@ use App\Application\Commands\AccountReceivableItem\CreateAccountReceivableItemCo
 use App\Application\Handlers\AccountReceivable\GetAccountReceivableByIdHandler;
 use App\Application\Handlers\AccountReceivable\UpdateAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHandler;
-use App\Application\Handlers\AccountReceivableItem\GetAllAccountReceivableItemHandler;
 use App\Application\Handlers\AccountReceivableItem\GetAccountReceivableItemByIdHandler;
+use App\Application\Handlers\AccountReceivableItem\GetAllAccountReceivableItemHandler;
 use App\Application\Handlers\AccountReceivableItem\UpdateAccountReceivableItemHandler;
 use App\ContaReceber;
 use App\ContaREceberItem;
@@ -103,7 +103,7 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
     {
         return [
             ...$data,
-            'descricao' => $data['descricao'] ?? "Recita financeira",
+            'descricao' => $data['descricao'] ?? 'Recita financeira',
             'documento' => $data['documento'] ?? null,
             'dtVencimentoOriginal' => $data['dtVencimentoOriginal'],
             'dtVencimento' => $data['dtVencimento'] ?? null,
@@ -193,7 +193,7 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
         $personObject               = $accountReceivableObject->pessoa;
 
         $vrCobranca   = Utilitarios::removeMaskMoney($data['vrCobranca']);
-        $erros = $this->validaGerCobrancaItem($accountReceivableObject,  $data);
+        $erros = $this->validaGerCobrancaItem($accountReceivableObject, $data);
 
         if ((is_array($erros) && count($erros) > 0)) {
             throw new CobrancaReceberException(implode('<br/>', $erros));
@@ -249,7 +249,7 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
                 $idCaixaBaixa       = null;
             }
 
-            $dtVencimento = $objDtVencimento->format("Y-m-d H:i:s");
+            $dtVencimento = $objDtVencimento->format('Y-m-d H:i:s');
 
             //--- Preparo os dados para salvar -----------------------------------
             $installMent = $this->accountReceivableParseData([

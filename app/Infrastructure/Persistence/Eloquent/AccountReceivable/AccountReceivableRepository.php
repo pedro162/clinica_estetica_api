@@ -9,7 +9,9 @@ use App\ContaReceberItem;
 use App\Domain\AccountReceivable\Entities\AccountReceivable;
 use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableId;
-use Illuminate\Support\Facades\Auth;;
+use Illuminate\Support\Facades\Auth;
+
+;
 
 class AccountReceivableRepository implements AccountReceivableRepositoryInterface
 {
@@ -140,7 +142,7 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
 
         if (isset($data['com_ordem_servico'])) {
             $registro->leftJoin('ordem_servicos as os', function ($join) {
-                $join->on('os.id', '=', 'cr.referencia_id')->on('cr.referencia', '=',  \DB::raw('"ordem_servicos"'));
+                $join->on('os.id', '=', 'cr.referencia_id')->on('cr.referencia', '=', \DB::raw('"ordem_servicos"'));
             })->join('profissionals as prof', function ($join) {
                 $join->on('prof.id', '=', 'os.profissional_id');
             })->join('pessoas as pprof', function ($join) {

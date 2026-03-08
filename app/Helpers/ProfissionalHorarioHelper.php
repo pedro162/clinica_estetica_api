@@ -2,19 +2,15 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use \App\HoraProfExpediente;
-use \App\Pessoa;
-use \App\Filial;
-use \App\Profissional;
-use \App\Exceptions\ProfissionalHorarioExcepton;
+use App\Exceptions\ProfissionalHorarioExcepton;
+use App\HoraProfExpediente;
+use App\Profissional;
 
-class ProfissionalHorarioHelper{
+class ProfissionalHorarioHelper
+{
+    public function store(array $dados)
+    {
 
-    
-
-    public function store(array $dados){
-        
 
         $profissional = Profissional::where('id', '=', $dados['profissional_id'])->where('active', '=', 'yes')->first();
         if (!$profissional) {
@@ -39,9 +35,10 @@ class ProfissionalHorarioHelper{
 
     }
 
-    
 
-    public function info(array $dados, int $id=0){
+
+    public function info(array $dados, int $id = 0)
+    {
 
         $id         = $id ?? $dados['id'];
         $callBack   = $dados['callBack'] ?? '';
@@ -58,7 +55,8 @@ class ProfissionalHorarioHelper{
     }
 
 
-    public function update(array $dados, int $id=0){
+    public function update(array $dados, int $id = 0)
+    {
 
         $id             = $id ?? $dados['id'];
         $callBack       = $dados['callBack'] ?? '';
@@ -95,9 +93,10 @@ class ProfissionalHorarioHelper{
         return $registro;
     }
 
-    
 
-    public function destroy(int $id){
+
+    public function destroy(int $id)
+    {
 
         if ($id <= 0) {
             throw new ProfissionalHorarioExcepton('Parâmetro inválido');
@@ -116,7 +115,7 @@ class ProfissionalHorarioHelper{
 
             //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
             //return redirect()->back();
-           throw new ProfissionalHorarioExcepton('Erro ao exclir registro');
+            throw new ProfissionalHorarioExcepton('Erro ao exclir registro');
         }
 
         return $registro;
@@ -124,7 +123,7 @@ class ProfissionalHorarioHelper{
 
     public function json(array $data)
     {
-        
+
 
         $consulta = $data;
         //dd($consulta);
@@ -143,24 +142,24 @@ class ProfissionalHorarioHelper{
             $join->on('pf.pessoa_id', '=', 'pesprf.id');
         });
 
-        $colunasComplementares = "";
+        $colunasComplementares = '';
         $campos =  null;
         $camposDefault = ['hpex.*', 'pesprf.name as name_profissional', 'pf.id as profissional_id', 'pf.filial_id as filial_id'];
         $groupByDefault = ['hpex.id', 'hpex.name', 'pesprf.name', 'hpex.dias_prof_expediente_id', 'hpex.hora', 'hpex.user_id', 'hpex.deleted_at', 'hpex.created_at', 'hpex.updated_at', 'hpex.active' ,'hpex.user_update_id', 'pf.id', 'pf.filial_id'];
 
 
-        if(isset($consulta['verificar_data_agenda'])){
+        if (isset($consulta['verificar_data_agenda'])) {
             $dt = str_replace(['/'], ['-'], $consulta['verificar_data_agenda']);
             $dtArr = explode('-', $dt);
             $nrAno = $dtArr[0];
             $nrMes = $dtArr[1];
 
-            if($nrMes  < 9){
-                $nrMes = "0".$nrMes ;
+            if ($nrMes  < 9) {
+                $nrMes = '0'.$nrMes ;
             }
             $nrDia = $dtArr[2];
-            if($nrDia  < 9){
-                $nrDia = "0".$nrDia ;
+            if ($nrDia  < 9) {
+                $nrDia = '0'.$nrDia ;
             }
             $nrAno = trim($nrAno);
             $nrMes = trim($nrMes);
@@ -168,10 +167,12 @@ class ProfissionalHorarioHelper{
 
             $consulta['verificar_data_agenda'] = $nrAno.'-'.$nrMes.'-'.$nrDia;
 
-            $registro->whereRaw('SUBSTRING(hpex.hora, 1, 5) NOT IN (SELECT SUBSTRING(IFNULL(ag.hora, "00:00"), 1, 5) FROM agendas as ag WHERE ag.active="yes" AND SUBSTRING(ag.hora, 1, 5) = SUBSTRING(hpex.hora, 1, 5) AND DATE_FORMAT(ag.data, "%Y-%m-%d") = DATE_FORMAT(?, "%Y-%m-%d") AND ag.pessoa_id = pf.pessoa_id  )', 
-                [$consulta['verificar_data_agenda']]);
+            $registro->whereRaw(
+                'SUBSTRING(hpex.hora, 1, 5) NOT IN (SELECT SUBSTRING(IFNULL(ag.hora, "00:00"), 1, 5) FROM agendas as ag WHERE ag.active="yes" AND SUBSTRING(ag.hora, 1, 5) = SUBSTRING(hpex.hora, 1, 5) AND DATE_FORMAT(ag.data, "%Y-%m-%d") = DATE_FORMAT(?, "%Y-%m-%d") AND ag.pessoa_id = pf.pessoa_id  )',
+                [$consulta['verificar_data_agenda']]
+            );
         }
-        
+
         if (is_array($consulta) && count($consulta) > 0) {
             foreach ($consulta as $key => $val) {
 
@@ -185,13 +186,13 @@ class ProfissionalHorarioHelper{
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
+
                         }
 
                         $val = explode(',', $val);
 
                         $registro->whereIn('hpex.id', $val);
-                        
+
                         break;
                     case 'nr_dia':
                         if (is_string($val)) {
@@ -202,13 +203,13 @@ class ProfissionalHorarioHelper{
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
+
                         }
 
                         $val = explode(',', $val);
 
                         $registro->whereIn('dprx.nr_dia', $val);
-                        
+
                         break;
                     case 'nome_pessoa':
                         if (is_string($val)) {
@@ -223,6 +224,7 @@ class ProfissionalHorarioHelper{
                             $registro->where('pesprf.name', 'like', '%' . $val . '%');
                         }
 
+                        // no break
                     case 'name_pessoa':
                         if (is_string($val)) {
 
@@ -294,10 +296,10 @@ class ProfissionalHorarioHelper{
         $registro   =  $registro->orderBy($oremCampo, $oremTipo)->get();
 
 
-            
+
 
         return $registro;
-        
+
     }
 
 }

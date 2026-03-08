@@ -11,26 +11,19 @@ use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHa
 use App\Application\Handlers\AccountReceivableItem\GetAccountReceivableItemByIdHandler;
 use App\Application\Handlers\AccountReceivableItem\GetAllAccountReceivableItemHandler;
 use App\Application\Handlers\AccountReceivableItem\UpdateAccountReceivableItemHandler;
-use \App\Utilitarios;
-use \App\ContaReceber;
-use \App\ContaReceberItem;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\Helpers\ContaReceberCartao;
-use \App\Helpers\ContaReceberCartaoHelper;
-use \App\Helpers\FinanceiroMovimentacoeHelper;
-use \App\Validators\CaixaValidator;
-use \App\Validators\ContaReceberItemValidator;
-use \App\Pessoa;
-use \App\Caixa;
-use \App\Exceptions\CobrancaReceberException;
-use App\Validators\AccountReceivable\AccountReceivableValidator;
+use App\Caixa;
+use App\ContaReceber;
 use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableId;
 use App\Domain\Cashier\Repositories\CashierRepositoryInterface;
 use App\Domain\Cashier\ValueObjects\CashierId;
-use Exception;
+use App\Exceptions\CobrancaReceberException;
+use App\FormaPagamento;
+use App\PlanoPagamento;
+use App\Utilitarios;
+use App\Validators\AccountReceivable\AccountReceivableValidator;
+use App\Validators\CaixaValidator;
+use App\Validators\ContaReceberItemValidator;
 
 class ContaReceberItemHelper
 {
@@ -144,7 +137,8 @@ class ContaReceberItemHelper
             throw new CobrancaReceberException(implode('<br/>', $erros));
         }
 
-        $installmentCount = $data['qtdParcelas'] ?? $planOfPaymentObject->qtdParcelas ?? 1;;
+        $installmentCount = $data['qtdParcelas'] ?? $planOfPaymentObject->qtdParcelas ?? 1;
+        ;
         $installmentListData = [];
         $intervalDays = $planOfPaymentObject->qtdDiasIntervaloParcelas ?? 0;
         $daysUntilFirstInstallment = $planOfPaymentObject->qtd_dias_pri_parcela ?? 0;
@@ -204,7 +198,7 @@ class ContaReceberItemHelper
                 $cashRegisterId = null;
             }
 
-            $dtVencimento = $objDtVencimento->format("Y-m-d H:i:s");
+            $dtVencimento = $objDtVencimento->format('Y-m-d H:i:s');
 
             //--- Preparo os dados para salvar -----------------------------------
             $installmentData = [
@@ -395,7 +389,7 @@ class ContaReceberItemHelper
         $dataRequest['user_update_id'] = \Auth::User()->id;
         $dataRequest['id'] = $registro->id;
 
-        $registro->status = "pago";
+        $registro->status = 'pago';
         $registro->user_update_id = \Auth::User()->id;
         $registro->vrPago = $registro->vrLiquido;
 

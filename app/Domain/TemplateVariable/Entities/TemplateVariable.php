@@ -2,7 +2,6 @@
 
 namespace App\Domain\TemplateVariable\Entities;
 
-use App\Domain\TemplateVariable\Interfaces\TemplateVariableInterface;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableId;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableSyntax;
 use App\Domain\TemplateVariable\ValueObjects\TemplateVariableTemplateId;

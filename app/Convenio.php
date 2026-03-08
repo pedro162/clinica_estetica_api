@@ -2,15 +2,16 @@
 
 namespace App;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\BelongsToTenant;
 
 class Convenio extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    protected $table = "convenios";
-    protected $primaryKey = "id";
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $table = 'convenios';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'name',
         'user_id',

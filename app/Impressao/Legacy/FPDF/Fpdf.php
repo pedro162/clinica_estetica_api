@@ -6,8 +6,8 @@ use Exception;
 
 class Fpdf
 {
-    const FPDF_VERSION = '1.6';
-    const FPDF_FONTPATH = '/font/';
+    public const FPDF_VERSION = '1.6';
+    public const FPDF_FONTPATH = '/font/';
 
     public $page;               //current page number
     public $n;                  //current object number

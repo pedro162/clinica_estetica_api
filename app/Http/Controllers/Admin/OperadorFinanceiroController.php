@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\OperadorFinanceiroException;
+use App\Filial;
 use App\Http\Controllers\Controller;
+use App\OperadorFinanceiro;
+use App\Pessoa;
 use Illuminate\Http\Request;
-use \App\Exceptions\OperadorFinanceiroException;
-use \App\PlanoPagamento;
-use \App\OperadorFinanceiro;
-use \App\Filial;
-use \App\Pessoa;
 
 class OperadorFinanceiroController extends Controller
 {
@@ -19,7 +18,7 @@ class OperadorFinanceiroController extends Controller
      */
     public function index(Request $request)
     {
-       
+
     }
 
     /**
@@ -29,7 +28,7 @@ class OperadorFinanceiroController extends Controller
      */
     public function create(Request $request, $idAssistente)
     {
-        
+
     }
 
     /**
@@ -41,7 +40,7 @@ class OperadorFinanceiroController extends Controller
     public function store(Request $request)
     {
 
-        try{
+        try {
 
 
             set_time_limit(9000000);
@@ -52,47 +51,47 @@ class OperadorFinanceiroController extends Controller
 
             $dados = $request->all();
 
-            $pessoas = Pessoa::where('active', '=' ,'yes')->where('id', '=', $dados['pessoa_id'])->first();
-            if(! $pessoas){
+            $pessoas = Pessoa::where('active', '=', 'yes')->where('id', '=', $dados['pessoa_id'])->first();
+            if (! $pessoas) {
                 throw new OperadorFinanceiroException('Pessoa não identificada. Tente novamente ou entre em contato com o suporte.');
             }
 
             $filial = Filial::where('id', '=', $dados['filial_id'])->where('active', '=', 'yes')->first();
-            if(! $filial){
+            if (! $filial) {
                 throw new OperadorFinanceiroException('Filial não identificada');
             }
 
-            
+
             $dadosRequest = [];
-      
+
             $dadosRequest['user_id']          = \Auth::User()->id;//trocar pelo id do usuario logado
             $dadosRequest['active']           = 'yes';
-            
+
             $form = OperadorFinanceiro::create($dadosRequest);
 
             \DB::commit();
-            
-            if(! $form){
+
+            if (! $form) {
                 throw new OperadorFinanceiroException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
             }
 
-            return response()->json(['mensagem'=>$form, 'class'=>'success'], 200);
+            return response()->json(['mensagem' => $form, 'class' => 'success'], 200);
 
-        }catch(OperadorFinanceiroException $e){
+        } catch (OperadorFinanceiroException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
-    
+
     /**
      * Display the specified resource.
      *
@@ -101,20 +100,20 @@ class OperadorFinanceiroController extends Controller
      */
     public function show(Request $request, $id, $idAssistente)
     {
-        
+
     }
 
 
     public function info(Request $request, $id)
     {
-        
-        try{
+
+        try {
 
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
             $callBack = $dados['callBack'] ?? '';
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new OperadorFinanceiroException('Parâmetro ínválido');
             }
 
@@ -131,31 +130,31 @@ class OperadorFinanceiroController extends Controller
             }
             $registro->item = $dataItens; */
             //$registro->item;
-            
-            
 
 
 
 
-            if($registro == null){
+
+
+            if ($registro == null) {
                 throw new OperadorFinanceiroException(' não encontrado');
             }
-           
+
             \DB::commit();
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
 
-        }catch(OperadorFinanceiroException $e){
+        } catch (OperadorFinanceiroException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
@@ -169,25 +168,25 @@ class OperadorFinanceiroController extends Controller
      */
     public function edit(Request $request, $id, $idAssistente)
     {
-        try{
-            
+        try {
+
             $dadosRequest = $request->all();
 
             $callBack = $dadosRequest['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-            if(! isset($id)){
+            if (! isset($id)) {
                 $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
             }
 
-            if($id <= 0){
+            if ($id <= 0) {
 
-                
+
 
             }
 
-            
 
-         }catch(\Exception $e){
+
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
@@ -205,7 +204,7 @@ class OperadorFinanceiroController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try{
+        try {
 
             $this->validaRequest($request);
 
@@ -217,8 +216,8 @@ class OperadorFinanceiroController extends Controller
             $callBack       = $dados['callBack'] ?? '';
             $idAssistente   =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
-            if( (!isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['error'=>'Parâmetro inválido']], 400);
+            if ((!isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['error' => 'Parâmetro inválido']], 400);
             }
 
             $registro = OperadorFinanceiro::where('active', '=', 'yes')->where('id', '=', $id)->first();
@@ -229,30 +228,30 @@ class OperadorFinanceiroController extends Controller
             $registro->update($dadosRequest);
 
 
-            if(! $registro){
+            if (! $registro) {
                 throw new OperadorFinanceiroException('Registro não encontrado');
             }
-            
-            
+
+
             \DB::commit();
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 200);
-        
-        }catch(OperadorFinanceiroException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
+
+        } catch (OperadorFinanceiroException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
 
     }
 
-    
+
     /**
      * Remove the specified resource from storage.
      *
@@ -261,56 +260,56 @@ class OperadorFinanceiroController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
-            if($id <= 0){
-                 return response()->json([['mensagem'=>'Parâmetro inválido', 'class'=>'warning'], 400]);
+            if ($id <= 0) {
+                return response()->json([['mensagem' => 'Parâmetro inválido', 'class' => 'warning'], 400]);
 
             }
 
             $registro = OperadorFinanceiro::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
-            if(! $registro){
-                return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
-            }else{
+            if (! $registro) {
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
+            } else {
 
-                $registro = $registro->update(['active'=>'no']);
+                $registro = $registro->update(['active' => 'no']);
 
             }
 
-            if($registro == null){
+            if ($registro == null) {
 
                 //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
                 //return redirect()->back();
-                 return response()->json(['mensagem'=>'Erro ao exclir registro', 'class'=>'warning'], 400);
+                return response()->json(['mensagem' => 'Erro ao exclir registro', 'class' => 'warning'], 400);
             }
 
             \DB::commit();
-            return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
-        
-        }catch(OperadorFinanceiroException $e){
+            return response()->json(['mensagem' => 'Registro deletado com sucesso', 'class' => 'success'], 200);
+
+        } catch (OperadorFinanceiroException $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Error $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Error $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['mensagem'=>$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
+            return response()->json(['mensagem' => $e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ], 500);
         }
     }
 
     public function head(Request $request)
     {
-        
-        
+
+
     }
 
-    
+
     /**
      * Return a listing of the resource in json.
      *
@@ -319,8 +318,8 @@ class OperadorFinanceiroController extends Controller
      */
     public function json(Request $request)
     {
-        try{
-            
+        try {
+
             //$this->validaRequest($request);
 
             \DB::beginTransaction();
@@ -332,115 +331,115 @@ class OperadorFinanceiroController extends Controller
 
             ];
 
-            $registro = \DB::table('operador_financeiros as opf')->join('pessoas as p', function($join){
-                
+            $registro = \DB::table('operador_financeiros as opf')->join('pessoas as p', function ($join) {
+
                 $join->on('opf.pessoa_id', '=', 'p.id');
 
-            })->leftJoin('oper_forma_pgto as opfpgto', function($join){
-                
+            })->leftJoin('oper_forma_pgto as opfpgto', function ($join) {
+
                 $join->on('opf.id', '=', 'opfpgto.oper_pagamentos_id');
 
-            })->leftJoin('forma_pagamentos as fpto', function($join){
-                
+            })->leftJoin('forma_pagamentos as fpto', function ($join) {
+
                 $join->on('opfpgto.forma_pagamentos_id', '=', 'fpto.id');
 
             });
 
             $campos =  null;
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('plgt.id', $val);
                             }
                             break;
                         case 'forma_pagamentos_id':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('fpto.id', $val);
                             }
                             break;
                         case 'nome_operador':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
-                                
-                                $registro->where('p.name', 'like' , '%'.$val.'%');
+
+                                $registro->where('p.name', 'like', '%'.$val.'%');
                             }
                             break;
-                            case 'limite':
-                                $val = (int) $val;
-                                if(is_integer($val) && $val > 0){
-                                        
-                                    $registro->limit($val);
-                                }
-                                break;
-                            case 'ordem':
+                        case 'limite':
+                            $val = (int) $val;
+                            if (is_integer($val) && $val > 0) {
 
-                                
-                                if($val[0] == ','){
-                                    $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
-                                    $val = substr($val, 0, -1);
-                                }
+                                $registro->limit($val);
+                            }
+                            break;
+                        case 'ordem':
 
-                                $val = explode(',', $val);
-                                for($i= 0; !($i == count($val)); $i++) {
-                                    $atual = explode('-', $val[$i]);
-                                    if(array_key_exists(trim($atual[0]), $parse)){
 
-                                        $parsed = $parse[trim($atual[0])];
-                                        
-                                        if($parsed){
-                                           
-                                            $registro->orderBy($parsed,$atual[1]);
-                                        }
+                            if ($val[0] == ',') {
+                                $val = substr($val, 1);
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
+                                $val = substr($val, 0, -1);
+                            }
+
+                            $val = explode(',', $val);
+                            for ($i = 0; !($i == count($val)); $i++) {
+                                $atual = explode('-', $val[$i]);
+                                if (array_key_exists(trim($atual[0]), $parse)) {
+
+                                    $parsed = $parse[trim($atual[0])];
+
+                                    if ($parsed) {
+
+                                        $registro->orderBy($parsed, $atual[1]);
                                     }
-                                    
-                                    
                                 }
 
-                                break;
 
-                        case'campos':
-                                if(is_array($val) && count($val) > 0){
-                                    $campos = $this->montaCamposConsulta($registro, $val);
-                                    
-                                }
+                            }
+
+                            break;
+
+                        case 'campos':
+                            if (is_array($val) && count($val) > 0) {
+                                $campos = $this->montaCamposConsulta($registro, $val);
+
+                            }
                             break;
 
                     }
                 }
             }
-            if($campos){
+            if ($campos) {
                 $registro->select($campos);
 
-            }else{
+            } else {
                 $registro->select('opf.*', 'p.name');
 
             }
@@ -450,25 +449,25 @@ class OperadorFinanceiroController extends Controller
 
             \DB::commit();
 
-            if(isset($consulta['to_require']) && $consulta['to_require'] == true){
+            if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
                 $dataToRequest = [];
-                foreach($registro as $reg){
-                    $dataToRequest[] = ['label'=>$reg->name, 'value'=>$reg->id];
+                foreach ($registro as $reg) {
+                    $dataToRequest[] = ['label' => $reg->name, 'value' => $reg->id];
                 }
 
                 $registro = $dataToRequest;
             }
-            
 
-            return response()->json(['mensagem'=>$registro, 'class'=>'success'], 201);
 
-        }catch(OperadorFinanceiroException $e){
+            return response()->json(['mensagem' => $registro, 'class' => 'success'], 201);
+
+        } catch (OperadorFinanceiroException $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
     }
 
@@ -476,10 +475,10 @@ class OperadorFinanceiroController extends Controller
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'filial_id'=> 'required|min:1',
-            'pessoa_id'=> 'required|min:1',
-            'rca_id'=> 'required|min:1',
+        $validator = Validator::make($request->all(), [
+            'filial_id' => 'required|min:1',
+            'pessoa_id' => 'required|min:1',
+            'rca_id' => 'required|min:1',
         ], [
             'filial_id.required' => 'O campo "Filial" é obrigatório.',
             'filial_id.min' => 'O "Filial" deve conter pelo menos :min caracteres.',
@@ -488,14 +487,14 @@ class OperadorFinanceiroController extends Controller
             'rca_id.required' => 'O campo "Vendedor" é obrigatório.',
             'rca_id.min' => 'O "Vendedor" deve conter pelo menos :min caracteres.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
+            foreach ($errors->all() as $mensagem) {
                 $msg .= $mensagem.'<br/>';
             }
-            
+
             throw new OperadorFinanceiroException($msg);
         }
 

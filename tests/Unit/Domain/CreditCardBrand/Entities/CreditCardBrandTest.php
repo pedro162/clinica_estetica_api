@@ -13,7 +13,7 @@ class CreditCardBrandTest extends TestCase
 
 
     /**
-     * 
+     *
      * @param array<mixed> $data
      * @dataProvider entityDataProvider
      * @return void

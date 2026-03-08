@@ -14,8 +14,6 @@ use App\Http\Requests\V1\PersonAddress\StorePersonAddressRequest;
 use App\Http\Requests\V1\PersonAddress\UpdatePersonAddressRequest;
 use App\Http\Resources\V1\PersonAddress\GetAllPersonAddressResource;
 use App\Http\Resources\V1\PersonAddress\PersonAddressResource;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PersonAddressController extends Controller
 {

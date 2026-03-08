@@ -4,12 +4,14 @@ namespace App\Domain\CreditCardBrand\Entities;
 
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
-use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;;
+use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
 
+;
+
+use App\BandeiraCartao;
 use App\Domain\CreditCardBrand\ValueObjects\CreditCardBrandId;
 use App\Domain\CreditCardBrand\ValueObjects\CreditCardBrandIsStandard;
 use App\Domain\CreditCardBrand\ValueObjects\CreditCardBrandName;
-use App\BandeiraCartao;
 
 class CreditCardBrand extends BaseEntity
 {
@@ -54,13 +56,13 @@ class CreditCardBrand extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new CreditCardBrandId($value))],
-            ['keys' => ['name'], 'callback' => fn($value) => $entity->name(new CreditCardBrandName((string)$value))],
-            ['keys' => ['standard'], 'callback' => fn($value) => $entity->standard(new CreditCardBrandIsStandard((string)$value))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new CreditCardBrandId($value))],
+            ['keys' => ['name'], 'callback' => fn ($value) => $entity->name(new CreditCardBrandName((string)$value))],
+            ['keys' => ['standard'], 'callback' => fn ($value) => $entity->standard(new CreditCardBrandIsStandard((string)$value))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
         ];
 
         foreach ($mapping as $map) {

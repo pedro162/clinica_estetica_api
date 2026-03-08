@@ -4,7 +4,6 @@ namespace App\Application\Commands;
 
 class CreateNotificationVariableCommand
 {
-
     protected string $notificationVariableId;
     protected string $notificationVariableSyntax;
     protected string $notificationVariableValue;

@@ -6,11 +6,9 @@ use App\Application\Services\Service\ServiceApplicationService;
 use App\Servico;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use Tests\Feature\SetupTest;
 
 class UpdateServiceControllerTest extends TestCase
 {

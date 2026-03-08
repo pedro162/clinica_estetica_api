@@ -3,9 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Config;
 
 class Tenant extends Model
 {
@@ -20,7 +20,7 @@ class Tenant extends Model
         'database',
     ];
 
-    protected $primaryKey = "id";
+    protected $primaryKey = 'id';
 
     public function configure()
     {
@@ -35,15 +35,15 @@ class Tenant extends Model
         ]);*/
 
         //Config::set('database.connections.tenant.host', $empresa->mysql_host);
-        
+
         Config::set('database.connections.tenant.database', $this->database);
         Config::set('database.connections.tenant.username', 'root');
         Config::set('database.connections.tenant.password', '');
         Config::set('database.default', 'tenant');
-        
-        
-        
-       
+
+
+
+
         DB::reconnect('tenant');
 
         Schema::connection('tenant')->getConnection()->reconnect();

@@ -3,15 +3,10 @@
 namespace App\Domain\AccountReceivable\Entities;
 
 use App\ContaReceber;
-use App\Domain\BaseEntity\Entities\BaseEntity;
-use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
-use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
-use App\Domain\AccountReceivable\ValueObjects\AccountReceivableStatus;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableBranchId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableClearanceDate;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableClearancePersonId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableClearanceType;
-use App\Domain\AccountReceivable\ValueObjects\AccountReceivableId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableDescription;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableDiscountValue;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableDocument;
@@ -19,6 +14,7 @@ use App\Domain\AccountReceivable\ValueObjects\AccountReceivableDueDate;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableFeeValue;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableFinancialOperatorId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableGrossValue;
+use App\Domain\AccountReceivable\ValueObjects\AccountReceivableId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableInterestValue;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableIsImportedData;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableNetValue;
@@ -31,7 +27,10 @@ use App\Domain\AccountReceivable\ValueObjects\AccountReceivablePersonId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableReceivableAccountId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableResponsibleId;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableReturnedValue;
-use Exception;
+use App\Domain\AccountReceivable\ValueObjects\AccountReceivableStatus;
+use App\Domain\BaseEntity\Entities\BaseEntity;
+use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
+use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
 
 class AccountReceivable extends BaseEntity
 {
@@ -375,37 +374,37 @@ class AccountReceivable extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new AccountReceivableId($value))],
-            ['keys' => ['descricao', 'description'], 'callback' => fn($value) => $entity->description(new AccountReceivableDescription((string)$value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId($value))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId($value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId($value))],
-            ['keys' => ['status'], 'callback' => fn($value) => $entity->status(new AccountReceivableStatus((string)$value))],
-            ['keys' => ['branchId', 'filial_id'], 'callback' => fn($value) => $entity->branchId(new AccountReceivableBranchId((string)$value))],
-            ['keys' => ['document', 'documento'], 'callback' => fn($value) => $entity->document(new AccountReceivableDocument((string)$value))],
-            ['keys' => ['originalDueDate', 'dtVencimentoOriginal'], 'callback' => fn($value) => $entity->originalDueDate(new AccountReceivableOriginalDueDate((string)$value))],
-            ['keys' => ['dueDate', 'dtVencimento'], 'callback' => fn($value) => $entity->dueDate(new AccountReceivableDueDate((string)$value))],
-            ['keys' => ['grossValue', 'vrBruto'], 'callback' => fn($value) => $entity->grossValue(new AccountReceivableGrossValue((string)$value))],
-            ['keys' => ['netValue', 'vrLiquido'], 'callback' => fn($value) => $entity->netValue(new AccountReceivableNetValue((string)$value))],
-            ['keys' => ['returnedValue', 'vrDevolvido'], 'callback' => fn($value) => $entity->returnedValue(new AccountReceivableReturnedValue((string)$value))],
-            ['keys' => ['paidValue', 'vrPago'], 'callback' => fn($value) => $entity->paidValue(new AccountReceivablePaidValue((string)$value))],
-            ['keys' => ['feeValue', 'vrTaxa'], 'callback' => fn($value) => $entity->feeValue(new AccountReceivableFeeValue((string)$value))],
-            ['keys' => ['discountValue', 'vrDesconto'], 'callback' => fn($value) => $entity->discountValue(new AccountReceivableDiscountValue((string)$value))],
-            ['keys' => ['interestValue', 'vrJuros'], 'callback' => fn($value) => $entity->interestValue(new AccountReceivableInterestValue((string)$value))],
-            ['keys' => ['isImportedData', 'importacao_dados'], 'callback' => fn($value) => $entity->isImportedData(new AccountReceivableIsImportedData((string)$value))],
-            ['keys' => ['paymentMethodId', 'forma_pagamento_id'], 'callback' => fn($value) => $entity->paymentMethodId(new AccountReceivablePaymentMethodId((string)$value))],
-            ['keys' => ['paymentPlanId', 'plano_pagamento_id'], 'callback' => fn($value) => $entity->paymentPlanId(new AccountReceivablePaymentPlanId((string)$value))],
-            ['keys' => ['financialOperatorId', 'operador_financeiro_id'], 'callback' => fn($value) => $entity->financialOperatorId(new AccountReceivableFinancialOperatorId((string)$value))],
-            ['keys' => ['paymentDate'], 'callback' => fn($value) => $entity->paymentDate(new AccountReceivablePaymentDate((string)$value))],
-            ['keys' => ['clearanceDate'], 'callback' => fn($value) => $entity->clearanceDate(new AccountReceivableClearanceDate((string)$value))],
-            ['keys' => ['receivableAccountId'], 'callback' => fn($value) => $entity->receivableAccountId(new AccountReceivableReceivableAccountId((string)$value))],
-            ['keys' => ['clearancePersonId'], 'callback' => fn($value) => $entity->clearancePersonId(new AccountReceivableClearancePersonId((string)$value))],
-            ['keys' => ['clearanceType'], 'callback' => fn($value) => $entity->clearanceType(new AccountReceivableClearanceType((string)$value))],
-            ['keys' => ['responsibleId', 'responsavel_id'], 'callback' => fn($value) => $entity->responsibleId(new AccountReceivableResponsibleId((string)$value))],
-            ['keys' => ['personId', 'pessoa_id'], 'callback' => fn($value) => $entity->personId(new AccountReceivablePersonId((string)$value))],
-            ['keys' => ['reference', 'referencia'], 'callback' => fn($value) => $entity->reference((string)$value)],
-            ['keys' => ['referenceId', 'referencia_id'], 'callback' => fn($value) => $entity->referenceId((string)$value)],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new AccountReceivableId($value))],
+            ['keys' => ['descricao', 'description'], 'callback' => fn ($value) => $entity->description(new AccountReceivableDescription((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId($value))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId($value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId($value))],
+            ['keys' => ['status'], 'callback' => fn ($value) => $entity->status(new AccountReceivableStatus((string)$value))],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn ($value) => $entity->branchId(new AccountReceivableBranchId((string)$value))],
+            ['keys' => ['document', 'documento'], 'callback' => fn ($value) => $entity->document(new AccountReceivableDocument((string)$value))],
+            ['keys' => ['originalDueDate', 'dtVencimentoOriginal'], 'callback' => fn ($value) => $entity->originalDueDate(new AccountReceivableOriginalDueDate((string)$value))],
+            ['keys' => ['dueDate', 'dtVencimento'], 'callback' => fn ($value) => $entity->dueDate(new AccountReceivableDueDate((string)$value))],
+            ['keys' => ['grossValue', 'vrBruto'], 'callback' => fn ($value) => $entity->grossValue(new AccountReceivableGrossValue((string)$value))],
+            ['keys' => ['netValue', 'vrLiquido'], 'callback' => fn ($value) => $entity->netValue(new AccountReceivableNetValue((string)$value))],
+            ['keys' => ['returnedValue', 'vrDevolvido'], 'callback' => fn ($value) => $entity->returnedValue(new AccountReceivableReturnedValue((string)$value))],
+            ['keys' => ['paidValue', 'vrPago'], 'callback' => fn ($value) => $entity->paidValue(new AccountReceivablePaidValue((string)$value))],
+            ['keys' => ['feeValue', 'vrTaxa'], 'callback' => fn ($value) => $entity->feeValue(new AccountReceivableFeeValue((string)$value))],
+            ['keys' => ['discountValue', 'vrDesconto'], 'callback' => fn ($value) => $entity->discountValue(new AccountReceivableDiscountValue((string)$value))],
+            ['keys' => ['interestValue', 'vrJuros'], 'callback' => fn ($value) => $entity->interestValue(new AccountReceivableInterestValue((string)$value))],
+            ['keys' => ['isImportedData', 'importacao_dados'], 'callback' => fn ($value) => $entity->isImportedData(new AccountReceivableIsImportedData((string)$value))],
+            ['keys' => ['paymentMethodId', 'forma_pagamento_id'], 'callback' => fn ($value) => $entity->paymentMethodId(new AccountReceivablePaymentMethodId((string)$value))],
+            ['keys' => ['paymentPlanId', 'plano_pagamento_id'], 'callback' => fn ($value) => $entity->paymentPlanId(new AccountReceivablePaymentPlanId((string)$value))],
+            ['keys' => ['financialOperatorId', 'operador_financeiro_id'], 'callback' => fn ($value) => $entity->financialOperatorId(new AccountReceivableFinancialOperatorId((string)$value))],
+            ['keys' => ['paymentDate'], 'callback' => fn ($value) => $entity->paymentDate(new AccountReceivablePaymentDate((string)$value))],
+            ['keys' => ['clearanceDate'], 'callback' => fn ($value) => $entity->clearanceDate(new AccountReceivableClearanceDate((string)$value))],
+            ['keys' => ['receivableAccountId'], 'callback' => fn ($value) => $entity->receivableAccountId(new AccountReceivableReceivableAccountId((string)$value))],
+            ['keys' => ['clearancePersonId'], 'callback' => fn ($value) => $entity->clearancePersonId(new AccountReceivableClearancePersonId((string)$value))],
+            ['keys' => ['clearanceType'], 'callback' => fn ($value) => $entity->clearanceType(new AccountReceivableClearanceType((string)$value))],
+            ['keys' => ['responsibleId', 'responsavel_id'], 'callback' => fn ($value) => $entity->responsibleId(new AccountReceivableResponsibleId((string)$value))],
+            ['keys' => ['personId', 'pessoa_id'], 'callback' => fn ($value) => $entity->personId(new AccountReceivablePersonId((string)$value))],
+            ['keys' => ['reference', 'referencia'], 'callback' => fn ($value) => $entity->reference((string)$value)],
+            ['keys' => ['referenceId', 'referencia_id'], 'callback' => fn ($value) => $entity->referenceId((string)$value)],
         ];
 
         foreach ($mapping as $map) {

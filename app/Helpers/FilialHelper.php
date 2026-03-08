@@ -2,17 +2,12 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Exceptions\FilialException;
-use \App\Filial;
-use \App\Pessoa;
-use App\Helpers\BaseHelper;
+use App\Filial;
+use App\Pessoa;
 
 class FilialHelper extends BaseHelper
 {
-
     public function info($dados, $id)
     {
 

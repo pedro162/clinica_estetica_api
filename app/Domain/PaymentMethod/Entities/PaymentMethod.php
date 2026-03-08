@@ -2,12 +2,10 @@
 
 namespace App\Domain\PaymentMethod\Entities;
 
-use App\FormaPagamento;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
 use App\Domain\FinancialOperator\Entities\FinancialOperator;
-use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBalance;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBillingCode;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodBranchId;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodHasCashAdjustment;
@@ -21,6 +19,7 @@ use App\Domain\PaymentMethod\ValueObjects\PaymentMethodName;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodPaymentType;
 use App\Domain\PaymentMethod\ValueObjects\PaymentMethodType;
 use App\Domain\PaymentPlan\Entities\PaymentPlan;
+use App\FormaPagamento;
 
 class PaymentMethod extends BaseEntity
 {
@@ -209,22 +208,22 @@ class PaymentMethod extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new PaymentMethodId($value))],
-            ['keys' => ['name'], 'callback' => fn($value) => $entity->name(new PaymentMethodName((string)$value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['type', 'tipo'], 'callback' => fn($value) => $entity->type(new PaymentMethodType((string)$value))],
-            ['keys' => ['branchId', 'filial_id'], 'callback' => fn($value) => $entity->branchId(new PaymentMethodBranchId((string)$value))],
-            ['keys' => ['paymentType', 'tpPagamento'], 'callback' => fn($value) => $entity->paymentType(new PaymentMethodPaymentType((string)$value))],
-            ['keys' => ['billingCode', 'cdCobrancaTipo'], 'callback' => fn($value) => $entity->billingCode(new PaymentMethodBillingCode((string)$value))],
-            ['keys' => ['hasCommission', 'hasComissao'], 'callback' => fn($value) => $entity->hasCommission(new PaymentMethodHasCommission((string)$value))],
-            ['keys' => ['hasCreditLimit', 'hasLimiteDeCredito'], 'callback' => fn($value) => $entity->hasCreditLimit(new PaymentMethodHasCreditLimit((string)$value))],
-            ['keys' => ['hasCounterAdjustment', 'hasAcertoBalcao'], 'callback' => fn($value) => $entity->hasCounterAdjustment(new PaymentMethodHasCounterAdjustment((string)$value))],
-            ['keys' => ['hasCashAdjustment', 'hasAcertoCaixa'], 'callback' => fn($value) => $entity->hasCashAdjustment(new PaymentMethodHasCashAdjustment((string)$value))],
-            ['keys' => ['hasDownPayment', 'hasEntrada'], 'callback' => fn($value) => $entity->hasDownPayment(new PaymentMethodHasDownPayment((string)$value))],
-            ['keys' => ['hasFinancialOperator', 'hasOperadorFinanceiro'], 'callback' => fn($value) => $entity->hasFinancialOperator(new PaymentMethodHasFinancialOperator((string)$value))],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new PaymentMethodId($value))],
+            ['keys' => ['name'], 'callback' => fn ($value) => $entity->name(new PaymentMethodName((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['type', 'tipo'], 'callback' => fn ($value) => $entity->type(new PaymentMethodType((string)$value))],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn ($value) => $entity->branchId(new PaymentMethodBranchId((string)$value))],
+            ['keys' => ['paymentType', 'tpPagamento'], 'callback' => fn ($value) => $entity->paymentType(new PaymentMethodPaymentType((string)$value))],
+            ['keys' => ['billingCode', 'cdCobrancaTipo'], 'callback' => fn ($value) => $entity->billingCode(new PaymentMethodBillingCode((string)$value))],
+            ['keys' => ['hasCommission', 'hasComissao'], 'callback' => fn ($value) => $entity->hasCommission(new PaymentMethodHasCommission((string)$value))],
+            ['keys' => ['hasCreditLimit', 'hasLimiteDeCredito'], 'callback' => fn ($value) => $entity->hasCreditLimit(new PaymentMethodHasCreditLimit((string)$value))],
+            ['keys' => ['hasCounterAdjustment', 'hasAcertoBalcao'], 'callback' => fn ($value) => $entity->hasCounterAdjustment(new PaymentMethodHasCounterAdjustment((string)$value))],
+            ['keys' => ['hasCashAdjustment', 'hasAcertoCaixa'], 'callback' => fn ($value) => $entity->hasCashAdjustment(new PaymentMethodHasCashAdjustment((string)$value))],
+            ['keys' => ['hasDownPayment', 'hasEntrada'], 'callback' => fn ($value) => $entity->hasDownPayment(new PaymentMethodHasDownPayment((string)$value))],
+            ['keys' => ['hasFinancialOperator', 'hasOperadorFinanceiro'], 'callback' => fn ($value) => $entity->hasFinancialOperator(new PaymentMethodHasFinancialOperator((string)$value))],
         ];
 
         foreach ($mapping as $map) {

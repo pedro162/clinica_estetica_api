@@ -32,9 +32,9 @@ trait TraitBlocoV
             ];
         }
         $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => ''];
-        $texto = "FORMA PAGAMENTO";
+        $texto = 'FORMA PAGAMENTO';
         $this->pdf->textBox($this->margem, $y, $this->wPrint, 4, $texto, $aFont, 'T', 'L', false, '', false);
-        $texto = "VALOR PAGO R$";
+        $texto = 'VALOR PAGO R$';
         $y1 = $this->pdf->textBox($this->margem, $y, $this->wPrint, 4, $texto, $aFont, 'T', 'R', false, '', false);
 
         $z = $y + $y1;
@@ -56,7 +56,7 @@ trait TraitBlocoV
             $z += $y2;
         }
 
-        $texto = "Troco R$";
+        $texto = 'Troco R$';
         $this->pdf->textBox($this->margem, $z, $this->wPrint, 3, $texto, $aFont, 'T', 'L', false, '', false);
         $texto =  !empty($this->vTroco) ? number_format((float) $this->vTroco, 2, ',', '.') : '0,00';
         $y1 = $this->pdf->textBox($this->margem, $z, $this->wPrint, 3, $texto, $aFont, 'T', 'R', false, '', false);

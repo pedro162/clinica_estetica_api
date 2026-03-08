@@ -2,32 +2,32 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\FormaPagamento;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PrazoPagamento extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
 
-    protected $primaryKey = "id";
-    protected $table = "prazo_pagamentos";
+    protected $primaryKey = 'id';
+    protected $table = 'prazo_pagamentos';
     protected $fillable =
-    [
-        'name',
-        'qtdMaxParcelas',
-        'qtdMinParcelas',
-        'qtdDiasIntervaloParcelas',
-        'qtdDiasMedios',
-        'exibe_balcao',
-        'qtd_dias_pri_parcela',
-        'user_id',
-        'user_update_id',
-        'pessoa_autor_id',
-        'active',
-        'tenant_id'
-    ];
+        [
+            'name',
+            'qtdMaxParcelas',
+            'qtdMinParcelas',
+            'qtdDiasIntervaloParcelas',
+            'qtdDiasMedios',
+            'exibe_balcao',
+            'qtd_dias_pri_parcela',
+            'user_id',
+            'user_update_id',
+            'pessoa_autor_id',
+            'active',
+            'tenant_id'
+        ];
 
 
     public function formaPagamento()

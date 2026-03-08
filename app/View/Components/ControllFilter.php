@@ -53,64 +53,64 @@ class ControllFilter extends Component
 
     public function getIddCod()
     {
-        return $this->idCod;   
+        return $this->idCod;
     }
 
     public function getTypeCod()
     {
-        return $this->typeCod;   
+        return $this->typeCod;
     }
 
     public function getNameCod()
     {
-        return $this->nameCod;   
+        return $this->nameCod;
     }
 
     public function getLabelCod()
     {
-        return $this->labelCod;   
+        return $this->labelCod;
     }
     public function getIdDescription()
     {
-        return $this->idDescription;   
+        return $this->idDescription;
     }
 
     public function getTypeDescrption()
     {
-        return $this->typeDescrption;   
+        return $this->typeDescrption;
     }
 
     public function getNameDescription()
     {
-        return $this->nameDescription;   
+        return $this->nameDescription;
     }
 
     public function getLabelDescription()
     {
-        return $this->labelDescription;   
+        return $this->labelDescription;
     }
-    
+
     public function getValueDescription()
     {
-        return $this->valueDescription;   
+        return $this->valueDescription;
     }
-    
+
 
     public function getValueCod()
     {
-        return $this->valueCod;   
+        return $this->valueCod;
     }
 
     public function getColCod()
     {
-        return $this->colCod;   
+        return $this->colCod;
     }
 
     public function getColDescription()
     {
-        return $this->colDescription;   
+        return $this->colDescription;
     }
-    
+
     public function getSearsh()
     {
         return $this->searsh;

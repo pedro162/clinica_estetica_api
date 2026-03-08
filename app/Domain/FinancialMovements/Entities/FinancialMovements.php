@@ -2,12 +2,12 @@
 
 namespace App\Domain\FinancialMovements\Entities;
 
-use App\FinanceiroMovimentacoe;
 use App\Domain\BaseEntity\Entities\BaseEntity;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityTenantId;
 use App\Domain\BaseEntity\ValueObjects\BaseEntityUserId;
 use App\Domain\FinancialMovements\ValueObjects\FinancialMovementsBranchId;
 use App\Domain\FinancialMovements\ValueObjects\FinancialMovementsId;
+use App\FinanceiroMovimentacoe;
 
 class FinancialMovements extends BaseEntity
 {

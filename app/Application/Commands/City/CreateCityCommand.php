@@ -4,7 +4,6 @@ namespace App\Application\Commands\City;
 
 class CreateCityCommand
 {
-
     protected string $id;
     protected string $name;
     protected string $code;
@@ -116,7 +115,7 @@ class CreateCityCommand
 
     public static function build(array $data): CreateCityCommand
     {
-        $entity = (new self)
+        $entity = (new self())
             ->id((string)($data['id'] ?? 0))
             ->name((string)($data['name'] ?? $data['nmCidade'] ?? ''))
             ->code((string)($data['code'] ?? $data['cdCidade'] ?? ''))

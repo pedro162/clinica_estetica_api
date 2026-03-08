@@ -4,14 +4,14 @@ namespace App\Domain\Notification\Entities;
 
 use App\Domain\Notification\ValueObjects\NotificationId;
 use App\Domain\Notification\ValueObjects\NotificationMessage;
-use App\Domain\Notification\ValueObjects\NotificationTitle;
 use App\Domain\Notification\ValueObjects\NotificationOriginContactAddress;
+use App\Domain\Notification\ValueObjects\NotificationSentDate;
+use App\Domain\Notification\ValueObjects\NotificationShippingState;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
 use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
 use App\Domain\Notification\ValueObjects\NotificationTemplateId;
-use App\Domain\Notification\ValueObjects\NotificationSentDate;
-use App\Domain\Notification\ValueObjects\NotificationShippingState;
 use App\Domain\Notification\ValueObjects\NotificationTenantId;
+use App\Domain\Notification\ValueObjects\NotificationTitle;
 use App\Domain\NotificationVariable\Entities\NotificationVariable;
 use App\Domain\Template\Entities\Template;
 

@@ -2,9 +2,9 @@
 
 namespace App\Domain\Service\Repositories;
 
-use App\Servico;
 use App\Domain\Service\Entities\Service;
 use App\Domain\Service\ValueObjects\ServiceId;
+use App\Servico;
 
 interface ServiceRepositoryInterface
 {

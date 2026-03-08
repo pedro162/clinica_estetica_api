@@ -3,9 +3,6 @@
 namespace App\Application\Commands\PaymentMethod;
 
 use App\Application\Commands\FinancialOperator\CreateFinancialOperatorCommand;
-use App\Utilitarios;
-use Exception;
-use Illuminate\Support\Facades\Log;
 
 class CreatePaymentMethodCommand
 {
@@ -231,21 +228,21 @@ class CreatePaymentMethodCommand
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id($value)],
-            ['keys' => ['name'], 'callback' => fn($value) => $entity->name((string)$value)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId((string)$value)],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId((string)$value)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId((string)$value)],
-            ['keys' => ['type', 'tipo'], 'callback' => fn($value) => $entity->type((string)$value)],
-            ['keys' => ['paymentType', 'tpPagamento'], 'callback' => fn($value) => $entity->paymentType((string)$value)],
-            ['keys' => ['billingCode', 'cdCobrancaTipo'], 'callback' => fn($value) => $entity->billingCode((string)$value)],
-            ['keys' => ['hasCommission', 'hasComissao'], 'callback' => fn($value) => $entity->hasCommission((string)$value)],
-            ['keys' => ['hasCreditLimit', 'hasLimiteDeCredito'], 'callback' => fn($value) => $entity->hasCreditLimit((string)$value)],
-            ['keys' => ['hasCounterAdjustment', 'hasAcertoBalcao'], 'callback' => fn($value) => $entity->hasCounterAdjustment((string)$value)],
-            ['keys' => ['hasCashAdjustment', 'hasAcertoCaixa'], 'callback' => fn($value) => $entity->hasCashAdjustment((string)$value)],
-            ['keys' => ['hasDownPayment', 'hasEntrada'], 'callback' => fn($value) => $entity->hasDownPayment((string)$value)],
-            ['keys' => ['hasFinancialOperator', 'hasOperadorFinanceiro'], 'callback' => fn($value) => $entity->hasFinancialOperator((string)$value)],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id($value)],
+            ['keys' => ['name'], 'callback' => fn ($value) => $entity->name((string)$value)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId((string)$value)],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId((string)$value)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId((string)$value)],
+            ['keys' => ['type', 'tipo'], 'callback' => fn ($value) => $entity->type((string)$value)],
+            ['keys' => ['paymentType', 'tpPagamento'], 'callback' => fn ($value) => $entity->paymentType((string)$value)],
+            ['keys' => ['billingCode', 'cdCobrancaTipo'], 'callback' => fn ($value) => $entity->billingCode((string)$value)],
+            ['keys' => ['hasCommission', 'hasComissao'], 'callback' => fn ($value) => $entity->hasCommission((string)$value)],
+            ['keys' => ['hasCreditLimit', 'hasLimiteDeCredito'], 'callback' => fn ($value) => $entity->hasCreditLimit((string)$value)],
+            ['keys' => ['hasCounterAdjustment', 'hasAcertoBalcao'], 'callback' => fn ($value) => $entity->hasCounterAdjustment((string)$value)],
+            ['keys' => ['hasCashAdjustment', 'hasAcertoCaixa'], 'callback' => fn ($value) => $entity->hasCashAdjustment((string)$value)],
+            ['keys' => ['hasDownPayment', 'hasEntrada'], 'callback' => fn ($value) => $entity->hasDownPayment((string)$value)],
+            ['keys' => ['hasFinancialOperator', 'hasOperadorFinanceiro'], 'callback' => fn ($value) => $entity->hasFinancialOperator((string)$value)],
         ];
 
         foreach ($mapping as $map) {
@@ -262,8 +259,8 @@ class CreatePaymentMethodCommand
 
     public function getDataProperties(): array
     {
-        $financeOperators = array_map(fn($item) => $item->getDataProperties(), $this->getFinanceOperators() ?? []);
-        $paymentPlans = array_map(fn($item) => $item->getDataProperties(), $this->getPaymentPlans() ?? []);
+        $financeOperators = array_map(fn ($item) => $item->getDataProperties(), $this->getFinanceOperators() ?? []);
+        $paymentPlans = array_map(fn ($item) => $item->getDataProperties(), $this->getPaymentPlans() ?? []);
 
         $data = [
             'id' => $this->id ?? '',
@@ -287,6 +284,6 @@ class CreatePaymentMethodCommand
             'paymentPlans' => $paymentPlans ?? [],
         ];
 
-        return array_filter($data, fn($value) => $value !== null && !empty($value));
+        return array_filter($data, fn ($value) => $value !== null && !empty($value));
     }
 }

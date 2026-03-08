@@ -9,20 +9,18 @@ use App\Application\Handlers\Seller\GetAllSellerHandler;
 use App\Application\Handlers\Seller\GetSellerByIdHandler;
 use App\Application\Handlers\Seller\UpdateSellerHandler;
 use App\Rca;
-use App\Domain\Seller\Entities\Seller;
 use Illuminate\Support\Collection;
 
 class SellerApplicationService implements SellerApplicationServiceInterface
 {
-
-
     public function __construct(
         private CreateSellerHandler $createSellerHandler,
         protected GetAllSellerHandler $getAllSellerHandler,
         protected UpdateSellerHandler $updateSellerHandler,
         protected GetSellerByIdHandler $getSellerByIdHandler,
         protected DestroySellerHandler $destroySellerHandler
-    ) {}
+    ) {
+    }
 
     public function store(
         CreateSellerCommand $command

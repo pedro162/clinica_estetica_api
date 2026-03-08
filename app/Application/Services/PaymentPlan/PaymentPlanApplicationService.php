@@ -9,7 +9,6 @@ use App\Application\Handlers\PaymentPlan\GetAllPaymentPlanHandler;
 use App\Application\Handlers\PaymentPlan\GetPaymentPlanByIdHandler;
 use App\Application\Handlers\PaymentPlan\UpdatePaymentPlanHandler;
 use App\PlanoPagamento;
-use App\Domain\PaymentPlan\Entities\PaymentPlan;
 use Illuminate\Support\Collection;
 
 class PaymentPlanApplicationService implements PaymentPlanApplicationServiceInterface

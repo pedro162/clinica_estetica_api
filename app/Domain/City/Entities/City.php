@@ -2,13 +2,13 @@
 
 namespace App\Domain\City\Entities;
 
+use App\Cidade;
 use App\Domain\City\ValueObjects\CityCode;
 use App\Domain\City\ValueObjects\CityId;
 use App\Domain\City\ValueObjects\CityName;
-use App\Domain\City\ValueObjects\CityTenantId;
-use App\Cidade;
 use App\Domain\City\ValueObjects\CitySlug;
 use App\Domain\City\ValueObjects\CityStateId;
+use App\Domain\City\ValueObjects\CityTenantId;
 use App\Domain\City\ValueObjects\CityUserId;
 
 class City

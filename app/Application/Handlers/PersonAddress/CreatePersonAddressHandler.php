@@ -3,9 +3,11 @@
 namespace App\Application\Handlers\PersonAddress;
 
 use App\Application\Commands\PersonAddress\CreatePersonAddressCommand;
-use App\Logradouro;
 use App\Domain\PersonAddress\Entities\PersonAddress;
-use App\Domain\PersonAddress\Repositories\PersonAddressRepositoryInterface;;
+use App\Domain\PersonAddress\Repositories\PersonAddressRepositoryInterface;
+use App\Logradouro;
+
+;
 
 class CreatePersonAddressHandler
 {

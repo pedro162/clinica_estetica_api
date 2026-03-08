@@ -2,20 +2,17 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\EventoAgenda;
-use App\Pessoa;
-use App\Profissional;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\FormularioItem;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PessoaFormularioResposta extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
 
-    protected $table = "pessoa_formulario_respostas";
-    protected $primaryKey = "id";
+    protected $table = 'pessoa_formulario_respostas';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'pess_form_id',
         'pergunta',

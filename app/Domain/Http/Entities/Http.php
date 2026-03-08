@@ -2,13 +2,12 @@
 
 namespace App\Domain\Http\Entities;
 
-use App\Domain\Http\ValueObjects\HttpId;
-use App\Domain\Http\ValueObjects\HttpCode;
 use App\Domain\Http\ValueObjects\HttpBody;
+use App\Domain\Http\ValueObjects\HttpCode;
 use App\Domain\Http\ValueObjects\HttpDataRequest;
 use App\Domain\Http\ValueObjects\HttpHeader;
+use App\Domain\Http\ValueObjects\HttpId;
 use App\Domain\Http\ValueObjects\HttpUrl;
-use App\Domain\Http\Interfaces\HttpInterface;
 
 class Http
 {

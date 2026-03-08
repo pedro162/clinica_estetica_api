@@ -18,7 +18,8 @@ class DeleteSellerController extends Controller
     public function __construct(
         protected SellerApplicationServiceInterface $service,
         protected SellerRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -26,7 +27,7 @@ class DeleteSellerController extends Controller
      * @param  \App\Http\Requests\V1\Seller\DestroySellerRequest $request
      * @param  int  $id
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(DestroySellerRequest $request, $id): JsonResponse

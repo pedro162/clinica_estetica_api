@@ -2,19 +2,15 @@
 
 namespace App\Helpers;
 
-use \App\Utilitarios;
-use \App\DiasProfExpediente;
-use \App\Pessoa;
-use \App\Filial;
-use \App\Profissional;
-use \App\Exceptions\ProfissionalHorarioExcepton;
+use App\DiasProfExpediente;
+use App\Exceptions\ProfissionalHorarioExcepton;
+use App\Profissional;
 
-class ProfissionalDiaExpedienteHelper{
+class ProfissionalDiaExpedienteHelper
+{
+    public function store(array $dados)
+    {
 
-    
-
-    public function store(array $dados){
-        
 
         $profissional = Profissional::where('id', '=', $dados['profissional_id'])->where('active', '=', 'yes')->first();
         if (!$profissional) {
@@ -39,9 +35,10 @@ class ProfissionalDiaExpedienteHelper{
 
     }
 
-    
 
-    public function info(array $dados, int $id=0){
+
+    public function info(array $dados, int $id = 0)
+    {
 
         $id         = $id ?? $dados['id'];
         $callBack   = $dados['callBack'] ?? '';
@@ -53,13 +50,14 @@ class ProfissionalDiaExpedienteHelper{
         $registro = DiasProfExpediente::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
         $registro->pessoa;
-        
+
 
         return $registro;
     }
 
 
-    public function update(array $dados, int $id=0){
+    public function update(array $dados, int $id = 0)
+    {
 
         $id             = $id ?? $dados['id'];
         $callBack       = $dados['callBack'] ?? '';
@@ -96,9 +94,10 @@ class ProfissionalDiaExpedienteHelper{
         return $registro;
     }
 
-    
 
-    public function destroy(int $id){
+
+    public function destroy(int $id)
+    {
 
         if ($id <= 0) {
             throw new ProfissionalHorarioExcepton('Parâmetro inválido');
@@ -117,7 +116,7 @@ class ProfissionalDiaExpedienteHelper{
 
             //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
             //return redirect()->back();
-           throw new ProfissionalHorarioExcepton('Erro ao exclir registro');
+            throw new ProfissionalHorarioExcepton('Erro ao exclir registro');
         }
 
         return $registro;
@@ -125,7 +124,7 @@ class ProfissionalDiaExpedienteHelper{
 
     public function json(array $data)
     {
-        
+
 
         $consulta = $data;
         //dd($consulta);
@@ -141,7 +140,7 @@ class ProfissionalDiaExpedienteHelper{
             $join->on('pf.pessoa_id', '=', 'pesprf.id');
         });
 
-        if(isset($consulta['verificar_data_agenda'])){
+        if (isset($consulta['verificar_data_agenda'])) {
             $registro->whereRaw('dprx.nr_dia NOT IN (SELECT WEEKDAY(IFNULL(ag.data, "-1")) FROM agendas as ag WHERE ag.active="yes" AND WEEKDAY(IFNULL(ag.data, "-1")) = dprx.nr_dia AND ag.data >= CURRENT_DATE() AND ag.pessoa_id = pf.pessoa_id  )', []);
         }
 
@@ -177,6 +176,7 @@ class ProfissionalDiaExpedienteHelper{
                             $registro->where('pesprf.name', 'like', '%' . $val . '%');
                         }
 
+                        // no break
                     case 'name_pessoa':
                         if (is_string($val)) {
 
@@ -245,10 +245,10 @@ class ProfissionalDiaExpedienteHelper{
         $registro   = $registro->where('dprx.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
 
 
-            
+
 
         return $registro;
-        
+
     }
 
 }

@@ -4,7 +4,6 @@ namespace App\Application\Services\Country;
 
 use App\Application\Commands\Country\CreateCountryCommand;
 use App\Pais;
-use App\Domain\Country\Entities\Country;
 use Illuminate\Support\Collection;
 
 interface CountryApplicationServiceInterface

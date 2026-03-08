@@ -2,25 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Fiscal\FacadeNfe;
+use App\Fiscal\Nfe;
+use App\Fiscal\VaidateNfe;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use \App\Fiscal\Nfe;
-use \App\Fiscal\VaidateNfe;
-use NFePHP\NFe\Tools;
-use NFePHP\NFe\Make;
 use NFePHP\Common\Certificate;
-use NFePHP\Common\Soap\SoapFake;
-use \Mpdf\Mpdf;
-use \App\Fiscal\FacadeNfe;
-use \App\Exceptions\FiscalException;
-use stdClass;
+use NFePHP\NFe\Make;
+use NFePHP\NFe\Tools;
 
 class NfeController extends Controller
 {
-
     /*
         Aual de modelagem 03 ok
-        
+
         Modelo conceitual controle fiscal
 
         Emitir nota fisca NFe e NFCe
@@ -104,8 +99,9 @@ class NfeController extends Controller
             $dados['indPag']    = '1'; //0=Pagamento à vista; 1=Pagamento a prazo; 2=Outros
             $dados['mod']       = '55'; //modelo da NFe 55 ou 65 essa última NFCe
             $dados['serie']     = '1'; //serie da NFe
-            $dados['nNF']       = '10'; // numero da NFe 
-            $dados['dhEmi']     = date("Y-m-d\TH:i:sP");;
+            $dados['nNF']       = '10'; // numero da NFe
+            $dados['dhEmi']     = date("Y-m-d\TH:i:sP");
+            ;
             $dados['dhSaiEnt']  = date("Y-m-d\TH:i:sP"); // Nâo informar para nfce
             $dados['tpNF']      = '1';
             $dados['idDest']    = '1'; //1=Operação interna; 2=Operação interestadual; 3=Operação com exterior.
@@ -115,7 +111,7 @@ class NfeController extends Controller
             $dados['cDV']       = '';
             $dados['tpAmb']     = '2';  //1=Produção; 2=Homologação
             $dados['finNFe']    = '1';  //1=NF-e normal; 2=NF-e complementar; 3=NF-e de ajuste; 4=Devolução/Retorno.
-            $dados['indFinal']  = '0';  //0=Normal; 1=Consumidor final;       
+            $dados['indFinal']  = '0';  //0=Normal; 1=Consumidor final;
             $dados['indPres']   = '9';  //0=Não se aplica (por exemplo, Nota Fiscal complementar ou de ajuste);
             //1=Operação presencial;
             //2=Operação não presencial, pela Internet;
@@ -252,7 +248,7 @@ class NfeController extends Controller
 
             //-----------------------------------------------------------------------------------------------
 
-            $aP[] = array(
+            $aP[] = [
                 //'nItem' => 1,
                 'item' => 1,
                 'cProd' => '15',
@@ -278,7 +274,7 @@ class NfeController extends Controller
                 'xPed' => '16',
                 'nItemPed' => '1',
                 'nFCI' => '',
-            );
+            ];
             $apenas = [
                 'item',
                 'cProd',
@@ -529,7 +525,7 @@ class NfeController extends Controller
 
             }
 
-            //---------------------NOTA: Ajustado para NT 2018.005 Node indicativo de local de retirada diferente do endereço do emitente 
+            //---------------------NOTA: Ajustado para NT 2018.005 Node indicativo de local de retirada diferente do endereço do emitente
             $dados = [];
             $dados['CPF']       = null; // OU cpf ou cnpj
             $dados['CNPJ']      = '03810070000101'; // OU cpf ou cnpj
@@ -572,7 +568,7 @@ class NfeController extends Controller
             }
             $nfe->localRetirada($dados);
 
-            //---------------------NOTA: NOTA: Ajustado para NT 2018.005 Node indicativo de local de entrega diferente do endereço do destinatário 
+            //---------------------NOTA: NOTA: Ajustado para NT 2018.005 Node indicativo de local de entrega diferente do endereço do destinatário
             $dados = [];
             $dados['CPF']       = null; // OU cpf ou cnpj
             $dados['CNPJ']      = '03810070000101'; // OU cpf ou cnpj

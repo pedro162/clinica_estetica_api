@@ -2,14 +2,13 @@
 
 namespace App\Scopes;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Auth;
 
 class MainUserScope implements Scope
 {
-
     public function apply(Builder $builder, Model $model)
     {
         $builder->where('main_user_id', Auth::user()->main_user_id);

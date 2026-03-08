@@ -32,14 +32,8 @@ use App\Notification as AppNotification;
 use App\Pessoa;
 use App\Profissional;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
-use Mockery;
-use Mockery\MockInterface;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-
 
 class NotificationServiceTest extends TestCase
 {
@@ -87,7 +81,7 @@ class NotificationServiceTest extends TestCase
 
         $command = new CreateAppointmentCommand();
         $command->appointmentId(0)
-            ->appointmentStartDate("2024-06-30")
+            ->appointmentStartDate('2024-06-30')
             ->appointmentPersonId(factory(Pessoa::class)->create()->id)
             ->appointmentStartHour('10:45')
             ->appointmentEndDate('')
@@ -96,7 +90,7 @@ class NotificationServiceTest extends TestCase
             ->appointmentBranchId(factory(Filial::class)->create()->id)
             ->appointmentName('José')
             ->appointmentNickname('Pedro')
-            ->appointmentReminder("Test")
+            ->appointmentReminder('Test')
             ->appointmentPriority('alta')
             ->appointmentType('consulta')
             ->appointmentActive('yes')
@@ -108,7 +102,7 @@ class NotificationServiceTest extends TestCase
         $idNotification = (string) $response->getId();
         $idNotification = (int) $idNotification;
 
-        $this->assertGreaterThan(0, $idNotification, "it was not possible to create a natural person");
+        $this->assertGreaterThan(0, $idNotification, 'it was not possible to create a natural person');
     }
 
     /**
@@ -163,37 +157,37 @@ class NotificationServiceTest extends TestCase
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue("2024-06-30"));
+        $varOj->setValue(new TemplateVariableValue('2024-06-30'));
         $varOj->setVariable(new TemplateVariableSyntax('{{3}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue("10:30 A.M"));
+        $varOj->setValue(new TemplateVariableValue('10:30 A.M'));
         $varOj->setVariable(new TemplateVariableSyntax('{{4}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue((string) "Skin care"));
+        $varOj->setValue(new TemplateVariableValue((string) 'Skin care'));
         $varOj->setVariable(new TemplateVariableSyntax('{{5}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue((string) "Rua das Amoras, Brazil"));
+        $varOj->setValue(new TemplateVariableValue((string) 'Rua das Amoras, Brazil'));
         $varOj->setVariable(new TemplateVariableSyntax('{{6}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue((string) "+55(98)984257623"));
+        $varOj->setValue(new TemplateVariableValue((string) '+55(98)984257623'));
         $varOj->setVariable(new TemplateVariableSyntax('{{7}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);
 
         $varOj = new TemplateVariable();
-        $varOj->setValue(new TemplateVariableValue((string) "http://localhost:3000"));
+        $varOj->setValue(new TemplateVariableValue((string) 'http://localhost:3000'));
         $varOj->setVariable(new TemplateVariableSyntax('{{7}}'));
         $varOj->setId(new TemplateVariableId(0));
         $templateObj->addVariable($varOj);

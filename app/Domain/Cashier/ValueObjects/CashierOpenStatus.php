@@ -10,7 +10,7 @@ class CashierOpenStatus
     {
         if (!empty($value)) {
             if (!in_array($value, ['open', 'close'])) {
-                throw new \InvalidArgumentException("The Cashier type is invalid. It should be either (open, close)");
+                throw new \InvalidArgumentException('The Cashier type is invalid. It should be either (open, close)');
             }
         }
 

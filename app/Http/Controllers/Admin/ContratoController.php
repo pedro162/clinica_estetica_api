@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contrato;
+use App\Filial;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ContratoRequest;
+use App\Pessoa;
 use Illuminate\Http\Request;
-use \App\Http\Requests\ContratoRequest;
-use \App\Pessoa;
-use \App\Contrato;
-use \App\Filial;
 
 class ContratoController extends Controller
 {
@@ -30,29 +30,29 @@ class ContratoController extends Controller
     {
         try {
 
-            if((! isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['params'=>'Parametro inválido']], 400);
+            if ((! isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['params' => 'Parametro inválido']], 400);
             }
 
-          
-            $registro = \DB::transaction(function() use (&$id){
+
+            $registro = \DB::transaction(function () use (&$id) {
                 $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $id)->first();
                 $filial = Filial::where('active', '=', 'yes')->get();
-                return ['pessoa'=>$pessoa, 'filial'=> $filial];
+                return ['pessoa' => $pessoa, 'filial' => $filial];
             });
 
             $filial     = $registro['filial'];
             $registro   = $registro['pessoa'];
-            
-            if($registro == null){
-                 return response()->json(['errors'=>['erro'=>'Erro ao carregar o registro'], 'class'=>'warning'], 400);
+
+            if ($registro == null) {
+                return response()->json(['errors' => ['erro' => 'Erro ao carregar o registro'], 'class' => 'warning'], 400);
             }
-          
+
 
             return view('admin.contrato.create', compact('registro', 'filial'));
 
         } catch (\Exception $e) {
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor']], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor']], 500);
         }
     }
 
@@ -66,21 +66,21 @@ class ContratoController extends Controller
     {
         try {
 
-            if((! isset($id)) || ($id <= 0)){
-                return response()->json(['errors'=>['params'=>'Parametro inválido']], 400);
+            if ((! isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['params' => 'Parametro inválido']], 400);
             }
 
             $errors = $request->validated();
             $dados  = $request->all();
-            $registro = \DB::transaction(function() use (&$id, &$dados){
+            $registro = \DB::transaction(function () use (&$id, &$dados) {
                 $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
-                if(! $pessoa){
+                if (! $pessoa) {
                     return false;
                 }
 
                 $filial = Filial::where('active', '=', 'yes')->where('id', '=', $dados['filial_id'])->first();
-                if(! $filial){
+                if (! $filial) {
                     return false;
                 }
 
@@ -97,16 +97,16 @@ class ContratoController extends Controller
                 $result = Contrato::create($toCommit);
                 return $result;
             });
-            
-            if($registro == false){
-                 return response()->json(['errors'=>['erro'=>'Erro ao carregar o registro'], 'class'=>'warning'], 400);
-            }
-          
 
-            return response()->json(['data'=> $registro], 201);
+            if ($registro == false) {
+                return response()->json(['errors' => ['erro' => 'Erro ao carregar o registro'], 'class' => 'warning'], 400);
+            }
+
+
+            return response()->json(['data' => $registro], 201);
 
         } catch (\Exception $e) {
-            return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor '.$e->getMessage()]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor '.$e->getMessage()]], 500);
         }
     }
 

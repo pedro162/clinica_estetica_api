@@ -10,7 +10,7 @@ class CashierAcceptTransfer
     {
         if (!empty($value)) {
             if (!in_array($value, ['yes', 'no'])) {
-                throw new \InvalidArgumentException("The cashier accept type is invalid. It should be either (yes, no)");
+                throw new \InvalidArgumentException('The cashier accept type is invalid. It should be either (yes, no)');
             }
         }
 

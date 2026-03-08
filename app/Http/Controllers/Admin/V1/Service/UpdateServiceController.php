@@ -18,17 +18,18 @@ class UpdateServiceController extends Controller
     public function __construct(
         protected ServiceApplicationServiceInterface $service,
         protected ServiceRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\V1\Service\UpdateServiceRequest $request
-     * 
+     *
      * @param  int  $id
-     * 
+     *
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(UpdateServiceRequest $request, $id): JsonResponse

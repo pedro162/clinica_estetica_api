@@ -5,7 +5,6 @@ namespace App\Application\Services;
 use App\Application\Commands\CreateHttpCommand;
 use App\Application\Handlers\CreateHttpHandler;
 use App\Domain\Http\Entities\Http;
-use App\Funcionario;
 
 class HttpApplicationService
 {

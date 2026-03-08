@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Person;
 
-use App\Pessoa;
 use App\Domain\Person\Entities\Person;
 use App\Domain\Person\Repositories\PersonRepositoryInterface;
 use App\Domain\Person\ValueObjects\PersonDocument;
 use App\Domain\Person\ValueObjects\PersonId;
 use App\Grupo;
 use App\Logradouro;
+use App\Pessoa;
 use Illuminate\Support\Facades\Auth;
 
 class PersonRepository implements PersonRepositoryInterface

@@ -3,32 +3,32 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Produto;
 use Illuminate\Http\Request;
-use \App\Produto;
 
 class SiteController extends Controller
 {
-	/**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-    	/*$registros = Produto::where('active', '=', 'yes')->where('spotlight', '=', 'yes')
+        /*$registros = Produto::where('active', '=', 'yes')->where('spotlight', '=', 'yes')
         ->get();*/
 
-        $registros = \DB::table('produtos')->join('categoria_produto', function($join){
-            
+        $registros = \DB::table('produtos')->join('categoria_produto', function ($join) {
+
             $join->on('produtos.id', '=', 'categoria_produto.produto_id');
 
-        })->join('categorias', function($join){
+        })->join('categorias', function ($join) {
 
             $join->on('categorias.id', '=', 'categoria_produto.categoria_id');
 
-        })->join('marcas', function($join){
+        })->join('marcas', function ($join) {
 
-            $join->on('marcas.id', '=' ,'produtos.marca_id');
+            $join->on('marcas.id', '=', 'produtos.marca_id');
 
         })->select('produtos.*', 'categorias.name as categoria', 'marcas.name as marca')
             ->where('categoria_produto.active', '=', 'yes')
@@ -104,5 +104,5 @@ class SiteController extends Controller
     {
         //
     }
-    
+
 }

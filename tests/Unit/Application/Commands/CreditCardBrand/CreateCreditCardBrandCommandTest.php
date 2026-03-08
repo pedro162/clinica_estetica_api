@@ -10,7 +10,7 @@ class CreateCreditCardBrandCommandTest extends TestCase
     //XDEBUG_MODE=coverage ./vendor/bin/phpunit coverage
 
     /**
-     * 
+     *
      * @param array<mixed> $data
      * @dataProvider entityDataProvider
      * @return void
@@ -26,7 +26,7 @@ class CreateCreditCardBrandCommandTest extends TestCase
         }
     }
     /**
-     * 
+     *
      * @param array<mixed> $data
      * @dataProvider entityDataProvider
      * @return void
@@ -43,7 +43,7 @@ class CreateCreditCardBrandCommandTest extends TestCase
     }
 
     /**
-     * 
+     *
      * @param array<mixed> $data
      * @dataProvider entityModelPropertiesDataProvider
      * @return void

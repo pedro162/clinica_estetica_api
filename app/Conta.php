@@ -2,16 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\ContaCategoria;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Conta extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    protected $table = "contas";
-    protected $primaryKey = "id";
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $table = 'contas';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'id',
         'name',

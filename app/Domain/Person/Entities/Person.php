@@ -176,19 +176,19 @@ class Person extends BaseEntity
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id(new PersonId($value))],
-            ['keys' => ['name'], 'callback' => fn($value) => $entity->name(new PersonName((string)$value))],
-            ['keys' => ['name_opcional', 'optionalName'], 'callback' => fn($value) => $entity->optionalName(new PersonOptionalName((string)$value))],
-            ['keys' => ['documento', 'document'], 'callback' => fn($value) => $entity->document(new PersonDocument((string)$value))],
-            ['keys' => ['documento_complementar', 'extraDocument'], 'callback' => fn($value) => $entity->extraDocument(new PersonExtraDocument((string)$value))],
-            ['keys' => ['nascimento_fundacao', 'birthOrFoundation'], 'callback' => fn($value) => $entity->birthOrFoundation(new PersonBirthOrFoundation((string)$value))],
-            ['keys' => ['email'], 'callback' => fn($value) => $entity->email(new PersonEmail((string)$value))],
-            ['keys' => ['sex', 'sexo'], 'callback' => fn($value) => $entity->sex(new PersonSex((string)$value))],
-            ['keys' => ['type'], 'callback' => fn($value) => $entity->type(new PersonType((string)$value))],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id(new PersonId($value))],
+            ['keys' => ['name'], 'callback' => fn ($value) => $entity->name(new PersonName((string)$value))],
+            ['keys' => ['name_opcional', 'optionalName'], 'callback' => fn ($value) => $entity->optionalName(new PersonOptionalName((string)$value))],
+            ['keys' => ['documento', 'document'], 'callback' => fn ($value) => $entity->document(new PersonDocument((string)$value))],
+            ['keys' => ['documento_complementar', 'extraDocument'], 'callback' => fn ($value) => $entity->extraDocument(new PersonExtraDocument((string)$value))],
+            ['keys' => ['nascimento_fundacao', 'birthOrFoundation'], 'callback' => fn ($value) => $entity->birthOrFoundation(new PersonBirthOrFoundation((string)$value))],
+            ['keys' => ['email'], 'callback' => fn ($value) => $entity->email(new PersonEmail((string)$value))],
+            ['keys' => ['sex', 'sexo'], 'callback' => fn ($value) => $entity->sex(new PersonSex((string)$value))],
+            ['keys' => ['type'], 'callback' => fn ($value) => $entity->type(new PersonType((string)$value))],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId(new BaseEntityUserId((string)$value))],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId(new BaseEntityTenantId((string)$value))],
         ];
 
         foreach ($mapping as $map) {

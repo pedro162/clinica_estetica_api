@@ -51,15 +51,16 @@ class GetAllServiceController extends Controller
     public function __construct(
         protected ServiceApplicationServiceInterface $service,
         protected ServiceRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
      *
      * @param GetAllServiceRequest $request
-     * 
+     *
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(GetAllServiceRequest $request): JsonResponse

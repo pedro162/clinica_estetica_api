@@ -2,16 +2,17 @@
 
 namespace App;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\BelongsToTenant;
 
 class Http extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
 
     protected $table = 'https';
-    protected $primaryKey = "id";
+    protected $primaryKey = 'id';
     protected $fillable = [
         'http_code',
         'http_body',

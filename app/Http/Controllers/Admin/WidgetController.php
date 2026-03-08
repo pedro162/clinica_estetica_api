@@ -2,27 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\CobrancaReceberException;
+use App\Helpers\AtendimentoHelper;
+use App\Helpers\ContaReceberHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use \App\ContaReceber as CobrancaReceber;
-use \App\Pessoa;
-use \App\FormaPagamento;
-use \App\PlanoPagamento;
-use \App\Utilitarios;
-use \App\OperadorFinanceiro;
-use \App\OrdemServico;
-use \App\Filial;
-use \App\VendaItem;
-use \App\Venda;
-use \App\ServicoItem;
-use \App\Servico;
-use \App\User;
-use \App\Rca;
-use \App\Exceptions\CobrancaReceberException;
-use \App\ExceptionApplication;
-use Illuminate\Support\Facades\Validator;
-use App\Helpers\ContaReceberHelper;
-use App\Helpers\AtendimentoHelper;
 
 class WidgetController extends Controller
 {
@@ -38,7 +22,9 @@ class WidgetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) {}
+    public function index(Request $request)
+    {
+    }
 
     /**
      * Display a listing of the resource.

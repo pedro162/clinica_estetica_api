@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Contact;
 
-use App\Telefone;
 use App\Domain\Contact\Entities\Contact;
 use App\Domain\Contact\Repositories\ContactRepositoryInterface;
 use App\Domain\Contact\ValueObjects\ContactId;
+use App\Telefone;
 use Illuminate\Support\Facades\Auth;
 
 class ContactRepository implements ContactRepositoryInterface
@@ -35,7 +35,8 @@ class ContactRepository implements ContactRepositoryInterface
 
     public function crateSimple(array $data): ?Telefone
     {
-        $data['user_id'] = $data['user_id'] ?? Auth::user()->id;;
+        $data['user_id'] = $data['user_id'] ?? Auth::user()->id;
+        ;
         $data['tenant_id'] = $this->getTenantId();
         $data['active'] = $data['active'] ?? 'yes';
 

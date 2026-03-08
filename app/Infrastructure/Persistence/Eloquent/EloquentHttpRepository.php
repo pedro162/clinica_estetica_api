@@ -5,19 +5,13 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Http\Entities\Http;
 use App\Domain\Http\Repositories\HttpRepositoryInterface;
 use App\Domain\Http\ValueObjects\HttpBody;
-use App\Domain\Http\ValueObjects\HttpDocument;
-use App\Domain\Http\ValueObjects\HttpEmail;
-use App\Domain\Http\ValueObjects\HttpExtraDocument;
 use App\Domain\Http\ValueObjects\HttpHeader;
 use App\Domain\Http\ValueObjects\HttpId;
-use App\Domain\Http\ValueObjects\HttpName;
-use App\Domain\Http\ValueObjects\HttpOptionalName;
-use App\Domain\Http\ValueObjects\HttpSex;
 use App\Domain\Http\ValueObjects\HttpUrl;
-use Illuminate\Support\Facades\DB;
 use App\Http as HttpModel;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EloquentHttpRepository implements HttpRepositoryInterface
 {

@@ -9,7 +9,7 @@ class PaymentMethodHasCounterAdjustment
     public function __construct(string $value)
     {
         if (empty($value)) {
-            throw new \InvalidArgumentException("The field, has accounter adjustment, cannot be empty");
+            throw new \InvalidArgumentException('The field, has accounter adjustment, cannot be empty');
         }
 
         $this->value = $value;

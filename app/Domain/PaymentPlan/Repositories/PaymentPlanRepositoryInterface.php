@@ -2,9 +2,9 @@
 
 namespace App\Domain\PaymentPlan\Repositories;
 
-use App\PlanoPagamento;
 use App\Domain\PaymentPlan\Entities\PaymentPlan;
 use App\Domain\PaymentPlan\ValueObjects\PaymentPlanId;
+use App\PlanoPagamento;
 
 interface PaymentPlanRepositoryInterface
 {

@@ -1,22 +1,20 @@
 <?php
 
-namespace Tests\Feature\Service;
+namespace Tests\Feature\Seller;
 
-use App\Application\Services\Service\ServiceApplicationService;
+use App\Application\Services\Seller\SellerApplicationService;
 use App\Rca;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use Tests\Feature\SetupTest;
 
-class UpdateServiceControllerTest extends TestCase
+class UpdateSellerControllerTest extends TestCase
 {
     //use RefreshDatabase;
 
-    protected ServiceApplicationService $sellerApplicationService;
+    protected SellerApplicationService $sellerApplicationService;
     protected Rca $payload;
     protected Rca $seller;
 
@@ -29,7 +27,7 @@ class UpdateServiceControllerTest extends TestCase
         Passport::actingAs($user, ['*']);
     }
 
-    public function testUpdateService()
+    public function testUpdateSeller()
     {
         $data = $this->payload->toArray();
         unset($data['id'], $data['user_id'], $data['user_update_id']);

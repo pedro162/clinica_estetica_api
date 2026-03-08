@@ -9,7 +9,6 @@ use App\Application\Handlers\Person\GetAllPersonHandler;
 use App\Application\Handlers\Person\GetPersonByIdHandler;
 use App\Application\Handlers\Person\UpdatePersonHandler;
 use App\Pessoa;
-use App\Domain\Person\Entities\Person;
 use Illuminate\Support\Collection;
 
 class PersonApplicationService implements PersonApplicationServiceInterface

@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Atendimento;
-use App\Pessoa;
-use App\Profissional;
-use App\Filial;
-use App\Agenda;
 use App\Exceptions\AtendimentoException;
+use App\Helpers\AtendimentoHelper;
+use App\Http\Controllers\Controller;
+use App\Profissional;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\Helpers\AtendimentoHelper;
 
 class AtendimentoController extends Controller
 {
-
-
-
     /**
      * Display a listing of the resource.
      *

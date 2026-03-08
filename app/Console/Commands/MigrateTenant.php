@@ -38,13 +38,13 @@ class MigrateTenant extends Command
      */
     public function handle()
     {
-        if($this->argument('tenant')){
+        if ($this->argument('tenant')) {
             $this->migrate(
                 Tenant::find($this->argument('tenant'))
             );
-        }else{
+        } else {
             Tenant::all()->each(
-                function($tenant){
+                function ($tenant) {
                     $this->migrate($tenant);
                 }
             );
@@ -54,8 +54,9 @@ class MigrateTenant extends Command
     }
 
 
-    public function migrate($tenant){
-        
+    public function migrate($tenant)
+    {
+
         $tenant->configure()->use();
         $this->line('');
         $this->line('----------------------------------------------------------------');
@@ -63,17 +64,16 @@ class MigrateTenant extends Command
         $this->line('----------------------------------------------------------------');
 
         $options = [
-            '--force'=>true
+            '--force' => true
         ];
 
-        if($this->option('seed')){
+        if ($this->option('seed')) {
             $options['--seed'] = true;
         }
 
         $this->call(
             $this->option('fresh') ? 'migrate:fresh' : 'migrate',
             $options
-            
         );
 
 

@@ -2,23 +2,22 @@
 
 namespace App\Domain\Appointment\Entities;
 
-use App\Domain\Appointment\Interfaces\AppointmentInterface;
-use App\Domain\Appointment\ValueObjects\AppointmentId;
-use App\Domain\Appointment\ValueObjects\AppointmentStartDate;
-use App\Domain\Appointment\ValueObjects\AppointmentPersonId;
-use App\Domain\Appointment\ValueObjects\AppointmentEndHour;
-use App\Domain\Appointment\ValueObjects\AppointmentEndDate;
-use App\Domain\Appointment\ValueObjects\AppointmentStartHour;
-use App\Domain\Appointment\ValueObjects\AppointmentUserId;
 use App\Domain\Appointment\ValueObjects\AppointmentActive;
 use App\Domain\Appointment\ValueObjects\AppointmentBranchId;
+use App\Domain\Appointment\ValueObjects\AppointmentEndDate;
+use App\Domain\Appointment\ValueObjects\AppointmentEndHour;
+use App\Domain\Appointment\ValueObjects\AppointmentId;
 use App\Domain\Appointment\ValueObjects\AppointmentPersonContactName;
 use App\Domain\Appointment\ValueObjects\AppointmentPersonContactNickname;
+use App\Domain\Appointment\ValueObjects\AppointmentPersonId;
 use App\Domain\Appointment\ValueObjects\AppointmentPriority;
-use App\Domain\Appointment\ValueObjects\AppointmentReminder;
-use App\Domain\Appointment\ValueObjects\AppointmentType;
 use App\Domain\Appointment\ValueObjects\AppointmentProfessionalId;
+use App\Domain\Appointment\ValueObjects\AppointmentReminder;
+use App\Domain\Appointment\ValueObjects\AppointmentStartDate;
+use App\Domain\Appointment\ValueObjects\AppointmentStartHour;
 use App\Domain\Appointment\ValueObjects\AppointmentStatus;
+use App\Domain\Appointment\ValueObjects\AppointmentType;
+use App\Domain\Appointment\ValueObjects\AppointmentUserId;
 
 class Appointment
 {

@@ -2,8 +2,6 @@
 
 namespace App\Application\Handlers\AccountReceivableItem;
 
-use App\Application\Commands\AccountReceivableItem\CreateAccountReceivableItemCommand;
-use App\Domain\AccountReceivableItem\Entities\AccountReceivableItem;
 use App\Domain\AccountReceivableItem\Repositories\AccountReceivableItemRepositoryInterface;
 use Illuminate\Support\Collection;
 

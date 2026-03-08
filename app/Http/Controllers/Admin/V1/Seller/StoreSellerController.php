@@ -18,15 +18,16 @@ class StoreSellerController extends Controller
     public function __construct(
         protected SellerApplicationServiceInterface $service,
         protected SellerRepositoryInterface $personRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\V1\Seller\StoreSellerRequest  $request
-     * 
+     *
      * @return JsonResponse
-     * 
+     *
      * @throws HttpResponseException
      */
     public function __invoke(StoreSellerRequest $request): JsonResponse

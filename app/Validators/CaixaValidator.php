@@ -2,13 +2,11 @@
 
 namespace App\Validators;
 
-use \App\Caixa;
-use \App\Exceptions\CobrancaReceberException;
+use App\Caixa;
+use App\Exceptions\CobrancaReceberException;
 
 class CaixaValidator
 {
-
-
     public function validarCaixaBaixar(int $id, array $dados = [])
     {
 

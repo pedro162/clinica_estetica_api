@@ -4,7 +4,6 @@ namespace App\Application\Services\AccountReceivable;
 
 use App\Application\Commands\AccountReceivable\CreateAccountReceivableCommand;
 use App\ContaReceber;
-use App\Domain\AccountReceivable\Entities\AccountReceivable;
 use Illuminate\Support\Collection;
 
 interface AccountReceivableApplicationServiceInterface

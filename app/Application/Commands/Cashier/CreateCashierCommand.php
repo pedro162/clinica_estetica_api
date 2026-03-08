@@ -3,11 +3,9 @@
 namespace App\Application\Commands\Cashier;
 
 use App\Utilitarios;
-use Exception;
 
 class CreateCashierCommand
 {
-
     protected string $id;
     protected string $name;
     protected string $type;
@@ -203,7 +201,7 @@ class CreateCashierCommand
             $balanceType = 'negativo';
         }
 
-        $entity = (new self)
+        $entity = (new self())
             ->id((string)($data['id'] ?? 0))
             ->name((string)($data['name'] ?? ''))
             ->type((string)($data['type'] ?? ''))

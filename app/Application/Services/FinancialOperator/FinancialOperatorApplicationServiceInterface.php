@@ -4,7 +4,6 @@ namespace App\Application\Services\FinancialOperator;
 
 use App\Application\Commands\FinancialOperator\CreateFinancialOperatorCommand;
 use App\OperadorFinanceiro;
-use App\Domain\FinancialOperator\Entities\FinancialOperator;
 use Illuminate\Support\Collection;
 
 interface FinancialOperatorApplicationServiceInterface

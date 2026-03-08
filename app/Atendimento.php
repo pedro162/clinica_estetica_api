@@ -2,18 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\EventoAgenda;
-use App\Pessoa;
-use App\Profissional;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Atendimento extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    protected $table = "atendimentos";
-    protected $primaryKey = "id";
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $table = 'atendimentos';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'name',
         'historico',

@@ -2,15 +2,12 @@
 
 namespace App\Impressao;
 
-use InvalidArgumentException;
-use App\Impressao\Legacy\Dom;
+use App\Impressao\Legacy\Common;
 use App\Impressao\Legacy\Pdf;
-use \App\Impressao\Legacy\Common;
-
 
 class FichaAnamnese extends Common
 {
-    const FPDF_FONTPATH = 'font/';
+    public const FPDF_FONTPATH = 'font/';
 
     /**
      * alinhamento padrão do logo (C-Center)
@@ -98,7 +95,7 @@ class FichaAnamnese extends Common
      */
     protected $logomarca = '';
 
-    protected  $logomarcamarcadagua;
+    protected $logomarcamarcadagua;
     /**
      * mesagens de erro
      * @var string
@@ -198,7 +195,7 @@ class FichaAnamnese extends Common
      * @param string  $fonteDANFE  Nome da fonte alternativa do DAnfe
      * @param integer $mododebug   0-Não 1-Sim e 2-nada (2 default)
      */
-    public function __construct($dadosArr,  $sPathLogo = '')
+    public function __construct($dadosArr, $sPathLogo = '')
     {
         $sOrientacao = 'P';
         $sPapel = '';
@@ -338,7 +335,7 @@ class FichaAnamnese extends Common
         $this->pdf->setLineWidth(0.1);
         $this->pdf->setTextColor(0, 0, 0);
 
-        $fontProduto = array('font' => $this->fontePadrao, 'size' => 7, 'style' => '');
+        $fontProduto = ['font' => $this->fontePadrao, 'size' => 7, 'style' => ''];
 
         $this->textoAdic = '';
         //altura disponivel para os campos da DANFE
@@ -349,7 +346,7 @@ class FichaAnamnese extends Common
 
         $hDispo2 = 239; //dados produtos pag  . 2
         //Contagem da altura ocupada para impressão dos itens
-        $fontProduto = array('font' => $this->fontePadrao, 'size' => 7, 'style' => '');
+        $fontProduto = ['font' => $this->fontePadrao, 'size' => 7, 'style' => ''];
         $i = 0;
         $numlinhas = 0;
         $hUsado = $hCabecItens;
@@ -513,9 +510,9 @@ class FichaAnamnese extends Common
             $w = round($maxW * 0.81, 0);
         }
         if ($this->orientacao == 'P') {
-            $aFont = array('font' => $this->fontePadrao, 'size' => 7, 'style' => 'I');
+            $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => 'I'];
         } else {
-            $aFont = array('font' => $this->fontePadrao, 'size' => 8, 'style' => 'B');
+            $aFont = ['font' => $this->fontePadrao, 'size' => 8, 'style' => 'B'];
         }
         $w1 = $w;
         $h = 60; //30;
@@ -552,8 +549,8 @@ class FichaAnamnese extends Common
             $this->pdf->Image($this->logomarca, $xImg, $yImg, $nImgW, $nImgH);
 
 
-            $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => '');
-            $texto = "Espaço beleza";
+            $aFont = ['font' => $this->fontePadrao, 'size' => 15, 'style' => ''];
+            $texto = 'Espaço beleza';
             //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
             $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 1, '');
             //echo ($tw) . '<br/>';
@@ -566,8 +563,8 @@ class FichaAnamnese extends Common
 
 
             //$y1 +=10;
-            $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => 'B');
-            $texto = "Registros de Atendimentos";
+            $aFont = ['font' => $this->fontePadrao, 'size' => 15, 'style' => 'B'];
+            $texto = 'Registros de Atendimentos';
             //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
             $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 1, '');
 
@@ -579,8 +576,8 @@ class FichaAnamnese extends Common
             /* echo ($x1) . '<br/>';
             die(); */
             //$y1 +=10;
-            $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => '');
-            $texto = "Data " . $dtInicial . " até " . $dtFinal;
+            $aFont = ['font' => $this->fontePadrao, 'size' => 15, 'style' => ''];
+            $texto = 'Data ' . $dtInicial . ' até ' . $dtFinal;
             //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
             $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 1, '');
         } else {
@@ -588,8 +585,8 @@ class FichaAnamnese extends Common
             $y1 = round($h / 3 + $y, 0) - 20;
             $tw = round($w * 0.40);
 
-            $aFont = array('font' => $this->fontePadrao, 'size' => 15, 'style' => '');
-            $texto = "Espaço beleza";
+            $aFont = ['font' => $this->fontePadrao, 'size' => 15, 'style' => ''];
+            $texto = 'Espaço beleza';
             //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
             $this->pdf->textBox($x1, $y1, $tw, 20, $texto, $aFont, 'C', 'L', 1, '');
             //echo ($tw) . '<br/>';
@@ -600,7 +597,7 @@ class FichaAnamnese extends Common
             $tw = round($w * 0.40);
 
             //$y1 +=10;
-            $aFont = array('font' => $this->fontePadrao, 'size' => 14, 'style' => 'B');
+            $aFont = ['font' => $this->fontePadrao, 'size' => 14, 'style' => 'B'];
             $texto = "Estética Facial\n\rFicha de anamnese";
             //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
             $this->pdf->textBox($x1, $y1, $tw, 20, $texto, $aFont, 'C', 'C', 1, '');
@@ -616,8 +613,8 @@ class FichaAnamnese extends Common
             /* echo ($x1) . '<br/>';
             die(); */
             //$y1 +=10;
-            $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => '');
-            $texto = "Data " . $dtInicial;
+            $aFont = ['font' => $this->fontePadrao, 'size' => 10, 'style' => ''];
+            $texto = 'Data ' . $dtInicial;
             //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
             $this->pdf->textBox($x1, $y1, $tw, 20, $texto, $aFont, 'C', 'L', 1, '');
         }
@@ -675,9 +672,9 @@ class FichaAnamnese extends Common
         $tw = round($w * 0.40);
 
         //Nome emitente
-        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 10, 'style' => 'B'];
         $texto = 'Nome completo: ';
-        $texto .= $this->dadosArr['emitente']["nome"];
+        $texto .= $this->dadosArr['emitente']['nome'];
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
@@ -686,7 +683,7 @@ class FichaAnamnese extends Common
         $tw = round($w * 0.20);
 
         //Nome emitente
-        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 10, 'style' => 'B'];
         $texto = 'Data de nasc: ';
         $texto .= '20-09-1996';
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
@@ -711,9 +708,9 @@ class FichaAnamnese extends Common
         $twRg = $tw;
 
         //Nome emitente
-        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 10, 'style' => 'B'];
         $texto = 'RG: ';
-        $texto .= $this->dadosArr['emitente']["cpf"] ?? '0000000000-0';
+        $texto .= $this->dadosArr['emitente']['cpf'] ?? '0000000000-0';
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
@@ -724,9 +721,9 @@ class FichaAnamnese extends Common
         $twCpf = $tw;
 
         //Nome emitente
-        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 10, 'style' => 'B'];
         $texto = 'CPF: ';
-        $texto .= $this->dadosArr['emitente']["cpf"] ?? '000000000-00';
+        $texto .= $this->dadosArr['emitente']['cpf'] ?? '000000000-00';
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'R', 0, '');
 
@@ -737,9 +734,9 @@ class FichaAnamnese extends Common
         $twWhats = $tw;
 
         //Nome emitente
-        $aFont = array('font' => $this->fontePadrao, 'size' => 10, 'style' => 'B');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 10, 'style' => 'B'];
         $texto = 'Whatsapp: ';
-        $texto .= $this->dadosArr['emitente']["nrWhatsapp"] ?? '(98)99999-9999';
+        $texto .= $this->dadosArr['emitente']['nrWhatsapp'] ?? '(98)99999-9999';
         //$this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
         $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'R', 0, '');
 
@@ -764,30 +761,30 @@ class FichaAnamnese extends Common
 
         //endereço
         $y1 = $y1 + 5;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 8, 'style' => '');
-        $fone = !empty($this->dadosArr['emitente']["fone"])
-            ? $this->dadosArr['emitente']["fone"]
+        $aFont = ['font' => $this->fontePadrao, 'size' => 8, 'style' => ''];
+        $fone = !empty($this->dadosArr['emitente']['fone'])
+            ? $this->dadosArr['emitente']['fone']
             : '';
-        $lgr        = $this->dadosArr['emitente']["logradouro"];
-        $nro        = $this->dadosArr['emitente']["numero"];
-        $cpl        = $this->dadosArr['emitente']["complemento"];
-        $bairro     = $this->dadosArr['emitente']["bairro"];
-        $CEP        = $this->dadosArr['emitente']["cep"];
-        $CEP        = $this->formatField($CEP, "#####-###");
-        $mun        = $this->dadosArr['emitente']["cidade"];
-        $UF         = $this->dadosArr['emitente']["uf"];
-        $IE         = $this->dadosArr['emitente']["inscricao"];
+        $lgr        = $this->dadosArr['emitente']['logradouro'];
+        $nro        = $this->dadosArr['emitente']['numero'];
+        $cpl        = $this->dadosArr['emitente']['complemento'];
+        $bairro     = $this->dadosArr['emitente']['bairro'];
+        $CEP        = $this->dadosArr['emitente']['cep'];
+        $CEP        = $this->formatField($CEP, '#####-###');
+        $mun        = $this->dadosArr['emitente']['cidade'];
+        $UF         = $this->dadosArr['emitente']['uf'];
+        $IE         = $this->dadosArr['emitente']['inscricao'];
 
-        if (!empty($this->dadosArr['emitente']["CNPJ"])) {
+        if (!empty($this->dadosArr['emitente']['CNPJ'])) {
             $cnpjcpf = $this->formatField(
-                $this->dadosArr['emitente']["CNPJ"],
-                "###.###.###/####-##"
+                $this->dadosArr['emitente']['CNPJ'],
+                '###.###.###/####-##'
             );
         } else {
-            $cnpjcpf = !empty($this->dadosArr['emitente']["CPF"]) ?
+            $cnpjcpf = !empty($this->dadosArr['emitente']['CPF']) ?
                 $this->formatField(
-                    $this->dadosArr['emitente']["CPF"],
-                    "###.###.###-##"
+                    $this->dadosArr['emitente']['CPF'],
+                    '###.###.###-##'
                 ) : '';
         }
 
@@ -799,10 +796,10 @@ class FichaAnamnese extends Common
                 . $CEP . "\n" . $mun . " - " . $UF . " "
                 . "Fone/Fax: " . $fone."\n";
 
-       
+
         */
-        $texto =  "CNPJ: " . $cnpjcpf . "\n"
-            . "Inscrição Estadual: " . $IE . "\n";
+        $texto =  'CNPJ: ' . $cnpjcpf . "\n"
+            . 'Inscrição Estadual: ' . $IE . "\n";
 
         $this->pdf->textBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'L', 0, '');
 
@@ -812,7 +809,7 @@ class FichaAnamnese extends Common
         $w = round($maxW * 0.19, 0); //35;
         $w2 = $w;
         //tipo de entrega
-        $aFont = array('font' => $this->fontePadrao, 'size' => 8, 'style' => '');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 8, 'style' => ''];
 
 
 
@@ -831,7 +828,7 @@ class FichaAnamnese extends Common
 
         //#####################################################################
         //DADOS DOS PRODUTOS / SERVIÇOS
-        $texto = "DADOS DOS AGENDAMENTOS";
+        $texto = 'DADOS DOS AGENDAMENTOS';
 
         $w = $this->wPrint;
 
@@ -851,10 +848,10 @@ class FichaAnamnese extends Common
         $this->pdf->setFillColor(46, 64, 84);
         $this->pdf->setTextColor(255, 255, 255);
 
-        $texto = "Código";
+        $texto = 'Código';
         $w1 = round($w * 0.10, 0);
         $h = 6;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 9, 'style' => 'B');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 9, 'style' => 'B'];
         $this->pdf->textBox($x, $y, $w1, $h, $texto, $aFont, 'C', 'C', 0, '', 0, 0, 0, 1);
 
         //DESCRIÇÃO DO PRODUTO / SERVIÇO
@@ -891,7 +888,7 @@ class FichaAnamnese extends Common
         // LOOP COM OS DADOS DOS PRODUTOS
         $i = 0;
         $hUsado = $h;
-        $aFont = array('font' => $this->fontePadrao, 'size' => 7, 'style' => '');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => ''];
 
         $y += $hUsado;
         $this->valorTotalTabela = 0;
@@ -925,13 +922,13 @@ class FichaAnamnese extends Common
 
                     $y_linha = $y + $h;
                     // linha entre itens
-                    $this->pdf->line($oldX, $y, $w + 2,  $y);
+                    $this->pdf->line($oldX, $y, $w + 2, $y);
                     //corrige o x
                     $x = $oldX;
                     //codigo do produto
                     $texto =  $d['cod'];
                     $this->pdf->textBox($x, $y, $w1, $h, $texto, $aFont, 'T', 'C', 0, '');
-                    //DESCRIÇÃO   
+                    //DESCRIÇÃO
 
                     $x += $w1;
                     $w2 = round($w * 0.54, 0);
@@ -1010,7 +1007,7 @@ class FichaAnamnese extends Common
         $oldY = $y;
         $w = $this->wPrint;
         $totItens = count($this->dadosArr['itens']);
-        $aFont = array('font' => $this->fontePadrao, 'size' => 7, 'style' => 'B');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => 'B'];
         $i = 0;
         $this->currentpag = $pag;
         //$y+=2;
@@ -1058,12 +1055,12 @@ class FichaAnamnese extends Common
                     /*echo "this->currentpag:";
                         echo $this->currentpag;
                         echo "<br>";
-                        
+
                         echo "this->totpag:";
                         echo $this->totpag;
                         echo "<br>";
-                        
-                        
+
+
 
                         echo "hmax:";
                         echo $hmax;
@@ -1107,10 +1104,10 @@ class FichaAnamnese extends Common
     {
         $w = $this->wPrint;
 
-        $aFont = array('font' => $this->fontePadrao, 'size' => 7, 'style' => 'I');
-        $texto = "Impresso em " . date('d/m/Y') . " as " . date('H:i:s');
+        $aFont = ['font' => $this->fontePadrao, 'size' => 7, 'style' => 'I'];
+        $texto = 'Impresso em ' . date('d/m/Y') . ' as ' . date('H:i:s');
         $this->pdf->textBox($x, $y, $w, 0, $texto, $aFont, 'T', 'L', false);
-        $texto = $this->creditos .  "  Desenvolvido por Reservai - www.reservai.com.br";
+        $texto = $this->creditos .  '  Desenvolvido por Reservai - www.reservai.com.br';
         $this->pdf->textBox($x, $y, $w, 0, $texto, $aFont, 'T', 'R', false, '');
 
         return $y;

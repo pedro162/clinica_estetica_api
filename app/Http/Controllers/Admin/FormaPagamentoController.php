@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exception\FormaPagamentoException;
+use App\FormaPagamento;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use \App\FormaPagamento;
-use App\Exception\FormaPagamentoException;
 use Illuminate\Support\Facades\Validator;
 
 class FormaPagamentoController extends Controller

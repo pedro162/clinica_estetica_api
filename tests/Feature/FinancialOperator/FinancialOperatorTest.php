@@ -4,8 +4,6 @@ namespace Tests\Feature\FinancialOperator;
 
 use App\OperadorFinanceiro;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
 use Laravel\Passport\Passport;
 use Tests\TestCase;

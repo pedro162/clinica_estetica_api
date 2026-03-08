@@ -105,14 +105,14 @@ class CreateCountryCommand
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id($value)],
-            ['keys' => ['name', 'nmPais'], 'callback' => fn($value) => $entity->name((string)$value)],
-            ['keys' => ['code', 'cdPais'], 'callback' => fn($value) => $entity->code((string)$value)],
-            ['keys' => ['isDefault', 'padrao'], 'callback' => fn($value) => $entity->isDefault($value === 'yes' || $value === true  ? true : false)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId((string)$value)],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId((string)$value)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId((string)$value)],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id($value)],
+            ['keys' => ['name', 'nmPais'], 'callback' => fn ($value) => $entity->name((string)$value)],
+            ['keys' => ['code', 'cdPais'], 'callback' => fn ($value) => $entity->code((string)$value)],
+            ['keys' => ['isDefault', 'padrao'], 'callback' => fn ($value) => $entity->isDefault($value === 'yes' || $value === true ? true : false)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId((string)$value)],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId((string)$value)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId((string)$value)],
         ];
 
         foreach ($mapping as $map) {
@@ -140,6 +140,6 @@ class CreateCountryCommand
             'active' => $this->active ?? '',
         ];
 
-        return  array_filter($data, fn($value) => $value !== null && trim($value) != '');
+        return  array_filter($data, fn ($value) => $value !== null && trim($value) != '');
     }
 }

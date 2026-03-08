@@ -2,10 +2,6 @@
 
 namespace App\Application\Commands\FinancialOperator;
 
-use App\Utilitarios;
-use Exception;
-use Illuminate\Support\Facades\Log;
-
 class CreateFinancialOperatorCommand
 {
     protected string $id;
@@ -217,23 +213,23 @@ class CreateFinancialOperatorCommand
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id($value)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId((string)$value)],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId((string)$value)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId((string)$value)],
-            ['keys' => ['branchId', 'branch_id', 'filial_id'], 'callback' => fn($value) => $entity->branchId((string)$value)],
-            ['keys' => ['tariffValue', 'vrTarifa'], 'callback' => fn($value) => $entity->tariffValue((string)$value)],
-            ['keys' => ['discountValue', 'vrDesconto'], 'callback' => fn($value) => $entity->discountValue((string)$value)],
-            ['keys' => ['discountPercentage', 'vrPorcentagemDesconto'], 'callback' => fn($value) => $entity->discountPercentage((string)$value)],
-            ['keys' => ['currentRemittanceNumber', 'nrRemessaAtual'], 'callback' => fn($value) => $entity->currentRemittanceNumber((string)$value)],
-            ['keys' => ['ourNumber', 'nrNossoNumero'], 'callback' => fn($value) => $entity->ourNumber((string)$value)],
-            ['keys' => ['protestDaysQuantity', 'qtdDiasProtesto'], 'callback' => fn($value) => $entity->protestDaysQuantity((string)$value)],
-            ['keys' => ['assumeDuplicata', 'isAssumeDuplicata'], 'callback' => fn($value) => $entity->assumeDuplicata((string)$value)],
-            ['keys' => ['boletoUpdateLocationType', 'tpLocalAtualizacaoBoleto'], 'callback' => fn($value) => $entity->boletoUpdateLocationType((string)$value)],
-            ['keys' => ['isDefault', 'isPadrao'], 'callback' => fn($value) => $entity->isDefault((string)$value)],
-            ['keys' => ['isReleased', 'isLiberado'], 'callback' => fn($value) => $entity->isReleased((string)$value)],
-            ['keys' => ['personId', 'pessoa_id'], 'callback' => fn($value) => $entity->personId((string)$value)],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id($value)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId((string)$value)],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId((string)$value)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId((string)$value)],
+            ['keys' => ['branchId', 'branch_id', 'filial_id'], 'callback' => fn ($value) => $entity->branchId((string)$value)],
+            ['keys' => ['tariffValue', 'vrTarifa'], 'callback' => fn ($value) => $entity->tariffValue((string)$value)],
+            ['keys' => ['discountValue', 'vrDesconto'], 'callback' => fn ($value) => $entity->discountValue((string)$value)],
+            ['keys' => ['discountPercentage', 'vrPorcentagemDesconto'], 'callback' => fn ($value) => $entity->discountPercentage((string)$value)],
+            ['keys' => ['currentRemittanceNumber', 'nrRemessaAtual'], 'callback' => fn ($value) => $entity->currentRemittanceNumber((string)$value)],
+            ['keys' => ['ourNumber', 'nrNossoNumero'], 'callback' => fn ($value) => $entity->ourNumber((string)$value)],
+            ['keys' => ['protestDaysQuantity', 'qtdDiasProtesto'], 'callback' => fn ($value) => $entity->protestDaysQuantity((string)$value)],
+            ['keys' => ['assumeDuplicata', 'isAssumeDuplicata'], 'callback' => fn ($value) => $entity->assumeDuplicata((string)$value)],
+            ['keys' => ['boletoUpdateLocationType', 'tpLocalAtualizacaoBoleto'], 'callback' => fn ($value) => $entity->boletoUpdateLocationType((string)$value)],
+            ['keys' => ['isDefault', 'isPadrao'], 'callback' => fn ($value) => $entity->isDefault((string)$value)],
+            ['keys' => ['isReleased', 'isLiberado'], 'callback' => fn ($value) => $entity->isReleased((string)$value)],
+            ['keys' => ['personId', 'pessoa_id'], 'callback' => fn ($value) => $entity->personId((string)$value)],
         ];
 
         foreach ($mapping as $map) {
@@ -271,6 +267,6 @@ class CreateFinancialOperatorCommand
             'personId' => $this->personId ?? '',
         ];
 
-        return array_filter($data, fn($value) => $value !== null && trim($value) != '');
+        return array_filter($data, fn ($value) => $value !== null && trim($value) != '');
     }
 }

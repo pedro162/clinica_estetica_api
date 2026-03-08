@@ -2,20 +2,14 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Atendimento as AppointmentModel;
 use App\Domain\Appointment\Entities\Appointment;
 use App\Domain\Appointment\Repositories\AppointmentRepositoryInterface;
-use App\Domain\Appointment\ValueObjects\AppointmentDocument;
-use App\Domain\Appointment\ValueObjects\AppointmentEmail;
-use App\Domain\Appointment\ValueObjects\AppointmentExtraDocument;
-use App\Domain\Appointment\ValueObjects\AppointmentId;
-use App\Domain\Appointment\ValueObjects\AppointmentMessage;
-use App\Domain\Appointment\ValueObjects\AppointmentSex;
-use Illuminate\Support\Facades\DB;
-use App\Atendimento as AppointmentModel;
 use App\Domain\Appointment\ValueObjects\AppointmentActive;
 use App\Domain\Appointment\ValueObjects\AppointmentBranchId;
 use App\Domain\Appointment\ValueObjects\AppointmentEndDate;
 use App\Domain\Appointment\ValueObjects\AppointmentEndHour;
+use App\Domain\Appointment\ValueObjects\AppointmentId;
 use App\Domain\Appointment\ValueObjects\AppointmentPersonContactName;
 use App\Domain\Appointment\ValueObjects\AppointmentPersonContactNickname;
 use App\Domain\Appointment\ValueObjects\AppointmentPersonId;
@@ -28,7 +22,7 @@ use App\Domain\Appointment\ValueObjects\AppointmentStatus;
 use App\Domain\Appointment\ValueObjects\AppointmentType;
 use App\Domain\Appointment\ValueObjects\AppointmentUserId;
 use App\User;
-use Exception;
+use Illuminate\Support\Facades\DB;
 
 class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {

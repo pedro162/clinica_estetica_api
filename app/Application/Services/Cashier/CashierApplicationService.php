@@ -8,7 +8,6 @@ use App\Application\Handlers\Cashier\GetAllCashierHandler;
 use App\Application\Handlers\Cashier\GetCashierByIdHandler;
 use App\Application\Handlers\Cashier\UpdateCashierHandler;
 use App\Caixa;
-use App\Domain\Cashier\Entities\Cashier;
 use Illuminate\Support\Collection;
 
 class CashierApplicationService implements CashierApplicationServiceInterface

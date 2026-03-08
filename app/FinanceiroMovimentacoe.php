@@ -2,16 +2,14 @@
 
 namespace App;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\ContaReceberItem;
-use App\Caixa;
-use App\User;
-use App\Traits\BelongsToTenant;
 
 class FinanceiroMovimentacoe extends Model
 {
-    use SoftDeletes, BelongsToTenant;
+    use SoftDeletes;
+    use BelongsToTenant;
     protected $primaryKey = 'id';
     protected $table = 'financeiro_movimentacoes';
 

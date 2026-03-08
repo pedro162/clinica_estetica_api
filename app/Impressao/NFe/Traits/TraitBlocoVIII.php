@@ -28,7 +28,7 @@ trait TraitBlocoVIII
             -4,
             -4,
             'black',
-            array(-2, -2, -2, -2)
+            [-2, -2, -2, -2]
         )->setBackgroundColor('white');
         $qrcode = $bobj->getPngData();
         $wQr = 50;

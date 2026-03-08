@@ -8,7 +8,8 @@ use App\ContaReceberItem;
 use App\Domain\AccountReceivableItem\Entities\AccountReceivableItem;
 use App\Domain\AccountReceivableItem\Repositories\AccountReceivableItemRepositoryInterface;
 use App\Domain\AccountReceivableItem\ValueObjects\AccountReceivableItemId;
-use Illuminate\Support\Facades\Auth;;
+
+;
 
 class AccountReceivableItemRepository implements AccountReceivableItemRepositoryInterface
 {
@@ -190,7 +191,7 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
         if ($campos) {
             $registro->select($campos);
         } else {
-            $registro->select('cr.*', \DB::raw('(IFNULL(cr.vrLiquido, 0) - (IFNULL(cr.vrPago, 0) + IFNULL(cr.vrDevolvido, 0)))  vrAberto'),  'fp.cdCobrancaTipo', 'pess.name', 'pesfl.name as name_filial');
+            $registro->select('cr.*', \DB::raw('(IFNULL(cr.vrLiquido, 0) - (IFNULL(cr.vrPago, 0) + IFNULL(cr.vrDevolvido, 0)))  vrAberto'), 'fp.cdCobrancaTipo', 'pess.name', 'pesfl.name as name_filial');
         }
 
         $ordemArr   = explode('-', $ordem);

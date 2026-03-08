@@ -7,18 +7,14 @@ use App\Application\Services\AccountReceivable\AccountReceivableApplicationServi
 use App\Classes\ApiResponseClass;
 use App\Exceptions\CobrancaReceberException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\AccountReceivable\CreateAccountReceivableRequest;
 use App\Http\Requests\V1\AccountReceivable\GetAllAccountReceivableRequest;
 use App\Http\Requests\V1\AccountReceivable\PayOffAccountReceivableRequest;
 use App\Http\Requests\V1\AccountReceivable\ShowAccountReceivableRequest;
 use App\Http\Requests\V1\AccountReceivable\StoreAccountReceivableRequest;
 use App\Http\Requests\V1\AccountReceivable\UpdateAccountReceivableRequest;
-use App\Http\Resources\V1\AccountReceivable\AccountReceivableCollection;
 use App\Http\Resources\V1\AccountReceivable\AccountReceivableResource;
 use App\Http\Resources\V1\AccountReceivable\GetAllAccountReceivableResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class AccountReceivableController extends Controller
 {

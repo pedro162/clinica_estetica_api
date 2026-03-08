@@ -9,7 +9,7 @@ class FinancialOperatorProtestDaysQuantity
     public function __construct(int $value)
     {
         if ($value < 0) {
-            throw new \InvalidArgumentException("The protest days quantity value cannot be negative");
+            throw new \InvalidArgumentException('The protest days quantity value cannot be negative');
         }
 
         $this->value = $value;

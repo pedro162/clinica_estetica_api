@@ -196,23 +196,23 @@ class CreatePersonAddressCommand
     {
         $entity = new self();
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($v) => $entity->id($v)],
-            ['keys' => ['street', 'logradouro'], 'callback' => fn($v) => $entity->street($v)],
-            ['keys' => ['city', 'cidade'], 'callback' => fn($v) => $entity->city($v)],
-            ['keys' => ['number', 'numero'], 'callback' => fn($v) => $entity->number($v)],
-            ['keys' => ['neighborhood', 'bairro'], 'callback' => fn($v) => $entity->neighborhood($v)],
-            ['keys' => ['complement', 'complemento'], 'callback' => fn($v) => $entity->complement($v)],
-            ['keys' => ['state', 'estado'], 'callback' => fn($v) => $entity->state($v)],
-            ['keys' => ['isActive', 'ativo'], 'callback' => fn($v) => $entity->isActive($v)],
-            ['keys' => ['type', 'tipo'], 'callback' => fn($v) => $entity->type($v)],
-            ['keys' => ['block', 'bloco'], 'callback' => fn($v) => $entity->block($v)],
-            ['keys' => ['importance', 'importancia'], 'callback' => fn($v) => $entity->importance($v)],
-            ['keys' => ['postalCode', 'cep'], 'callback' => fn($v) => $entity->postalCode($v)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($v) => $entity->tenantId($v)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($v) => $entity->userId($v)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($v) => $entity->userUpdateId($v)],
-            ['keys' => ['active'], 'callback' => fn($v) => $entity->active($v)],
-            ['keys' => ['branchId', 'filial_id'], 'callback' => fn($v) => $entity->branchId($v)],
+            ['keys' => ['id'], 'callback' => fn ($v) => $entity->id($v)],
+            ['keys' => ['street', 'logradouro'], 'callback' => fn ($v) => $entity->street($v)],
+            ['keys' => ['city', 'cidade'], 'callback' => fn ($v) => $entity->city($v)],
+            ['keys' => ['number', 'numero'], 'callback' => fn ($v) => $entity->number($v)],
+            ['keys' => ['neighborhood', 'bairro'], 'callback' => fn ($v) => $entity->neighborhood($v)],
+            ['keys' => ['complement', 'complemento'], 'callback' => fn ($v) => $entity->complement($v)],
+            ['keys' => ['state', 'estado'], 'callback' => fn ($v) => $entity->state($v)],
+            ['keys' => ['isActive', 'ativo'], 'callback' => fn ($v) => $entity->isActive($v)],
+            ['keys' => ['type', 'tipo'], 'callback' => fn ($v) => $entity->type($v)],
+            ['keys' => ['block', 'bloco'], 'callback' => fn ($v) => $entity->block($v)],
+            ['keys' => ['importance', 'importancia'], 'callback' => fn ($v) => $entity->importance($v)],
+            ['keys' => ['postalCode', 'cep'], 'callback' => fn ($v) => $entity->postalCode($v)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($v) => $entity->tenantId($v)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($v) => $entity->userId($v)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($v) => $entity->userUpdateId($v)],
+            ['keys' => ['active'], 'callback' => fn ($v) => $entity->active($v)],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn ($v) => $entity->branchId($v)],
         ];
 
         foreach ($mapping as $map) {
@@ -248,6 +248,6 @@ class CreatePersonAddressCommand
             'active' => $this->getActive(),
         ];
 
-        return array_filter($data, fn($value) => $value !== null && $value !== '');
+        return array_filter($data, fn ($value) => $value !== null && $value !== '');
     }
 }

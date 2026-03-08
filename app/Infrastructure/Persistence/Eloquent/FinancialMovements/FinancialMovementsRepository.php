@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\FinancialMovements;
 
-use App\FinanceiroMovimentacoe;
 use App\Domain\FinancialMovements\Entities\FinancialMovements;
 use App\Domain\FinancialMovements\Repositories\FinancialMovementsRepositoryInterface;
 use App\Domain\FinancialMovements\ValueObjects\FinancialMovementsId;
-use Illuminate\Support\Facades\Auth;;
+use App\FinanceiroMovimentacoe;
+use Illuminate\Support\Facades\Auth;
+
+;
 
 class FinancialMovementsRepository implements FinancialMovementsRepositoryInterface
 {
@@ -91,6 +93,7 @@ class FinancialMovementsRepository implements FinancialMovementsRepositoryInterf
                         $query->whereBetween('fm.' . $tpExercicio, [$value[0] . ' 00:00:00', $value[1] . ' 23:59:59']);
                     }
 
+                    // no break
                 case 'limite':
                     $query->limit((int) $value);
                     break;
@@ -107,7 +110,7 @@ class FinancialMovementsRepository implements FinancialMovementsRepositoryInterf
         }
 
         if (!empty($filter['to_require'])) {
-            $registro = $registro->map(fn($item) => [
+            $registro = $registro->map(fn ($item) => [
                 'label' => $item->historico,
                 'value' => $item->id
             ])->toArray();

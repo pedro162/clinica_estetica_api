@@ -19,7 +19,8 @@ class ServiceApplicationService implements ServiceApplicationServiceInterface
         protected UpdateServiceHandler $updateServiceHandler,
         protected DestroyServiceHandler $destroyServiceHandler,
         protected GetServiceByIdHandler $getServiceByIdHandler
-    ) {}
+    ) {
+    }
 
     public function store(
         CreateServiceCommand $command

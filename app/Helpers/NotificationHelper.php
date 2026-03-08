@@ -2,39 +2,23 @@
 
 namespace App\Helpers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Pessoa;
-use App\Profissional;
-use App\Filial;
-use App\Agenda;
 use App\Application\Commands\CreateNotificationCommand;
 use App\Application\Handlers\CreateNotificationHandler;
-use App\Application\Handlers\CreateNotificationVariableHandler;
 use App\Application\Services\NotificationApplicationService;
-use App\Domain\Notification\Entities\Notification;
-use App\Domain\Notification\ValueObjects\NotificationTargetContactAddress;
-use App\Domain\Notification\ValueObjects\NotificationTargetContactName;
-use App\HoraProfExpediente;
 use App\Exceptions\NotificationException;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use App\Helpers\BaseHelper;
+use App\Filial;
 use App\Infrastructure\Persistence\Eloquent\EloquentNotificationRepository;
-use App\Infrastructure\Persistence\Eloquent\EloquentNotificationVariableRepository;
-use App\Infrastructure\Persistence\Eloquent\EloquentTemplateRepository;
-use App\Infrastructure\Persistence\Eloquent\EloquentTemplateVariableRepository;
-use App\Infrastructure\Services\Notifications\Whatsapp\WhatsAppOfficialApi;
 use App\Notification as AppNotification;
 use App\Parametro;
+use App\Pessoa;
 use App\Validators\NotificationValidator;
 
 class NotificationHelper extends BaseHelper
 {
-    const USE_NOTIFICATION_SERVICE = TRUE;
-    const NOTIFICATION_TYPE_EMAIL = 'email';
-    const NOTIFICATION_TYPE_WHATSAPP = 'whatsapp';
-    const NOTIFIATION_TYPE = [
+    public const USE_NOTIFICATION_SERVICE = true;
+    public const NOTIFICATION_TYPE_EMAIL = 'email';
+    public const NOTIFICATION_TYPE_WHATSAPP = 'whatsapp';
+    public const NOTIFIATION_TYPE = [
         self::NOTIFICATION_TYPE_EMAIL,
         self::NOTIFICATION_TYPE_WHATSAPP,
     ];
@@ -55,7 +39,7 @@ class NotificationHelper extends BaseHelper
             throw new NotificationException('País não identificado. Tente novamente ou entre em contato com o suporte.');
         }
 
-        $filial = Filial::where('id', '=',  \Auth::User()->filial_id)->where('active', '=', 'yes')->first();
+        $filial = Filial::where('id', '=', \Auth::User()->filial_id)->where('active', '=', 'yes')->first();
         if (!$filial) {
             throw new NotificationException('Filial não identificada');
         }

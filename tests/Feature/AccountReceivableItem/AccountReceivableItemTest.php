@@ -7,12 +7,10 @@ use App\FormaPagamento;
 use App\OperadorFinanceiro;
 use App\PlanoPagamento;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Artisan;
 
 class AccountReceivableItemTest extends TestCase
 {

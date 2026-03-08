@@ -6,16 +6,14 @@ use App\Application\Commands\Country\CreateCountryCommand;
 use App\Application\Services\Country\CountryApplicationServiceInterface;
 use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Country\CreateCountryRequest;
 use App\Http\Requests\V1\Country\DestroyCountryRequest;
 use App\Http\Requests\V1\Country\GetAllCountryRequest;
 use App\Http\Requests\V1\Country\ShowCountryRequest;
 use App\Http\Requests\V1\Country\StoreCountryRequest;
 use App\Http\Requests\V1\Country\UpdateCountryRequest;
-use App\Http\Resources\V1\Country\GetAllCountryResource;
 use App\Http\Resources\V1\Country\CountryResource;
+use App\Http\Resources\V1\Country\GetAllCountryResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class CountryController extends Controller
 {
@@ -57,7 +55,7 @@ class CountryController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param  ShowCountryRequest $request
      * @param  int  $id
      * @return JsonResponse

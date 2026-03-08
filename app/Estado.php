@@ -2,16 +2,15 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Pais;
-use App\Icms;
 use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Estado extends Model
 {
-    use SoftDeletes, BelongsToTenant;
-    protected $table = "estadoss";
+    use SoftDeletes;
+    use BelongsToTenant;
+    protected $table = 'estadoss';
     protected $primaryKey = 'id';
     protected $fillable = [
         'nmEStado',

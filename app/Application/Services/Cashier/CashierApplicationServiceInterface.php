@@ -4,7 +4,6 @@ namespace App\Application\Services\Cashier;
 
 use App\Application\Commands\Cashier\CreateCashierCommand;
 use App\Caixa;
-use App\Domain\Cashier\Entities\Cashier;
 use Illuminate\Support\Collection;
 
 interface CashierApplicationServiceInterface

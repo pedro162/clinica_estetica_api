@@ -3,43 +3,42 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LogradouroRequest;
+use App\Logradouro;
+use App\Pessoa;
+use App\Utilitarios;
 use Illuminate\Http\Request;
-use \App\Utilitarios;
-use \App\Pessoa;
-use \App\Logradouro;
-use \App\Http\Requests\LogradouroRequest;
 
 class LogradouroController extends Controller
 {
-
-	/**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {	
-    	
-    	try {
+    {
 
-    		$registro = null;
-    		\DB::transaction(function() use (&$registro){
+        try {
 
-    			$registro = Logradouro::where('active', '=', 'yes')->get();
+            $registro = null;
+            \DB::transaction(function () use (&$registro) {
 
-    		});
+                $registro = Logradouro::where('active', '=', 'yes')->get();
+
+            });
 
             //dd($registro[0]->name);
 
             return view('admin.logradouro.index', compact('registro'));
-    		
-    	} catch (\Exception $e) {
-    		 
-    		//\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+
+        } catch (\Exception $e) {
+
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
-    	}
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
+        }
 
     }
 
@@ -50,21 +49,21 @@ class LogradouroController extends Controller
      */
     public function create($id)
     {
-        if($id <= 0){
-            return response()->json(['errors'=>['params' => 'Parâmetro inválido']], 400);
+        if ($id <= 0) {
+            return response()->json(['errors' => ['params' => 'Parâmetro inválido']], 400);
         }
 
         $registro = null;
-        \DB::transaction(function() use (&$registro, &$id){
-            $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $id)->first(); 
-            if($pessoa){
+        \DB::transaction(function () use (&$registro, &$id) {
+            $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $id)->first();
+            if ($pessoa) {
                 $registro = $pessoa;
             }
         });
-    	     
-        if(! $registro){
+
+        if (! $registro) {
             return response()->json(['errors' => ['erro' => 'Pessoa não didentificada']], 404);
-        }  
+        }
         return view('admin.logradouro.create', compact('registro'));
     }
 
@@ -77,80 +76,86 @@ class LogradouroController extends Controller
     public function store(LogradouroRequest $request, $id)
     {
 
-        try{
+        try {
 
-        	if((!isset($id)) || ($id <= 0)){
-        		return response()->json(['errors'=>['param'=>'Parâmetro inválido']], 400);
-        	}
+            if ((!isset($id)) || ($id <= 0)) {
+                return response()->json(['errors' => ['param' => 'Parâmetro inválido']], 400);
+            }
 
             $validator = $request->validated();
 
             $pessoa 	= Pessoa::where('active', '=', 'yes')->where('id', '=', $id)->first();
-            if(! $pessoa){
-            	return response()->json(['errors'=>['param'=>'Parâmetro inválido']], 400);
+            if (! $pessoa) {
+                return response()->json(['errors' => ['param' => 'Parâmetro inválido']], 400);
             }
 
             $registro   = null;
             $erros      = [];
 
-            \DB::transaction(function() use (&$request, &$registro, &$erros, &$pessoa){
+            \DB::transaction(function () use (&$request, &$registro, &$erros, &$pessoa) {
 
                 $dados = $request->all();
-                $user_id = \Auth::User()->id;                
+                $user_id = \Auth::User()->id;
 
                 $dadosLogradoruo = $request->only(
-                    'cep','logradouro',
-                    'numero','tipo',
-                    'complemento','bairro',
-                    'cidade','estado', 'bloco');
+                    'cep',
+                    'logradouro',
+                    'numero',
+                    'tipo',
+                    'complemento',
+                    'bairro',
+                    'cidade',
+                    'estado',
+                    'bloco'
+                );
                 $dadosLogradoruo['user_id']  = $user_id;
                 $dadosLogradoruo['active']   = 'yes';
                 $dadosLogradoruo['importancia']   = 'principal';
 
-                 $cpf = preg_replace("/[^0-9]/", '', trim($dadosLogradoruo['cep']));
-                 if(strlen($cpf) < 8){
-                 	$erros['cep'] = 'Cep inválido';
-                 }else{
+                $cpf = preg_replace('/[^0-9]/', '', trim($dadosLogradoruo['cep']));
+                if (strlen($cpf) < 8) {
+                    $erros['cep'] = 'Cep inválido';
+                } else {
 
-	                $logradouro         = Logradouro::create($dadosLogradoruo);
-	                $resultLogradouro   = $pessoa->adicionarLogradouro($logradouro,['active'=>'yes','user_id'=>$user_id]);
+                    $logradouro         = Logradouro::create($dadosLogradoruo);
+                    $resultLogradouro   = $pessoa->adicionarLogradouro($logradouro, ['active' => 'yes','user_id' => $user_id]);
 
-	                if( $logradouro ){
-	                    $registro = $pessoa;
-	                }
-	                
-                 }
+                    if ($logradouro) {
+                        $registro = $pessoa;
+                    }
+
+                }
 
             });
 
-            if($registro){
+            if ($registro) {
 
                 //\Session::flash('mensagem', ['msg'=>'Registro salvo com sucesso', 'class'=>'alert alert-success']);
                 //return redirect()->route('pessoa.head');
 
-                return response()->json(['mensagem'=>$registro, 'class' => 'success'], 200);
+                return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
 
-            }else if($erros) {
-
-                //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
-
-                //return redirect()->back();
-                return response()->json(['errors'=>$erros, 'class'=>'warning'], 400);
-
-            }else{
+            } elseif ($erros) {
 
                 //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
 
                 //return redirect()->back();
-                return response()->json(['errors'=>['erro'=>'Erro ao salvar o registro'], 'class'=>'warning'], 400);
+                return response()->json(['errors' => $erros, 'class' => 'warning'], 400);
+
+            } else {
+
+                //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
+
+                //return redirect()->back();
+                return response()->json(['errors' => ['erro' => 'Erro ao salvar o registro'], 'class' => 'warning'], 400);
             }
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
- 
-            return response()->json(['errors'=>['erro'=>$e->getMessage()], 'class'=>'warning'], 500);
+
+            return response()->json(['errors' => ['erro' => $e->getMessage()], 'class' => 'warning'], 500);
 
         }
     }
@@ -163,47 +168,47 @@ class LogradouroController extends Controller
      */
     public function show($id)
     {
-        try{
+        try {
 
-            if($id <= 0){
+            if ($id <= 0) {
 
-                 \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
+                \Session::flash('mensagem', ['msg' => 'Parâmetro ínválido', 'class' => 'alert alert-danger']);
 
                 //return redirect()->route('pessoa.index');
 
-                 return  response()->json(['mensagem'=>'Erro, parâmetro inválido', 'class'=>'warning'], 400);
+                return  response()->json(['mensagem' => 'Erro, parâmetro inválido', 'class' => 'warning'], 400);
 
             }
 
             $registro = null;
 
-            \DB::transaction(function() use (&$id, &$registro){
+            \DB::transaction(function () use (&$id, &$registro) {
 
                 $registro = Pessoa::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
-        
-            } );
+
+            });
 
             //dd($registro);
 
-            if($registro == null){
+            if ($registro == null) {
 
                 //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
                 //return redirect()->back();
 
-                return response()->json(['mensagem'=>'Erro, registro não encontrado', 'class'=>'warning'], 400);
+                return response()->json(['mensagem' => 'Erro, registro não encontrado', 'class' => 'warning'], 400);
             }
 
 
             //return view('admin.produto.info', compact('registro'));
             return view('admin.pessoa.show', compact('registro'));
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
 
         }
     }
@@ -211,48 +216,48 @@ class LogradouroController extends Controller
 
     public function info($id, $idPessoa)
     {
-        
-        try{
 
-            if(($id <= 0) || ($idPessoa <= 0) ){
+        try {
 
-                 \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
+            if (($id <= 0) || ($idPessoa <= 0)) {
+
+                \Session::flash('mensagem', ['msg' => 'Parâmetro ínválido', 'class' => 'alert alert-danger']);
 
                 //return redirect()->route('pessoa.index');
 
-                 return  response()->json(['mensagem'=>'Erro, parâmetro inválido', 'class'=>'warning'], 400);
+                return  response()->json(['mensagem' => 'Erro, parâmetro inválido', 'class' => 'warning'], 400);
 
             }
 
             $registro = null;
             $pessoa   = null;
 
-            \DB::transaction(function() use (&$id, &$idPessoa, &$registro, &$pessoa){
+            \DB::transaction(function () use (&$id, &$idPessoa, &$registro, &$pessoa) {
 
                 $pessoa = Pessoa::where('active', '=', 'yes')
                 ->where('id', '=', $idPessoa)->first();
                 $registro = $pessoa->logradouro->where('active', '=', 'yes')->where('id', '=', $id)->first();
-        
-            } );
 
-            if((! $registro) || (! $pessoa)){
+            });
+
+            if ((! $registro) || (! $pessoa)) {
 
                 //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
                 //return redirect()->back();
 
-                return response()->json(['errors'=>['params'=>'Erro, registro não encontrado'], 'class'=>'warning'], 400);
+                return response()->json(['errors' => ['params' => 'Erro, registro não encontrado'], 'class' => 'warning'], 400);
             }
 
 
             //return view('admin.produto.info', compact('registro'));
             return view('admin.logradouro.info', compact('registro', 'pessoa'));
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
 
         }
     }
@@ -266,49 +271,49 @@ class LogradouroController extends Controller
     public function edit($id, $idPessoa)
     {
 
-    	try {
+        try {
 
-    		$registro   = null;
-    		$pessoa 	= null;
-    		$erros 		= [];
+            $registro   = null;
+            $pessoa 	= null;
+            $erros 		= [];
 
-	    	if(($idPessoa <= 0) || ($id <= 0)){
-	    		return response()->json(['errors' => ['params' => 'Parâmetro inválido']], 400);
-	    	}
-    		
-       		 \DB::transaction(function() use (&$id, &$idPessoa,&$registro, &$grupos, &$erros, &$pessoa){
+            if (($idPessoa <= 0) || ($id <= 0)) {
+                return response()->json(['errors' => ['params' => 'Parâmetro inválido']], 400);
+            }
 
-       		 	$pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
-       		 	if(! $pessoa){
-       		 		$erros['pessoa'] = 'Pessoa não reconhecida';
-       		 	}
+            \DB::transaction(function () use (&$id, &$idPessoa, &$registro, &$grupos, &$erros, &$pessoa) {
 
-       		 	$registro = $pessoa->logradouro->where('id', '=', $id)->where('active', '=', 'yes')->first();
-       		 	if(! $registro){
-       		 		$erros['logradouro'] = 'Logradouro não reconhecido';
-       		 	}
+                $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
+                if (! $pessoa) {
+                    $erros['pessoa'] = 'Pessoa não reconhecida';
+                }
 
-	        } );
+                $registro = $pessoa->logradouro->where('id', '=', $id)->where('active', '=', 'yes')->first();
+                if (! $registro) {
+                    $erros['logradouro'] = 'Logradouro não reconhecido';
+                }
 
-
-	        if(count($erros) > 0){
-
-	            //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
-	            //return redirect()->back();
-                return response()->json(['errors'=>$erros, 'class'=>'warning'], 400);
-	        }
+            });
 
 
-	        return view('admin.logradouro.edit', compact('registro', 'pessoa'));
+            if (count($erros) > 0) {
+
+                //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
+                //return redirect()->back();
+                return response()->json(['errors' => $erros, 'class' => 'warning'], 400);
+            }
 
 
-    	} catch (\Exception $e) {
+            return view('admin.logradouro.edit', compact('registro', 'pessoa'));
 
-    		 //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
+
+        } catch (\Exception $e) {
+
+            //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
-    	}
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
+        }
 
     }
 
@@ -319,82 +324,88 @@ class LogradouroController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(LogradouroRequest $request, $id,$idPessoa)
+    public function update(LogradouroRequest $request, $id, $idPessoa)
     {
-        try{
+        try {
 
-        	if(($id <= 0) || ($idPessoa <= 0)){
+            if (($id <= 0) || ($idPessoa <= 0)) {
 
-        		return response()->json(['errors'=> ['params'=>'Parâmetro inválido']], 400);
-        	}
+                return response()->json(['errors' => ['params' => 'Parâmetro inválido']], 400);
+            }
 
             $validator = $request->validated();
 
             $registro   = null;
             $user_id    = \Auth::User()->id;
             $erros      = [];
-            \DB::transaction(function() use (&$request, &$registro, &$erros, &$id, &$user_id, &$idPessoa){
+            \DB::transaction(function () use (&$request, &$registro, &$erros, &$id, &$user_id, &$idPessoa) {
 
                 $dados = $request->all();
                 $pessoa = Pessoa::where('id', '=', $idPessoa)->where('active', '=', 'yes')->first();
-                if($pessoa){
+                if ($pessoa) {
 
                     $logradouro = $pessoa->logradouro->where('active', '=', 'yes')->where('id', '=', $id)->first();
-                    if($logradouro){
+                    if ($logradouro) {
 
                         $dadosLogradoruo = $request->only(
-		                    'cep','logradouro',
-		                    'numero','tipo',
-		                    'complemento','bairro',
-		                    'cidade','estado', 'bloco');
-		                $dadosLogradoruo['user_update_id']  = $user_id;
-                            
-                       $resultUpdate = $logradouro->update($dadosLogradoruo);
-                       if($resultUpdate){
-                       		$registro = $resultUpdate;
-                       }
+                            'cep',
+                            'logradouro',
+                            'numero',
+                            'tipo',
+                            'complemento',
+                            'bairro',
+                            'cidade',
+                            'estado',
+                            'bloco'
+                        );
+                        $dadosLogradoruo['user_update_id']  = $user_id;
 
-                    }else{
+                        $resultUpdate = $logradouro->update($dadosLogradoruo);
+                        if ($resultUpdate) {
+                            $registro = $resultUpdate;
+                        }
+
+                    } else {
                         $erros[] = 'Logradouro não identificado';
                     }
 
-                }else{
+                } else {
 
                     $erros[] = 'Pessoa não identificada';
 
                 }
-                
+
 
             });
 
-            if($registro){
+            if ($registro) {
 
                 //\Session::flash('mensagem', ['msg'=>'Registro salvo com sucesso', 'class'=>'alert alert-success']);
                 //return redirect()->route('pessoa.head');
 
-                return response()->json(['mensagem'=>$registro, 'class' => 'success'], 200);
+                return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
 
-            }else if($erros) {
-
-                //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
-
-                //return redirect()->back();
-                return response()->json(['errors'=>$erros, 'class'=>'warning'], 400);
-
-            }else{
+            } elseif ($erros) {
 
                 //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
 
                 //return redirect()->back();
-                return response()->json(['errors'=>['erro'=>'Erro ao atualizar o registro'], 'class'=>'warning'], 400);
+                return response()->json(['errors' => $erros, 'class' => 'warning'], 400);
+
+            } else {
+
+                //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
+
+                //return redirect()->back();
+                return response()->json(['errors' => ['erro' => 'Erro ao atualizar o registro'], 'class' => 'warning'], 400);
             }
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['errors'=>['erro'=>$e->getMessage()], 'class'=>'warning'], 500);
+            return response()->json(['errors' => ['erro' => $e->getMessage()], 'class' => 'warning'], 500);
 
         }
     }
@@ -407,52 +418,52 @@ class LogradouroController extends Controller
      */
     public function destroy($id, $idPessoa)
     {
-        try{
+        try {
 
-            if(($id <= 0) || ($idPessoa <= 0)){
+            if (($id <= 0) || ($idPessoa <= 0)) {
 
                 // \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
 
                 //return redirect()->route('pessoa.index');
-                return response()->json(['errors'=>['params'=>'Parâmetro inválido'], 'class'=>'warning'], 400);
+                return response()->json(['errors' => ['params' => 'Parâmetro inválido'], 'class' => 'warning'], 400);
 
-            }else{
+            } else {
 
                 $registro = null;
 
-                \DB::transaction(function() use (&$id, &$idPessoa, &$registro){
+                \DB::transaction(function () use (&$id, &$idPessoa, &$registro) {
 
                     $pessoa = Pessoa::where('active', '=', 'yes')
                     ->where('id', '=', $idPessoa)->first();
-                    if($pessoa){
+                    if ($pessoa) {
 
-                        $logradouro = $pessoa->logradouro->where('active', '=', 'yes')->where('id', '=', $id)->first();  
-                        if($logradouro){
+                        $logradouro = $pessoa->logradouro->where('active', '=', 'yes')->where('id', '=', $id)->first();
+                        if ($logradouro) {
                             $registro = $logradouro;
-                            $logradouro->update(['active'=>'no']);
-                        }                 
+                            $logradouro->update(['active' => 'no']);
+                        }
 
                     }
-            
-                } );
 
-                if($registro == null){
+                });
+
+                if ($registro == null) {
 
                     //\Session::flash('mensagem', ['msg'=>'Registro não encontrado', 'class'=>'alert alert-danger']);
                     //return redirect()->back();
-                    return response()->json(['errors'=>['erro' => 'Erro ao deletar registro afaf'], 'class'=>'warning'], 400);
-                }else{
-                    return response()->json(['mensagem'=>'Registro deletado com sucesso', 'class'=>'success'], 200);
+                    return response()->json(['errors' => ['erro' => 'Erro ao deletar registro afaf'], 'class' => 'warning'], 400);
+                } else {
+                    return response()->json(['mensagem' => 'Registro deletado com sucesso', 'class' => 'success'], 200);
                 }
 
             }
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['errors'=>['erro' => 'Algo errado aconteceu no servidor'], 'class'=>'warning'], 500);
+            return response()->json(['errors' => ['erro' => 'Algo errado aconteceu no servidor'], 'class' => 'warning'], 500);
 
         }
     }
@@ -464,26 +475,26 @@ class LogradouroController extends Controller
     }
 
     public function loadLogradouroApi(Request $request)
-    {	
-    	try {   		
-    		
-	    	$dados = $request->only('cep');
-	    	if($dados){
+    {
+        try {
 
-	    		$logradouro = Utilitarios::loadEnderecoApi($dados['cep']); 
-	    		if($logradouro == false){
-	    			
-	    			return response()->json(['mensagem'=>'Cep inválido', 'class'=>'success'], 400);
-	    		}  		
-	    		return response()->json(['mensagem'=>$logradouro, 'class'=>'success'], 200);    		
-	    	}
+            $dados = $request->only('cep');
+            if ($dados) {
 
-	    	return response()->json(['mensagem'=>'Cep inválido', 'class'=>'success'], 400);
+                $logradouro = Utilitarios::loadEnderecoApi($dados['cep']);
+                if ($logradouro == false) {
 
-    	} catch (\Exception $e) {
-    		return response()->json(['mensagem'=>$e->getMessage(), 'class'=>'warning'], 500);
-    	}
-    	
+                    return response()->json(['mensagem' => 'Cep inválido', 'class' => 'success'], 400);
+                }
+                return response()->json(['mensagem' => $logradouro, 'class' => 'success'], 200);
+            }
+
+            return response()->json(['mensagem' => 'Cep inválido', 'class' => 'success'], 400);
+
+        } catch (\Exception $e) {
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
+        }
+
     }
 
 

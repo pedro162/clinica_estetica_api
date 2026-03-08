@@ -2,17 +2,12 @@
 
 namespace App\Validators\AccountReceivable;
 
-use \App\Utilitarios;
-use \App\ContaReceber;
-use \App\ContaReceberItem;
-use \App\FormaPagamento;
-use \App\Pessoa;
-use \App\Caixa;
-use \App\Exceptions\CobrancaReceberException;
+use App\FormaPagamento;
+use App\Pessoa;
+use App\Utilitarios;
 
 class AccountReceivableValidator
 {
-
     public function validaGerCobranca(int $idPessoa, float $vrCobranca, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = []): array
     {
         $erros = [];

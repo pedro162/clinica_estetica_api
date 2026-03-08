@@ -3,18 +3,14 @@
 namespace App\Helpers;
 
 use App\Domain\Person\ValueObjects\PersonId;
-use \App\Pessoa;
-use \App\Grupo;
-use \App\Telefone;
-use \App\Logradouro;
-use \App\Utilitarios;
 use App\Exceptions\PessoaException;
-use App\Helpers\BaseHelper;
 use App\Infrastructure\Persistence\Eloquent\Person\PersonRepository;
 
 class PessoaHelper extends BaseHelper
 {
-    public function __construct(readonly protected PersonRepository $personRepository) {}
+    public function __construct(protected readonly PersonRepository $personRepository)
+    {
+    }
     public function info($dados, $id)
     {
         $id = $id ?? $dados['id'];

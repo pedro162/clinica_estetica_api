@@ -13,22 +13,22 @@ trait TraitBlocoI
         $y = $this->margem;
         //$aFont = ['font'=> $this->fontePadrao, 'size' => 7, 'style' => ''];
         //$this->pdf->textBox($this->margem, $y, $this->wPrint, $this->bloco1H, '', $aFont, 'T', 'C', true, '', false);
-        $emitRazao = $this->getTagValue($this->emit, "xNome");
-        $emitCnpj = $this->getTagValue($this->emit, "CNPJ");
-        $emitIE = $this->getTagValue($this->emit, "IE");
-        $emitCnpj = $this->formatField($emitCnpj, "###.###.###/####-##");
-        $emitLgr = $this->getTagValue($this->enderEmit, "xLgr");
-        $emitNro = $this->getTagValue($this->enderEmit, "nro");
-        $emitBairro = $this->getTagValue($this->enderEmit, "xBairro");
-        $emitMun = $this->getTagValue($this->enderEmit, "xMun");
-        $emitUF = $this->getTagValue($this->enderEmit, "UF");
+        $emitRazao = $this->getTagValue($this->emit, 'xNome');
+        $emitCnpj = $this->getTagValue($this->emit, 'CNPJ');
+        $emitIE = $this->getTagValue($this->emit, 'IE');
+        $emitCnpj = $this->formatField($emitCnpj, '###.###.###/####-##');
+        $emitLgr = $this->getTagValue($this->enderEmit, 'xLgr');
+        $emitNro = $this->getTagValue($this->enderEmit, 'nro');
+        $emitBairro = $this->getTagValue($this->enderEmit, 'xBairro');
+        $emitMun = $this->getTagValue($this->enderEmit, 'xMun');
+        $emitUF = $this->getTagValue($this->enderEmit, 'UF');
 
-        $emitFone = $this->getTagValue($this->enderEmit, "fone");
+        $emitFone = $this->getTagValue($this->enderEmit, 'fone');
         if (strlen($emitFone) > 0) {
             if (strlen($emitFone) == 11) {
-                $emitFone = $this->formatField($emitFone, "(##)#####-####");
+                $emitFone = $this->formatField($emitFone, '(##)#####-####');
             } else {
-                $emitFone = $this->formatField($emitFone, "(##) ####-####");
+                $emitFone = $this->formatField($emitFone, '(##) ####-####');
             }
         }
 
@@ -76,11 +76,11 @@ trait TraitBlocoI
         }
         $texto = "CNPJ: {$emitCnpj} IE: {$emitIE}";
         $y += $this->pdf->textBox($xRs + 2, $y, $wRs - 2, 3, $texto, $aFont, 'T', $alignH, false, '', true);
-        $texto = $emitLgr . ", " . $emitNro;
+        $texto = $emitLgr . ', ' . $emitNro;
         $y += $this->pdf->textBox($xRs + 2, $y, $wRs - 2, 3, $texto, $aFont, 'T', $alignH, false, '', true);
         $texto = $emitBairro;
         $y += $this->pdf->textBox($xRs + 2, $y, $wRs - 2, 3, $texto, $aFont, 'T', $alignH, false, '', true);
-        $texto = $emitMun . "-" . $emitUF . ($emitFone ? "  Fone: " . $emitFone : "");
+        $texto = $emitMun . '-' . $emitUF . ($emitFone ? '  Fone: ' . $emitFone : '');
         $y += $this->pdf->textBox($xRs + 2, $y, $wRs - 2, 3, $texto, $aFont, 'T', $alignH, false, '', true);
         $this->pdf->dashedHLine($this->margem, $this->bloco1H, $this->wPrint, 0.1, 30);
         return $this->bloco1H;

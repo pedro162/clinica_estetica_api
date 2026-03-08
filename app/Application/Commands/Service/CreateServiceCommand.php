@@ -129,16 +129,16 @@ class CreateServiceCommand
     {
         $entity = (new self());
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($value) => $entity->id((string) $value)],
-            ['keys' => ['name'], 'callback' => fn($value) => $entity->name((string)$value)],
-            ['keys' => ['description', 'descricao'], 'callback' => fn($value) => $entity->description((string) $value)],
-            ['keys' => ['value', 'vrServico'], 'callback' => fn($value) => $entity->value((float)$value)],
-            ['keys' => ['type'], 'callback' => fn($value) => $entity->type((string)$value)],
-            ['keys' => ['active'], 'callback' => fn($value) => $entity->active((string)$value)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($value) => $entity->userId((string) $value)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($value) => $entity->userUpdateId((string) $value)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($value) => $entity->tenantId((string) $value)],
-            ['keys' => ['unit', 'unidade'], 'callback' => fn($value) => $entity->unit((string) $value)],
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id((string) $value)],
+            ['keys' => ['name'], 'callback' => fn ($value) => $entity->name((string)$value)],
+            ['keys' => ['description', 'descricao'], 'callback' => fn ($value) => $entity->description((string) $value)],
+            ['keys' => ['value', 'vrServico'], 'callback' => fn ($value) => $entity->value((float)$value)],
+            ['keys' => ['type'], 'callback' => fn ($value) => $entity->type((string)$value)],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active((string)$value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId((string) $value)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId((string) $value)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId((string) $value)],
+            ['keys' => ['unit', 'unidade'], 'callback' => fn ($value) => $entity->unit((string) $value)],
         ];
 
         foreach ($mapping as $map) {
@@ -168,6 +168,6 @@ class CreateServiceCommand
             'unit' => (string)($this->unit ?? ''),
         ];
 
-        return  array_filter($data, fn($value) => $value !== null && trim($value) != '');
+        return  array_filter($data, fn ($value) => $value !== null && trim($value) != '');
     }
 }

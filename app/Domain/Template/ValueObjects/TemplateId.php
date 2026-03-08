@@ -5,7 +5,7 @@ namespace App\Domain\Template\ValueObjects;
 class TemplateId
 {
     private string $value;
-    /* 
+    /*
 notificationTemplateId
 notificationTitle
 notificationMessage
@@ -16,7 +16,7 @@ notificationOriginContactAddress */
     public function __construct(string $value)
     {
         if (!(isset($value) && strlen(trim($value)) > 0)) {
-            throw new \InvalidArgumentException("Template ID cannot be empty");
+            throw new \InvalidArgumentException('Template ID cannot be empty');
         }
         $this->value = $value;
     }

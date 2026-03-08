@@ -2,8 +2,6 @@
 
 namespace App\Domain\Template\Interfaces;
 
-use App\Application\Handlers\HttpRequestResponseHandler;
-use App\Domain\Template\Entities\Template;
 use App\Domain\Template\ValueObjects\TemplateLanguage;
 
 interface TemplateInterface

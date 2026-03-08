@@ -21,27 +21,27 @@ trait TraitBlocoIII
         }
         $aFont = ['font' => $this->fontePadrao, 'size' => $fsize, 'style' => ''];
 
-        $texto = "Código";
+        $texto = 'Código';
         $x = $this->margem;
         $this->pdf->textBox($x, $y, ($this->wPrint * $matrix[0]), 3, $texto, $aFont, 'T', 'L', false, '', true);
 
-        $texto = "Descrição";
+        $texto = 'Descrição';
         $x1 = $x + ($this->wPrint * $matrix[0]);
         $this->pdf->textBox($x1, $y, ($this->wPrint * $matrix[1]), 3, $texto, $aFont, 'T', 'L', false, '', true);
 
-        $texto = "Qtde";
+        $texto = 'Qtde';
         $x2 = $x1 + ($this->wPrint * $matrix[1]);
         $this->pdf->textBox($x2, $y, ($this->wPrint * $matrix[2]), 3, $texto, $aFont, 'T', 'C', false, '', true);
 
-        $texto = "UN";
+        $texto = 'UN';
         $x3 = $x2 + ($this->wPrint * $matrix[2]);
         $this->pdf->textBox($x3, $y, ($this->wPrint * $matrix[3]), 3, $texto, $aFont, 'T', 'C', false, '', true);
 
-        $texto = "Vl Unit";
+        $texto = 'Vl Unit';
         $x4 = $x3 + ($this->wPrint * $matrix[3]);
         $this->pdf->textBox($x4, $y, ($this->wPrint * $matrix[4]), 3, $texto, $aFont, 'T', 'C', false, '', true);
 
-        $texto = "Vl Total";
+        $texto = 'Vl Total';
         $x5 = $x4 + ($this->wPrint * $matrix[4]);
         $y1 = $this->pdf->textBox($x5, $y, ($this->wPrint * $matrix[5]), 3, $texto, $aFont, 'T', 'R', false, '', true);
 
@@ -150,13 +150,13 @@ trait TraitBlocoIII
         if ($this->det->length == 0) {
         } else {
             foreach ($this->det as $item) {
-                $prod = $item->getElementsByTagName("prod")->item(0);
-                $cProd      = $this->getTagValue($prod, "cProd");
-                $xProd      = substr($this->getTagValue($prod, "xProd"), 0, 45);
-                $qCom       = (float) $this->getTagValue($prod, "qCom");
-                $uCom       = $this->getTagValue($prod, "uCom");
-                $vUnCom     = number_format((float) $this->getTagValue($prod, "vUnCom"), 2, ",", ".");
-                $vProd      = number_format((float) $this->getTagValue($prod, "vProd"), 2, ",", ".");
+                $prod = $item->getElementsByTagName('prod')->item(0);
+                $cProd      = $this->getTagValue($prod, 'cProd');
+                $xProd      = substr($this->getTagValue($prod, 'xProd'), 0, 45);
+                $qCom       = (float) $this->getTagValue($prod, 'qCom');
+                $uCom       = $this->getTagValue($prod, 'uCom');
+                $vUnCom     = number_format((float) $this->getTagValue($prod, 'vUnCom'), 2, ',', '.');
+                $vProd      = number_format((float) $this->getTagValue($prod, 'vProd'), 2, ',', '.');
 
                 $tempPDF = new \NFePHP\DA\Legacy\Pdf(); // cria uma instancia temporaria da class pdf
                 $tempPDF->setFont($this->fontePadrao, '', $fsize); // seta a font do PDF
@@ -165,19 +165,19 @@ trait TraitBlocoIII
                 $limit = 45;
                 while ($n > 2) {
                     $limit -= 1;
-                    $xProd = substr($this->getTagValue($prod, "xProd"), 0, $limit);
+                    $xProd = substr($this->getTagValue($prod, 'xProd'), 0, $limit);
                     $p = $xProd;
                     $n = $tempPDF->wordWrap($p, $descriptionWidth);
                 }
                 $h = ($hfont * $n) + 0.5;
                 $this->itens[] = [
-                    "codigo" => $cProd,
-                    "desc" => $xProd,
-                    "qtd" => $qCom,
-                    "un" => $uCom,
-                    "vunit" => $vUnCom,
-                    "valor" => $vProd,
-                    "height" => $h
+                    'codigo' => $cProd,
+                    'desc' => $xProd,
+                    'qtd' => $qCom,
+                    'un' => $uCom,
+                    'vunit' => $vUnCom,
+                    'valor' => $vProd,
+                    'height' => $h
                 ];
                 $htot += $h;
             }

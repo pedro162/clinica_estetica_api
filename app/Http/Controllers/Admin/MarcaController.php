@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\MarcaException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MarcaRequest;
+use App\Marca;
+use App\Produto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Http\Requests\MarcaRequest;
-use \App\Produto;
-use \App\Marca;
-use \App\Categoria;
-use \App\Exceptions\MarcaException;
-
 
 class MarcaController extends Controller
 {
@@ -22,62 +20,62 @@ class MarcaController extends Controller
     public function index(Request $request)
     {
 
-    	try {
+        try {
             \DB::beginTransaction();
-    		
+
             $consulta = $request->all();
 
             $campos =  null;
 
             $registro = Marca::where('active', '=', 'yes');
 
-            if(is_array($consulta) && count($consulta) > 0){
-                foreach($consulta as $key=>$val){
-                    
-                    switch(trim($key)){
+            if (is_array($consulta) && count($consulta) > 0) {
+                foreach ($consulta as $key => $val) {
+
+                    switch (trim($key)) {
                         case 'codigo_marca':
-                            if(is_string($val)){
-                                
-                                if($val[0] == ','){
+                            if (is_string($val)) {
+
+                                if ($val[0] == ',') {
                                     $val = substr($val, 1);
-                                } 
-                                if($val[strlen($val) - 1] == ','){
+                                }
+                                if ($val[strlen($val) - 1] == ',') {
                                     $val = substr($val, 0, -1);
                                 }
                                 $val = explode(',', $val);
-                                
+
                                 $registro->whereIn('id', $val);
                             }
                             break;
                         case 'nome_marca':
-                            if($val[0] == ','){
+                            if ($val[0] == ',') {
                                 $val = substr($val, 1);
-                            } 
-                            if($val[strlen($val) - 1] == ','){
+                            }
+                            if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
-                            
-                            $registro->where('name', 'like' , '%'.$val.'%');
+
+                            $registro->where('name', 'like', '%'.$val.'%');
                             break;
                     }
                 }
             }
 
-    		$registro = $registro->get();
+            $registro = $registro->get();
 
             return view('admin.marca.index', compact('registro', 'consulta'));
-    		
+
             \DB::commit();
 
-    	} catch(MarcaException $e){
+        } catch (MarcaException $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
 
-           // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
-    
-        }catch(\Exception $e){
+            // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
+
+        } catch (\Exception $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -101,7 +99,7 @@ class MarcaController extends Controller
         $callBack = $dadosRequest['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
 
-        return view('admin.marca.create', compact('callBack','idAssistente'));
+        return view('admin.marca.create', compact('callBack', 'idAssistente'));
     }
 
     /**
@@ -113,13 +111,13 @@ class MarcaController extends Controller
     public function store(MarcaRequest $request)
     {
 
-        try{
+        try {
 
 
             $validator = $request->validated();
 
             $registro = null;
-            \DB::transaction(function() use (&$request, &$registro){
+            \DB::transaction(function () use (&$request, &$registro) {
 
                 $dados = $request->all();
 
@@ -131,32 +129,32 @@ class MarcaController extends Controller
 
                 $registro      = $marca = Marca::create($dadosRequest);
 
-                
-                
+
+
 
             });
 
-            if($registro){
+            if ($registro) {
 
                 //\Session::flash('mensagem', ['msg'=>'Registro salvo com sucesso', 'class'=>'alert alert-success']);
                 //return redirect()->route('marca.head');
 
-                return response()->json(['mensagem'=>$registro, 'class' => 'success'], 200);
+                return response()->json(['mensagem' => $registro, 'class' => 'success'], 200);
 
-            }else{
+            } else {
 
                 //\Session::flash('mensagem', ['msg'=>'Erro ao salvar o registro', 'class'=>'alert alert-warning']);
 
                 //return redirect()->back();
-                return response()->json(['mensagem'=>'Erro ao salvar o registro', 'class'=>'warning'], 400);
+                return response()->json(['mensagem' => 'Erro ao salvar o registro', 'class' => 'warning'], 400);
             }
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
 
         }
     }
@@ -175,8 +173,8 @@ class MarcaController extends Controller
 
     public function info(Request $request, $id, $idAssistente)
     {
-        
-        try{
+
+        try {
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
@@ -184,43 +182,43 @@ class MarcaController extends Controller
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
 
-            if($id <= 0){
+            if ($id <= 0) {
 
-                 \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
+                \Session::flash('mensagem', ['msg' => 'Parâmetro ínválido', 'class' => 'alert alert-danger']);
 
                 //return redirect()->route('marca.index');
 
-                 return  response()->json(['mensagem'=>'Erro, parâmetro inválido', 'class'=>'warning'], 400);
+                return  response()->json(['mensagem' => 'Erro, parâmetro inválido', 'class' => 'warning'], 400);
 
             }
 
             $registro = null;
 
-            \DB::transaction(function() use (&$id, &$registro){
+            \DB::transaction(function () use (&$id, &$registro) {
 
                 $registro = Marca::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
-        
-            } );
 
-            if($registro == null){
+            });
+
+            if ($registro == null) {
 
                 //\Session::flash('mensagem', ['msg'=>'Marca não encontrada', 'class'=>'alert alert-danger']);
                 //return redirect()->back();
 
-                return response()->json(['mensagem'=>'Erro, registro não encontrado', 'class'=>'warning'], 400);
+                return response()->json(['mensagem' => 'Erro, registro não encontrado', 'class' => 'warning'], 400);
             }
 
 
             //return view('admin.produto.info', compact('registro'));
             return view('admin.marca.info', compact('registro', 'idAssistente', 'callBack'));
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
 
         }
     }
@@ -237,16 +235,16 @@ class MarcaController extends Controller
 
         $registro = null;
 
-    	try {
+        try {
             $dadosRequest = $request->all();
 
             $callBack = $dadosRequest['callBack'] ?? '';
             $idAssistente =  $idAssistente ?? $dadosRequest['idAssistente'] ?? '';
-            if(! isset($id)){
+            if (! isset($id)) {
                 $id = isset($dadosRequest['id']) ? $dadosRequest['id'] : 0;
             }
 
-            if($id <= 0){
+            if ($id <= 0) {
                 throw new MarcaException('Parâmetro ínválido');
             }
 
@@ -255,27 +253,27 @@ class MarcaController extends Controller
             $registro = Marca::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
-            if($registro == null){
+            if ($registro == null) {
                 throw new MarcaException('Registro não encontrado');
-                
+
             }
 
             \DB::commit();
 
-	        return view('admin.marca.edit', compact('registro',  'idAssistente', 'callBack'));
+            return view('admin.marca.edit', compact('registro', 'idAssistente', 'callBack'));
 
 
-    	} catch(MarcaException $e){
+        } catch (MarcaException $e) {
 
             \DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
-            
+
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
 
             $msg = $e->getMessage();
@@ -289,8 +287,8 @@ class MarcaController extends Controller
     public function update(Request $request, $id)
     {
         try {
-           
-            
+
+
             $this->validaRequest($request);
 
             \DB::beginTransaction();
@@ -304,25 +302,25 @@ class MarcaController extends Controller
             $dadosRequest['active']             = 'yes';
 
             $marca = Marca::find($id);
-           
+
             $marca->update($dadosRequest);
 
             \DB::commit();
 
-            return response()->json(['mensagem'=>$marca, 'class'=>'sucess'], 200);
+            return response()->json(['mensagem' => $marca, 'class' => 'sucess'], 200);
 
 
-        }catch (MarcaException $th) {
+        } catch (MarcaException $th) {
 
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
             \DB::rollback();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor: '.$th->getMessage(), 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: '.$th->getMessage(), 'class' => 'warning'], 500);
             //throw $th;
         }
     }
@@ -335,45 +333,45 @@ class MarcaController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
 
             \DB::beginTransaction();
 
-            if($id <= 0){
+            if ($id <= 0) {
 
                 // \Session::flash('mensagem', ['msg'=>'Parâmetro ínválido', 'class'=>'alert alert-danger']);
 
                 //return redirect()->route('marca.index');
-                return response()->json(['mensagem'=>'Erro ao deletar registro', 'class'=>'warning'], 400);
+                return response()->json(['mensagem' => 'Erro ao deletar registro', 'class' => 'warning'], 400);
 
             }
 
             $marca = Marca::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
-            if(! $marca){
+            if (! $marca) {
 
-                throw new MarcaException('Registro não encontrado');                   
+                throw new MarcaException('Registro não encontrado');
 
             }
-            $marca->update(['active'=>'no']);
+            $marca->update(['active' => 'no']);
             $marca->delete();
-            
-            \DB::commit();
-            return response()->json(['mensagem'=>'Registro atulizado com sucesso', 'class'=>'success']);
 
-        }catch (MarcaException $th) {
+            \DB::commit();
+            return response()->json(['mensagem' => 'Registro atulizado com sucesso', 'class' => 'success']);
+
+        } catch (MarcaException $th) {
 
             \DB::rollback();
 
-            return response()->json(['mensagem'=>$th->getMessage(), 'class'=>'warning'], 400);
+            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //\Session::flash('mensagem', ['msg'=>'Ocorreum um erro no servidor: '.$e->getMessage(), 'class'=>'alert alert-warning']);
             //return redirect()->back();
 
-            return response()->json(['mensagem'=>'Algo errado aconteceu no servidor', 'class'=>'warning'], 500);
+            return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
 
         }
     }
@@ -381,34 +379,34 @@ class MarcaController extends Controller
     public function head(Request $request)
     {
         $dados = $request->all();
-        
-        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload']: false;
-        if($isReload){
-           
+
+        $isReload = isset($dados['isReload']) && $dados['isReload'] == true ? $dados['isReload'] : false;
+        if ($isReload) {
+
             return view('admin.marca.head_refresh', compact('isReload'));
-        }else{
+        } else {
             return view('admin.marca.head', compact('isReload'));
         }
-        
+
     }
 
     protected function validaRequest(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'name'=> 'required|max:255|min:2',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255|min:2',
         ], [
             'name.required' => 'O campo "DESCRIÇÃO" é obrigatório.',
             'name.max' => 'O "DESCRIÇÃO" suporta até :max caracteres.',
             'name.min' => 'O "DESCRIÇÃO" deve conter pelo menos :min caracteres.',
         ]);
-        
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
-            foreach($errors->all() as $mensagem){
+            foreach ($errors->all() as $mensagem) {
                 $msg .= $mensagem.'<br/>';
             }
-            
+
             throw new MarcaException($msg);
         }
 

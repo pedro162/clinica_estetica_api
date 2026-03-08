@@ -2,18 +2,16 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-use App\Domain\Notification\ValueObjects\NotificationId as ValueObjectsNotificationId;
 use App\Domain\NotificationVariable\Entities\NotificationVariable;
+use App\Domain\NotificationVariable\Repositories\NotificationVariableRepositoryInterface;
 use App\Domain\NotificationVariable\ValueObjects\NotificationId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableSyntax;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableTemplateVariableId;
 use App\Domain\NotificationVariable\ValueObjects\NotificationVariableValue;
-use App\Domain\NotificationVariable\Repositories\NotificationVariableRepositoryInterface;
-use Illuminate\Support\Facades\DB;
 use App\NotificationVariable as NotificationVariableModel;
 use App\User;
-
+use Illuminate\Support\Facades\DB;
 
 class EloquentNotificationVariableRepository implements NotificationVariableRepositoryInterface
 {
