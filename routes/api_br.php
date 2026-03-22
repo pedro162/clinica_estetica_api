@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\V1\Service\GetAllServiceController;
 use App\Http\Controllers\Admin\V1\Service\GetByIdServiceController;
 use App\Http\Controllers\Admin\V1\Service\StoreServiceController;
 use App\Http\Controllers\Admin\V1\Service\UpdateServiceController;
+use App\Http\Controllers\Admin\V1\WorkOrder\GetByIdWorkOrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -604,8 +605,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::put('/ordem/servico/update/{id}', ['as' => 'ordem.servico.update', 'uses' => 'Admin\OrdemServicoController@update']);
     Route::put('/ordem/servico/adicionar/item/{id}', ['as' => 'ordem.servico.adicionar.item', 'uses' => 'Admin\OrdemServicoController@adicionarItem']);
     Route::put('/ordem/servico/remover/item/{id}', ['as' => 'ordem.servico.remover.item', 'uses' => 'Admin\OrdemServicoController@removerItem']);
-    Route::get('/ordem/servico/info/{id}', ['as' => 'ordem.servico.info', 'uses' => 'Admin\OrdemServicoController@info']);
-    Route::post('/ordem/servico/info/{id}', ['as' => 'ordem.servico.info', 'uses' => 'Admin\OrdemServicoController@info']);
+    Route::get('/ordem/servico/info/{id}', ['as' => 'ordem.servico.info', 'uses' => GetByIdWorkOrderController::class]);
+    Route::post('/ordem/servico/info/{id}', ['as' => 'ordem.servico.info', 'uses' => GetByIdWorkOrderController::class]);
     Route::get('/ordem/servico/destroy/{id}', ['as' => 'ordem.servico.destroy', 'uses' => 'Admin\OrdemServicoController@destroy']);
     Route::put('/ordem/servico/finalizar/{id}', ['as' => 'ordem.servico.finalizar', 'uses' => 'Admin\OrdemServicoController@finalizar']);
     Route::put('/ordem/servico/cancelar/{id}', ['as' => 'ordem.servico.cancelar', 'uses' => 'Admin\OrdemServicoController@cancelar']);

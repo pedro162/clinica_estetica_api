@@ -368,7 +368,7 @@ class OrdemServicoHelper extends BaseHelper
         $registro->cobranca;
         $registro->item;
         $registro->rca;
-        $registro->filial;
+        $registro->filial->pessoa;
 
         return $registro;
     }

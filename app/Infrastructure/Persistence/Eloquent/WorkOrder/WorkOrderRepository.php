@@ -16,9 +16,9 @@ class WorkOrderRepository implements WorkOrderRepositoryInterface
 
     public function findById(WorkOrderId $id): ?OrdemServico
     {
-        return OrdemServico::with([])
-            ->where('active', '=', 'yes')
-            ->where('id', '=', (string)$id)
+        return OrdemServico::with(['pessoa', 'cobranca', 'cobranca.formaPgto', 'cobranca.planoPgto', 'item', 'item.servico', 'rca', 'filial', 'filial.pessoa'])
+            ->where('ordem_servicos.active', '=', 'yes')
+            ->where('ordem_servicos.id', '=', (string)$id)
             ->first();
     }
 
