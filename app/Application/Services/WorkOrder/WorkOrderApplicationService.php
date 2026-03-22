@@ -14,7 +14,8 @@ class WorkOrderApplicationService implements WorkOrderApplicationServiceInterfac
     public function __construct(
         protected WorkOrderRepositoryInterface $repository,
         protected OrdemServicoHelper $helper
-    ) {}
+    ) {
+    }
 
     public function store(CreateWorkOrderCommand $command): OrdemServico
     {

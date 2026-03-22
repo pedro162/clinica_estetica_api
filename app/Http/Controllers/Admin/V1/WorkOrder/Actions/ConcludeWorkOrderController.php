@@ -14,7 +14,8 @@ class ConcludeWorkOrderController extends Controller
 {
     public function __construct(
         protected WorkOrderApplicationServiceInterface $service
-    ) {}
+    ) {
+    }
 
     public function __invoke(ConcludeWorkOrderRequest $request, $id): JsonResponse
     {

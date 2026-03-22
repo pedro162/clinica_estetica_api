@@ -14,7 +14,8 @@ class CancelWorkOrderController extends Controller
 {
     public function __construct(
         protected WorkOrderApplicationServiceInterface $service
-    ) {}
+    ) {
+    }
 
     public function __invoke(CancelWorkOrderRequest $request, $id): JsonResponse
     {

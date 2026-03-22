@@ -19,12 +19,12 @@ use App\Http\Controllers\Admin\V1\WorkOrder\Actions\AddItemWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\Actions\CancelWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\Actions\ConcludeWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\Actions\FinalizeWorkOrderController;
+use App\Http\Controllers\Admin\V1\WorkOrder\Actions\RemoveItemWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\DeleteWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\GetAllWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\GetByIdWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\StoreWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\UpdateWorkOrderController;
-use App\Http\Controllers\Admin\V1\WorkOrder\Actions\RemoveItemWorkOrderController;
 use Illuminate\Support\Facades\Route;
 
 /*

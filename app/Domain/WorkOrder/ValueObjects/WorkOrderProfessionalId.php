@@ -4,7 +4,9 @@ namespace App\Domain\WorkOrder\ValueObjects;
 
 class WorkOrderProfessionalId
 {
-    public function __construct(private string $value) {}
+    public function __construct(private string $value)
+    {
+    }
 
     public function __toString(): string
     {

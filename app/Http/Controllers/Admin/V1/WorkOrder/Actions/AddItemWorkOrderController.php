@@ -14,7 +14,8 @@ class AddItemWorkOrderController extends Controller
 {
     public function __construct(
         protected WorkOrderApplicationServiceInterface $service
-    ) {}
+    ) {
+    }
 
     public function __invoke(AddItemWorkOrderRequest $request, $id): JsonResponse
     {

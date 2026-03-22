@@ -348,36 +348,36 @@ class CreateWorkOrderCommand
         $entity = new self();
 
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($v) => $entity->id((string) $v)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($v) => $entity->tenantId((string) $v)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($v) => $entity->userId((string) $v)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($v) => $entity->userUpdateId((string) $v)],
-            ['keys' => ['active'], 'callback' => fn($v) => $entity->active((string) $v)],
+            ['keys' => ['id'], 'callback' => fn ($v) => $entity->id((string) $v)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($v) => $entity->tenantId((string) $v)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($v) => $entity->userId((string) $v)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($v) => $entity->userUpdateId((string) $v)],
+            ['keys' => ['active'], 'callback' => fn ($v) => $entity->active((string) $v)],
 
             // Domain fields
-            ['keys' => ['vrTotal', 'vr_total'], 'callback' => fn($v) => $entity->vrTotal((float) $v)],
-            ['keys' => ['status'], 'callback' => fn($v) => $entity->status((string) $v)],
-            ['keys' => ['observacao'], 'callback' => fn($v) => $entity->observacao((string) $v)],
-            ['keys' => ['dsArquivo', 'ds_arquivo'], 'callback' => fn($v) => $entity->dsArquivo((string) $v)],
-            ['keys' => ['pessoa_id'], 'callback' => fn($v) => $entity->pessoaId((int) $v)],
-            ['keys' => ['pessoa_rca_id'], 'callback' => fn($v) => $entity->pessoaRcaId((int) $v)],
-            ['keys' => ['filial_id'], 'callback' => fn($v) => $entity->filialId((int) $v)],
-            ['keys' => ['vr_final'], 'callback' => fn($v) => $entity->vrFinal((float) $v)],
-            ['keys' => ['vr_desconto'], 'callback' => fn($v) => $entity->vrDesconto((float) $v)],
-            ['keys' => ['pct_acrescimo'], 'callback' => fn($v) => $entity->pctAcrescimo((float) $v)],
-            ['keys' => ['vr_acrescimo'], 'callback' => fn($v) => $entity->vrAcrescimo((float) $v)],
-            ['keys' => ['pct_desconto'], 'callback' => fn($v) => $entity->pctDesconto((float) $v)],
-            ['keys' => ['is_faturado'], 'callback' => fn($v) => $entity->isFaturado((string) $v)],
-            ['keys' => ['td_faturamento'], 'callback' => fn($v) => $entity->tdFaturamento((string) $v)],
-            ['keys' => ['td_cancelamento'], 'callback' => fn($v) => $entity->tdCancelamento((string) $v)],
-            ['keys' => ['td_conclusao'], 'callback' => fn($v) => $entity->tdConclusao((string) $v)],
-            ['keys' => ['pess_fat_id'], 'callback' => fn($v) => $entity->pessFatId((int) $v)],
-            ['keys' => ['pess_cancel_id'], 'callback' => fn($v) => $entity->pessCancelId((int) $v)],
-            ['keys' => ['pess_concl_id'], 'callback' => fn($v) => $entity->pessConclId((int) $v)],
-            ['keys' => ['profissional_id'], 'callback' => fn($v) => $entity->profissionalId((int) $v)],
-            ['keys' => ['mt_calcel_id'], 'callback' => fn($v) => $entity->cancelReasonId((int) $v)],
-            ['keys' => ['type'], 'callback' => fn($v) => $entity->type((string) $v)],
-            ['keys' => ['is_orcamento'], 'callback' => fn($v) => $entity->isOrcamento((string) $v)],
+            ['keys' => ['vrTotal', 'vr_total'], 'callback' => fn ($v) => $entity->vrTotal((float) $v)],
+            ['keys' => ['status'], 'callback' => fn ($v) => $entity->status((string) $v)],
+            ['keys' => ['observacao'], 'callback' => fn ($v) => $entity->observacao((string) $v)],
+            ['keys' => ['dsArquivo', 'ds_arquivo'], 'callback' => fn ($v) => $entity->dsArquivo((string) $v)],
+            ['keys' => ['pessoa_id'], 'callback' => fn ($v) => $entity->pessoaId((int) $v)],
+            ['keys' => ['pessoa_rca_id'], 'callback' => fn ($v) => $entity->pessoaRcaId((int) $v)],
+            ['keys' => ['filial_id'], 'callback' => fn ($v) => $entity->filialId((int) $v)],
+            ['keys' => ['vr_final'], 'callback' => fn ($v) => $entity->vrFinal((float) $v)],
+            ['keys' => ['vr_desconto'], 'callback' => fn ($v) => $entity->vrDesconto((float) $v)],
+            ['keys' => ['pct_acrescimo'], 'callback' => fn ($v) => $entity->pctAcrescimo((float) $v)],
+            ['keys' => ['vr_acrescimo'], 'callback' => fn ($v) => $entity->vrAcrescimo((float) $v)],
+            ['keys' => ['pct_desconto'], 'callback' => fn ($v) => $entity->pctDesconto((float) $v)],
+            ['keys' => ['is_faturado'], 'callback' => fn ($v) => $entity->isFaturado((string) $v)],
+            ['keys' => ['td_faturamento'], 'callback' => fn ($v) => $entity->tdFaturamento((string) $v)],
+            ['keys' => ['td_cancelamento'], 'callback' => fn ($v) => $entity->tdCancelamento((string) $v)],
+            ['keys' => ['td_conclusao'], 'callback' => fn ($v) => $entity->tdConclusao((string) $v)],
+            ['keys' => ['pess_fat_id'], 'callback' => fn ($v) => $entity->pessFatId((int) $v)],
+            ['keys' => ['pess_cancel_id'], 'callback' => fn ($v) => $entity->pessCancelId((int) $v)],
+            ['keys' => ['pess_concl_id'], 'callback' => fn ($v) => $entity->pessConclId((int) $v)],
+            ['keys' => ['profissional_id'], 'callback' => fn ($v) => $entity->profissionalId((int) $v)],
+            ['keys' => ['mt_calcel_id'], 'callback' => fn ($v) => $entity->cancelReasonId((int) $v)],
+            ['keys' => ['type'], 'callback' => fn ($v) => $entity->type((string) $v)],
+            ['keys' => ['is_orcamento'], 'callback' => fn ($v) => $entity->isOrcamento((string) $v)],
         ];
 
         foreach ($mapping as $map) {
@@ -425,6 +425,6 @@ class CreateWorkOrderCommand
             'is_orcamento' => $this->isOrcamento,
         ];
 
-        return array_filter($data, fn($v) => $v !== null);
+        return array_filter($data, fn ($v) => $v !== null);
     }
 }

@@ -14,7 +14,8 @@ class FinalizeWorkOrderController extends Controller
 {
     public function __construct(
         protected WorkOrderApplicationServiceInterface $service
-    ) {}
+    ) {
+    }
 
     public function __invoke(FinalizeWorkOrderRequest $request, $id): JsonResponse
     {

@@ -17,7 +17,8 @@ class DeleteWorkOrderController extends Controller
     public function __construct(
         protected WorkOrderApplicationServiceInterface $service,
         protected WorkOrderRepositoryInterface $workOrderRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(DestroyWorkOrderRequest $request, $id): JsonResponse
     {

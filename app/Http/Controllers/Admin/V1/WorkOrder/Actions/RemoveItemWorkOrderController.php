@@ -13,7 +13,8 @@ class RemoveItemWorkOrderController extends Controller
 {
     public function __construct(
         protected WorkOrderApplicationServiceInterface $service
-    ) {}
+    ) {
+    }
 
     public function __invoke($id): JsonResponse
     {
