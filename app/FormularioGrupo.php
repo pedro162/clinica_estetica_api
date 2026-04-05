@@ -10,6 +10,7 @@ class FormularioGrupo extends Model
 {
     use SoftDeletes;
     use BelongsToTenant;
+
     protected $table = 'formulario_grupos';
     protected $primaryKey = 'id';
     protected $fillable = [

@@ -8,6 +8,8 @@ use App\Helpers\AtendimentoHelper;
 use App\Http\Controllers\Controller;
 use App\Profissional;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -21,7 +23,7 @@ class AtendimentoController extends Controller
     public function json(Request $request)
     {
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $consulta = $request->all();
 
@@ -29,16 +31,16 @@ class AtendimentoController extends Controller
 
             $registro = $objAtendimentoHelper->json($consulta);
 
-            \DB::commit();
+            DB::commit();
 
             //dd( $registro);
 
             return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
         } catch (AtendimentoException $e) {
-            \DB::rollback();
-            return response()->json(['mensagem' . $e->getMessage()], 404);
+            DB::rollback();
+            return response()->json(['mensagem' => $e->getMessage()], 404);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
@@ -56,7 +58,7 @@ class AtendimentoController extends Controller
 
             $this->validaRequest($request);
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
 
@@ -64,14 +66,14 @@ class AtendimentoController extends Controller
 
             $registro = $objAtendimentoHelper->store($dados);
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
         } catch (AtendimentoException $e) {
-            \DB::rollback();
+            DB::rollback();
             return response()->json(['mensagem' . $e->getMessage()], 404);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
@@ -93,21 +95,21 @@ class AtendimentoController extends Controller
 
         try {
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
             $objAtendimentoHelper = new AtendimentoHelper();
 
             $registro = $objAtendimentoHelper->info($dados, $id);
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
         } catch (AtendimentoException $e) {
-            \DB::rollback();
+            DB::rollback();
             return response()->json(['mensagem' . $e->getMessage()], 404);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
@@ -127,7 +129,7 @@ class AtendimentoController extends Controller
 
             $this->validaRequest($request);
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
 
@@ -145,7 +147,7 @@ class AtendimentoController extends Controller
             //filial_id
             $dadosRequest = [];
 
-            $dadosRequest['user_update_id']     = \Auth::User()->id;
+            $dadosRequest['user_update_id']     = Auth::User()->id;
             $dadosRequest['historico']          = $dados['historico'];
             $dadosRequest['dt_inicio']          = $dados['dt_inicio'] ?? $dados['dt_inicio'];
             $dadosRequest['hr_inicio']          = $dados['hr_inicio'] ?? $dados['hr_inicio'];
@@ -155,14 +157,14 @@ class AtendimentoController extends Controller
 
             $atendimento->update($dadosRequest);
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $atendimento, 'class' => 'sucess'], 200);
         } catch (AtendimentoException $e) {
-            \DB::rollback();
+            DB::rollback();
             return response()->json(['mensagem' . $e->getMessage()], 404);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()], 500);
         }
@@ -178,28 +180,28 @@ class AtendimentoController extends Controller
     {
         try {
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dadosRequest = [];
 
-            $dadosRequest['user_update_id']     = \Auth::User()->id; //trocar pelo id do usuario logado
+            $dadosRequest['user_update_id']     = Auth::User()->id; //trocar pelo id do usuario logado
             $dadosRequest['active']             = 'no';
             $piscofins = Atendimento::where('active', '=', 'yes')->where('id', '=', $id)->first();
             $piscofins->update($dadosRequest);
             $piscofins->delete();
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => [], 'class' => 'sucess'], 200);
         } catch (AtendimentoException $th) {
 
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;

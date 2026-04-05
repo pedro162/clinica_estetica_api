@@ -7,6 +7,8 @@ use App\Cidade;
 use App\Exceptions\BairroException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class BairroController extends Controller
@@ -19,7 +21,7 @@ class BairroController extends Controller
     public function index(Request $request)
     {
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $consulta = $request->all();
             $campos =  null;
@@ -28,11 +30,10 @@ class BairroController extends Controller
 
             ];
 
-            $registro = \DB::table('bairros');
+            $registro = DB::table('bairros');
             $registro->join('cidades', function ($join) {
 
                 $join->on('cidades.id', '=', 'bairros.cidade_id');
-
             });
 
             if (is_array($consulta) && count($consulta) > 0) {
@@ -63,7 +64,7 @@ class BairroController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('bairros.name', 'like', '%'.$val.'%');
+                                $registro->where('bairros.name', 'like', '%' . $val . '%');
                             }
                             break;
                         case 'cidade_id':
@@ -76,7 +77,7 @@ class BairroController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('bairros.cidade_id', '=', ''.$val.'');
+                                $registro->where('bairros.cidade_id', '=', '' . $val . '');
                             }
                             break;
                         case 'limite':
@@ -108,8 +109,6 @@ class BairroController extends Controller
                                         $registro->orderBy($parsed, $atual[1]);
                                     }
                                 }
-
-
                             }
 
                             break;
@@ -120,7 +119,6 @@ class BairroController extends Controller
 
                             }
                             break;
-
                     }
                 }
             }
@@ -128,20 +126,18 @@ class BairroController extends Controller
                 $registro->select($campos);
             } else {
                 $registro->select('bairros.*', 'cidades.nmCidade');
-
             }
 
             $registro = $registro->where('cidades.active', '=', 'yes')
-            ->where('bairros.active', '=', 'yes')->get();
+                ->where('bairros.active', '=', 'yes')->get();
 
-            \DB::commit();
+            DB::commit();
 
             //dd( $registro);
 
             return view('admin.bairro.index', compact('registro', 'consulta'));
-
         } catch (BairroException $e) {
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -149,7 +145,7 @@ class BairroController extends Controller
             // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
 
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -184,7 +180,7 @@ class BairroController extends Controller
 
             $this->validaRequest($request);
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
 
@@ -195,8 +191,8 @@ class BairroController extends Controller
 
             $dadosRequest = [];
 
-            $dadosRequest['user_id']            = \Auth::User()->id;
-            $dadosRequest['user_update_id']     = \Auth::User()->id;
+            $dadosRequest['user_id']            = Auth::User()->id;
+            $dadosRequest['user_update_id']     = Auth::User()->id;
             $dadosRequest['name']               = $dados['name'];
             $dadosRequest['codIbge']            = $dados['codIbge'];
             $dadosRequest['cep']                = $dados['cep'];
@@ -204,21 +200,19 @@ class BairroController extends Controller
             $dadosRequest['active']             = 'yes';
 
             $registro = Bairro::create($dadosRequest);
-            \DB::commit();
+            DB::commit();
 
             if ($registro) {
                 return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
             } else {
                 throw new BairroException('Erro ao cadastrar');
             }
-
         } catch (BairroException $e) {
-            \DB::rollback();
-            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
-
+            DB::rollback();
+            return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 400);
         } catch (\Exception $e) {
-            \DB::rollback();
-            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            DB::rollback();
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
 
@@ -247,22 +241,21 @@ class BairroController extends Controller
                 throw new BairroException('Parâmetro ínválido');
             }
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $registro = Bairro::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
             if ($registro == null) {
                 throw new BairroException('Registro não encontrado');
             }
 
-            \DB::commit();
+            DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
             return view('admin.bairro.info', compact('registro', 'idAssistente', 'callBack'));
-
         } catch (BairroException $e) {
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -300,23 +293,21 @@ class BairroController extends Controller
                 throw new BairroException('Parâmetro ínválido');
             }
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $registro = Bairro::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
 
             if ($registro == null) {
                 throw new BairroException('Registro não encontrado');
-
             }
 
-            \DB::commit();
+            DB::commit();
 
             return view('admin.bairro.edit', compact('registro', 'idAssistente', 'callBack'));
-
         } catch (BairroException $e) {
 
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -325,7 +316,7 @@ class BairroController extends Controller
             //return redirect()->back();
 
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -349,7 +340,7 @@ class BairroController extends Controller
 
             $this->validaRequest($request);
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
 
@@ -360,7 +351,7 @@ class BairroController extends Controller
             }
             $dadosRequest = [];
 
-            $dadosRequest['user_update_id']     = \Auth::User()->id;
+            $dadosRequest['user_update_id']     = Auth::User()->id;
             $dadosRequest['name']               = $dados['name'];
             $dadosRequest['codIbge']            = $dados['codIbge'];
             $dadosRequest['cep']                = $dados['cep'];
@@ -370,20 +361,18 @@ class BairroController extends Controller
             $bairro = Bairro::where('active', '=', 'yes')->where('id', '=', $id)->first();
             $bairro->update($dadosRequest);
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $bairro, 'class' => 'sucess'], 200);
-
-
         } catch (BairroException $th) {
 
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
@@ -400,29 +389,28 @@ class BairroController extends Controller
     {
         try {
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dadosRequest = [];
 
-            $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['user_update_id']     = Auth::User()->id; //trocar pelo id do usuario logado
             $dadosRequest['active']             = 'no';
             $bairro = Bairro::where('active', '=', 'yes')->where('id', '=', $id)->first();
             $bairro->update($dadosRequest);
             $bairro->delete();
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => [], 'class' => 'sucess'], 200);
-
         } catch (BairroException $th) {
 
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
@@ -440,7 +428,6 @@ class BairroController extends Controller
         } else {
             return view('admin.bairro.head', compact('isReload'));
         }
-
     }
 
     protected function validaRequest(Request $request)
@@ -466,7 +453,7 @@ class BairroController extends Controller
             $errors = $validator->errors();
             $msg = '';
             foreach ($errors->all() as $mensagem) {
-                $msg .= $mensagem.'<br/>';
+                $msg .= $mensagem . '<br/>';
             }
 
             throw new BairroException($msg);

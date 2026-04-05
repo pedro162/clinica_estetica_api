@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Conta;
 use App\Exception\ContaException;
+use App\Exceptions\ContaException as ExceptionsContaException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ContaController extends Controller
@@ -18,7 +21,7 @@ class ContaController extends Controller
     public function index(Request $request)
     {
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $consulta = $request->all();
             $campos =  null;
@@ -27,7 +30,7 @@ class ContaController extends Controller
 
             ];
 
-            $registro = \DB::table('contas');
+            $registro = DB::table('contas');
             if (is_array($consulta) && count($consulta) > 0) {
                 foreach ($consulta as $key => $val) {
 
@@ -56,7 +59,7 @@ class ContaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('contas.name', 'like', '%'.$val.'%');
+                                $registro->where('contas.name', 'like', '%' . $val . '%');
                             }
                             break;
                         case 'conta_id':
@@ -69,7 +72,7 @@ class ContaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('contas.id', '=', ''.$val.'');
+                                $registro->where('contas.id', '=', '' . $val . '');
                             }
                             break;
                         case 'limite':
@@ -101,8 +104,6 @@ class ContaController extends Controller
                                         $registro->orderBy($parsed, $atual[1]);
                                     }
                                 }
-
-
                             }
 
                             break;
@@ -113,7 +114,6 @@ class ContaController extends Controller
 
                             }
                             break;
-
                     }
                 }
             }
@@ -121,19 +121,17 @@ class ContaController extends Controller
                 $registro->select($campos);
             } else {
                 $registro->select('contas.*');
-
             }
 
             $registro = $registro->where('contas.active', '=', 'yes')->get();
 
-            \DB::commit();
+            DB::commit();
 
             //dd( $registro);
 
             return view('admin.conta.index', compact('registro', 'consulta'));
-
         } catch (ContaException $e) {
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -141,7 +139,7 @@ class ContaController extends Controller
             // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
 
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -153,7 +151,7 @@ class ContaController extends Controller
     public function json(Request $request)
     {
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $consulta = $request->all();
             $campos =  null;
@@ -162,7 +160,7 @@ class ContaController extends Controller
 
             ];
 
-            $registro = \DB::table('contas');
+            $registro = DB::table('contas');
             if (is_array($consulta) && count($consulta) > 0) {
                 foreach ($consulta as $key => $val) {
 
@@ -191,7 +189,7 @@ class ContaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('contas.name', 'like', '%'.$val.'%');
+                                $registro->where('contas.name', 'like', '%' . $val . '%');
                             }
                             break;
                         case 'caixa_id':
@@ -204,7 +202,7 @@ class ContaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('contas.id', '=', ''.$val.'');
+                                $registro->where('contas.id', '=', '' . $val . '');
                             }
                             break;
                         case 'limite':
@@ -236,8 +234,6 @@ class ContaController extends Controller
                                         $registro->orderBy($parsed, $atual[1]);
                                     }
                                 }
-
-
                             }
 
                             break;
@@ -248,7 +244,6 @@ class ContaController extends Controller
 
                             }
                             break;
-
                     }
                 }
             }
@@ -256,26 +251,23 @@ class ContaController extends Controller
                 $registro->select($campos);
             } else {
                 $registro->select('contas.*');
-
             }
 
             $registro = $registro->where('contas.active', '=', 'yes')->get();
 
-            \DB::commit();
+            DB::commit();
 
             //dd( $registro);
 
             return response()->json(['registro' => $registro, 'class' => 'sucess'], 201);
+        } catch (ExceptionsContaException $e) {
+            DB::rollback();
 
-        } catch (ContaException $e) {
-            \DB::rollback();
-
-            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
-
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
-            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
 
             //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
@@ -307,7 +299,7 @@ class ContaController extends Controller
 
             $this->validaRequest($request);
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
 
@@ -320,24 +312,22 @@ class ContaController extends Controller
             $dadosRequest['status_abertura']        = $dados['status_abertura'] ?? 'close';
             $dadosRequest['status_bloqueio']        = $dados['status_bloqueio'];
             $dadosRequest['aceita_transferencia']   = $dados['aceita_transferencia'];
-            $dadosRequest['user_id']                = \Auth::User()->id;
+            $dadosRequest['user_id']                = Auth::User()->id;
             $dadosRequest['active']                 = 'yes';
             $registro = Conta::create($dadosRequest);
-            \DB::commit();
+            DB::commit();
 
             if ($registro) {
                 return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
             } else {
-                throw new ContaException('Erro ao cadastrar');
+                throw new ExceptionsContaException('Erro ao cadastrar');
             }
-
-        } catch (ContaException $e) {
-            \DB::rollback();
-            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
-
+        } catch (ExceptionsContaException $e) {
+            DB::rollback();
+            return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 400);
         } catch (\Exception $e) {
-            \DB::rollback();
-            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            DB::rollback();
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
 
@@ -363,25 +353,24 @@ class ContaController extends Controller
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
             if ($id <= 0) {
-                throw new ContaException('Parâmetro ínválido');
+                throw new ExceptionsContaException('Parâmetro ínválido');
             }
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $registro = Conta::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
             if ($registro == null) {
-                throw new ContaException('Registro não encontrado');
+                throw new ExceptionsContaException('Registro não encontrado');
             }
 
-            \DB::commit();
+            DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
             return view('admin.conta.info', compact('registro', 'idAssistente', 'callBack'));
-
-        } catch (ContaException $e) {
-            \DB::rollback();
+        } catch (ExceptionsContaException $e) {
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -416,26 +405,24 @@ class ContaController extends Controller
             }
 
             if ($id <= 0) {
-                throw new ContaException('Parâmetro ínválido');
+                throw new ExceptionsContaException('Parâmetro ínválido');
             }
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $registro = Conta::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
 
             if ($registro == null) {
-                throw new ContaException('Registro não encontrado');
-
+                throw new ExceptionsContaException('Registro não encontrado');
             }
 
-            \DB::commit();
+            DB::commit();
 
             return view('admin.conta.edit', compact('registro', 'idAssistente', 'callBack'));
+        } catch (ExceptionsContaException $e) {
 
-        } catch (ContaException $e) {
-
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -444,7 +431,7 @@ class ContaController extends Controller
             //return redirect()->back();
 
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -468,12 +455,12 @@ class ContaController extends Controller
 
             $this->validaRequest($request);
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
 
             $dadosRequest = [];
-            $dadosRequest['user_update_id']         = \Auth::User()->id;
+            $dadosRequest['user_update_id']         = Auth::User()->id;
             $dadosRequest['name']                   = $dados['name'];
             $dadosRequest['type']                   = $dados['type'];
             $dadosRequest['vrMin']                  = $dados['vrMin'];
@@ -485,20 +472,18 @@ class ContaController extends Controller
             $caixa = Conta::where('active', '=', 'yes')->where('id', '=', $id)->first();
             $caixa->update($dadosRequest);
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $caixa, 'class' => 'sucess'], 200);
+        } catch (ExceptionsContaException $th) {
 
-
-        } catch (ContaException $th) {
-
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
@@ -515,32 +500,31 @@ class ContaController extends Controller
     {
         try {
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dadosRequest = [];
 
-            $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['user_update_id']     = Auth::User()->id; //trocar pelo id do usuario logado
             $dadosRequest['active']             = 'no';
             $bairro = Conta::where('active', '=', 'yes')->where('id', '=', $id)->first();
             if ($bairro->vrSaldo == 0) {
-                throw new ContaException('Este caixa ainda possui saldo.');
+                throw new ExceptionsContaException('Este caixa ainda possui saldo.');
             }
             $bairro->update($dadosRequest);
             $bairro->delete();
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => [], 'class' => 'sucess'], 200);
+        } catch (ExceptionsContaException $th) {
 
-        } catch (ContaException $th) {
-
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
@@ -562,7 +546,6 @@ class ContaController extends Controller
         } else {
             return view('admin.conta.head', compact('isReload', 'calback_selected', 'pesquisar', 'url_pesquisa'));
         }
-
     }
 
     protected function validaRequest(Request $request)
@@ -585,10 +568,10 @@ class ContaController extends Controller
             $errors = $validator->errors();
             $msg = '';
             foreach ($errors->all() as $mensagem) {
-                $msg .= $mensagem.'<br/>';
+                $msg .= $mensagem . '<br/>';
             }
 
-            throw new ContaException($msg);
+            throw new ExceptionsContaException($msg);
         }
 
         return true;

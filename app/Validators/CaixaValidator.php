@@ -9,7 +9,6 @@ class CaixaValidator
 {
     public function validarCaixaBaixar(int $id, array $dados = [])
     {
-
         $erros = [];
 
         $id             = $id ?? $dados['id'];

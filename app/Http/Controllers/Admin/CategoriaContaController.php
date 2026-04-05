@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\ContaCategoria;
-use App\Exception\CategoriaContaException;
+use App\Exceptions\CategoriaContaException as ExceptionsCategoriaContaException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class CategoriaContaController extends Controller
@@ -18,7 +20,7 @@ class CategoriaContaController extends Controller
     public function index(Request $request)
     {
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $consulta = $request->all();
             $campos =  null;
@@ -27,7 +29,7 @@ class CategoriaContaController extends Controller
 
             ];
 
-            $registro = \DB::table('conta_categorias');
+            $registro = DB::table('conta_categorias');
             if (is_array($consulta) && count($consulta) > 0) {
                 foreach ($consulta as $key => $val) {
 
@@ -56,7 +58,7 @@ class CategoriaContaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('conta_categorias.name', 'like', '%'.$val.'%');
+                                $registro->where('conta_categorias.name', 'like', '%' . $val . '%');
                             }
                             break;
                         case 'categoria_conta_id':
@@ -69,7 +71,7 @@ class CategoriaContaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('conta_categorias.id', '=', ''.$val.'');
+                                $registro->where('conta_categorias.id', '=', '' . $val . '');
                             }
                             break;
                         case 'limite':
@@ -101,8 +103,6 @@ class CategoriaContaController extends Controller
                                         $registro->orderBy($parsed, $atual[1]);
                                     }
                                 }
-
-
                             }
 
                             break;
@@ -113,7 +113,6 @@ class CategoriaContaController extends Controller
 
                             }
                             break;
-
                     }
                 }
             }
@@ -121,19 +120,17 @@ class CategoriaContaController extends Controller
                 $registro->select($campos);
             } else {
                 $registro->select('conta_categorias.*');
-
             }
 
             $registro = $registro->where('conta_categorias.active', '=', 'yes')->get();
 
-            \DB::commit();
+            DB::commit();
 
             //dd( $registro);
 
             return view('admin.categoria_conta.index', compact('registro', 'consulta'));
-
-        } catch (CategoriaContaException $e) {
-            \DB::rollback();
+        } catch (ExceptionsCategoriaContaException $e) {
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -141,7 +138,7 @@ class CategoriaContaController extends Controller
             // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
 
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -153,7 +150,7 @@ class CategoriaContaController extends Controller
     public function json(Request $request)
     {
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $consulta = $request->all();
             $campos =  null;
@@ -162,7 +159,7 @@ class CategoriaContaController extends Controller
 
             ];
 
-            $registro = \DB::table('conta_categorias');
+            $registro = DB::table('conta_categorias');
             if (is_array($consulta) && count($consulta) > 0) {
                 foreach ($consulta as $key => $val) {
 
@@ -191,7 +188,7 @@ class CategoriaContaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('conta_categorias.name', 'like', '%'.$val.'%');
+                                $registro->where('conta_categorias.name', 'like', '%' . $val . '%');
                             }
                             break;
                         case 'categoria_conta_id':
@@ -204,7 +201,7 @@ class CategoriaContaController extends Controller
                                     $val = substr($val, 0, -1);
                                 }
 
-                                $registro->where('conta_categorias.id', '=', ''.$val.'');
+                                $registro->where('conta_categorias.id', '=', '' . $val . '');
                             }
                             break;
                         case 'limite':
@@ -236,8 +233,6 @@ class CategoriaContaController extends Controller
                                         $registro->orderBy($parsed, $atual[1]);
                                     }
                                 }
-
-
                             }
 
                             break;
@@ -248,7 +243,6 @@ class CategoriaContaController extends Controller
 
                             }
                             break;
-
                     }
                 }
             }
@@ -256,26 +250,23 @@ class CategoriaContaController extends Controller
                 $registro->select($campos);
             } else {
                 $registro->select('conta_categorias.*');
-
             }
 
             $registro = $registro->where('conta_categorias.active', '=', 'yes')->get();
 
-            \DB::commit();
+            DB::commit();
 
             //dd( $registro);
 
             return response()->json(['registro' => $registro, 'class' => 'sucess'], 201);
+        } catch (ExceptionsCategoriaContaException $e) {
+            DB::rollback();
 
-        } catch (CategoriaContaException $e) {
-            \DB::rollback();
-
-            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
-
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
-            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
 
             //return response()->json(['errors'=>['error'=>'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
         }
@@ -307,31 +298,29 @@ class CategoriaContaController extends Controller
 
             $this->validaRequest($request);
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
 
             $dadosRequest = [];
 
             $dadosRequest['name']                   = $dados['name'];
-            $dadosRequest['user_id']                = \Auth::User()->id;
+            $dadosRequest['user_id']                = Auth::User()->id;
             $dadosRequest['active']                 = 'yes';
             $registro = ContaCategoria::create($dadosRequest);
-            \DB::commit();
+            DB::commit();
 
             if ($registro) {
                 return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
             } else {
-                throw new CategoriaContaException('Erro ao cadastrar');
+                throw new ExceptionsCategoriaContaException('Erro ao cadastrar');
             }
-
-        } catch (CategoriaContaException $e) {
-            \DB::rollback();
-            return response()->json(['errors' => ['error' => 'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 400);
-
+        } catch (ExceptionsCategoriaContaException $e) {
+            DB::rollback();
+            return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 400);
         } catch (\Exception $e) {
-            \DB::rollback();
-            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 500);
+            DB::rollback();
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
 
@@ -357,25 +346,24 @@ class CategoriaContaController extends Controller
             $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
             if ($id <= 0) {
-                throw new CategoriaContaException('Parâmetro ínválido');
+                throw new ExceptionsCategoriaContaException('Parâmetro ínválido');
             }
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $registro = ContaCategoria::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+                ->where('id', '=', $id)->first();
 
             if ($registro == null) {
-                throw new CategoriaContaException('Registro não encontrado');
+                throw new ExceptionsCategoriaContaException('Registro não encontrado');
             }
 
-            \DB::commit();
+            DB::commit();
 
             //return view('admin.produto.info', compact('registro'));
             return view('admin.categoria_conta.info', compact('registro', 'idAssistente', 'callBack'));
-
-        } catch (CategoriaContaException $e) {
-            \DB::rollback();
+        } catch (ExceptionsCategoriaContaException $e) {
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -410,26 +398,24 @@ class CategoriaContaController extends Controller
             }
 
             if ($id <= 0) {
-                throw new CategoriaContaException('Parâmetro ínválido');
+                throw new ExceptionsCategoriaContaException('Parâmetro ínválido');
             }
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $registro = ContaCategoria::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
 
             if ($registro == null) {
-                throw new CategoriaContaException('Registro não encontrado');
-
+                throw new ExceptionsCategoriaContaException('Registro não encontrado');
             }
 
-            \DB::commit();
+            DB::commit();
 
             return view('admin.categoria_conta.edit', compact('registro', 'idAssistente', 'callBack'));
+        } catch (ExceptionsCategoriaContaException $e) {
 
-        } catch (CategoriaContaException $e) {
-
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -438,7 +424,7 @@ class CategoriaContaController extends Controller
             //return redirect()->back();
 
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             $msg = $e->getMessage();
             return view('layouts._admin._error', compact('msg'));
@@ -462,34 +448,32 @@ class CategoriaContaController extends Controller
 
             $this->validaRequest($request);
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
 
             $dadosRequest = [];
-            $dadosRequest['user_update_id']         = \Auth::User()->id;
+            $dadosRequest['user_update_id']         = Auth::User()->id;
             $dadosRequest['name']                   = $dados['name'];
 
             $categoria_conta = ContaCategoria::where('active', '=', 'yes')->where('id', '=', $id)->first();
             if (! $categoria_conta) {
-                throw new CategoriaContaException('Registro não encontrado');
+                throw new ExceptionsCategoriaContaException('Registro não encontrado');
             }
             $categoria_conta->update($dadosRequest);
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $categoria_conta, 'class' => 'sucess'], 200);
+        } catch (ExceptionsCategoriaContaException $th) {
 
-
-        } catch (CategoriaContaException $th) {
-
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
@@ -506,30 +490,29 @@ class CategoriaContaController extends Controller
     {
         try {
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dadosRequest = [];
 
-            $dadosRequest['user_update_id']     = \Auth::User()->id;//trocar pelo id do usuario logado
+            $dadosRequest['user_update_id']     = Auth::User()->id; //trocar pelo id do usuario logado
             $dadosRequest['active']             = 'no';
             $categoriaConta = ContaCategoria::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
             $categoriaConta->update($dadosRequest);
             $categoriaConta->delete();
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => [], 'class' => 'sucess'], 200);
+        } catch (ExceptionsCategoriaContaException $th) {
 
-        } catch (CategoriaContaException $th) {
-
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor', 'class' => 'warning'], 500);
             //throw $th;
@@ -551,7 +534,6 @@ class CategoriaContaController extends Controller
         } else {
             return view('admin.categoria_conta.head', compact('isReload', 'calback_selected', 'pesquisar', 'url_pesquisa'));
         }
-
     }
 
     protected function validaRequest(Request $request)
@@ -568,10 +550,10 @@ class CategoriaContaController extends Controller
             $errors = $validator->errors();
             $msg = '';
             foreach ($errors->all() as $mensagem) {
-                $msg .= $mensagem.'<br/>';
+                $msg .= $mensagem . '<br/>';
             }
 
-            throw new CategoriaContaException($msg);
+            throw new ExceptionsCategoriaContaException($msg);
         }
 
         return true;

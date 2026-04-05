@@ -10,6 +10,7 @@ class FinanceiroMovimentacoe extends Model
 {
     use SoftDeletes;
     use BelongsToTenant;
+
     protected $primaryKey = 'id';
     protected $table = 'financeiro_movimentacoes';
 
@@ -31,7 +32,6 @@ class FinanceiroMovimentacoe extends Model
         'user_update_id',
         'active',
         'tenant_id'
-
     ];
 
     public function contaReceber()
@@ -39,6 +39,7 @@ class FinanceiroMovimentacoe extends Model
         return $this->belongsTo(ContaReceberItem::class, 'referencia_id', 'id')
             ->where('referencia', 'conta_receber_items');
     }
+
     public function caixa()
     {
         return $this->belongsTo(Caixa::class, 'caixa_id', 'id');

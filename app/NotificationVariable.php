@@ -10,6 +10,7 @@ class NotificationVariable extends Model
 {
     use SoftDeletes;
     use BelongsToTenant;
+
     protected $primaryKey    = 'id';
     protected $table         = 'notification_variables';
     protected $fillable     = [

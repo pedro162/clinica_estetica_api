@@ -11,7 +11,6 @@ class ContaReceberItemValidator
 {
     public function validarBaixar(int $id, array $dados = [])
     {
-
         $erros = [];
 
         $id                     = $id ?? $dados['id'];
@@ -19,6 +18,7 @@ class ContaReceberItemValidator
         $dados['receber_id']     = $id;
 
         $errosEncontrados = $this->validaBaixaRequest($dados);
+
         if (is_array($errosEncontrados) && count($errosEncontrados) > 0) {
             $erros =  array_merge($errosEncontrados, $erros);
         }
@@ -34,12 +34,12 @@ class ContaReceberItemValidator
             if (! $registro) {
                 throw new CobrancaReceberException('Caixa não identificao. Tente novamente ou entre em contato com o suporte.');
             } else {
-
                 if (! ($registro->status == 'aberto')) {
                     $erros[] = "O contas a receber de código encontra-se \"{$registro->status}\" e não poderá ser baixado";
                 }
 
                 $objCobrancaReceber = $registro->contaReceber;
+
                 if (! $objCobrancaReceber) {
                     throw new CobrancaReceberException('O cabeçalho do contas a receber não foi identificado. Tente novamente ou entre em contato com o suporte.');
                 }
@@ -92,6 +92,7 @@ class ContaReceberItemValidator
         if ($validator->fails()) {
             $errors = $validator->errors();
             $msg = '';
+
             foreach ($errors->all() as $mensagem) {
                 $msg .= $mensagem . '<br/>';
             }

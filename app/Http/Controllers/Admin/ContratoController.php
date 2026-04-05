@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ContratoRequest;
 use App\Pessoa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ContratoController extends Controller
 {
@@ -35,7 +37,7 @@ class ContratoController extends Controller
             }
 
 
-            $registro = \DB::transaction(function () use (&$id) {
+            $registro = DB::transaction(function () use (&$id) {
                 $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $id)->first();
                 $filial = Filial::where('active', '=', 'yes')->get();
                 return ['pessoa' => $pessoa, 'filial' => $filial];
@@ -48,9 +50,7 @@ class ContratoController extends Controller
                 return response()->json(['errors' => ['erro' => 'Erro ao carregar o registro'], 'class' => 'warning'], 400);
             }
 
-
             return view('admin.contrato.create', compact('registro', 'filial'));
-
         } catch (\Exception $e) {
             return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor']], 500);
         }
@@ -72,7 +72,7 @@ class ContratoController extends Controller
 
             $errors = $request->validated();
             $dados  = $request->all();
-            $registro = \DB::transaction(function () use (&$id, &$dados) {
+            $registro = DB::transaction(function () use (&$id, &$dados) {
                 $pessoa = Pessoa::where('active', '=', 'yes')->where('id', '=', $id)->first();
 
                 if (! $pessoa) {
@@ -91,7 +91,7 @@ class ContratoController extends Controller
                 $toCommit['dtVencimento']       = $dados['dtVencimento'];
                 $toCommit['tpVencimento']       = $dados['tpVencimento'];
                 $toCommit['isLiberaCatraca']    = $dados['isLiberaCatraca'] == true ? 'yes' : 'no';
-                $toCommit['user_id']            = \Auth::User()->id;
+                $toCommit['user_id']            = Auth::User()->id;
                 $toCommit['active']             = 'yes';
 
                 $result = Contrato::create($toCommit);
@@ -104,9 +104,8 @@ class ContratoController extends Controller
 
 
             return response()->json(['data' => $registro], 201);
-
         } catch (\Exception $e) {
-            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor '.$e->getMessage()]], 500);
+            return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor ' . $e->getMessage()]], 500);
         }
     }
 

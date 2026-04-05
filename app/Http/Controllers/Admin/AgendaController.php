@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Agenda;
+use App\Especialidade;
 use App\Exceptions\AgendaException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class AgendaController extends Controller
@@ -20,7 +23,7 @@ class AgendaController extends Controller
     {
 
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $consulta = $request->all();
 
@@ -34,8 +37,8 @@ class AgendaController extends Controller
                 $consulta['limite'] =  500;
             }
 
-            $tpUser     = \Auth::User()->type;
-            $pessoaUser = \Auth::User()->pessoa;
+            $tpUser     = Auth::User()->type;
+            $pessoaUser = Auth::User()->pessoa;
 
             if ($tpUser == 'external') {
                 $consulta['pessoa_atendimento_id'] = $pessoaUser->id;
@@ -53,7 +56,7 @@ class AgendaController extends Controller
             ];
 
 
-            $registro = \DB::table('agendas')->join('pessoas', function ($join) {
+            $registro = DB::table('agendas')->join('pessoas', function ($join) {
 
                 $join->on('agendas.pessoa_id', '=', 'pessoas.id');
             })->leftJoin('atendimentos as at', function ($join) {
@@ -196,7 +199,7 @@ class AgendaController extends Controller
             if ($campos) {
                 $registro->select($campos);
             } else {
-                $registro->select('agendas.id', 'agendas.pessoa_id', 'agendas.descricao', 'agendas.data', \DB::raw('DATE_FORMAT(agendas.data, \'%d-%m-%Y\') as data_format'), 'agendas.hora', 'agendas.status', 'pessoas.name as name_pessoa', 'pessoas.name_opcional', 'pessoas.sexo', 'pessoas.email', 'pa.name as  name_pessoa_atendimento', 'pa.id as pessoa_atendimento_id', 'at.historico as historico_atendimento');
+                $registro->select('agendas.id', 'agendas.pessoa_id', 'agendas.descricao', 'agendas.data', DB::raw('DATE_FORMAT(agendas.data, \'%d-%m-%Y\') as data_format'), 'agendas.hora', 'agendas.status', 'pessoas.name as name_pessoa', 'pessoas.name_opcional', 'pessoas.sexo', 'pessoas.email', 'pa.name as  name_pessoa_atendimento', 'pa.id as pessoa_atendimento_id', 'at.historico as historico_atendimento');
             }
 
             /* $ordemArr   = explode('-', $ordem);
@@ -224,14 +227,14 @@ class AgendaController extends Controller
             }
 
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
         } catch (AgendaException $e) {
-            \DB::rollback();
+            DB::rollback();
             return response()->json(['errors' => ['error' => 'teste: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 404);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
             return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
     }
@@ -251,10 +254,10 @@ class AgendaController extends Controller
             $validator = $this->validaRequest($request);
 
             $registro = null;
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $dados = $request->all();
-            $user_id = \Auth::User()->id;
+            $user_id = Auth::User()->id;
 
             $dadosEvento                        = [];
             $dadosEvento['pessoa_id']           = $dados['pessoa_id'];
@@ -286,18 +289,18 @@ class AgendaController extends Controller
                 $result->adicionarEspecialidade($especialidade, $dadosEvento);
             }
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $result, 'class' => 'sucess'], 200);
         } catch (AgendaException $th) {
 
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
 
             //throw $th;
         } catch (\Exception $th) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => 'Algo errado aconteceu no servidor: ' . $th->getMessage(), 'class' => 'warning'], 500);
             //throw $th;
@@ -313,7 +316,7 @@ class AgendaController extends Controller
 
             $dados = $request->all();
             $id = $id ?? $dados['id'];
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             if ($id <= 0) {
 
@@ -330,18 +333,18 @@ class AgendaController extends Controller
                 throw new AgendaException('Registro não encontrado.');
             }
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
         } catch (AgendaException $e) {
-            \DB::rollback();
+            DB::rollback();
 
             //$msg = $e->getMessage();
             //return view('layouts._admin._error', compact('msg'));
 
-            return response()->json(['mensagem' => $th->getMessage(), 'class' => 'warning'], 400);
+            return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
@@ -364,7 +367,7 @@ class AgendaController extends Controller
                 throw new AgendaException('Parâmetro ínválido');
             }
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $registro = Agenda::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
@@ -373,16 +376,16 @@ class AgendaController extends Controller
                 throw new AgendaException('Registro não encontrado');
             }
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json(['mensagem' => $registro, 'class' => 'sucess'], 200);
         } catch (AgendaException $e) {
 
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['errors' => ['error' => $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 400);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['errors' => ['error' => 'Algo errado aconteceu no servidor: ' . $e->getMessage() . ' ' . $e->getLine() . ' ' . $e->getFile()]], 500);
         }
@@ -401,11 +404,11 @@ class AgendaController extends Controller
 
             $this->validaRequest($request);
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
 
 
-            $user_id    = \Auth::User()->id;
+            $user_id    = Auth::User()->id;
             $erros      = [];
 
             $dados = $request->all();
@@ -440,17 +443,17 @@ class AgendaController extends Controller
                 $profissional->adicionarEspecialidade($especialidade, $dadosEvento);
             }
 
-            \DB::commit();
+            DB::commit();
             return response()->json(['mensagem' => $profissional, 'class' => 'success'], 200);
         } catch (AgendaException $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
 
             // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
 
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
 
@@ -476,7 +479,7 @@ class AgendaController extends Controller
                 return response()->json(['mensagem' => 'Erro ao deletar registro', 'class' => 'warning'], 400);
             }
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $eventoAgenda = Agenda::where('active', '=', 'yes')
                 ->where('id', '=', $id)->first();
@@ -487,17 +490,17 @@ class AgendaController extends Controller
             $eventoAgenda->update(['active' => 'no']);
             $eventoAgenda->delete();
 
-            \DB::commit();
+            DB::commit();
             return response()->json(['mensagem' => 'Registro atulizado com sucesso', 'class' => 'success']);
         } catch (AgendaException $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 400);
 
             // return response()->json(['errors'=>['error'=>'teste: '.$e->getMessage(). ' '.$e->getLine(). ' '.$e->getFile() ]], 404);
 
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
 
             return response()->json(['mensagem' => $e->getMessage(), 'class' => 'warning'], 500);
 

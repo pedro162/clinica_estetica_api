@@ -29,17 +29,22 @@ class PrazoPagamento extends Model
             'tenant_id'
         ];
 
-
     public function formaPagamento()
     {
-        return $this->belongsToMany(FormaPagamento::class, 'forma_prazo', 'prazo_pagamento_id', 'forma_pagamento_id')->withPivot('pcTaxa', 'vrTaxa', 'bandeira_cartao_id', 'user_id');
-    }
-    public function adicionarPagamento($formaPgto, $dados)
-    {
-        return $this->formaPagamento()->attach($formaPgto, $dados); //
+        return $this->belongsToMany(
+            FormaPagamento::class,
+            'forma_prazo',
+            'prazo_pagamento_id',
+            'forma_pagamento_id'
+        )->withPivot('pcTaxa', 'vrTaxa', 'bandeira_cartao_id', 'user_id');
     }
 
-    public function removeverPagamento($formaPgto)
+    public function adicionarPagamento($formaPgto, $dados)
+    {
+        return $this->formaPagamento()->attach($formaPgto, $dados);
+    }
+
+    public function removerPagamento($formaPgto)
     {
         return $this->formaPagamento()->detach($formaPgto);
     }
