@@ -68,6 +68,11 @@ class OrdemServico extends Model
         return $this->belongsTo(Pessoa::class, 'pessoa_id', 'id');
     }
 
+    public function profissional()
+    {
+        return $this->belongsTo(Profissional::class, 'profissional_id', 'id');
+    }
+
     public function rca()
     {
         return $this->belongsTo(Rca::class, 'pessoa_rca_id', 'id');

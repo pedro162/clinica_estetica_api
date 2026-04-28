@@ -2,6 +2,10 @@
 
 namespace App\Helpers;
 
+use App\Application\Commands\WorkOrder\CreateWorkOrderCommand;
+use App\Domain\WorkOrder\Entities\WorkOrder as WorkOrderEntity;
+use App\Domain\WorkOrder\Repositories\WorkOrderRepositoryInterface;
+use App\Domain\WorkOrder\ValueObjects\WorkOrderId;
 use App\Exceptions\OrdemServicoException;
 use App\Filial;
 use App\MotivoCancelamentoOrdemServico;
@@ -32,6 +36,7 @@ class OrdemServicoHelper extends BaseHelper
 
         // First loop: validations
         $vrTotalCobrancas = 0;
+
         foreach ($cobrancas as $obranca) {
             $formaPagamento     = $obranca->formaPgto;
             $planoPagamento     = $obranca->planoPgto;
@@ -97,7 +102,6 @@ class OrdemServicoHelper extends BaseHelper
             throw new OrdemServicoException(__('work_order.charges_total_mismatch'));
         }
 
-        // Second loop: persist data
         foreach ($cobrancas as $obranca) {
             $formaPagamento     = $obranca->formaPgto;
             $planoPagamento     = $obranca->planoPgto;
@@ -111,7 +115,7 @@ class OrdemServicoHelper extends BaseHelper
                 'referencia_id'  => $ordemServico->id,
                 'documento'      => $obranca->nr_doc,
                 'descricao'      => 'Conta a receber ordem de serviço nº ' . $ordemServico->id,
-                'responsavel_id' => Auth::user()->pessoa->id,
+                'responsavel_id' => Auth::user()?->pessoa?->id,
             ];
 
             $cobRecebHelper->gerarCobranca(
@@ -129,22 +133,19 @@ class OrdemServicoHelper extends BaseHelper
 
     public function marcarComoFaturada(OrdemServico $ordemServico)
     {
-
         $dadosRequest = [];
         $dadosRequest['is_faturado']        = 'yes';
         $dadosRequest['type']               = 'pedido';
         $dadosRequest['td_faturamento']     = date('Y-m-d H:i:s');
-        $dadosRequest['pess_fat_id']        = Auth::User()->pessoa->id;
+        $dadosRequest['pess_fat_id']        = Auth::User()?->pessoa?->id;
         $dadosRequest['user_update_id']     = Auth::User()->id;
         $ordemServico->update($dadosRequest);
 
         return $ordemServico;
-        //
     }
 
     public function marcarComoOrcamento(OrdemServico $ordemServico)
     {
-
         $dadosRequest = [];
         $dadosRequest['is_faturado']        = 'no';
         $dadosRequest['is_orcamento']       = 'yes';
@@ -155,12 +156,10 @@ class OrdemServicoHelper extends BaseHelper
         $ordemServico->update($dadosRequest);
 
         return $ordemServico;
-        //
     }
 
     public function marcarFinalizada(OrdemServico $ordemServico)
     {
-
         $dadosRequest = [];
         $dadosRequest['td_conclusao']       = date('Y-m-d H:i:s');
         $dadosRequest['status']             = 'concluido';
@@ -338,60 +337,34 @@ class OrdemServicoHelper extends BaseHelper
 
     public function info(array $dados, int $id = 0)
     {
-
         $id       = $id ?? $dados['id'];
-        $callBack = $dados['callBack'] ?? '';
 
         if ($id <= 0) {
             throw new OrdemServicoException(__('work_order.invalid_parameter'));
         }
 
-        $registro = OrdemServico::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
-        $registro->pessoa;
-        $dataItens = [];
-        if ($registro->item) {
-            foreach ($registro->item as $key => $item) {
-                $item->servico;
-            }
-        }
-
-        $dataCobrancas = [];
-
-        if ($registro->cobranca) {
-            foreach ($registro->cobranca as $key => $cobranca) {
-                $cobranca->formaPgto;
-                $cobranca->planoPgto;
-            }
-        }
-
-        $registro->cobranca;
-        $registro->item;
-        $registro->rca;
-        $registro->filial->pessoa;
-
-        return $registro;
+        return app(WorkOrderRepositoryInterface::class)
+            ->findById(new WorkOrderId((string)$id));
     }
 
     public function update(array $dados, int $id = 0)
     {
-
         $id           = $id ?? $dados['id'];
-        $callBack     = $dados['callBack'] ?? '';
-        $idAssistente = $idAssistente ?? $dados['idAssistente'] ?? '';
 
         if (! isset($id) || $id <= 0) {
             throw new OrdemServicoException(__('work_order.invalid_parameter'));
         }
 
-        $registro = OrdemServico::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+        app(WorkOrderRepositoryInterface::class)
+            ->update(WorkOrderEntity::buildEntity(CreateWorkOrderCommand::build(
+                [
+                    'id' => $id,
+                    'observacao' => $dados['observacao'] ?? null
+                ]
+            )->getDataProperties()));
 
-        $dadosRequest = [];
-        $dadosRequest['observacao']         = $dados['observacao'] ?? null;
-        $dadosRequest['user_update_id']     = Auth::User()->id;
-        $registro->update($dadosRequest);
-
+        $registro = app(WorkOrderRepositoryInterface::class)
+            ->findById(new WorkOrderId((string)$id));
 
         if (! $registro) {
             throw new OrdemServicoException(__('work_order.record_not_found'));
@@ -402,9 +375,7 @@ class OrdemServicoHelper extends BaseHelper
 
     public function finalizar(array $dados, int $id = 0)
     {
-
         $id           = $id ?? $dados['id'];
-        $callBack     = $dados['callBack'] ?? '';
         $isOrcamento  = $dados['is_orcamento'] ?? 'no';
         $idAssistente = $idAssistente ?? $dados['idAssistente'] ?? '';
 
@@ -412,36 +383,29 @@ class OrdemServicoHelper extends BaseHelper
             throw new OrdemServicoException(__('work_order.invalid_parameter'));
         }
 
-        $registro = OrdemServico::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
+        $registro = app(WorkOrderRepositoryInterface::class)
+            ->findById(new WorkOrderId((string)$id));
+
         if (! $registro) {
             throw new OrdemServicoException(__('work_order.record_not_found'));
         }
-
 
         if ($isOrcamento == 'yes' || trim($isOrcamento) == 'sim' || $isOrcamento === true) {
             $this->marcarComoOrcamento($registro);
         } else {
-
             $this->gerarFinanceiro($registro);
             $this->marcarComoFaturada($registro);
         }
 
-        if (! $registro) {
-            throw new OrdemServicoException(__('work_order.record_not_found'));
-        }
-
-        return $registro;
+        return app(WorkOrderRepositoryInterface::class)
+            ->findById(new WorkOrderId((string)$id));
     }
 
     public function adicionarItem(array $dados, int $id = 0)
     {
-
         $id           = $id ?? $dados['id'];
-        $callBack     = $dados['callBack'] ?? '';
         $idAssistente = $idAssistente ?? $dados['idAssistente'] ?? '';
         $idServico    = $dados['servico_id'] ?? 0;
-        $erros          = [];
         $vrItem         = $dados['vrItem']          ?? 0;
         $vrItemBruto    = $dados['vrItemBruto']     ?? 0;
         $qtd            = $dados['qtd']             ?? 0;
@@ -454,16 +418,8 @@ class OrdemServicoHelper extends BaseHelper
             throw new OrdemServicoException(__('work_order.invalid_work_order_parameter'));
         }
 
-        $registro = OrdemServico::where('active', '=', 'yes')
-            ->where('id', '=', $id)->first();
-
-        /* $dadosRequest = [];
-        $dadosRequest['name']                   = $dados['name'];
-        $dadosRequest['descricao']              = $dados['descricao']       ?? null;
-        $dadosRequest['vrServico']              = $dados['vrServico']       ?? null;
-        $dadosRequest['user_update_id']         = \Auth::User()->id;
-        $registro->update($dadosRequest); */
-
+        $registro = app(WorkOrderRepositoryInterface::class)
+            ->findById(new WorkOrderId((string)$id));
 
         if (! $registro) {
             throw new OrdemServicoException(__('work_order.record_not_found'));
@@ -472,6 +428,7 @@ class OrdemServicoHelper extends BaseHelper
         $servico = Servico::where('active', '=', 'yes')
             ->where('id', '=', $idServico)
             ->first();
+
         if (! $servico) {
             throw new OrdemServicoException(__('work_order.service_not_found'));
         }
@@ -481,16 +438,16 @@ class OrdemServicoHelper extends BaseHelper
                 __('work_order.service_without_price', ['id' => $servico->id])
             );
         }
-        $servicoItem = null;
-        if (isset($dados['os_item_id']) && $dados['os_item_id'] > 0) {
 
+        $servicoItem = null;
+
+        if (isset($dados['os_item_id']) && $dados['os_item_id'] > 0) {
             $servicoItem = ServicoItem::where('id', '=', $dados['os_item_id'])->first();
+
             if (! $servicoItem) {
                 throw new OrdemServicoException(__('work_order.record_not_found_to_update'));
             }
         }
-
-
 
         $vrItem         = Utilitarios::removeMaskMoney($vrItem);
         $vrItemBruto    = Utilitarios::removeMaskMoney($vrItemBruto);
@@ -526,10 +483,7 @@ class OrdemServicoHelper extends BaseHelper
             $servicoItem = ServicoItem::create($dadosRequest);
         }
 
-        //---Recalcula a ordem de serviço
-        $registro = $this->recalcularOrdemServico($registro->id);
-
-        return $registro;
+        return $this->recalcularOrdemServico($registro->id);
     }
 
     public function removerItem(int $id)
@@ -572,6 +526,7 @@ class OrdemServicoHelper extends BaseHelper
         if (! $response) {
             throw new OrdemServicoException(__('work_order.delete_error'));
         }
+
         $registro = $registro->delete();
         $this->recalcularOrdemServico($ordem->id);
 
@@ -584,18 +539,19 @@ class OrdemServicoHelper extends BaseHelper
             throw new OrdemServicoException(__('work_order.invalid_parameter'));
         }
 
-        $registro = OrdemServico::where('active', '=', 'yes')
-            ->where('id', '=', $id)
-            ->first();
+        $registro = app(WorkOrderRepositoryInterface::class)
+            ->findById(new WorkOrderId((string)$id));
 
         if (! $registro) {
             throw new OrdemServicoException(__('work_order.work_order_not_found'));
         }
 
         $servicosArr = $registro->item()->where('active', '=', 'yes')->get();
+
         if (! $servicosArr || $servicosArr->isEmpty()) {
             throw new OrdemServicoException(__('work_order.services_not_found'));
         }
+
         $vrTotSevicos      = 0;
         $vrTotDesconto     = 0;
         $vrTotServicoFinal = 0;
@@ -606,7 +562,6 @@ class OrdemServicoHelper extends BaseHelper
             $vrTotServicoFinal += $item->vr_final;
         }
 
-
         $dadosRequest                     = [];
         $dadosRequest['vrTotal']          = $vrTotSevicos;
         $dadosRequest['vr_final']         = $vrTotServicoFinal;
@@ -616,15 +571,15 @@ class OrdemServicoHelper extends BaseHelper
             : 0;
         $dadosRequest['pct_acrescimo']    = 0;
         $dadosRequest['vr_acrescimo']     = 0;
-        $dadosRequest['user_update_id']   = Auth::user()->id;
+        $dadosRequest['id'] = $id;
 
-        $registro->update($dadosRequest);
+        app(WorkOrderRepositoryInterface::class)
+            ->update(WorkOrderEntity::buildEntity(CreateWorkOrderCommand::build(
+                $dadosRequest
+            )->getDataProperties()));
 
-        if (! $registro) {
-            throw new OrdemServicoException(__('work_order.record_not_found'));
-        }
-
-        return $registro;
+        return  app(WorkOrderRepositoryInterface::class)
+            ->findById(new WorkOrderId((string)$id));
     }
 
     public function destroy(int $id)
@@ -634,32 +589,25 @@ class OrdemServicoHelper extends BaseHelper
             throw new OrdemServicoException(__('work_order.invalid_parameter'));
         }
 
-        $registro = OrdemServico::where('active', '=', 'yes')
-            ->where('id', '=', $id)
-            ->first();
+        $registro = app(WorkOrderRepositoryInterface::class)
+            ->findById(new WorkOrderId((string)$id));
+
         if (!$registro) {
             throw new OrdemServicoException(__('work_order.delete_error_generic'));
-        } else {
-
-            $registro = $registro->update(['active' => 'no']);
         }
 
-        if ($registro == null) {
+        app(WorkOrderRepositoryInterface::class)
+            ->update(WorkOrderEntity::buildEntity(CreateWorkOrderCommand::build(
+                ['active' => 'no', 'id' => $id]
+            )->getDataProperties()));
 
-            //\Session::flash('mensagem', ['msg'=>' não encontrado', 'class'=>'alert alert-danger']);
-            //return redirect()->back();
-            throw new OrdemServicoException(__('work_order.delete_error_generic'));
-        }
-
-        return $registro;
+        return app(WorkOrderRepositoryInterface::class)
+            ->findById(new WorkOrderId((string)$id));
     }
 
     public function json(array $data, $usePaginate = false)
     {
-
-
         $consulta = $data;
-        //dd($consulta);
         $ordem = $consulta['ordem'] ?? 'id-desc';
 
         $parse = [];
@@ -799,13 +747,12 @@ class OrdemServicoHelper extends BaseHelper
         $usePaginate    = (int) $usePaginate;
         $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::PAGINACAO_ITENS_POR_PAGINA_PADRAO;
         $usePaginate    = (int) $usePaginate;
+
         if ($usePaginate > 0) {
             $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
         } else {
             $registro   = $registro->where('os.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->get();
         }
-
-
 
         return $registro;
     }

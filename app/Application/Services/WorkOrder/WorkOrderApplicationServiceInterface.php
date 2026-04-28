@@ -4,12 +4,13 @@ namespace App\Application\Services\WorkOrder;
 
 use App\Application\Commands\WorkOrder\CreateWorkOrderCommand;
 use App\OrdemServico;
+use Illuminate\Support\Collection;
 
 interface WorkOrderApplicationServiceInterface
 {
     public function store(CreateWorkOrderCommand $command): OrdemServico;
 
-    public function getAll(array $filters = []): array;
+    public function getAll(array $filters = []): ?Collection;
 
     public function findById(CreateWorkOrderCommand $command): OrdemServico;
 

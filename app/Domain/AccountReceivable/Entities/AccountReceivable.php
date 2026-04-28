@@ -446,6 +446,8 @@ class AccountReceivable extends BaseEntity
             'operador_financeiro_id' => isset($this->financialOperatorId) ? (string) $this->financialOperatorId : null,
             'responsavel_id' => isset($this->responsibleId) ? (string) $this->responsibleId : null,
             'pessoa_id' => isset($this->personId) ? (string) $this->personId : null,
+            'referencia' => isset($this->reference) ? (string) $this->reference : null,
+            'referencia_id' => isset($this->referenceId) ? (string) $this->referenceId : null,
         ];
 
         $data = array_filter($data, function ($value) {

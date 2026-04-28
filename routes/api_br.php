@@ -10,8 +10,11 @@ use App\Http\Controllers\Admin\V1\Service\GetAllServiceController;
 use App\Http\Controllers\Admin\V1\Service\GetByIdServiceController;
 use App\Http\Controllers\Admin\V1\Service\StoreServiceController;
 use App\Http\Controllers\Admin\V1\Service\UpdateServiceController;
+use App\Http\Controllers\Admin\V1\WorkOrder\GetAllWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\GetByIdWorkOrderController;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\ThrottleRequestsWithRedis;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -597,8 +600,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/servico/info/{id}', ['as' => 'servico.info', 'uses' => GetByIdServiceController::class]);
     Route::get('/servico/destroy/{id}', ['as' => 'servico.destroy', 'uses' => DeleteServiceController::class]);
 
-    Route::get('/ordem/servico/json', ['as' => 'ordem.servico.json', 'uses' => 'Admin\OrdemServicoController@json']);
-    Route::post('/ordem/servico/json', ['as' => 'ordem.servico.json', 'uses' => 'Admin\OrdemServicoController@json']);
+    Route::get('/ordem/servico/json', ['as' => 'ordem.servico.json', 'uses' => GetAllWorkOrderController::class]);
+    Route::post('/ordem/servico/json', ['as' => 'ordem.servico.json', 'uses' => GetAllWorkOrderController::class]);
     Route::post('/ordem/servico/store', ['as' => 'ordem.servico.store', 'uses' => 'Admin\OrdemServicoController@store']);
     Route::get('/ordem/servico/edit/{id}', ['as' => 'ordem.servico.edit', 'uses' => 'Admin\OrdemServicoController@edit']);
     Route::post('/ordem/servico/edit/{id}', ['as' => 'ordem.servico.edit', 'uses' => 'Admin\OrdemServicoController@edit']);
@@ -685,6 +688,17 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/parametro/info/{id}', ['as' => 'parametro.info', 'uses' => 'Admin\ParametroController@info']);
     Route::get('/parametro/destroy/{id}', ['as' => 'parametro.destroy', 'uses' => 'Admin\ParametroController@destroy']);
 });
+
+// Health check para load testing e monitoramento
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok'], 200);
+})->withoutMiddleware([
+    'throttle',
+    'throttle:api',
+    'auth:api',
+    ThrottleRequests::class,
+    ThrottleRequestsWithRedis::class,
+]);
 Route::middleware('auth:api')->get('/debug', function (Request $request) {
     return response()->json([
         'user' => $request->user(),

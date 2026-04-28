@@ -9,7 +9,7 @@ class GetAllWorkOrderResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'registro' => WorkOrderResource::collection($this->resource['registro'] ?? []),
+            'data' => parent::toArray($request),
         ];
     }
 }

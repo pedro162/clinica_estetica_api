@@ -3,17 +3,28 @@
 namespace App\Application\Services\WorkOrder;
 
 use App\Application\Commands\WorkOrder\CreateWorkOrderCommand;
+use App\Application\Handlers\WorkOrder\CreateWorkOrderHandler;
+use App\Application\Handlers\WorkOrder\DestroyWorkOrderHandler;
+use App\Application\Handlers\WorkOrder\GetAllWorkOrderHandler;
+use App\Application\Handlers\WorkOrder\GetWorkOrderByIdHandler;
+use App\Application\Handlers\WorkOrder\UpdateWorkOrderHandler;
 use App\Domain\WorkOrder\Entities\WorkOrder as WorkOrderEntity;
 use App\Domain\WorkOrder\Repositories\WorkOrderRepositoryInterface;
 use App\Domain\WorkOrder\ValueObjects\WorkOrderId;
 use App\Helpers\OrdemServicoHelper;
 use App\OrdemServico;
+use Illuminate\Support\Collection;
 
 class WorkOrderApplicationService implements WorkOrderApplicationServiceInterface
 {
     public function __construct(
         protected WorkOrderRepositoryInterface $repository,
-        protected OrdemServicoHelper $helper
+        protected OrdemServicoHelper $helper,
+        private CreateWorkOrderHandler $createWorkOrderHandler,
+        protected GetAllWorkOrderHandler $getAllWorkOrderHandler,
+        protected UpdateWorkOrderHandler $updateWorkOrderHandler,
+        protected DestroyWorkOrderHandler $destroyWorkOrderHandler,
+        protected GetWorkOrderByIdHandler $getWorkOrderByIdHandler
     ) {
     }
 
@@ -24,9 +35,9 @@ class WorkOrderApplicationService implements WorkOrderApplicationServiceInterfac
         return $this->repository->save($entity);
     }
 
-    public function getAll(array $filters = []): array
+    public function getAll(array $filters = []): ?Collection
     {
-        return $this->repository->getAll($filters ?? []);
+        return $this->getAllWorkOrderHandler->handler($filters);
     }
 
     public function findById(CreateWorkOrderCommand $command): OrdemServico

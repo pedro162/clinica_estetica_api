@@ -16,7 +16,19 @@ class WorkOrderRepository implements WorkOrderRepositoryInterface
 
     public function findById(WorkOrderId $id): ?OrdemServico
     {
-        return OrdemServico::with(['pessoa', 'cobranca', 'cobranca.formaPgto', 'cobranca.planoPgto', 'item', 'item.servico', 'rca', 'filial', 'filial.pessoa'])
+        return OrdemServico::with([
+            'pessoa',
+            'cobranca',
+            'cobranca.formaPgto',
+            'cobranca.planoPgto',
+            'cobranca.operadorFinanceiro',
+            'item',
+            'item.servico',
+            'rca.pessoa',
+            'profissional.pessoa',
+            'filial',
+            'filial.pessoa'
+        ])
             ->where('ordem_servicos.active', '=', 'yes')
             ->where('ordem_servicos.id', '=', (string)$id)
             ->first();
@@ -41,6 +53,7 @@ class WorkOrderRepository implements WorkOrderRepositoryInterface
         $entity = $parameter->build();
 
         $data = $entity->toArray();
+        $data['user_update_id'] = Auth::user()->id;
         unset($data['tenant_id']);
 
         OrdemServico::findOrFail((string)$parameter->getId())->update($data);
