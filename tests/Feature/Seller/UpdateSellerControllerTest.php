@@ -29,8 +29,16 @@ class UpdateSellerControllerTest extends TestCase
 
     public function testUpdateSeller()
     {
-        $data = $this->payload->toArray();
-        unset($data['id'], $data['user_id'], $data['user_update_id']);
+        $data = [
+            'filial_id' => $this->seller->filial_id,
+            'pessoa_id' => $this->seller->pessoa_id,
+            'acessaTodosRcas' => $this->payload->acessaTodosRcas,
+            'situacao' => $this->payload->situacao,
+            'metaPositivacao' => $this->payload->metaPositivacao,
+            'metaMargem' => $this->payload->metaMargem,
+            'metaFaturamento' => $this->payload->metaFaturamento,
+            'active' => $this->payload->active,
+        ];
 
         $response = $this->putJson(route('sellers.update', ['id' => $this->seller->id]), $data)
             ->assertStatus(JsonResponse::HTTP_NO_CONTENT);

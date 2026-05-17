@@ -303,4 +303,10 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
 
         return $installMents;
     }
+
+    public function reverse(
+        CreateAccountReceivableItemCommand $command
+    ): ?ContaReceberItem {
+        return $this->accountReceivableItemHelper->estornarCobrancaItem($command);
+    }
 }

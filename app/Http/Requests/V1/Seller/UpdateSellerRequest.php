@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\V1\Seller;
 
+use App\Utilitarios;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSellerRequest extends FormRequest
@@ -15,6 +16,7 @@ class UpdateSellerRequest extends FormRequest
     {
         return true;
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -35,5 +37,24 @@ class UpdateSellerRequest extends FormRequest
             'user_update_id' => 'sometimes|exists:App\User,id',
             'tenant_id' => 'sometimes|exists:App\SimpleTenantDatabase,id',
         ];
+    }
+
+    public function prepareForValidation(): void
+    {
+        $numericFields = [
+            'metaMargem',
+            'metaFaturamento',
+            'metaPositivacao',
+        ];
+
+        $data = $this->all();
+
+        foreach ($numericFields as $field) {
+            if (isset($data[$field])) {
+                $data[$field] = Utilitarios::removeMaskMoney($data[$field]);
+            }
+        }
+
+        $this->replace($data);
     }
 }

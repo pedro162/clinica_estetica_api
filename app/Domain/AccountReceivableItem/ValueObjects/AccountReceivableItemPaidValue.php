@@ -8,7 +8,7 @@ class AccountReceivableItemPaidValue
 
     public function __construct(string $value)
     {
-        if (empty($value)) {
+        if ($value === '') {
             throw new \InvalidArgumentException("The account receivable's payed value cannot be empty");
         }
         $this->value = $value;

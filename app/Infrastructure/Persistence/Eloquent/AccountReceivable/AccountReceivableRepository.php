@@ -29,7 +29,7 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
         $tenantId   = Auth::user()->tenant_id;
         $entity = $parameter->build();
         $entity->user_id = $userId;
-        $entity->responsavel_id = isset($entity->responsavel_id) ? $entity->responsavel_id : Auth::user()?->pessoa?->id;
+        $entity->responsavel_id = isset($entity->responsavel_id) ? $entity->responsavel_id : Auth::user()->pessoa->id;
         $entity->tenant_id = $tenantId;
         unset($entity->id);
 
@@ -155,11 +155,13 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
 
                 switch (trim($key)) {
                     case 'id':
-                        if (is_string($val)) {
+                        $val = (string) $val;
 
+                        if (is_string($val)) {
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
@@ -176,13 +178,14 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
 
                             $registro->where('pessoas.name', 'like', '%' . $val . '%');
                         }
-                        break; //
+                        break;
                     case 'vencido':
 
                         if (is_string($val)) {
@@ -215,6 +218,7 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
                             }
                             $tpExercicio = 'dtVencimento';
                         }
+
                         if (is_string($val) && strpos($val, ',') > -1) {
                             $val = explode(',', $val);
                             $registro->where('cr.' . $tpExercicio, '>=', date($val[0]));
@@ -224,25 +228,30 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
                         break;
 
                     case 'pessoa_id':
-                        if (is_string($val)) {
+                        $val = (string) $val;
 
+                        if (is_string($val)) {
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
+
                             $val = explode(',', $val);
 
                             $registro->whereIn('pessoas.id', $val);
                         }
                         break;
                     case 'filial_id':
-                        if (is_string($val)) {
+                        $val = (string) $val;
 
+                        if (is_string($val)) {
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
@@ -253,11 +262,14 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
                         $registro->whereIn('cr.filial_id', $val);
                         break;
                     case 'referencia_id':
+                        $val = (string) $val;
+
                         if (is_string($val)) {
 
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
@@ -270,13 +282,14 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
 
                     case 'referencia':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
+
                             $val = explode(',', $val);
 
                             $registro->whereIn('cr.referencia', $val);
@@ -288,9 +301,11 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
+
                             $val = explode(',', $val);
 
                             $registro->whereIn('cr.status', $val);
@@ -298,8 +313,8 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
                         break;
                     case 'limite':
                         $val = (int) $val;
-                        if (is_integer($val) && $val > 0) {
 
+                        if (is_integer($val) && $val > 0) {
                             $registro->limit($val);
                         }
                         break;
@@ -314,6 +329,7 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
                         }
 
                         $val = explode(',', $val);
+
                         for ($i = 0; !($i == count($val)); $i++) {
                             $atual = explode('-', $val[$i]);
                             if (array_key_exists(trim($atual[0]), $parse)) {

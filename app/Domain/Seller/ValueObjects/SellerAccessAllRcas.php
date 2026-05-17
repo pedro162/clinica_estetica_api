@@ -4,12 +4,12 @@ namespace App\Domain\Seller\ValueObjects;
 
 class SellerAccessAllRcas
 {
-    private int $value;
+    private string $value;
 
-    public function __construct(int $value)
+    public function __construct(string $value)
     {
-        if (in_array($value, [0, 1]) === false) {
-            throw new \InvalidArgumentException('Seller access all RCAs must be either 0 or 1');
+        if (!in_array($value, ['yes', 'no'], true)) {
+            throw new \InvalidArgumentException('Seller access all RCAs must be either yes or no');
         }
 
         $this->value = $value;
@@ -17,6 +17,6 @@ class SellerAccessAllRcas
 
     public function __toString()
     {
-        return (string)$this->value;
+        return $this->value;
     }
 }

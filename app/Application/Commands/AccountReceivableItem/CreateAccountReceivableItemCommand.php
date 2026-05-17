@@ -417,48 +417,59 @@ class CreateAccountReceivableItemCommand
 
     public static function build(array $data): CreateAccountReceivableItemCommand
     {
-        $grossValue = Utilitarios::removeMaskMoney($data['grossValue'] ?? $data['vrBruto'] ?? 0);
-        $netValue = Utilitarios::removeMaskMoney($data['netValue'] ?? $data['vrLiquido'] ?? 0);
-        $returnedValue = Utilitarios::removeMaskMoney($data['returnedValue'] ?? $data['vrDevolvido'] ?? 0);
-        $paidValue = Utilitarios::removeMaskMoney($data['paidValue'] ?? $data['vrPago'] ?? 0);
-        $feeValue = Utilitarios::removeMaskMoney($data['feeValue'] ?? $data['vrTaxa'] ?? 0);
-        $discountValue = Utilitarios::removeMaskMoney($data['discountValue'] ?? $data['vrDesconto'] ?? 0);
-        $interestValue = Utilitarios::removeMaskMoney($data['interestValue'] ?? $data['vrJuros'] ?? 0);
+        $entity = (new self());
 
-        $entity = (new self())
-            ->id((string)($data['id'] ?? 0))
-            ->description((string)($data['description'] ?? $data['descricao'] ?? ''))
-            ->tenantId((string)($data['tenantId'] ?? ''))
-            ->userId((string)($data['userId'] ?? ''))
-            ->userUpdateId((string)($data['userId'] ?? ''))
-            ->active((string)($data['active'] ?? 'yes'))
-            ->branchId((string)($data['filial_id'] ?? $data['branchId'] ?? ''))
-            ->document((string) ($data['document'] ?? $data['documento'] ?? ''))
-            ->originalDueDate((string) ($data['originalDueDate'] ?? $data['dtVencimentoOriginal'] ?? ''))
-            ->dueDate((string) ($data['dueDate'] ?? $data['dtVencimento'] ?? ''))
-            ->paymentDate((string) ($data['paymentDate'] ?? $data['dtPagamento'] ?? ''))
-            ->clearanceDate((string) ($data['clearanceDate'] ?? $data['dtBaixa'] ?? ''))
-            ->reversalDescription((string) ($data['reversalDescription'] ?? $data['ds_estorno'] ?? ''))
-            ->receivableAccountId((string) ($data['receivableAccountId'] ?? $data['conta_receber_id'] ?? ''))
-            ->reversalPersonId((string) ($data['reversalPersonId'] ?? $data['pessoa_estorno_id'] ?? ''))
-            ->clearancePersonId((string) ($data['clearancePersonId'] ?? $data['pessoa_baixa_id'] ?? ''))
-            ->refundPersonId((string) ($data['refundPersonId'] ?? $data['pessoa_devolucao_id'] ?? ''))
-            ->cashboxId((string) ($data['cashboxId'] ?? $data['caixa_id'] ?? ''))
-            ->clearanceType((string) ($data['clearanceType'] ?? $data['tpBaixa'] ?? ''))
-            ->clearanceHash((string) ($data['clearanceHash'] ?? $data['rashBaixa'] ?? ''))
-            ->grossValue((string) $grossValue)
-            ->netValue((string) $netValue)
-            ->returnedValue((string) $returnedValue)
-            ->paidValue((string) $paidValue)
-            ->feeValue((string) $feeValue)
-            ->discountValue((string) $discountValue)
-            ->interestValue((string) $interestValue)
-            ->responsibleId((string) ($data['responsibleId'] ?? $data['responsavel_id'] ?? ''))
-            ->isImportedData((string) ($data['isImportedData'] ?? $data['importacao_dados'] ?? ''))
-            ->paymentMethodId((string) ($data['paymentMethodId'] ??  $data['forma_pagamentos_id'] ?? $data['forma_pagamento_id'] ?? ''))
-            ->paymentPlanId((string) ($data['paymentPlanId'] ?? $data['plano_pagamento_id'] ?? ''))
-            ->financialOperatorId((string) ($data['financialOperatorId'] ?? $data['operador_financeiro_id'] ?? ''))
-            ->status((string) ($data['status'] ?? ''));
+        $entity->id((string)($data['id'] ?? 0));
+        $entity->active((string)($data['active'] ?? 'yes'));
+
+        $mapping = [
+            ['keys' => ['id'], 'callback' => fn ($value) => $entity->id($value)],
+            ['keys' => ['description', 'descricao'], 'callback' => fn ($value) => $entity->description($value)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($value) => $entity->tenantId($value)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($value) => $entity->userId($value)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($value) => $entity->userUpdateId($value)],
+            ['keys' => ['active'], 'callback' => fn ($value) => $entity->active($value)],
+            ['keys' => ['branchId', 'filial_id'], 'callback' => fn ($value) => $entity->branchId($value)],
+            ['keys' => ['document', 'documento'], 'callback' => fn ($value) => $entity->document($value)],
+            ['keys' => ['originalDueDate', 'dtVencimentoOriginal'], 'callback' => fn ($value) => $entity->originalDueDate($value)],
+            ['keys' => ['dueDate', 'dtVencimento'], 'callback' => fn ($value) => $entity->dueDate($value)],
+            ['keys' => ['paymentDate', 'dtPagamento'], 'callback' => fn ($value) => $entity->paymentDate($value)],
+            ['keys' => ['clearanceDate', 'dtBaixa'], 'callback' => fn ($value) => $entity->clearanceDate($value)],
+            ['keys' => ['reversalDescription', 'ds_estorno'], 'callback' => fn ($value) => $entity->reversalDescription($value)],
+            ['keys' => ['receivableAccountId', 'conta_receber_id'], 'callback' => fn ($value) => $entity->receivableAccountId($value)],
+            ['keys' => ['reversalPersonId', 'pessoa_estorno_id'], 'callback' => fn ($value) => $entity->reversalPersonId($value)],
+            ['keys' => ['clearancePersonId', 'pessoa_baixa_id'], 'callback' => fn ($value) => $entity->clearancePersonId($value)],
+            ['keys' => ['refundPersonId', 'pessoa_devolucao_id'], 'callback' => fn ($value) => $entity->refundPersonId($value)],
+            ['keys' => ['cashboxId', 'caixa_id'], 'callback' => fn ($value) => $entity->cashboxId($value)],
+            ['keys' => ['clearanceType', 'tpBaixa'], 'callback' => fn ($value) => $entity->clearanceType($value)],
+            ['keys' => ['clearanceHash', 'rashBaixa'], 'callback' => fn ($value) => $entity->clearanceHash($value)],
+            ['keys' => ['grossValue', 'vrBruto'], 'callback' => fn ($value) => $entity->grossValue(Utilitarios::removeMaskMoney($value))],
+            ['keys' => ['netValue', 'vrLiquido'], 'callback' => fn ($value) => $entity->netValue(Utilitarios::removeMaskMoney($value))],
+            ['keys' => ['returnedValue', 'vrDevolvido'], 'callback' => fn ($value) => $entity->returnedValue(Utilitarios::removeMaskMoney($value))],
+            ['keys' => ['paidValue', 'vrPago'], 'callback' => fn ($value) => $entity->paidValue(Utilitarios::removeMaskMoney($value))],
+            ['keys' => ['feeValue', 'vrTaxa'], 'callback' => fn ($value) => $entity->feeValue(Utilitarios::removeMaskMoney($value))],
+            ['keys' => ['discountValue', 'vrDesconto'], 'callback' => fn ($value) => $entity->discountValue(Utilitarios::removeMaskMoney($value))],
+            ['keys' => ['interestValue', 'vrJuros'], 'callback' => fn ($value) => $entity->interestValue(Utilitarios::removeMaskMoney($value))],
+            ['keys' => ['responsibleId', 'responsavel_id'], 'callback' => fn ($value) => $entity->responsibleId($value)],
+            ['keys' => ['isImportedData', 'importacao_dados'], 'callback' => fn ($value) => $entity->isImportedData($value)],
+            ['keys' => ['paymentMethodId', 'forma_pagamentos_id', 'forma_pagamento_id'], 'callback' => fn ($value) => $entity->paymentMethodId($value)],
+            ['keys' => ['paymentPlanId', 'plano_pagamento_id'], 'callback' => fn ($value) => $entity->paymentPlanId($value)],
+            ['keys' => ['financialOperatorId', 'operador_financeiro_id'], 'callback' => fn ($value) => $entity->financialOperatorId($value)],
+            ['keys' => ['status'], 'callback' => fn ($value) => $entity->status($value)],
+        ];
+
+        foreach ($mapping as $map) {
+            foreach ($map['keys'] as $key) {
+                if (array_key_exists($key, $data) && $data[$key] !== null) {
+                    $map['callback']($data[$key]);
+                    break;
+                }
+            }
+        }
+
+        if (!$entity->getUserUpdateId() && $entity->getUserId()) {
+            $entity->userUpdateId($entity->getUserId());
+        }
 
         return $entity;
     }
@@ -507,7 +518,7 @@ class CreateAccountReceivableItemCommand
         ];
 
         return array_filter($data, function ($value) {
-            return $value !== null && !empty($value);
+            return $value !== null && $value !== '';
         });
     }
 }

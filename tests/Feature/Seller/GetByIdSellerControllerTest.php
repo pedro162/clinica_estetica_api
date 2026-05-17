@@ -30,16 +30,16 @@ class GetByIdSellerControllerTest extends TestCase
     public function testGetASellerById()
     {
         $data = $this->seller->toArray();
-        $response = $this->getJson(route('sellers.info', ['id' => $this->seller->id]));
+        $response = $this->getJson(route('sellers.show', ['id' => $this->seller->id]));
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonStructure([
                 'data',
                 'success'
-            ])->assertJsonPath('data.id', $this->seller->id)
-            ->assertJson([
-                'data' => $data
-            ]);
+            ])->assertJsonPath('success', true)
+            ->assertJsonPath('data.id', $this->seller->id)
+            ->assertJsonPath('data.filial_id', $data['filial_id'])
+            ->assertJsonPath('data.pessoa_id', $data['pessoa_id']);
 
         $this->assertDatabaseHas($this->seller->getTable(), $data);
     }

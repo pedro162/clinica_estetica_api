@@ -160,7 +160,7 @@ class CreateSellerCommand
             ['keys' => ['userId', 'user_id'], 'callback' => fn ($v) => $entity->userId((string)$v)],
             ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($v) => $entity->userUpdateId((string)$v)],
             ['keys' => ['personId', 'pessoa_id'], 'callback' => fn ($v) => $entity->personId((string)$v)],
-            ['keys' => ['accessAll', 'accessAllRcas', 'acessaTodosRcas'], 'callback' => fn ($v) => $entity->accessAll((int)$v)],
+            ['keys' => ['accessAll', 'accessAllRcas', 'acessaTodosRcas'], 'callback' => fn ($v) => $entity->accessAll((string)$v)],
             ['keys' => ['status', 'situacao'], 'callback' => fn ($v) => $entity->status((string)$v)],
             ['keys' => ['positivityGoal', 'metaPositivacao'], 'callback' => fn ($v) => $entity->positivityGoal((float)$v)],
             ['keys' => ['marginGoal', 'metaMargem'], 'callback' => fn ($v) => $entity->marginGoal((float)$v)],

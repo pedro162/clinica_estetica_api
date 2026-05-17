@@ -34,11 +34,14 @@ class StoreSellerControllerTest extends TestCase
         unset($data['id'], $data['user_id'], $data['user_update_id'], $data['tenant_id']);
 
         $this->postJson(route('sellers.store'), $data)
+            ->assertStatus(JsonResponse::HTTP_CREATED)
             ->assertJsonStructure([
                 'success',
                 'data',
-            ])->assertJson([
-                'data' => $data
-            ])->assertStatus(JsonResponse::HTTP_CREATED);
+            ])->assertJsonPath('success', true)
+            ->assertJsonPath('data.filial_id', $data['filial_id'])
+            ->assertJsonPath('data.pessoa_id', $data['pessoa_id'])
+            ->assertJsonPath('data.situacao', $data['situacao'])
+            ->assertJsonPath('data.active', $data['active']);
     }
 }

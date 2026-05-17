@@ -452,6 +452,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/receber/item/destroy/{id}/{id_assistente?}', ['as' => 'receber.item.destroy', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@destroy']);
     Route::post('/receber/item/destroy/{id}/{id_assistente?}', ['as' => 'receber.item.destroy', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@destroy']);
     Route::put('/receber/item/baixar/{id}/{id_assistente?}', ['as' => 'receber.item.baixar', 'uses' => 'Admin\V1\AccountReceivableItem\AccountReceivableItemController@baixar']);
+    Route::put('/receber/item/{id}/estornar', ['as' => 'receber.item.estornar', 'uses' => 'Admin\V1\AccountReceivableItem\ReverseAccountReceivableItemController@__invoke']);
 
     Route::get('/financeiro/movimentacoes/index/{id_assistente?}', ['as' => 'financeiro.movimentacoes.index', 'uses' => 'Admin\MovimentacoesFinanceirasController@index']);
     Route::post('/financeiro/movimentacoes/index/{id_assistente?}', ['as' => 'financeiro.movimentacoes.index', 'uses' => 'Admin\MovimentacoesFinanceirasController@index']);

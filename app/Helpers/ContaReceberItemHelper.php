@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Application\Commands\AccountReceivable\CreateAccountReceivableCommand;
 use App\Application\Commands\AccountReceivableItem\CreateAccountReceivableItemCommand;
+use App\Application\Commands\Cashier\CreateCashierCommand;
 use App\Application\Handlers\AccountReceivable\GetAccountReceivableByIdHandler;
 use App\Application\Handlers\AccountReceivable\GetAllAccountReceivableHandler;
 use App\Application\Handlers\AccountReceivable\UpdateAccountReceivableHandler;
@@ -11,8 +12,10 @@ use App\Application\Handlers\AccountReceivableItem\CreateAccountReceivableItemHa
 use App\Application\Handlers\AccountReceivableItem\GetAccountReceivableItemByIdHandler;
 use App\Application\Handlers\AccountReceivableItem\GetAllAccountReceivableItemHandler;
 use App\Application\Handlers\AccountReceivableItem\UpdateAccountReceivableItemHandler;
+use App\Application\Services\Cashier\CashierApplicationServiceInterface;
 use App\Caixa;
 use App\ContaReceber;
+use App\ContaReceberItem;
 use App\Domain\AccountReceivable\Repositories\AccountReceivableRepositoryInterface;
 use App\Domain\AccountReceivable\ValueObjects\AccountReceivableId;
 use App\Domain\Cashier\Repositories\CashierRepositoryInterface;
@@ -24,6 +27,7 @@ use App\Utilitarios;
 use App\Validators\AccountReceivable\AccountReceivableValidator;
 use App\Validators\CaixaValidator;
 use App\Validators\ContaReceberItemValidator;
+use Illuminate\Support\Facades\Auth;
 
 class ContaReceberItemHelper
 {
@@ -386,11 +390,11 @@ class ContaReceberItemHelper
         $dataRequest = [];
         $dataRequest['status']         = 'pago';
         $dataRequest['vrPago']         = $registro->vrLiquido;
-        $dataRequest['user_update_id'] = \Auth::User()->id;
+        $dataRequest['user_update_id'] = Auth::user()->id;
         $dataRequest['id'] = $registro->id;
 
         $registro->status = 'pago';
-        $registro->user_update_id = \Auth::User()->id;
+        $registro->user_update_id = Auth::user()->id;
         $registro->vrPago = $registro->vrLiquido;
 
         $this->updateAccountReceivableItemHandler->handler(
@@ -421,5 +425,54 @@ class ContaReceberItemHelper
         }
 
         return $registro;
+    }
+
+    public function estornarCobrancaItem(
+        CreateAccountReceivableItemCommand $command
+    ): ?ContaReceberItem {
+        $id = $command->getId();
+        $caixaId = $command->getCashboxId();
+
+        $registro = $this->getAccountReceivableItemByIdHandler
+            ->handler($command);
+
+        $objMovimentacaoHelper = app(FinanceiroMovimentacoeHelper::class);
+        $caixa = app(CashierApplicationServiceInterface::class)
+            ->findById(CreateCashierCommand::build(['id' => $caixaId]));
+
+        $objMovimentacaoHelper->estornarMovimentacaoContaReceber(
+            $registro,
+            $caixa
+        );
+
+        $dataRequest = [];
+        $dataRequest['status']         = 'aberto';
+        $dataRequest['vrPago']         = 0;
+        $dataRequest['id'] = $registro->id;
+
+        $this->updateAccountReceivableItemHandler->handler(
+            CreateAccountReceivableItemCommand::build($dataRequest)
+        );
+
+        //---Atualizo o cabeçalho-------------------------
+        $objCobrancaReceber = $registro->contaReceber;
+        $dataRequest = [
+            'vrPago' => $objCobrancaReceber->vrPago - $registro->vrPago,
+            'vrTaxa' => $objCobrancaReceber->vrTaxa - $registro->vrTaxa,
+            'vrDesconto' => $objCobrancaReceber->vrDesconto - $registro->vrDesconto,
+            'vrJuros' => $objCobrancaReceber->vrJuros - $registro->vrJuros,
+            'id' => $objCobrancaReceber->id
+        ];
+
+        if ($dataRequest['vrPago'] < $objCobrancaReceber->vrLiquido) {
+            $dataRequest['status'] = 'aberto';
+        }
+
+        $this->updateAccountReceivableHandler->handler(
+            CreateAccountReceivableCommand::build($dataRequest)
+        );
+
+        return $this->getAccountReceivableItemByIdHandler
+            ->handler($command);
     }
 }

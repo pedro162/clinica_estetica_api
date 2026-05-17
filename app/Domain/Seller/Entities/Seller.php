@@ -19,16 +19,12 @@ class Seller extends BaseEntity
 {
     protected SellerId $id;
     protected SellerBranchId $branchId;
-    protected BaseEntityTenantId $tenantId = null;
-    protected BaseEntityUserId $userId = null;
-    protected BaseEntityUserId $userUpdateId = null;
-    protected SellerPersonId $personId = null;
-    protected SellerAccessAllRcas $accessAll = null;
-    protected SellerStatus $status = null;
-    protected SellerGoalPositivacao $positivityGoal = null;
-    protected SellerGoalMargem $marginGoal = null;
-    protected SellerGoalFaturamento $revenueGoal = null;
-    protected string $active = null;
+    protected ?SellerPersonId $personId = null;
+    protected ?SellerAccessAllRcas $accessAll = null;
+    protected ?SellerStatus $status = null;
+    protected ?SellerGoalPositivacao $positivityGoal = null;
+    protected ?SellerGoalMargem $marginGoal = null;
+    protected ?SellerGoalFaturamento $revenueGoal = null;
 
     public function id(SellerId $id): Seller
     {
@@ -173,7 +169,7 @@ class Seller extends BaseEntity
             ['keys' => ['userId', 'user_id'], 'callback' => fn ($v) => $entity->userId(new BaseEntityUserId((string)$v))],
             ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($v) => $entity->userUpdateId(new BaseEntityUserId((string)$v))],
             ['keys' => ['personId', 'pessoa_id'], 'callback' => fn ($v) => $entity->personId(new SellerPersonId((string)$v))],
-            ['keys' => ['accessAll', 'accessAllRcas', 'acessaTodosRcas'], 'callback' => fn ($v) => $entity->accessAll(new SellerAccessAllRcas((int)$v))],
+            ['keys' => ['accessAll', 'accessAllRcas', 'acessaTodosRcas'], 'callback' => fn ($v) => $entity->accessAll(new SellerAccessAllRcas((string)$v))],
             ['keys' => ['status', 'situacao'], 'callback' => fn ($v) => $entity->status(new SellerStatus((string)$v))],
             ['keys' => ['positivityGoal', 'metaPositivacao'], 'callback' => fn ($v) => $entity->positivityGoal(new SellerGoalPositivacao((float)$v))],
             ['keys' => ['marginGoal', 'metaMargem'], 'callback' => fn ($v) => $entity->marginGoal(new SellerGoalMargem((float)$v))],

@@ -321,41 +321,137 @@ class CreateAccountReceivableCommand
 
     public static function build(array $data): CreateAccountReceivableCommand
     {
-        $grossValue = Utilitarios::removeMaskMoney($data['grossValue'] ?? $data['vrBruto'] ?? 0);
-        $netValue = Utilitarios::removeMaskMoney($data['netValue'] ?? $data['vrLiquido'] ?? 0);
-        $returnedValue = Utilitarios::removeMaskMoney($data['returnedValue'] ?? $data['vrDevolvido'] ?? 0);
-        $paidValue = Utilitarios::removeMaskMoney($data['paidValue'] ?? $data['vrPago'] ?? 0);
-        $feeValue = Utilitarios::removeMaskMoney($data['feeValue'] ?? $data['vrTaxa'] ?? 0);
-        $discountValue = Utilitarios::removeMaskMoney($data['discountValue'] ?? $data['vrDesconto'] ?? 0);
-        $interestValue = Utilitarios::removeMaskMoney($data['interestValue'] ?? $data['vrJuros'] ?? 0);
+        $entity = (new self());
 
-        $entity = (new self())
-            ->id((string)($data['id'] ?? 0))
-            ->description((string)($data['description'] ?? $data['descricao'] ?? ''))
-            ->tenantId((string)($data['tenantId'] ?? ''))
-            ->userId((string)($data['userId'] ?? $data['user_id'] ?? ''))
-            ->userUpdateId((string)($data['userUpdateId'] ?? $data['user_update_id'] ?? ''))
-            ->active((string)($data['active'] ?? 'yes'))
-            ->branchId((string)($data['filial_id'] ?? $data['branchId'] ?? ''))
-            ->document((string) ($data['document'] ?? $data['documento'] ?? ''))
-            ->originalDueDate((string) ($data['originalDueDate'] ?? $data['dtVencimentoOriginal'] ?? ''))
-            ->dueDate((string) ($data['dueDate'] ?? $data['dtVencimento'] ?? ''))
-            ->grossValue((string) $grossValue)
-            ->netValue((string) $netValue)
-            ->returnedValue((string) $returnedValue)
-            ->paidValue((string) $paidValue)
-            ->feeValue((string) $feeValue)
-            ->discountValue((string) $discountValue)
-            ->interestValue((string) $interestValue)
-            ->responsibleId((string) ($data['responsibleId'] ?? $data['responsavel_id'] ?? ''))
-            ->isImportedData((string) ($data['isImportedData'] ?? $data['importacao_dados'] ?? ''))
-            ->paymentMethodId((string) ($data['paymentMethodId'] ?? $data['forma_pagamento_id'] ?? ''))
-            ->paymentPlanId((string) ($data['paymentPlanId'] ?? $data['plano_pagamento_id'] ?? ''))
-            ->financialOperatorId((string) ($data['financialOperatorId'] ?? $data['operador_financeiro_id'] ?? ''))
-            ->status((string) ($data['status'] ?? ''))
-            ->personId((string) ($data['personId'] ?? $data['pessoa_id'] ?? 0))
-            ->reference((string) ($data['reference'] ?? $data['referencia'] ?? 0))
-            ->referenceId((string) ($data['referenceId'] ?? $data['referencia_id'] ?? 0));
+        $entity->id((string)($data['id'] ?? 0));
+        $entity->active((string)($data['active'] ?? 'yes'));
+
+        $mapping = [
+            [
+                'keys' => ['id'],
+                'callback' => fn ($value) => $entity->id((string) $value)
+            ],
+            [
+                'keys' => ['description', 'descricao'],
+                'callback' => fn ($value) => $entity->description((string) $value)
+            ],
+            [
+                'keys' => ['tenantId', 'tenant_id'],
+                'callback' => fn ($value) => $entity->tenantId((string) $value)
+            ],
+            [
+                'keys' => ['userId', 'user_id'],
+                'callback' => fn ($value) => $entity->userId((string) $value)
+            ],
+            [
+                'keys' => ['userUpdateId', 'user_update_id'],
+                'callback' => fn ($value) => $entity->userUpdateId((string) $value)
+            ],
+            [
+                'keys' => ['active'],
+                'callback' => fn ($value) => $entity->active((string) $value)
+            ],
+            [
+                'keys' => ['branchId', 'filial_id'],
+                'callback' => fn ($value) => $entity->branchId((string) $value)
+            ],
+            [
+                'keys' => ['document', 'documento'],
+                'callback' => fn ($value) => $entity->document((string) $value)
+            ],
+            [
+                'keys' => ['originalDueDate', 'dtVencimentoOriginal'],
+                'callback' => fn ($value) => $entity->originalDueDate((string) $value)
+            ],
+            [
+                'keys' => ['dueDate', 'dtVencimento'],
+                'callback' => fn ($value) => $entity->dueDate((string) $value)
+            ],
+            [
+                'keys' => ['grossValue', 'vrBruto'],
+                'callback' => fn ($value) => $entity->grossValue((string)
+                Utilitarios::removeMaskMoney($value))
+            ],
+            [
+                'keys' => ['netValue', 'vrLiquido'],
+                'callback' => fn ($value) => $entity->netValue((string)
+                Utilitarios::removeMaskMoney($value))
+            ],
+            [
+                'keys' => ['returnedValue', 'vrDevolvido'],
+                'callback' => fn ($value) => $entity->returnedValue((string)
+                Utilitarios::removeMaskMoney($value))
+            ],
+            [
+                'keys' => ['paidValue', 'vrPago'],
+                'callback' => fn ($value) => $entity->paidValue((string)
+                Utilitarios::removeMaskMoney($value))
+            ],
+            [
+                'keys' => ['feeValue', 'vrTaxa'],
+                'callback' => fn ($value) => $entity->feeValue((string)
+                Utilitarios::removeMaskMoney($value))
+            ],
+            [
+                'keys' => ['discountValue', 'vrDesconto'],
+                'callback' => fn ($value) => $entity->discountValue((string)
+                Utilitarios::removeMaskMoney($value))
+            ],
+            [
+                'keys' => ['interestValue', 'vrJuros'],
+                'callback' => fn ($value) => $entity->interestValue((string)
+                Utilitarios::removeMaskMoney($value))
+            ],
+            [
+                'keys' => ['responsibleId', 'responsavel_id'],
+                'callback' => fn ($value) => $entity->responsibleId((string) $value)
+            ],
+            [
+                'keys' => ['isImportedData', 'importacao_dados'],
+                'callback' => fn ($value) => $entity->isImportedData((string) $value)
+            ],
+            [
+                'keys' => ['paymentMethodId', 'forma_pagamento_id', 'forma_pagamentos_id'],
+                'callback' => fn ($value) => $entity->paymentMethodId((string) $value)
+            ],
+            [
+                'keys' => ['paymentPlanId', 'plano_pagamento_id'],
+                'callback' => fn ($value) => $entity->paymentPlanId((string) $value)
+            ],
+            [
+                'keys' => ['financialOperatorId', 'operador_financeiro_id'],
+                'callback' => fn ($value) => $entity->financialOperatorId((string) $value)
+            ],
+            [
+                'keys' => ['status'],
+                'callback' => fn ($value) => $entity->status((string) $value)
+            ],
+            [
+                'keys' => ['personId', 'pessoa_id'],
+                'callback' => fn ($value) => $entity->personId((string) $value)
+            ],
+            [
+                'keys' => ['reference', 'referencia'],
+                'callback' => fn ($value) => $entity->reference((string) $value)
+            ],
+            [
+                'keys' => ['referenceId', 'referencia_id'],
+                'callback' => fn ($value) => $entity->referenceId((string) $value)
+            ],
+        ];
+
+        foreach ($mapping as $map) {
+            foreach ($map['keys'] as $key) {
+                if (array_key_exists($key, $data) && $data[$key] !== null) {
+                    $map['callback']($data[$key]);
+                    break;
+                }
+            }
+        }
+
+        if (!$entity->getUserUpdateId() && $entity->getUserId()) {
+            $entity->userUpdateId($entity->getUserId());
+        }
 
         return $entity;
     }
@@ -397,7 +493,7 @@ class CreateAccountReceivableCommand
         ];
 
         return array_filter($data, function ($value) {
-            return $value !== null && !empty($value);
+            return $value !== null && $value !== '';
         });
     }
 }

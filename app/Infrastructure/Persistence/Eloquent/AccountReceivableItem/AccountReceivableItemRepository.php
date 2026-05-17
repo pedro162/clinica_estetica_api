@@ -41,7 +41,7 @@ class AccountReceivableItemRepository implements AccountReceivableItemRepository
         $userId   = Auth::user()->id;
         $tenantId   = Auth::user()->tenant_id;
         $entity = $parameter->build();
-        $entity->user_id = $userId;
+        $entity->user_update_id = $userId;
         $entity->tenant_id = $tenantId;
 
         $data = $entity->toArray();

@@ -16,7 +16,7 @@ class SellerRepository implements SellerRepositoryInterface
 
     public function findById(SellerId $id): ?Rca
     {
-        return Rca::with([])->where('active', '=', 'yes')
+        return Rca::with(['pessoa', 'filial.pessoa'])->where('active', '=', 'yes')
             ->where('id', '=', (string)$id)->first();
     }
 
@@ -70,7 +70,7 @@ class SellerRepository implements SellerRepositoryInterface
         $ordem = $filter['ordem'];
         $parse = [];
 
-        $query = Rca::query()->with(['pessoa', 'filial']);
+        $query = Rca::query()->with(['pessoa', 'filial.pessoa']);
 
         if (!empty($filter)) {
             foreach ($filter as $key => $val) {

@@ -2,10 +2,14 @@
 
 namespace App\Helpers;
 
+use App\Caixa;
 use App\ContaReceber as CobrancaReceber;
+use App\ContaReceberItem;
 use App\Exceptions\FinanceiroMovimentacoeException;
 use App\FinanceiroMovimentacoe;
 use App\Utilitarios;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class FinanceiroMovimentacoeHelper extends BaseHelper
 {
@@ -344,7 +348,7 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
         if ($campos) {
             $registro->select($campos);
         } else {
-            $registro->select('fm.*', \DB::raw($sqlDsReferencia), 'cx.name as caixa_name', 'cx.filial_id');
+            $registro->select('fm.*', DB::raw($sqlDsReferencia), 'cx.name as caixa_name', 'cx.filial_id');
         }
 
 
@@ -373,5 +377,67 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
         }
 
         return  $registro;
+    }
+
+    public function estornarMovimentacaoContaReceber(
+        ContaReceberItem $contaReceberItem,
+        Caixa $caixa
+    ): bool {
+        $hashOperacao = $contaReceberItem->hashBaixa ?? $contaReceberItem->rashBaixa ?? null;
+
+        if (empty($hashOperacao)) {
+            return false;
+        }
+
+        $movimentacoesEstornar = FinanceiroMovimentacoe::where(
+            'hash_operacao',
+            $hashOperacao
+        )
+            ->where('estornado', 'no')
+            ->where('active', 'yes')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        if ($movimentacoesEstornar->isEmpty()) {
+            return false;
+        }
+
+        $idsMovimentacoes = $movimentacoesEstornar->pluck('id')->all();
+
+        FinanceiroMovimentacoe::whereIn('id', $idsMovimentacoes)
+            ->update(['estornado' => 'yes']);
+
+        $objCaixaHelper = app(CaixaHelper::class);
+        $saldoAtual = $objCaixaHelper->getSaldoCaixa($caixa->id);
+        $userId = Auth::user()->id;
+
+        $novasMovimentacoes = [];
+
+        foreach ($movimentacoesEstornar as $movimentacao) {
+            $valorSaida = -1 * abs((float) $movimentacao->vr_movimentacao);
+            $saldoAnterior = $saldoAtual;
+            $saldoAtual += $valorSaida;
+
+            $novasMovimentacoes[] = [
+                'referencia_id' => $movimentacao->referencia_id,
+                'referencia' => $movimentacao->referencia,
+                'sub_referencia_id' => $movimentacao->sub_referencia_id,
+                'sub_referencia' => $movimentacao->sub_referencia,
+                'historico' => $movimentacao->historico,
+                'caixa_id' => $caixa->id,
+                'vr_saldo_anterior' => $saldoAnterior,
+                'vr_movimentacao' => $valorSaida,
+                'vr_saldo' => $saldoAtual,
+                'tp_movimentacao' => 'negativa',
+                'conciliado' => 'no',
+                'estornado' => 'yes',
+                'hash_operacao' => $hashOperacao,
+                'user_id' => $userId,
+                'active' => 'yes',
+                'tenant_id' => $movimentacao->tenant_id,
+            ];
+        }
+
+        return FinanceiroMovimentacoe::insert($novasMovimentacoes);
     }
 }

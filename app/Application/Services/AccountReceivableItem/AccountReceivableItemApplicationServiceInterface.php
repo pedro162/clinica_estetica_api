@@ -21,4 +21,8 @@ interface AccountReceivableItemApplicationServiceInterface
     ): void;
 
     public function getAll(array $data = []): ?Collection;
+
+    public function reverse(
+        CreateAccountReceivableItemCommand $command
+    ): ?ContaReceberItem;
 }

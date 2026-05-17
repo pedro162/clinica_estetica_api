@@ -82,7 +82,19 @@ class WorkOrderRepository implements WorkOrderRepositoryInterface
         $ordem = $filter['ordem'];
         $parse = [];
 
-        $query = OrdemServico::query();
+        $query = OrdemServico::query()->with([
+            'pessoa',
+            'cobranca',
+            'cobranca.formaPgto',
+            'cobranca.planoPgto',
+            'cobranca.operadorFinanceiro',
+            'item',
+            'item.servico',
+            'rca.pessoa',
+            'profissional.pessoa',
+            'filial',
+            'filial.pessoa'
+        ]);
 
         if (!empty($filter)) {
             foreach ($filter as $key => $val) {
