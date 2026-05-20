@@ -20,6 +20,11 @@ use App\Http\Controllers\Admin\V1\WorkOrder\Actions\CancelWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\Actions\ConcludeWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\Actions\FinalizeWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\Actions\RemoveItemWorkOrderController;
+use App\Http\Controllers\Admin\V1\WorkOrder\CancelingMotive\DeleteCancelingMotiveController;
+use App\Http\Controllers\Admin\V1\WorkOrder\CancelingMotive\GetAllCancelingMotiveController;
+use App\Http\Controllers\Admin\V1\WorkOrder\CancelingMotive\GetByIdCancelingMotiveController;
+use App\Http\Controllers\Admin\V1\WorkOrder\CancelingMotive\StoreCancelingMotiveController;
+use App\Http\Controllers\Admin\V1\WorkOrder\CancelingMotive\UpdateCancelingMotiveController;
 use App\Http\Controllers\Admin\V1\WorkOrder\DeleteWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\GetAllWorkOrderController;
 use App\Http\Controllers\Admin\V1\WorkOrder\GetByIdWorkOrderController;
@@ -58,10 +63,18 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::delete('/v1/neighborhoods/{id}', ['as' => 'neighborhoods.destroy', 'uses' => DeleteNeighborhoodController::class]);
 
     Route::get('/v1/work-orders', ['as' => 'work-orders.index', 'uses' => GetAllWorkOrderController::class]);
+    Route::post('/v1/work-orders', ['as' => 'work-orders.search', 'uses' => GetAllWorkOrderController::class]);
     Route::get('/v1/work-orders/{id}', ['as' => 'work-orders.show', 'uses' => GetByIdWorkOrderController::class]);
     Route::post('/v1/work-orders', ['as' => 'work-orders.store', 'uses' => StoreWorkOrderController::class]);
     Route::put('/v1/work-orders/{id}', ['as' => 'work-orders.update', 'uses' => UpdateWorkOrderController::class]);
     Route::delete('/v1/work-orders/{id}', ['as' => 'work-orders.destroy', 'uses' => DeleteWorkOrderController::class]);
+
+    Route::get('/v1/work-order-canceling-motives', ['as' => 'work-order-canceling-motives.index', 'uses' => GetAllCancelingMotiveController::class]);
+    Route::post('/v1/work-order-canceling-motives', ['as' => 'work-order-canceling-motives.search', 'uses' => GetAllCancelingMotiveController::class]);
+    Route::get('/v1/work-order-canceling-motives/{id}', ['as' => 'work-order-canceling-motives.show', 'uses' => GetByIdCancelingMotiveController::class]);
+    Route::post('/v1/work-order-canceling-motives', ['as' => 'work-order-canceling-motives.store', 'uses' => StoreCancelingMotiveController::class]);
+    Route::put('/v1/work-order-canceling-motives/{id}', ['as' => 'work-order-canceling-motives.update', 'uses' => UpdateCancelingMotiveController::class]);
+    Route::delete('/v1/work-order-canceling-motives/{id}', ['as' => 'work-order-canceling-motives.destroy', 'uses' => DeleteCancelingMotiveController::class]);
 
     Route::post('/v1/work-orders/{id}/conclude', ['as' => 'work-orders.conclude', 'uses' => ConcludeWorkOrderController::class]);
     Route::post('/v1/work-orders/{id}/cancel', ['as' => 'work-orders.cancel', 'uses' => CancelWorkOrderController::class]);
