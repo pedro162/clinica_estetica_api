@@ -14,8 +14,8 @@ use App\Application\Services\WorkOrder\CancelingMotive\UpdateCancelingMotiveAppl
 use App\Application\Services\WorkOrder\CancelingMotive\UpdateCancelingMotiveApplicationServiceInterface;
 use App\Application\Services\WorkOrder\WorkOrderApplicationService;
 use App\Application\Services\WorkOrder\WorkOrderApplicationServiceInterface;
-use App\Domain\WorkOrderCancelingMotive\Repositories\WorkOrderCancelingMotiveRepositoryInterface;
 use App\Domain\WorkOrder\Repositories\WorkOrderRepositoryInterface;
+use App\Domain\WorkOrderCancelingMotive\Repositories\WorkOrderCancelingMotiveRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\WorkOrder\CancelingMotive\CancelingMotiveRepository;
 use App\Infrastructure\Persistence\Eloquent\WorkOrder\WorkOrderRepository;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;

@@ -89,13 +89,13 @@ class StoreCancelingMotiveCommand
         $entity = new self();
 
         $mapping = [
-            ['keys' => ['id'], 'callback' => fn($v) => $entity->id((string) $v)],
-            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn($v) => $entity->tenantId((string) $v)],
-            ['keys' => ['userId', 'user_id'], 'callback' => fn($v) => $entity->userId((string) $v)],
-            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn($v) => $entity->userUpdateId((string) $v)],
-            ['keys' => ['active'], 'callback' => fn($v) => $entity->active((string) $v)],
-            ['keys' => ['motivo', 'motive'], 'callback' => fn($v) => $entity->motive((string) $v)],
-            ['keys' => ['pessoa_id', 'person_id'], 'callback' => fn($v) => $entity->personId((int) $v)],
+            ['keys' => ['id'], 'callback' => fn ($v) => $entity->id((string) $v)],
+            ['keys' => ['tenantId', 'tenant_id'], 'callback' => fn ($v) => $entity->tenantId((string) $v)],
+            ['keys' => ['userId', 'user_id'], 'callback' => fn ($v) => $entity->userId((string) $v)],
+            ['keys' => ['userUpdateId', 'user_update_id'], 'callback' => fn ($v) => $entity->userUpdateId((string) $v)],
+            ['keys' => ['active'], 'callback' => fn ($v) => $entity->active((string) $v)],
+            ['keys' => ['motivo', 'motive'], 'callback' => fn ($v) => $entity->motive((string) $v)],
+            ['keys' => ['pessoa_id', 'person_id'], 'callback' => fn ($v) => $entity->personId((int) $v)],
         ];
 
         foreach ($mapping as $map) {
@@ -122,6 +122,6 @@ class StoreCancelingMotiveCommand
             'person_id' => $this->personId,
         ];
 
-        return array_filter($data, fn($v) => $v !== null);
+        return array_filter($data, fn ($v) => $v !== null);
     }
 }

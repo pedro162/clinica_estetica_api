@@ -41,15 +41,21 @@ class AccountReceivableItemController extends Controller
      */
     public function store(StoreAccountReceivableItemRequest $request)
     {
-        $data = $this->service->store(CreateAccountReceivableItemCommand::build($request->validated()));
-        return ApiResponseClass::sendRequest(new AccountReceivableItemResource($data), 'AccountReceivableItem Created Successful', 201);
+        $data = $this->service->store(CreateAccountReceivableItemCommand::build(
+            $request->validated()
+        ));
+        return ApiResponseClass::sendRequest(
+            new AccountReceivableItemResource($data),
+            'AccountReceivableItem Created Successful',
+            201
+        );
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \App\Http\Requests\V1\AccountReceivableItem\ShowAccountReceivableItemRequest
+     * @param  \App\Http\Requests\V1\AccountReceivableItem\ShowAccountReceivableItemRequest  $request
      */
     public function show(ShowAccountReceivableItemRequest $request, $id)
     {

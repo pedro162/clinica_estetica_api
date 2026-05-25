@@ -99,6 +99,7 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
 
         return $this->getAccountReceivableItemByIdHandler->handler($command);
     }
+
     protected function accountReceivableParseData(array $data)
     {
         return [
@@ -118,7 +119,7 @@ class AccountReceivableItemApplicationService implements AccountReceivableItemAp
             'referencia_id' => $data['referencia_id'] ?? null,
             'referencia' => $data['referencia'] ?? null,
             'filial_id' => $data['filial_id'] ?? null,
-            'responsavel_id' => $data['responsavel_id'] ?? 0,
+            'responsavel_id' => $data['responsavel_id'] ?? null,
             'forma_pagamentos_id' => $data['forma_pagamentos_id'] ?? null,
             'plano_pagamento_id' => $data['plano_pagamento_id'] ?? null,
             'operador_financeiro_id' => $data['operador_financeiro_id'] ?? null,

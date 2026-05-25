@@ -5,6 +5,7 @@ namespace App\Validators\AccountReceivable;
 use App\FormaPagamento;
 use App\Pessoa;
 use App\Utilitarios;
+use Illuminate\Support\Facades\Log;
 
 class AccountReceivableValidator
 {
@@ -13,6 +14,7 @@ class AccountReceivableValidator
         $erros = [];
 
         $objFormaPagamento      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
+        Log::info('Payment Method Object: ' . print_r($objFormaPagamento, true));
         $objPlanoPagamento      = $objFormaPagamento->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
         $objOperadorFinanceiro  = $objFormaPagamento->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
         $objPessoa              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();

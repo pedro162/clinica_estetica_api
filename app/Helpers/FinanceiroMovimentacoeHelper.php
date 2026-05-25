@@ -15,82 +15,86 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
 {
     public function store(array $dados)
     {
-
-        $caixa_id = $dados['caixa_id'];
-
+        $caixa_id = $dados['caixa_id'] ?? null;
         $objCaixaHelper = new CaixaHelper();
         $vrSaldo         = $objCaixaHelper->getSaldoCaixa($caixa_id);
-
         $vrMovimentacao = $dados['vr_movimentacao'];
         $vrMovimentacao = Utilitarios::removeMaskMoney($vrMovimentacao);
-
         $vrSaldoFinal     = $vrSaldo + $vrMovimentacao;
 
         $dadosRequest = $dados;
-
-        $dadosRequest['referencia_id']      = $dados['referencia_id'];
-        $dadosRequest['referencia']            = $dados['referencia'];
-        $dadosRequest['historico']          = $dados['ds_observacao'] ?? $dados['historico'];
-        $dadosRequest['caixa_id']            = $caixa_id;
-        $dadosRequest['vr_saldo_anterior']  = $vrSaldo;
-        $dadosRequest['vr_movimentacao']    = $vrMovimentacao;
-        $dadosRequest['vr_saldo']            = $vrSaldoFinal;
-        $dadosRequest['conciliado']         = 'no';
-        $dadosRequest['estornado']            = 'no';
-        $dadosRequest['hash_operacao']         = null;
-
-        $dadosRequest['user_id']          = \Auth::User()->id; //trocar pelo id do usuario logado
-        $dadosRequest['active']           = 'yes';
+        $dadosRequest['referencia_id'] = $dados['referencia_id'];
+        $dadosRequest['referencia'] = $dados['referencia'];
+        $dadosRequest['historico'] = $dados['ds_observacao'] ?? $dados['historico'];
+        $dadosRequest['caixa_id'] = $caixa_id;
+        $dadosRequest['vr_saldo_anterior'] = $vrSaldo;
+        $dadosRequest['vr_movimentacao'] = $vrMovimentacao;
+        $dadosRequest['vr_saldo'] = $vrSaldoFinal;
+        $dadosRequest['conciliado'] = $dados['conciliado'] ?? 'no';
+        $dadosRequest['estornado'] = $dados['estornado'] ?? 'no';
+        $dadosRequest['hash_operacao'] = $dados['hash_operacao'] ?? null;
+        $dadosRequest['user_id'] = Auth::user()->id;
+        $dadosRequest['active']  = 'yes';
 
         $registro = FinanceiroMovimentacoe::create($dadosRequest);
 
         if (!$registro) {
-            throw new OrdemServicoException('Não foi possível concluir a operação. Tente novamente ou entre em contato com o suporte.');
+            throw new FinanceiroMovimentacoeException(
+                'Não foi possível concluir a operação.'
+                    . ' Tente novamente ou entre em contato com o suporte.'
+            );
         }
 
         return $registro;
     }
+
     public function update(array $data, int $id)
     {
         $dadosRequest = [];
-
         $dadosRequest['descricao']                  = $data['descricao'];
-        $dadosRequest['user_update_id']             = \Auth::User()->id;
+        $dadosRequest['user_update_id']             = Auth::user()->id;
         $dadosRequest['active']                     =  'yes';
 
-        $registro = FinanceiroMovimentacoe::where('active', '=', 'yes')->where('id', '=', $id)->first();
+        $registro = FinanceiroMovimentacoe::where('active', '=', 'yes')
+            ->where('id', '=', $id)->first();
+
         if (!$registro) {
-            throw new FinanceiroMovimentacoeException('Registro não identificado');
+            throw new FinanceiroMovimentacoeException(
+                'Registro não identificado'
+            );
         }
 
         $registro->update($dadosRequest);
-
         return $registro;
     }
 
     public function info(array $data, $id, $idAssistente = 0)
     {
-
         $dados = $data;
         $id = $id ?? $dados['id'];
-        $callBack = $dados['callBack'] ?? '';
         $idAssistente =  $idAssistente ?? $dados['idAssistente'] ?? '';
 
         if ($id <= 0) {
             throw new FinanceiroMovimentacoeException('Parâmetro ínválido');
         }
 
-
         $registro = FinanceiroMovimentacoe::where('active', '=', 'yes')
             ->where('id', '=', $id)->first();
 
         if ($registro == null) {
-            throw new FinanceiroMovimentacoeException('Registro não encontrado');
+            throw new FinanceiroMovimentacoeException(
+                'Registro não encontrado'
+            );
         }
 
+        if (
+            $registro->referencia_id > 0
+            && $registro->referencia == 'conta_recebers'
+        ) {
+            $registro->data_referencia = CobrancaReceber::find(
+                $registro->referencia_id
+            );
 
-        if ($registro->referencia_id > 0 && $registro->referencia == 'conta_recebers') {
-            $registro->data_referencia = CobrancaReceber::find($registro->referencia_id);
             if ($registro->data_referencia) {
                 $registro->data_referencia->pessoa;
                 $registro->data_referencia->contaReceberItem;
@@ -98,6 +102,7 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
         }
 
         $registro->caixa;
+
         if ($registro->user) {
             $registro->user->pessoa;
         }
@@ -127,7 +132,7 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
             'name' => 'cx.name',
         ];
 
-        $registro = \DB::table('financeiro_movimentacoes as fm');
+        $registro = DB::table('financeiro_movimentacoes as fm');
         $registro->join('caixas as cx', function ($join) {
             $join->on('cx.id', '=', 'fm.caixa_id');
         });
@@ -138,29 +143,33 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
                 switch (trim($key)) {
                     case 'id':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
+
                             $val = explode(',', $val);
                         }
+
                         $registro->whereIn('fm.id', $val);
 
                         break;
                     case 'caixa_id':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
+
                             $val = explode(',', $val);
                         }
+
                         $registro->whereIn('fm.caixa_id', $val);
 
                         break;
@@ -175,109 +184,114 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
                             }
                         }
 
-                        $registro->where('fm.historico', 'like', '%' . $val . '%');
+                        $registro->where(
+                            'fm.historico',
+                            'like',
+                            '%' . $val . '%'
+                        );
 
                         break;
                     case 'referencia_id':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
                         }
 
                         $val = explode(',', $val);
-
                         $registro->whereIn('fm.referencia_id', $val);
 
                         break;
                     case 'referencia':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
                         }
 
                         $val = explode(',', $val);
-
                         $registro->whereIn('fm.referencia', $val);
 
                         break;
                     case 'sub_referencia_id':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
                         }
 
                         $val = explode(',', $val);
-
                         $registro->whereIn('fm.sub_referencia_id', $val);
 
                         break;
                     case 'sub_referencia':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
                         }
 
                         $val = explode(',', $val);
-
                         $registro->whereIn('fm.sub_referencia', $val);
                         break;
                     case 'conciliado':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
+
                             $val = explode(',', $val);
                         }
 
                         $registro->whereIn('fm.conciliado', $val);
+
                         break;
                     case 'tp_movimentacao':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
+
                             $val = explode(',', $val);
                         }
 
                         $registro->whereIn('fm.tp_movimentacao', $val);
+
                         break;
                     case 'estornado':
                         if (is_string($val)) {
-
                             if ($val[0] == ',') {
                                 $val = substr($val, 1);
                             }
+
                             if ($val[strlen($val) - 1] == ',') {
                                 $val = substr($val, 0, -1);
                             }
+
                             $val = explode(',', $val);
                         }
 
@@ -289,36 +303,39 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
                         $datas = explode(',', $val);
 
                         if (count($datas) === 2) {
-                            $registro->whereBetween('fm.' . $tpExercicio, [$datas[0] . ' 00:00:00', $datas[1] . ' 23:59:59']);
+                            $registro->whereBetween('fm.' . $tpExercicio, [
+                                $datas[0] . ' 00:00:00',
+                                $datas[1] . ' 23:59:59'
+                            ]);
                         }
 
                         break;
                     case 'limite':
                         $val = (int) $val;
-                        if (is_integer($val) && $val > 0) {
 
+                        if (is_integer($val) && $val > 0) {
                             $registro->limit($val);
                         }
+
                         break;
                     case 'ordem':
-
-
                         if ($val[0] == ',') {
                             $val = substr($val, 1);
                         }
+
                         if ($val[strlen($val) - 1] == ',') {
                             $val = substr($val, 0, -1);
                         }
 
                         $val = explode(',', $val);
+
                         for ($i = 0; !($i == count($val)); $i++) {
                             $atual = explode('-', $val[$i]);
-                            if (array_key_exists(trim($atual[0]), $parse)) {
 
+                            if (array_key_exists(trim($atual[0]), $parse)) {
                                 $parsed = $parse[trim($atual[0])];
 
                                 if ($parsed) {
-
                                     $registro->orderBy($parsed, $atual[1]);
                                 }
                             }
@@ -328,9 +345,9 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
 
                     case 'campos':
                         if (is_array($val) && count($val) > 0) {
-                            //$campos = $this->montaCamposConsulta($registro, $val);
-
+                            //
                         }
+
                         break;
                 }
             }
@@ -345,12 +362,17 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
                 )
                 as dsReferencia
             ';
+
         if ($campos) {
             $registro->select($campos);
         } else {
-            $registro->select('fm.*', DB::raw($sqlDsReferencia), 'cx.name as caixa_name', 'cx.filial_id');
+            $registro->select(
+                'fm.*',
+                DB::raw($sqlDsReferencia),
+                'cx.name as caixa_name',
+                'cx.filial_id'
+            );
         }
-
 
         //----
         $ordemArr   = explode('-', $ordem);
@@ -360,15 +382,24 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
         $usePaginate = $consulta['usePaginate'] ?? 0;
         $usePaginate = (int) $usePaginate;
         $nrItensPerPage = isset($consulta['nr_itens_per_page']) && $consulta['nr_itens_per_page'] > 0 ? $consulta['nr_itens_per_page'] : self::PAGINACAO_ITENS_POR_PAGINA_PADRAO;
-        if ($usePaginate > 0) {
-            $registro   = $registro->where('fm.active', '=', 'yes')->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
-        } else {
-            $registro = $registro->where('fm.active', '=', 'yes')->get();
-        }
 
+        if ($usePaginate > 0) {
+            $registro   = $registro->where(
+                'fm.active',
+                '=',
+                'yes'
+            )->orderBy($oremCampo, $oremTipo)->paginate($nrItensPerPage);
+        } else {
+            $registro = $registro->where(
+                'fm.active',
+                '=',
+                'yes'
+            )->get();
+        }
 
         if (isset($consulta['to_require']) && $consulta['to_require'] == true) {
             $dataToRequest = [];
+
             foreach ($registro as $reg) {
                 $dataToRequest[] = ['label' => $reg->historico, 'value' => $reg->id];
             }
@@ -403,14 +434,12 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
         }
 
         $idsMovimentacoes = $movimentacoesEstornar->pluck('id')->all();
-
         FinanceiroMovimentacoe::whereIn('id', $idsMovimentacoes)
             ->update(['estornado' => 'yes']);
 
         $objCaixaHelper = app(CaixaHelper::class);
         $saldoAtual = $objCaixaHelper->getSaldoCaixa($caixa->id);
         $userId = Auth::user()->id;
-
         $novasMovimentacoes = [];
 
         foreach ($movimentacoesEstornar as $movimentacao) {
@@ -423,7 +452,7 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
                 'referencia' => $movimentacao->referencia,
                 'sub_referencia_id' => $movimentacao->sub_referencia_id,
                 'sub_referencia' => $movimentacao->sub_referencia,
-                'historico' => $movimentacao->historico,
+                'historico' => 'Estorno: ' . $movimentacao->historico,
                 'caixa_id' => $caixa->id,
                 'vr_saldo_anterior' => $saldoAnterior,
                 'vr_movimentacao' => $valorSaida,
@@ -437,6 +466,11 @@ class FinanceiroMovimentacoeHelper extends BaseHelper
                 'tenant_id' => $movimentacao->tenant_id,
             ];
         }
+
+        $objCaixaHelper->atualizar(
+            ['id' => $caixa->id, 'vrSaldo' => $saldoAtual],
+            $caixa->id
+        );
 
         return FinanceiroMovimentacoe::insert($novasMovimentacoes);
     }

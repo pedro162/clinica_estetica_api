@@ -22,12 +22,12 @@ use App\Domain\Cashier\Repositories\CashierRepositoryInterface;
 use App\Domain\Cashier\ValueObjects\CashierId;
 use App\Exceptions\CobrancaReceberException;
 use App\FormaPagamento;
-use App\PlanoPagamento;
 use App\Utilitarios;
 use App\Validators\AccountReceivable\AccountReceivableValidator;
 use App\Validators\CaixaValidator;
 use App\Validators\ContaReceberItemValidator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ContaReceberItemHelper
 {
@@ -68,11 +68,24 @@ class ContaReceberItemHelper
     {
         $erros = [];
 
-        $paymentMethodObject = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $paymentMethodId)->first();
-        $planOfPaymentObject = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $paymentPlanId)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $paymentPlanId)->first();
-        $financialOperatorObject = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $financialOperatorId)->first();
+        $paymentMethodObject = FormaPagamento::where('active', '=', 'yes')
+            ->where('id', '=', $paymentMethodId)->first();
+
+        $planOfPaymentObject = $paymentMethodObject
+            ? $paymentMethodObject->planoPagamento()
+            ->where('plano_pagamentos.active', '=', 'yes')
+            ->where('plano_pagamentos.id', '=', $paymentPlanId)->first()
+            : null;
+
+        $financialOperatorObject = $paymentMethodObject
+            ? $paymentMethodObject->operadorFinanceiro()
+            ->where('operador_financeiros.active', '=', 'yes')
+            ->where('operador_financeiros.id', '=', $financialOperatorId)->first()
+            : null;
         $personObject = $accountReceivableObject->pessoa;
-        $openNettAmoun = $this->repository->sumOpenNetAmounts(new AccountReceivableId((string) $accountReceivableObject->id));
+        $openNettAmoun = $this->repository->sumOpenNetAmounts(
+            new AccountReceivableId((string) $accountReceivableObject->id)
+        );
 
         $interestValue = (float)Utilitarios::removeMaskMoney($data['vrJuros'] ?? 0);
         $feeValue = (float)Utilitarios::removeMaskMoney($data['vrTaxa'] ?? 0);
@@ -81,7 +94,9 @@ class ContaReceberItemHelper
         $interestValue = $interestValue  >= 0 ? $interestValue : 0;
         $feeValue = $feeValue  >= 0 ? $feeValue : 0;
         $discountValue = $discountValue  >= 0 ? $discountValue : 0;
-        $billingBalance = $accountReceivableObject->vrLiquido - (abs($accountReceivableObject->vrPago) + abs($openNettAmoun));
+        $billingBalance = $accountReceivableObject->vrLiquido
+            - (abs($accountReceivableObject->vrPago)
+                + abs($openNettAmoun));
 
         $billingAmount = $billingAmount - ($interestValue + $feeValue);
 
@@ -112,7 +127,7 @@ class ContaReceberItemHelper
         }
 
         if (!$financialOperatorObject) {
-            if ($paymentMethodObject->hasOperadorFinanceiro == 'yes') {
+            if ($paymentMethodObject && $paymentMethodObject->hasOperadorFinanceiro == 'yes') {
                 $erros[] = 'O operador financeiro de código nº ' . $financialOperatorId . ' não foi identificado.';
             }
         }
@@ -124,18 +139,41 @@ class ContaReceberItemHelper
         return $erros;
     }
 
-    public function gerarCobrancaItem(ContaReceber $accountReceivableObject, float $billingAmount, int $paymentMethodId, int $paymentPlanId, $financialOperatorId = null, array $data = [])
-    {
-        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $paymentMethodId)->first();
-        $planOfPaymentObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $paymentPlanId)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $paymentPlanId)->first();
-        $financialOperatorObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $financialOperatorId)->first();
-        $personObject              = $accountReceivableObject->pessoa;
+    public function gerarCobrancaItem(
+        ContaReceber $accountReceivableObject,
+        float $billingAmount,
+        int $paymentMethodId,
+        int $paymentPlanId,
+        $financialOperatorId = null,
+        array $data = []
+    ) {
+        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')
+            ->where('id', '=', $paymentMethodId)->first();
+
+        $planOfPaymentObject = $paymentMethodObject
+            ? $paymentMethodObject->planoPagamento()
+            ->where('plano_pagamentos.active', '=', 'yes')
+            ->where('plano_pagamentos.id', '=', $paymentPlanId)->first()
+            : null;
+
+        $financialOperatorObject = $paymentMethodObject
+            ? $paymentMethodObject->operadorFinanceiro()
+            ->where('operador_financeiros.active', '=', 'yes')
+            ->where('operador_financeiros.id', '=', $financialOperatorId)->first()
+            : null;
 
         $interestValue = (float)Utilitarios::removeMaskMoney($data['vrJuros'] ?? 0);
         $feeValue = (float)Utilitarios::removeMaskMoney($data['vrTaxa'] ?? 0);
         $discountValue = (float)Utilitarios::removeMaskMoney($data['vrDesconto'] ?? 0);
 
-        $erros = $this->validaGerCobrancaItem($accountReceivableObject, $billingAmount, $paymentMethodId, $paymentPlanId, $financialOperatorId, $data);
+        $erros = $this->validaGerCobrancaItem(
+            $accountReceivableObject,
+            $billingAmount,
+            $paymentMethodId,
+            $paymentPlanId,
+            $financialOperatorId,
+            $data
+        );
 
         if ((is_array($erros) && count($erros) > 0)) {
             throw new CobrancaReceberException(implode('<br/>', $erros));
@@ -157,8 +195,6 @@ class ContaReceberItemHelper
 
         $discountBaseAmount = $discountValue / $installmentCount;
         $discountBaseAmount = (float) $discountBaseAmount;
-
-
         $objDtVencimento = new \DateTime();
 
         if ($daysUntilFirstInstallment > 0) {
@@ -181,14 +217,15 @@ class ContaReceberItemHelper
         $cashRegisterId     = null;
         $isCreditCardPayment = false;
 
-        if (trim($paymentMethodObject->tipo) == 'cartao_credito' || trim($paymentMethodObject->tipo) == 'cartao_debito') {
+        if (
+            trim($paymentMethodObject->tipo) == 'cartao_credito'
+            || trim($paymentMethodObject->tipo) == 'cartao_debito'
+        ) {
+            $isCreditCardPayment = true;
+
             if (isset($data['documento']) && strlen(trim($data['documento'])) >= 3) {
                 $billingStatus = 'pago';
             }
-        }
-
-        if (trim($paymentMethodObject->tipo) == 'cartao_credito' || trim($paymentMethodObject->tipo) == 'cartao_debito') {
-            $isCreditCardPayment = true;
         }
 
         for ($i = 0; !($i == $installmentCount); $i++) {
@@ -196,13 +233,9 @@ class ContaReceberItemHelper
             if ($billingStatus == 'pago') {
                 $paymentDate    = date('Y-m-d H:i:s');
                 $settlementDate = date('Y-m-d H:i:s');
-                $randId         = rand(111111111, 999999999);
                 $amountPaid     = $installmentBaseAmount;
-                $settlementHash = ($i + 1) . '' . $personObject->id . '' . $randId . '' . date('ymdhis');
-                $cashRegisterId = null;
+                $settlementHash = Str::uuid();
             }
-
-            $dtVencimento = $objDtVencimento->format('Y-m-d H:i:s');
 
             //--- Preparo os dados para salvar -----------------------------------
             $installmentData = [
@@ -219,7 +252,7 @@ class ContaReceberItemHelper
                 'status' => $billingStatus,
                 'forma_pagamentos_id' => $paymentMethodObject->id,
                 'plano_pagamento_id' => $planOfPaymentObject->id,
-                'operador_financeiro_id' => $financialOperatorObject->id ?? 0,
+                'operador_financeiro_id' => $financialOperatorObject->id ?? null,
                 'conta_receber_id' => $accountReceivableObject->id,
                 'caixa_id' => $cashRegisterId,
                 'tpBaixa' => $settlementType,
@@ -278,7 +311,8 @@ class ContaReceberItemHelper
                 );
 
                 if (! $accountReceivableItem) {
-                    throw new CobrancaReceberException('Não foi possível gerar os contas a receber.Tente novamente ou entre em contato com o suporte.');
+                    throw new CobrancaReceberException('Não foi possível gerar os contas a receber.'
+                        . ' Tente novamente ou entre em contato com o suporte.');
                 }
 
                 if ($billingStatus == 'pago') {
@@ -286,9 +320,8 @@ class ContaReceberItemHelper
                 }
 
                 if (!empty($val['is_cartao']) && $val['is_cartao']) {
-
                     $objCobCartHelper   = app(ContaReceberCartaoHelper::class);
-                    $idBandeira         = $data['bandeira_cartao_id'] ?? 1; //Gravar a bandeira do cartão na tabela de cobranças
+                    $idBandeira         = $data['bandeira_cartao_id'] ?? 1;
                     $dataCartoes        = $objCobCartHelper->gerarCarteiraCartao(
                         $accountReceivableItem->id,
                         $idBandeira,
@@ -299,7 +332,8 @@ class ContaReceberItemHelper
                     );
 
                     if (! $dataCartoes) {
-                        throw new CobrancaReceberException('Não foi possível gerar a carteira de cartões.Tente novamente ou entre em contato com o suporte.');
+                        throw new CobrancaReceberException('Não foi possível gerar a carteira de cartões.'
+                            . ' Tente novamente ou entre em contato com o suporte.');
                     }
 
                     $datacobReceberObjArr['data_cob_receber_cartoes'][] = $dataCartoes;
@@ -308,7 +342,8 @@ class ContaReceberItemHelper
                 $datacobReceberObjArr['data_cob_receber_item'][] = $accountReceivableItem;
             }
         } else {
-            throw new CobrancaReceberException('Não foi possível identificar quantas parcelas deveriam ser geradas. Tente novamente ou entre em contato com o suporte.');
+            throw new CobrancaReceberException('Não foi possível identificar quantas parcelas deveriam ser geradas.'
+                . ' Tente novamente ou entre em contato com o suporte.');
         }
 
         return $datacobReceberObjArr;
@@ -326,7 +361,7 @@ class ContaReceberItemHelper
         }
 
         if (! ($cashierRegisterId > 0)) {
-            throw new CobrancaReceberException('Parâmetro ínválido para o caixa de baixa');
+            throw new CobrancaReceberException('Parâmetro ínválido para o caixa de baixa: ');
         }
 
         $cashierRegisterValidator  = new CaixaValidator();
@@ -366,19 +401,29 @@ class ContaReceberItemHelper
         }
 
         //--------------------- Gerar movimentação de caixa ----------------------------------------
+        $objCaixaHelper = app(CaixaHelper::class);
+        $previousBalance = $objCaixaHelper->getSaldoCaixa($cashierRegister->id);
+
         $objMovimentacaoHelper = new FinanceiroMovimentacoeHelper();
+        $settlementHash = Str::uuid();
+
+        $newBalance = $previousBalance + $registro->vrLiquido;
 
         $dataRequest = [];
         $dataRequest['referencia']         = 'conta_recebers';
         $dataRequest['referencia_id']      = $registro->conta_receber_id;
         $dataRequest['sub_referencia']     = 'conta_receber_items';
         $dataRequest['sub_referencia_id']  = $registro->id;
-        $dataRequest['historico']          = 'Baixa parcial contas a receber código nº ' . $registro->conta_receber_id . ' - Cliente: ' . $objCobrancaReceber->pessoa->name;
+        $dataRequest['historico']          = 'Baixa parcial contas a receber código nº '
+            . $registro->conta_receber_id . ' - Cliente: ' . $objCobrancaReceber->pessoa->name;
         $dataRequest['caixa_id']           = $cashierRegister->id;
         $dataRequest['vr_movimentacao']    = $registro->vrLiquido;
         $dataRequest['conciliado']         = 'no';
         $dataRequest['estornado']          = 'no';
-        $dataRequest['hash_operacao']      = null;
+        $dataRequest['hash_operacao']      = $settlementHash;
+        $dataRequest['tp_movimentacao']     = 'positiva';
+        $dataRequest['vr_saldo_anterior']   = $previousBalance;
+        $dataRequest['vr_saldo']            = $newBalance;
 
         $registroMovimentacao = $objMovimentacaoHelper->store($dataRequest);
 
@@ -386,12 +431,18 @@ class ContaReceberItemHelper
             throw new CobrancaReceberException('Não foi possível gerar movimentação de caixa. Tente novamente ou entre em contato com o suporte.');
         }
 
+        $objCaixaHelper->atualizar(
+            ['id' => $cashierRegister->id, 'vrSaldo' => $newBalance],
+            $cashierRegister->id
+        );
+
         //--------------------- Marcar o contas a receber como pago ----------------------------------------
         $dataRequest = [];
         $dataRequest['status']         = 'pago';
         $dataRequest['vrPago']         = $registro->vrLiquido;
         $dataRequest['user_update_id'] = Auth::user()->id;
         $dataRequest['id'] = $registro->id;
+        $dataRequest['rashBaixa'] = $settlementHash;
 
         $registro->status = 'pago';
         $registro->user_update_id = Auth::user()->id;

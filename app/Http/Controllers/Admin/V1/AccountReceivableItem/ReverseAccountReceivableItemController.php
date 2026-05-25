@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin\V1\AccountReceivableItem;
 
 use App\Application\Commands\AccountReceivableItem\CreateAccountReceivableItemCommand;
 use App\Application\Services\AccountReceivableItem\AccountReceivableItemApplicationServiceInterface;
+use App\Classes\ApiResponseClass;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\AccountReceivableItem\ReverseAccountReceivableItemRequest;
+use App\Http\Resources\V1\AccountReceivableItem\ReverseAccountReceivableItemResource;
 
 class ReverseAccountReceivableItemController extends Controller
 {
@@ -28,6 +30,10 @@ class ReverseAccountReceivableItemController extends Controller
         $data = $request->validated();
         $data['id'] = $id;
         $data = $this->service->reverse(CreateAccountReceivableItemCommand::build($data));
-        return response()->noContent();
+        return ApiResponseClass::sendRequest(
+            new ReverseAccountReceivableItemResource($data),
+            '',
+            204
+        );
     }
 }

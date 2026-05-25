@@ -9,17 +9,10 @@ class CaixaHelper extends BaseHelper
 {
     public function atualizar(array $dados, int $id)
     {
-
-        $id             = $id ?? $dados['id'];
-        $callBack       = $dados['callBack'] ?? '';
-        $caixa_id       = $dados['caixa_id'] ?? 0;
+        $id = $id ?? $dados['id'] ?? null;
 
         if ($id <= 0) {
             throw new CobrancaReceberException('Parâmetro ínválido');
-        }
-
-        if (! ($caixa_id > 0)) {
-            throw new CobrancaReceberException('Parâmetro ínválido para o caixa de baixa');
         }
 
         $registro = Caixa::where('active', '=', 'yes')
@@ -28,6 +21,8 @@ class CaixaHelper extends BaseHelper
         if (! $registro) {
             throw new CobrancaReceberException('Registro não identificao. Tente novamente ou entre em contato com o suporte.');
         }
+
+        $registro->update($dados);
     }
 
     public function getSaldoCaixa(int $id)

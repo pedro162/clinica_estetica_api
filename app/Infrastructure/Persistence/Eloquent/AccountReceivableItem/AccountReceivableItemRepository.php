@@ -10,8 +10,6 @@ use App\Domain\AccountReceivableItem\Repositories\AccountReceivableItemRepositor
 use App\Domain\AccountReceivableItem\ValueObjects\AccountReceivableItemId;
 use Illuminate\Support\Facades\Auth;
 
-;
-
 class AccountReceivableItemRepository implements AccountReceivableItemRepositoryInterface
 {
     protected const ITENS_PER_PAGE = 10;

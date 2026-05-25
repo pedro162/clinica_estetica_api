@@ -2,4 +2,6 @@
 
 namespace App\Application\Commands\WorkOrder\CancelingMotive;
 
-class UpdateWorkOrderCommand extends CreateCancelingMotiveCommand {}
+class UpdateWorkOrderCommand extends CreateCancelingMotiveCommand
+{
+}

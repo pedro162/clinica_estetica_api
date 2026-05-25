@@ -50,10 +50,13 @@ class ContaReceberHelper extends BaseHelper
         $erros = [];
 
         $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
-        $paymentPlanObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
-        $operatorFainantialObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
+        $paymentPlanObject = $paymentMethodObject
+            ? $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first()
+            : null; //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
+        $operatorFainantialObject = $paymentMethodObject
+            ? $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first()
+            : null;
         $personObject              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
-
         $paidValue   = Utilitarios::removeMaskMoney($paidValue);
 
         if (!$personObject) {
@@ -69,7 +72,7 @@ class ContaReceberHelper extends BaseHelper
         }
 
         if (!$operatorFainantialObject) {
-            if ($paymentMethodObject->hasOperadorFinanceiro == 'yes') {
+            if ($paymentMethodObject && $paymentMethodObject->hasOperadorFinanceiro == 'yes') {
                 $erros[] = 'O operador financeiro de código nº ' . $idOperadorFinanceiro . ' não foi identificado.';
             }
         }
@@ -100,7 +103,7 @@ class ContaReceberHelper extends BaseHelper
             'referencia_id' => $data['referencia_id'] ?? null,
             'referencia' => $data['referencia'] ?? null,
             'filial_id' => $data['filial_id'] ?? null,
-            'responsavel_id' => $data['responsavel_id'] ?? 0,
+            'responsavel_id' => $data['responsavel_id'] ?? null,
             'forma_pagamento_id' => $data['forma_pagamento_id'] ?? null,
             'plano_pagamento_id' => $data['plano_pagamento_id'] ?? null,
             'operador_financeiro_id' => $data['operador_financeiro_id'] ?? null,
@@ -108,22 +111,41 @@ class ContaReceberHelper extends BaseHelper
         ];
     }
 
-    public function gerarCobranca(int $idPessoa, float $paidValue, int $idFormaPagamento, int $idPlanoPagamento, $idOperadorFinanceiro = null, array $dados = [])
-    {
-        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')->where('id', '=', $idFormaPagamento)->first();
-        $paymentPlanObject      = $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first(); //PlanoPagamento::where('active','=', 'yes')->where('id', '=' $idPlanoPagamento)->first();
-        $operatorFainantialObject  = $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first();
+    public function gerarCobranca(
+        int $idPessoa,
+        float $paidValue,
+        int $idFormaPagamento,
+        int $idPlanoPagamento,
+        $idOperadorFinanceiro = null,
+        array $dados = []
+    ) {
+        $paymentMethodObject      = FormaPagamento::where('active', '=', 'yes')
+            ->where('id', '=', $idFormaPagamento)->first();
+        $paymentPlanObject = $paymentMethodObject
+            ? $paymentMethodObject->planoPagamento()->where('plano_pagamentos.active', '=', 'yes')
+            ->where('plano_pagamentos.id', '=', $idPlanoPagamento)->first()
+            : null;
+        $operatorFainantialObject = $paymentMethodObject
+            ? $paymentMethodObject->operadorFinanceiro()->where('operador_financeiros.active', '=', 'yes')
+            ->where('operador_financeiros.id', '=', $idOperadorFinanceiro)->first()
+            : null;
         $personObject              = Pessoa::where('active', '=', 'yes')->where('id', '=', $idPessoa)->first();
 
         $paidValue   = Utilitarios::removeMaskMoney($paidValue);
-        $erros = $this->validaGerCobranca($idPessoa, $paidValue, $idFormaPagamento, $idPlanoPagamento, $idOperadorFinanceiro, $dados);
+        $erros = $this->validaGerCobranca(
+            $idPessoa,
+            $paidValue,
+            $idFormaPagamento,
+            $idPlanoPagamento,
+            $idOperadorFinanceiro,
+            $dados
+        );
 
         if ((is_array($erros) && count($erros) > 0)) {
             throw new CobrancaReceberException(implode('<br/>', $erros));
         }
 
-        $installMentsQuantity         = $paymentPlanObject->installMentsQuantitys ?? 1;
-        ;
+        $installMentsQuantity = $paymentPlanObject->installMentsQuantitys ?? 1;
         $installMents       = [];
         $qtdDiasIntervalo   = $paymentPlanObject->qtdDiasIntervaloParcelas ?? 0;
         $qtdDiasPriParcela  = $paymentPlanObject->qtd_dias_pri_parcela ?? 0;
@@ -140,13 +162,23 @@ class ContaReceberHelper extends BaseHelper
         $defaultReferenceId = date('ymdhis');
         $defaultReference = 'sem_referencia';
         $status = $dados['status'] ?? 'aberto';
+        $isCardPayment = trim($paymentMethodObject->tipo) == 'cartao_credito'
+            || trim($paymentMethodObject->tipo) == 'cartao_debito';
+        $shouldSettleCashPayment = trim($paymentMethodObject->tipo) == 'dinheiro'
+            && isset($dados['caixa_id'])
+            && $dados['caixa_id'] > 0;
 
-        if (trim($paymentMethodObject->tipo) == 'cartao_credito' || trim($paymentMethodObject->tipo) == 'cartao_debito') {
+        if ($isCardPayment) {
             $installMentsQuantity = 1;
 
-            if (isset($data['document']) && strlen(trim($data['document'])) >= 3) {
+            if (isset($dados['document']) && strlen(trim($dados['document'])) >= 3) {
                 $status    = 'pago';
             }
+        }
+
+        if ($shouldSettleCashPayment) {
+            $installMentsQuantity = 1;
+            $status = 'aberto';
         }
 
         for ($i = 0; !($i == $installMentsQuantity); $i++) {
@@ -163,12 +195,12 @@ class ContaReceberHelper extends BaseHelper
                 'referencia_id' => $dados['referencia_id'] ?? $dados['referenceId'] ?? $defaultReferenceId,
                 'referencia' => $dados['referencia'] ?? $dados['reference'] ?? $defaultReference,
                 'filial_id' => $dados['filial_id'] ?? $dados['branchId'] ?? null,
-                'responsavel_id' => $dados['responsavel_id'] ?? $dados['responsibleId'] ?? 0,
+                'responsavel_id' => $dados['responsavel_id'] ?? $dados['responsibleId'] ?? null,
                 'forma_pagamento_id' => $paymentMethodObject->id,
                 'plano_pagamento_id' => $paymentPlanObject->id,
-                'operador_financeiro_id' => $operatorFainantialObject->id ?? 0,
+                'operador_financeiro_id' => $operatorFainantialObject->id ?? null,
                 'status' => $status,
-
+                'caixa_id' => $dados['caixa_id'] ?? null,
             ]);
 
             if ($qtdDiasIntervalo > 0) {
@@ -193,6 +225,8 @@ class ContaReceberHelper extends BaseHelper
             'data_cob_receber_boletos' => [],
         ];
 
+        $itens = [];
+
         if (is_array($installMents) && count($installMents) > 0) {
             foreach ($installMents as $key => $val) {
 
@@ -201,18 +235,26 @@ class ContaReceberHelper extends BaseHelper
                 );
 
                 if (!$accountReceivable) {
-                    throw new CobrancaReceberException('Não foi possível gerar os contas a receber.Tente novamente ou entre em contato com o suporte.');
+                    throw new CobrancaReceberException('Não foi possível gerar os contas a receber.'
+                        . 'Tente novamente ou entre em contato com o suporte.');
                 }
 
-                if ($accountReceivable->status == 'pago') {
+                if ($accountReceivable->status == 'pago' || $shouldSettleCashPayment) {
                     $val['qtdParcelas'] = 1;
+                    $itemData = $val;
+
+                    if ($shouldSettleCashPayment) {
+                        $itemData['status'] = 'aberto';
+                        unset($itemData['caixa_id']);
+                    }
+
                     $errosEncontrados = $this->accountReceivableItemHelp->validaGerCobrancaItem(
                         $accountReceivable,
                         (float)$accountReceivable->vrLiquido,
                         $paymentMethodObject->id,
                         $paymentPlanObject->id,
-                        $operatorFainantialObject->id ?? 0,
-                        $val,
+                        $operatorFainantialObject->id ?? null,
+                        $itemData,
                     );
 
                     if (is_array($errosEncontrados) && count($errosEncontrados) > 0) {
@@ -225,21 +267,38 @@ class ContaReceberHelper extends BaseHelper
                         $paymentMethodObject->id,
                         $paymentPlanObject->id,
                         $operatorFainantialObject->id ?? 0,
-                        $val
+                        $itemData
                     );
 
                     if (!$responseHelper) {
-                        throw new CobrancaReceberException('Não foi possível realizar a baixa do contas a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');
+                        throw new CobrancaReceberException('Não foi possível realizar a baixa do contas '
+                            . 'a receber vinculado ao cartão informado. Tente novamente ou entre em contato com o suporte.');
                     }
 
                     $dataCartoes = $responseHelper['data_cob_receber_cartoes'] ??  [];
                     $datacobReceberObjArr['data_cob_receber_cartoes'][] = $dataCartoes;
+                    $itens[] = $responseHelper['data_cob_receber_item'] ?? [];
                 }
 
                 $datacobReceberObjArr['data_cob_receber'][] = $accountReceivable;
             }
         } else {
-            throw new CobrancaReceberException('Não foi possível identificar quantas parcelas deveriam ser geradas. Tente novamente ou entre em contato com o suporte.');
+            throw new CobrancaReceberException('Não foi possível identificar quantas parcelas deveriam ser geradas.'
+                . ' Tente novamente ou entre em contato com o suporte.');
+        }
+
+        if ($shouldSettleCashPayment && $itens) {
+            foreach ($itens as $key => $val) {
+                foreach ($val as $keyItem => $valItem) {
+                    if ($valItem->status == 'aberto' && $valItem->vrLiquido > 0) {
+                        $this->accountReceivableItemHelp->baixar([
+                            'caixa_id' => $dados['caixa_id'],
+                            'vr_pago' => $valItem->vrLiquido,
+                            'ds_observacao' => $valItem->descricao ?? 'Baixa automática gerada na criação da cobrança.',
+                        ], $valItem->id);
+                    }
+                }
+            }
         }
 
         return $datacobReceberObjArr;
@@ -307,12 +366,12 @@ class ContaReceberHelper extends BaseHelper
             'referencia_id' => $registro->referencia_id ?? date('ymdhis'),
             'referencia' => $registro->referencia ?? 'sem_referencia',
             'filial_id' => $registro->filial_id ?? null,
-            'responsavel_id' => $registro->responsavel_id ?? 0,
+            'responsavel_id' => $registro->responsavel_id ?? null,
             'qtd_parcelas' => 1,
             'nr_parcela' => 1,
             'forma_pagamento_id' => $registro->formaPagamento->id,
             'plano_pagamento_id' => $registro->planoPagamento->id,
-            'operador_financeiro_id' => $registro->operadorFinanceiro->id ?? 0,
+            'operador_financeiro_id' => $registro->operadorFinanceiro->id ?? null,
             'status' => 'aberto',
         ];
 

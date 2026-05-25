@@ -7,10 +7,10 @@ use App\Application\Services\WorkOrder\CancelingMotive\UpdateCancelingMotiveAppl
 use App\Classes\ApiResponseClass;
 use App\Exceptions\ServicoException;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use App\Http\Requests\V1\WorkOrder\CancelingMotive\UpdateCancelingMotiveRequest;
 use App\Http\Resources\V1\WorkOrder\CancelingMotive\UpdateCancelingMotiveResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class UpdateCancelingMotiveController extends Controller
 {

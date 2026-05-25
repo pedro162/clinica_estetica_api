@@ -2,4 +2,6 @@
 
 namespace App\Application\Commands\WorkOrder\CancelingMotive;
 
-class DeleteWorkOrderCommand extends CreateCancelingMotiveCommand {}
+class DeleteWorkOrderCommand extends CreateCancelingMotiveCommand
+{
+}

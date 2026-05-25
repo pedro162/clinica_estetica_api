@@ -405,7 +405,7 @@ class AccountReceivableRepository implements AccountReceivableRepositoryInterfac
 
     public function sumOpenNetAmounts(AccountReceivableId $id): ?float
     {
-        return ContaReceberItem::where('conta_receber_id', (string)$id)
+        return (float) ContaReceberItem::where('conta_receber_id', (string)$id)
             ->where('status', 'aberto')
             ->where('active', 'yes')
             ->sum('vrLiquido');
